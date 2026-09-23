@@ -19,7 +19,7 @@ run() {
 	[ "$code" = "0" ] || FAILED=1
 }
 
-for t in test-pricing-parity test-seasons test-features test-regression; do
+for t in test-pricing-parity test-seasons test-features test-regression test-ical; do
 	run "$t" $WP eval-file "$DIR/$t.php"
 done
 run "test-features (wp-config constants)" env FLEXO_CONST_TEST=1 $WP --exec="define('FLEXO_BOOKING_FEATURES','booking_request,seasonal_pricing,guest_emails'); define('FLEXO_BOOKING_AGENCY_USERS','support, agency-test@flexohotels.test');" eval-file "$DIR/test-features.php"

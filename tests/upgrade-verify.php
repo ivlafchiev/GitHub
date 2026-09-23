@@ -11,7 +11,7 @@ $fixture = json_decode( file_get_contents( getenv( 'FLEXO_FIXTURE' ) ), true );
 t_section( 'Upgrade from ' . $fixture['plugin'] . ' to ' . FLEXO_BOOKING_VERSION );
 t_eq( (string) Flexo_Booking_Migrations::LATEST, get_option( 'flexo_booking_db_version' ), 'database version is latest' );
 t_ok( false === get_option( Flexo_Booking_Migrations::ERROR_OPTION ), 'no migration error recorded' );
-foreach ( array( 'bookings', 'seasons', 'closures' ) as $table ) {
+foreach ( array_keys( Flexo_Booking_Schema::tables() ) as $table ) {
 	t_ok( Flexo_Booking_Schema::table_exists( $table ), "table {$table} exists" );
 }
 $row     = $wpdb->get_row( 'SELECT * FROM ' . $wpdb->prefix . 'flexo_bookings LIMIT 1', ARRAY_A );
