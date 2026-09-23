@@ -114,7 +114,7 @@ class Flexo_Booking_Rest {
 				continue;
 			}
 			unset( $room['min_nights_override'] );
-			$room['price_formatted'] = Flexo_Booking_Settings::format_price( $room['price'] );
+			$room['price_formatted'] = Flexo_Booking_Money::format( $room['price'] );
 			$rooms[]                 = $room;
 		}
 		return rest_ensure_response( $rooms );
@@ -168,7 +168,7 @@ class Flexo_Booking_Rest {
 		);
 
 		if ( is_wp_error( $booking ) ) {
-			$booking->add_data( array( 'status' => 'flexo_unavailable' === $booking->get_error_code() ? 409 : 400 ) );
+			$booking->add_data( array( 'status' => in_array( $booking->get_error_code(), array( 'flexo_unavailable', 'flexo_closed', 'flexo_busy' ), true ) ? 409 : 400 ) );
 			return $booking;
 		}
 
@@ -186,7 +186,8 @@ class Flexo_Booking_Rest {
 				'check_in'        => $booking['check_in'],
 				'check_out'       => $booking['check_out'],
 				'nights'          => $booking['nights'],
-				'total_formatted' => Flexo_Booking_Settings::format_price( $booking['total'] ),
+				'total_formatted' => Flexo_Booking_Money::format( $booking['total'], $booking['currency'] ),
+				'breakdown'       => Flexo_Booking_Pricing::format_lines( Flexo_Booking_Pricing::snapshot( $booking ) ),
 				'message'         => $confirmed
 					? __( 'Your booking is confirmed! A confirmation has been sent to your email.', 'flexo-booking' )
 					: __( 'Thank you! We received your booking request and will confirm it shortly by email.', 'flexo-booking' ),

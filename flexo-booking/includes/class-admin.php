@@ -210,7 +210,18 @@ class Flexo_Booking_Admin {
 							</div>
 						</td>
 						<td><?php echo esc_html( $b['adults'] . ( $b['children'] ? ' + ' . $b['children'] : '' ) ); ?></td>
-						<td><?php echo esc_html( Flexo_Booking_Settings::format_price( $b['total'] ) ); ?></td>
+						<td>
+							<?php echo esc_html( Flexo_Booking_Money::format( $b['total'], $b['currency'] ) ); ?>
+							<?php
+							$flexo_details = array();
+							foreach ( Flexo_Booking_Pricing::format_lines( Flexo_Booking_Pricing::snapshot( $b ) ) as $flexo_row ) {
+								$flexo_details = array_merge( $flexo_details, $flexo_row['details'] );
+							}
+							if ( $flexo_details ) {
+								echo '<div class="flexo-breakdown">' . esc_html( implode( "\n", $flexo_details ) ) . '</div>';
+							}
+							?>
+						</td>
 						<td><span class="flexo-status flexo-status--<?php echo esc_attr( $b['status'] ); ?>"><?php echo esc_html( Flexo_Booking_Bookings::status_label( $b['status'] ) ); ?></span></td>
 						<td class="flexo-actions">
 							<?php if ( 'pending' === $b['status'] ) : ?>
@@ -317,10 +328,12 @@ class Flexo_Booking_Admin {
 						<th scope="row"><label for="fb-notes"><?php esc_html_e( 'Notes', 'flexo-booking' ); ?></label></th>
 						<td><textarea id="fb-notes" name="notes" rows="3" class="large-text"></textarea></td>
 					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Email', 'flexo-booking' ); ?></th>
-						<td><label><input type="checkbox" name="notify" value="1"> <?php esc_html_e( 'Send the confirmation email to the guest', 'flexo-booking' ); ?></label></td>
-					</tr>
+					<?php if ( Flexo_Booking_Features::is_enabled( 'guest_emails' ) ) : ?>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'Email', 'flexo-booking' ); ?></th>
+							<td><label><input type="checkbox" name="notify" value="1"> <?php esc_html_e( 'Send the confirmation email to the guest', 'flexo-booking' ); ?></label></td>
+						</tr>
+					<?php endif; ?>
 				</table>
 				<?php submit_button( __( 'Save booking', 'flexo-booking' ) ); ?>
 			</form>
@@ -385,7 +398,7 @@ class Flexo_Booking_Admin {
 			self::redirect( add_query_arg( 'flexo_error', rawurlencode( $booking->get_error_message() ), $new_url ) );
 		}
 
-		if ( ! empty( $_POST['notify'] ) && 'blocked' !== $booking['status'] ) {
+		if ( ! empty( $_POST['notify'] ) && 'blocked' !== $booking['status'] && Flexo_Booking_Features::is_enabled( 'guest_emails' ) ) {
 			Flexo_Booking_Emails::send_guest( $booking, 'confirmed' === $booking['status'] ? 'confirmed' : 'request' );
 		}
 
@@ -406,9 +419,10 @@ class Flexo_Booking_Admin {
 
 		$out = fopen( 'php://output', 'w' );
 		fwrite( $out, "\xEF\xBB\xBF" ); // UTF-8 BOM so Excel shows accents and Cyrillic correctly.
-		fputcsv( $out, array( 'Reference', 'Status', 'Room', 'Check-in', 'Check-out', 'Nights', 'Adults', 'Children', 'Guest', 'Email', 'Phone', 'Notes', 'Total', 'Currency', 'Source', 'Created' ), ',', '"', '\\' );
+		fputcsv( $out, array( 'Reference', 'Status', 'Room', 'Check-in', 'Check-out', 'Nights', 'Adults', 'Children', 'Guest', 'Email', 'Phone', 'Notes', 'Total', 'Currency', 'Source', 'Created', 'Price details' ), ',', '"', '\\' );
 		foreach ( $result['items'] as $b ) {
-			$row = array( $b['reference'], $b['status'], $b['room_title'], $b['check_in'], $b['check_out'], $b['nights'], $b['adults'], $b['children'], $b['guest_name'], $b['guest_email'], $b['guest_phone'], $b['notes'], $b['total'], $b['currency'], $b['source'], $b['created_at'] );
+			$details = 'blocked' === $b['status'] ? '' : Flexo_Booking_Pricing::summary_text( Flexo_Booking_Pricing::snapshot( $b ) );
+			$row     = array( $b['reference'], $b['status'], $b['room_title'], $b['check_in'], $b['check_out'], $b['nights'], $b['adults'], $b['children'], $b['guest_name'], $b['guest_email'], $b['guest_phone'], $b['notes'], $b['total'], $b['currency'], $b['source'], $b['created_at'], $details );
 			// Prevent spreadsheet formula injection from guest-entered values.
 			$row = array_map(
 				static function ( $value ) {

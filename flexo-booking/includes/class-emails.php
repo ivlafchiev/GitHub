@@ -18,12 +18,14 @@ class Flexo_Booking_Emails {
 		if ( 'website' !== $booking['source'] ) {
 			return;
 		}
-		self::send_guest( $booking, 'confirmed' === $booking['status'] ? 'confirmed' : 'request' );
+		if ( Flexo_Booking_Features::is_enabled( 'guest_emails' ) ) {
+			self::send_guest( $booking, 'confirmed' === $booking['status'] ? 'confirmed' : 'request' );
+		}
 		self::send_admin( $booking );
 	}
 
 	public static function on_status_changed( $booking, $old_status, $new_status ) {
-		if ( in_array( $new_status, array( 'confirmed', 'cancelled' ), true ) ) {
+		if ( Flexo_Booking_Features::is_enabled( 'guest_emails' ) && in_array( $new_status, array( 'confirmed', 'cancelled' ), true ) ) {
 			self::send_guest( $booking, $new_status );
 		}
 	}
@@ -92,21 +94,28 @@ class Flexo_Booking_Emails {
 				$booking['children']
 			);
 		}
-		$total = Flexo_Booking_Settings::format_price( $booking['total'] );
+		$total    = Flexo_Booking_Money::format( $booking['total'], $booking['currency'] );
+		$snapshot = Flexo_Booking_Pricing::snapshot( $booking );
+		$prices   = array();
+		foreach ( Flexo_Booking_Pricing::format_lines( $snapshot ) as $row ) {
+			foreach ( $row['details'] as $detail ) {
+				$prices[] = '  ' . $detail;
+			}
+		}
 
-		$details = implode(
-			"\n",
-			array(
-				__( 'Reference', 'flexo-booking' ) . ': ' . $booking['reference'],
-				__( 'Room', 'flexo-booking' ) . ': ' . $booking['room_title'],
-				__( 'Check-in', 'flexo-booking' ) . ': ' . $check_in,
-				__( 'Check-out', 'flexo-booking' ) . ': ' . $check_out,
-				__( 'Nights', 'flexo-booking' ) . ': ' . $booking['nights'],
-				__( 'Guests', 'flexo-booking' ) . ': ' . $guests,
-				__( 'Total', 'flexo-booking' ) . ': ' . $total,
-				__( 'Status', 'flexo-booking' ) . ': ' . Flexo_Booking_Bookings::status_label( $booking['status'] ),
-			)
+		$details = array(
+			__( 'Reference', 'flexo-booking' ) . ': ' . $booking['reference'],
+			__( 'Room', 'flexo-booking' ) . ': ' . $booking['room_title'],
+			__( 'Check-in', 'flexo-booking' ) . ': ' . $check_in,
+			__( 'Check-out', 'flexo-booking' ) . ': ' . $check_out,
+			__( 'Nights', 'flexo-booking' ) . ': ' . $booking['nights'],
+			__( 'Guests', 'flexo-booking' ) . ': ' . $guests,
+			__( 'Total', 'flexo-booking' ) . ': ' . $total,
 		);
+		// Nights priced differently (seasons, weekends) are listed under the total.
+		$details   = array_merge( $details, $prices );
+		$details[] = __( 'Status', 'flexo-booking' ) . ': ' . Flexo_Booking_Bookings::status_label( $booking['status'] );
+		$details   = implode( "\n", $details );
 
 		return apply_filters(
 			'flexo_booking_email_placeholders',
@@ -121,6 +130,7 @@ class Flexo_Booking_Emails {
 				'{nights}'          => $booking['nights'],
 				'{guests}'          => $guests,
 				'{total}'           => $total,
+				'{price_breakdown}' => Flexo_Booking_Pricing::summary_text( $snapshot ),
 				'{status}'          => Flexo_Booking_Bookings::status_label( $booking['status'] ),
 				'{booking_details}' => $details,
 				'{check_in_time}'   => Flexo_Booking_Settings::get( 'check_in_time' ),

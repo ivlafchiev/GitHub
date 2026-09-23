@@ -61,3 +61,118 @@
 	margin: 16px 0;
 	max-width: 780px;
 }
+
+.flexo-admin .flexo-past td {
+	opacity: 0.55;
+}
+
+.flexo-admin .flexo-tools-card .form-table th {
+	width: 180px;
+}
+
+.flexo-admin input.flexo-date {
+	width: 120px;
+}
+
+.flexo-admin .flexo-breakdown {
+	margin: 4px 0 0;
+	color: #646970;
+	font-size: 12px;
+	white-space: pre-line;
+}
+
+/* Features tab */
+.flexo-features .flexo-feature-choice {
+	display: block;
+	margin-bottom: 8px;
+}
+
+.flexo-features .flexo-feature--soon th,
+.flexo-features .flexo-feature--soon .description {
+	color: #8c8f94;
+}
+
+.flexo-badge {
+	display: inline-block;
+	padding: 1px 8px;
+	border-radius: 10px;
+	background: #f0f0f1;
+	color: #50575e;
+	font-size: 12px;
+}
+
+.flexo-season-summary {
+	margin: 0 0 8px;
+}
+
+/* jQuery UI datepicker (WordPress ships the script, not the styles) */
+.ui-datepicker {
+	display: none;
+	z-index: 100000 !important;
+	padding: 8px;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+}
+
+.ui-datepicker-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 4px;
+	margin-bottom: 6px;
+}
+
+.ui-datepicker-prev,
+.ui-datepicker-next {
+	cursor: pointer;
+	font-size: 12px;
+	text-decoration: none;
+}
+
+.ui-datepicker-prev { order: 0; }
+.ui-datepicker-title { order: 1; display: flex; gap: 4px; }
+.ui-datepicker-next { order: 2; }
+
+.ui-datepicker table {
+	border-collapse: collapse;
+}
+
+.ui-datepicker th {
+	padding: 4px;
+	font-size: 11px;
+	color: #646970;
+}
+
+.ui-datepicker td {
+	padding: 1px;
+}
+
+.ui-datepicker td a,
+.ui-datepicker td span {
+	display: block;
+	width: 28px;
+	padding: 4px 0;
+	text-align: center;
+	text-decoration: none;
+	border-radius: 3px;
+	color: #1d2327;
+}
+
+.ui-datepicker td a:hover {
+	background: #f0f0f1;
+}
+
+.ui-datepicker .ui-state-active {
+	background: #2271b1;
+	color: #fff;
+}
+
+.ui-datepicker .ui-datepicker-other-month a {
+	color: #a7aaad;
+}
+
+.ui-datepicker .ui-state-disabled span {
+	color: #c3c4c7;
+}

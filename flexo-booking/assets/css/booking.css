@@ -357,3 +357,8 @@
 		text-align: left;
 	}
 }
+
+.flexo-booking .fb-summary__detail {
+	font-size: 0.875em;
+	color: var(--fb-muted);
+}

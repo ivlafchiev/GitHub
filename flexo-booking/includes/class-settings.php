@@ -23,6 +23,8 @@ class Flexo_Booking_Settings {
 			'currency'                 => 'EUR',
 			'currency_symbol'          => '€',
 			'currency_position'        => 'after',
+			'currency_decimals'        => 2,
+			'number_format'            => 'auto',
 			'booking_mode'             => 'request',
 			'min_nights'               => 1,
 			'max_nights'               => 30,
@@ -75,19 +77,26 @@ class Flexo_Booking_Settings {
 		return home_url( '/' . ltrim( $value, '/' ) );
 	}
 
-	public static function format_price( $amount ) {
-		$number = number_format_i18n( (float) $amount, 2 );
-		$symbol = self::get( 'currency_symbol' );
-		return 'before' === self::get( 'currency_position' ) ? $symbol . $number : $number . ' ' . $symbol;
+	/**
+	 * @param float       $amount
+	 * @param string|null $currency Currency the amount is in (e.g. a booking's).
+	 */
+	public static function format_price( $amount, $currency = null ) {
+		return Flexo_Booking_Money::format( $amount, $currency );
 	}
 
+	/**
+	 * Sanitises submitted settings. Keys that are not submitted keep their
+	 * saved value, so each settings tab only changes its own fields.
+	 */
 	public static function sanitize( $input ) {
 		$defaults = self::defaults();
+		$base     = self::all();
 		$input    = is_array( $input ) ? $input : array();
 		$clean    = array();
 
 		foreach ( $defaults as $key => $default ) {
-			$value = isset( $input[ $key ] ) ? $input[ $key ] : $default;
+			$value = isset( $input[ $key ] ) ? $input[ $key ] : $base[ $key ];
 
 			switch ( $key ) {
 				case 'min_nights':
@@ -100,13 +109,22 @@ class Flexo_Booking_Settings {
 					$clean[ $key ] = absint( $value );
 					break;
 				case 'delete_data_on_uninstall':
-					$clean[ $key ] = empty( $input[ $key ] ) ? 0 : 1;
+					$clean[ $key ] = empty( $value ) ? 0 : 1;
 					break;
 				case 'booking_mode':
 					$clean[ $key ] = in_array( $value, array( 'request', 'instant' ), true ) ? $value : 'request';
 					break;
 				case 'currency_position':
-					$clean[ $key ] = in_array( $value, array( 'before', 'after' ), true ) ? $value : 'after';
+					$clean[ $key ] = array_key_exists( $value, Flexo_Booking_Money::positions() ) ? $value : 'after';
+					break;
+				case 'currency_decimals':
+					$clean[ $key ] = min( 3, absint( $value ) );
+					break;
+				case 'number_format':
+					$clean[ $key ] = array_key_exists( $value, Flexo_Booking_Money::number_formats() ) ? $value : 'auto';
+					break;
+				case 'currency':
+					$clean[ $key ] = strtoupper( substr( preg_replace( '/[^A-Za-z]/', '', (string) $value ), 0, 10 ) );
 					break;
 				case 'notification_email':
 					$clean[ $key ] = sanitize_email( $value );
@@ -160,36 +178,77 @@ class Flexo_Booking_Settings {
 		);
 	}
 
+	public static function tabs() {
+		return array(
+			'general'  => __( 'General', 'flexo-booking' ),
+			'features' => __( 'Features', 'flexo-booking' ),
+			'emails'   => __( 'Emails', 'flexo-booking' ),
+		);
+	}
+
 	public static function render_page() {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$tab  = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'general';
+		$tab  = array_key_exists( $tab, self::tabs() ) ? $tab : 'general';
 		$s    = self::all();
 		$name = self::OPTION;
 		?>
 		<div class="wrap flexo-admin">
 			<h1><?php esc_html_e( 'Booking settings', 'flexo-booking' ); ?></h1>
+			<nav class="nav-tab-wrapper">
+				<?php foreach ( self::tabs() as $key => $label ) : ?>
+					<a href="<?php echo esc_url( add_query_arg( array( 'page' => Flexo_Booking_Admin::MENU_SLUG . '-settings', 'tab' => $key ), admin_url( 'admin.php' ) ) ); ?>" class="nav-tab <?php echo $tab === $key ? 'nav-tab-active' : ''; ?>"><?php echo esc_html( $label ); ?></a>
+				<?php endforeach; ?>
+			</nav>
+			<?php settings_errors(); ?>
+			<?php if ( 'features' === $tab && isset( $_GET['settings-updated'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Features saved.', 'flexo-booking' ); ?></p></div>
+			<?php endif; ?>
+
+			<?php
+			if ( 'features' === $tab ) {
+				Flexo_Booking_Features::render_tab();
+				echo '</div>';
+				return;
+			}
+			?>
+
 			<form method="post" action="options.php">
 				<?php settings_fields( 'flexo_booking' ); ?>
 
-				<h2><?php esc_html_e( 'General', 'flexo-booking' ); ?></h2>
+				<?php if ( 'general' === $tab ) : ?>
 				<table class="form-table" role="presentation">
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Booking mode', 'flexo-booking' ); ?></th>
-						<td>
-							<label><input type="radio" name="<?php echo esc_attr( $name ); ?>[booking_mode]" value="request" <?php checked( $s['booking_mode'], 'request' ); ?>> <?php esc_html_e( 'Booking request: new bookings are "pending" until you confirm them', 'flexo-booking' ); ?></label><br>
-							<label><input type="radio" name="<?php echo esc_attr( $name ); ?>[booking_mode]" value="instant" <?php checked( $s['booking_mode'], 'instant' ); ?>> <?php esc_html_e( 'Instant booking: new bookings are confirmed automatically', 'flexo-booking' ); ?></label>
-						</td>
-					</tr>
 					<tr>
 						<th scope="row"><?php esc_html_e( 'Currency', 'flexo-booking' ); ?></th>
 						<td>
 							<input type="text" class="small-text" name="<?php echo esc_attr( $name ); ?>[currency]" value="<?php echo esc_attr( $s['currency'] ); ?>" aria-label="<?php esc_attr_e( 'Currency code', 'flexo-booking' ); ?>" placeholder="EUR">
 							<input type="text" class="small-text" name="<?php echo esc_attr( $name ); ?>[currency_symbol]" value="<?php echo esc_attr( $s['currency_symbol'] ); ?>" aria-label="<?php esc_attr_e( 'Currency symbol', 'flexo-booking' ); ?>" placeholder="€">
 							<select name="<?php echo esc_attr( $name ); ?>[currency_position]" aria-label="<?php esc_attr_e( 'Symbol position', 'flexo-booking' ); ?>">
-								<option value="before" <?php selected( $s['currency_position'], 'before' ); ?>><?php esc_html_e( 'Symbol before amount (€120.00)', 'flexo-booking' ); ?></option>
-								<option value="after" <?php selected( $s['currency_position'], 'after' ); ?>><?php esc_html_e( 'Symbol after amount (120.00 €)', 'flexo-booking' ); ?></option>
+								<?php foreach ( Flexo_Booking_Money::positions() as $value => $label ) : ?>
+									<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $s['currency_position'], $value ); ?>><?php echo esc_html( $label ); ?></option>
+								<?php endforeach; ?>
 							</select>
+							<p>
+								<label><?php esc_html_e( 'Number format', 'flexo-booking' ); ?>
+									<select name="<?php echo esc_attr( $name ); ?>[number_format]">
+										<?php foreach ( Flexo_Booking_Money::number_formats() as $value => $format ) : ?>
+											<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $s['number_format'], $value ); ?>><?php echo esc_html( $format[2] ); ?></option>
+										<?php endforeach; ?>
+									</select>
+								</label>
+								<label><?php esc_html_e( 'Decimals', 'flexo-booking' ); ?>
+									<input type="number" min="0" max="3" class="small-text" name="<?php echo esc_attr( $name ); ?>[currency_decimals]" value="<?php echo esc_attr( $s['currency_decimals'] ); ?>">
+								</label>
+							</p>
+							<p class="description">
+								<?php
+								/* translators: %s: example price */
+								printf( esc_html__( 'Example: %s. Changing the currency does not convert your prices – update room prices yourself.', 'flexo-booking' ), '<strong>' . esc_html( Flexo_Booking_Money::format( 1234.5 ) ) . '</strong>' );
+								?>
+							</p>
 						</td>
 					</tr>
 					<tr>
@@ -198,7 +257,7 @@ class Flexo_Booking_Settings {
 							<?php esc_html_e( 'Minimum', 'flexo-booking' ); ?> <input type="number" min="1" class="small-text" name="<?php echo esc_attr( $name ); ?>[min_nights]" value="<?php echo esc_attr( $s['min_nights'] ); ?>">
 							<?php esc_html_e( 'Maximum', 'flexo-booking' ); ?> <input type="number" min="1" class="small-text" name="<?php echo esc_attr( $name ); ?>[max_nights]" value="<?php echo esc_attr( $s['max_nights'] ); ?>">
 							<?php esc_html_e( 'nights', 'flexo-booking' ); ?>
-							<p class="description"><?php esc_html_e( 'Individual rooms can override the minimum.', 'flexo-booking' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Rooms and seasons can set their own minimum.', 'flexo-booking' ); ?></p>
 						</td>
 					</tr>
 					<tr>
@@ -235,43 +294,48 @@ class Flexo_Booking_Settings {
 							<p class="description"><?php esc_html_e( 'Optional. When set, guests must accept the terms before booking.', 'flexo-booking' ); ?></p>
 						</td>
 					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Data removal', 'flexo-booking' ); ?></th>
+						<td>
+							<input type="hidden" name="<?php echo esc_attr( $name ); ?>[delete_data_on_uninstall]" value="0">
+							<label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[delete_data_on_uninstall]" value="1" <?php checked( $s['delete_data_on_uninstall'], 1 ); ?>> <?php esc_html_e( 'Delete all rooms, bookings, prices and settings when the plugin is deleted', 'flexo-booking' ); ?></label>
+						</td>
+					</tr>
 				</table>
+				<?php endif; ?>
 
-				<h2><?php esc_html_e( 'Emails', 'flexo-booking' ); ?></h2>
+				<?php if ( 'emails' === $tab ) : ?>
 				<p class="description">
 					<?php esc_html_e( 'Placeholders:', 'flexo-booking' ); ?>
-					<code>{reference}</code> <code>{guest_name}</code> <code>{guest_email}</code> <code>{guest_phone}</code> <code>{room}</code> <code>{check_in}</code> <code>{check_out}</code> <code>{nights}</code> <code>{guests}</code> <code>{total}</code> <code>{status}</code> <code>{booking_details}</code> <code>{check_in_time}</code> <code>{check_out_time}</code> <code>{site_name}</code>
+					<code>{reference}</code> <code>{guest_name}</code> <code>{guest_email}</code> <code>{guest_phone}</code> <code>{room}</code> <code>{check_in}</code> <code>{check_out}</code> <code>{nights}</code> <code>{guests}</code> <code>{total}</code> <code>{price_breakdown}</code> <code>{status}</code> <code>{booking_details}</code> <code>{check_in_time}</code> <code>{check_out_time}</code> <code>{site_name}</code>
 				</p>
 				<table class="form-table" role="presentation">
 					<tr>
 						<th scope="row"><label for="fb-notify"><?php esc_html_e( 'Send new booking alerts to', 'flexo-booking' ); ?></label></th>
 						<td><input id="fb-notify" type="email" class="regular-text" name="<?php echo esc_attr( $name ); ?>[notification_email]" value="<?php echo esc_attr( $s['notification_email'] ); ?>" placeholder="<?php echo esc_attr( get_option( 'admin_email' ) ); ?>"></td>
 					</tr>
-					<?php
-					$templates = array(
-						'request'   => __( 'Booking request received (to guest)', 'flexo-booking' ),
-						'confirmed' => __( 'Booking confirmed (to guest)', 'flexo-booking' ),
-						'cancelled' => __( 'Booking cancelled (to guest)', 'flexo-booking' ),
-					);
-					foreach ( $templates as $type => $label ) :
-						?>
-						<tr>
-							<th scope="row"><?php echo esc_html( $label ); ?></th>
-							<td>
-								<input type="text" class="large-text" name="<?php echo esc_attr( $name . '[email_' . $type . '_subject]' ); ?>" value="<?php echo esc_attr( $s[ 'email_' . $type . '_subject' ] ); ?>" aria-label="<?php esc_attr_e( 'Subject', 'flexo-booking' ); ?>">
-								<textarea class="large-text" rows="7" name="<?php echo esc_attr( $name . '[email_' . $type . '_body]' ); ?>" aria-label="<?php esc_attr_e( 'Message', 'flexo-booking' ); ?>"><?php echo esc_textarea( $s[ 'email_' . $type . '_body' ] ); ?></textarea>
-							</td>
-						</tr>
-					<?php endforeach; ?>
+					<?php if ( Flexo_Booking_Features::is_enabled( 'guest_emails' ) ) : ?>
+						<?php
+						$templates = array(
+							'request'   => __( 'Booking request received (to guest)', 'flexo-booking' ),
+							'confirmed' => __( 'Booking confirmed (to guest)', 'flexo-booking' ),
+							'cancelled' => __( 'Booking cancelled (to guest)', 'flexo-booking' ),
+						);
+						foreach ( $templates as $type => $label ) :
+							?>
+							<tr>
+								<th scope="row"><?php echo esc_html( $label ); ?></th>
+								<td>
+									<input type="text" class="large-text" name="<?php echo esc_attr( $name . '[email_' . $type . '_subject]' ); ?>" value="<?php echo esc_attr( $s[ 'email_' . $type . '_subject' ] ); ?>" aria-label="<?php esc_attr_e( 'Subject', 'flexo-booking' ); ?>">
+									<textarea class="large-text" rows="7" name="<?php echo esc_attr( $name . '[email_' . $type . '_body]' ); ?>" aria-label="<?php esc_attr_e( 'Message', 'flexo-booking' ); ?>"><?php echo esc_textarea( $s[ 'email_' . $type . '_body' ] ); ?></textarea>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+					<?php else : ?>
+						<tr><td colspan="2"><p class="description"><?php esc_html_e( 'Guest emails are switched off under Settings → Features. Only the new-booking alert above is sent.', 'flexo-booking' ); ?></p></td></tr>
+					<?php endif; ?>
 				</table>
-
-				<h2><?php esc_html_e( 'Uninstall', 'flexo-booking' ); ?></h2>
-				<table class="form-table" role="presentation">
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Data removal', 'flexo-booking' ); ?></th>
-						<td><label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[delete_data_on_uninstall]" value="1" <?php checked( $s['delete_data_on_uninstall'], 1 ); ?>> <?php esc_html_e( 'Delete all rooms, bookings and settings when the plugin is deleted', 'flexo-booking' ); ?></label></td>
-					</tr>
-				</table>
+				<?php endif; ?>
 
 				<?php submit_button(); ?>
 			</form>

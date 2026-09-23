@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Flexo Booking 1.0.0\n"
+"Project-Id-Version: Flexo Booking 1.1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/flexo-booking\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-23T10:41:09+00:00\n"
+"POT-Creation-Date: 2026-09-23T15:27:41+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: flexo-booking\n"
@@ -36,8 +36,327 @@ msgstr ""
 msgid "FlexoHotels"
 msgstr ""
 
+#: includes/admin/class-closures-admin.php:23
+#: includes/admin/class-closures-admin.php:76
+msgid "Closed dates"
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:33
+msgid "You are not allowed to manage closed dates."
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:77
+msgid "Close the whole property (e.g. for the winter) or a single room type. Guests cannot book nights inside a closed period and see a clear message instead. To take just one room out of service, use Add booking → Block dates."
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:83
+#: includes/admin/class-closures-admin.php:117
+msgid "Applies to"
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:84
+#: includes/admin/class-closures-admin.php:130
+#: includes/admin/class-seasons-admin.php:184
+#: includes/admin/class-seasons-admin.php:234
+msgid "From"
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:85
+#: includes/admin/class-closures-admin.php:131
+#: includes/admin/class-seasons-admin.php:185
+#: includes/admin/class-seasons-admin.php:235
+msgid "To (last night)"
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:86
+#: includes/admin/class-closures-admin.php:136
+msgid "Message for guests"
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:87
+#: includes/admin/class-seasons-admin.php:189
+#: includes/class-admin.php:170
+msgid "Actions"
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:92
+msgid "No closed dates. The property is open all year."
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:96
+#: includes/admin/class-closures-admin.php:120
+msgid "Whole property"
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:101
+#: includes/admin/class-seasons-admin.php:211
+msgid "Edit"
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:102
+msgid "Delete this closed period? The dates become bookable again."
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:102
+#: includes/admin/class-seasons-admin.php:212
+#: includes/class-admin.php:235
+msgid "Delete"
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:110
+msgid "Edit closed period"
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:110
+msgid "Add a closed period"
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:128
+#: includes/admin/class-seasons-admin.php:232
+#: includes/class-admin.php:301
+msgid "Dates"
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:132
+msgid "Guests can still check out on the first closed day."
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:138
+msgid "e.g. We are closed for the winter season"
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:139
+msgid "Optional. The dates are added automatically."
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:143
+msgid "Save closed period"
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:143
+msgid "Add closed period"
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:145
+#: includes/admin/class-seasons-admin.php:260
+#: includes/class-admin.php:233
+msgid "Cancel"
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:152
+msgid "Copy closed dates to next year"
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:156
+msgid "Copy closed periods starting in"
+msgstr ""
+
+#: includes/admin/class-closures-admin.php:163
+#: includes/admin/class-seasons-admin.php:281
+msgid "Copy to next year"
+msgstr ""
+
+#. translators: 1: number copied, 2: year, 3: number skipped
+#: includes/admin/class-closures-admin.php:202
+#, php-format
+msgid "%1$d closed periods copied to %2$d (%3$d already existed)."
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:27
+#: includes/admin/class-seasons-admin.php:102
+#: includes/admin/class-seasons-admin.php:350
+#: includes/class-features.php:58
+msgid "Seasonal prices"
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:56
+msgid "You are not allowed to manage seasonal prices."
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:81
+msgid "Saved."
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:82
+msgid "Deleted."
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:103
+msgid "Set different prices for high and low season. Each night is priced by the season it falls in; nights outside any season use the room's normal price."
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:107
+#: includes/class-admin.php:274
+msgid "Add your first room"
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:159
+#: includes/class-admin.php:149
+#: includes/class-admin.php:165
+#: includes/class-admin.php:291
+#: includes/class-emails.php:108
+#: includes/class-rooms.php:39
+#: includes/elementor/class-booking-widget.php:79
+#: includes/elementor/class-room-link-tag.php:41
+msgid "Room"
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:165
+msgid "Show"
+msgstr ""
+
+#. translators: 1: price per night, 2: weekend price
+#: includes/admin/class-seasons-admin.php:172
+#, php-format
+msgid "Normal price: %1$s per night%2$s. Used on dates without a season."
+msgstr ""
+
+#. translators: %s: price
+#: includes/admin/class-seasons-admin.php:174
+#, php-format
+msgid ", weekends %s"
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:177
+#: includes/class-rooms.php:42
+msgid "Edit room"
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:183
+msgid "Season"
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:186
+#: includes/admin/class-seasons-admin.php:240
+#: includes/class-rooms.php:71
+msgid "Price per night"
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:187
+msgid "Weekend price"
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:188
+#: includes/admin/class-seasons-admin.php:251
+msgid "Minimum stay"
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:194
+msgid "No seasons yet – this room uses its normal price all year."
+msgstr ""
+
+#. translators: %d: nights
+#. translators: %d: number of nights
+#: includes/admin/class-seasons-admin.php:206
+#: includes/class-admin.php:208
+#, php-format
+msgid "%d night"
+msgid_plural "%d nights"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/class-seasons-admin.php:212
+msgid "Delete this season?"
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:220
+msgid "Edit season"
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:220
+msgid "Add a season"
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:228
+msgid "Name"
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:229
+msgid "e.g. High season"
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:236
+msgid "Both dates are nights inside the season. Example: 01.07.2026 – 31.08.2026 includes the night of 31 August (check-out 1 September)."
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:244
+#: includes/class-rooms.php:75
+msgid "Weekend price per night"
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:247
+msgid "Optional. Friday and Saturday nights in this season. Leave empty to use the price above every night."
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:253
+#: includes/class-settings.php:259
+msgid "nights"
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:254
+msgid "Optional. Applies to guests arriving during this season. Leave empty to use the room's minimum."
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:258
+msgid "Save season"
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:258
+msgid "Add season"
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:266
+msgid "Copy seasons to next year"
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:267
+msgid "Creates the same seasons one year later with the same prices. Seasons that would overlap an existing one are skipped."
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:272
+msgid "Copy seasons starting in"
+msgstr ""
+
+#. translators: %s: room name
+#: includes/admin/class-seasons-admin.php:279
+#, php-format
+msgid "for %s"
+msgstr ""
+
+#. translators: %s: room name
+#: includes/admin/class-seasons-admin.php:280
+msgid "for all rooms"
+msgstr ""
+
+#. translators: 1: number of seasons, 2: year
+#: includes/admin/class-seasons-admin.php:334
+#, php-format
+msgid "%1$d season copied to %2$d."
+msgid_plural "%1$d seasons copied to %2$d."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: list of skipped seasons
+#: includes/admin/class-seasons-admin.php:340
+#, php-format
+msgid "Skipped because they overlap an existing season: %s."
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:376
+msgid "No current or upcoming seasons – the normal price applies all year."
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:379
+msgid "Edit seasonal prices"
+msgstr ""
+
+#: includes/admin/class-seasons-admin.php:381
+msgid "Save the room first, then add its seasons."
+msgstr ""
+
 #: includes/class-admin.php:39
 #: includes/class-admin.php:127
+#: includes/class-features.php:141
 msgid "Bookings"
 msgstr ""
 
@@ -47,12 +366,12 @@ msgstr ""
 
 #: includes/class-admin.php:41
 #: includes/class-admin.php:128
-#: includes/class-admin.php:259
+#: includes/class-admin.php:270
 msgid "Add booking"
 msgstr ""
 
 #: includes/class-admin.php:45
-#: includes/class-settings.php:171
+#: includes/class-settings.php:200
 msgid "Booking settings"
 msgstr ""
 
@@ -62,7 +381,7 @@ msgid "Settings"
 msgstr ""
 
 #: includes/class-admin.php:46
-#: includes/class-portability.php:295
+#: includes/class-portability.php:390
 msgid "Import / Export"
 msgstr ""
 
@@ -92,22 +411,13 @@ msgstr ""
 
 #: includes/class-admin.php:143
 #: includes/class-admin.php:169
-#: includes/class-emails.php:107
+#: includes/class-emails.php:117
+#: includes/class-features.php:445
 msgid "Status"
 msgstr ""
 
 #: includes/class-admin.php:144
 msgid "All statuses"
-msgstr ""
-
-#: includes/class-admin.php:149
-#: includes/class-admin.php:165
-#: includes/class-admin.php:280
-#: includes/class-emails.php:101
-#: includes/class-rooms.php:39
-#: includes/elementor/class-booking-widget.php:79
-#: includes/elementor/class-room-link-tag.php:41
-msgid "Room"
 msgstr ""
 
 #: includes/class-admin.php:150
@@ -127,12 +437,12 @@ msgid "Filter"
 msgstr ""
 
 #: includes/class-admin.php:163
-#: includes/class-emails.php:100
+#: includes/class-emails.php:107
 msgid "Reference"
 msgstr ""
 
 #: includes/class-admin.php:164
-#: includes/class-emails.php:57
+#: includes/class-emails.php:59
 msgid "Guest"
 msgstr ""
 
@@ -141,18 +451,15 @@ msgid "Stay"
 msgstr ""
 
 #: includes/class-admin.php:167
-#: includes/class-admin.php:298
-#: includes/class-emails.php:105
+#: includes/class-admin.php:309
+#: includes/class-emails.php:112
 msgid "Guests"
 msgstr ""
 
 #: includes/class-admin.php:168
-#: includes/class-emails.php:106
+#: includes/class-emails.php:113
+#: includes/class-pricing.php:301
 msgid "Total"
-msgstr ""
-
-#: includes/class-admin.php:170
-msgid "Actions"
 msgstr ""
 
 #: includes/class-admin.php:175
@@ -163,126 +470,102 @@ msgstr ""
 msgid "added by staff"
 msgstr ""
 
-#. translators: %d: number of nights
-#: includes/class-admin.php:208
-#, php-format
-msgid "%d night"
-msgid_plural "%d nights"
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/class-admin.php:217
+#: includes/class-admin.php:228
 msgid "Confirm"
 msgstr ""
 
-#: includes/class-admin.php:220
+#: includes/class-admin.php:231
 msgid "Reinstate"
 msgstr ""
 
-#: includes/class-admin.php:222
+#: includes/class-admin.php:233
 msgid "Cancel this booking? The guest will be notified by email."
 msgstr ""
 
-#: includes/class-admin.php:222
-msgid "Cancel"
-msgstr ""
-
-#: includes/class-admin.php:224
+#: includes/class-admin.php:235
 msgid "Permanently delete this booking?"
 msgstr ""
 
-#: includes/class-admin.php:224
-msgid "Delete"
-msgstr ""
-
-#: includes/class-admin.php:260
+#: includes/class-admin.php:271
 msgid "Record a phone, walk-in or other-channel booking, or block dates (e.g. maintenance) so they can’t be booked online."
 msgstr ""
 
-#: includes/class-admin.php:263
-msgid "Add your first room"
-msgstr ""
-
-#: includes/class-admin.php:270
+#: includes/class-admin.php:281
 msgid "Type"
 msgstr ""
 
-#: includes/class-admin.php:273
+#: includes/class-admin.php:284
 msgid "Confirmed booking"
 msgstr ""
 
-#: includes/class-admin.php:274
+#: includes/class-admin.php:285
 msgid "Pending booking"
 msgstr ""
 
-#: includes/class-admin.php:275
+#: includes/class-admin.php:286
 msgid "Block dates (room closed)"
 msgstr ""
 
-#: includes/class-admin.php:290
-msgid "Dates"
-msgstr ""
-
-#: includes/class-admin.php:292
-#: includes/class-emails.php:102
+#: includes/class-admin.php:303
+#: includes/class-emails.php:109
 #: templates/booking-form.php:42
 #: templates/search-bar.php:33
 msgid "Check-in"
 msgstr ""
 
-#: includes/class-admin.php:294
-#: includes/class-emails.php:103
+#: includes/class-admin.php:305
+#: includes/class-emails.php:110
 #: templates/booking-form.php:46
 #: templates/search-bar.php:37
 msgid "Check-out"
 msgstr ""
 
-#: includes/class-admin.php:300
+#: includes/class-admin.php:311
 #: templates/booking-form.php:50
 #: templates/search-bar.php:41
 msgid "Adults"
 msgstr ""
 
-#: includes/class-admin.php:301
+#: includes/class-admin.php:312
 #: templates/booking-form.php:59
 #: templates/search-bar.php:50
 msgid "Children"
 msgstr ""
 
-#: includes/class-admin.php:305
+#: includes/class-admin.php:316
 msgid "Guest name"
 msgstr ""
 
-#: includes/class-admin.php:309
-#: includes/class-admin.php:321
-#: includes/class-emails.php:59
+#: includes/class-admin.php:320
+#: includes/class-admin.php:333
+#: includes/class-emails.php:61
 #: templates/booking-form.php:86
 msgid "Email"
 msgstr ""
 
-#: includes/class-admin.php:313
-#: includes/class-emails.php:61
+#: includes/class-admin.php:324
+#: includes/class-emails.php:63
 #: templates/booking-form.php:90
 msgid "Phone"
 msgstr ""
 
-#: includes/class-admin.php:317
-#: includes/class-emails.php:65
+#: includes/class-admin.php:328
+#: includes/class-emails.php:67
 msgid "Notes"
 msgstr ""
 
-#: includes/class-admin.php:322
+#: includes/class-admin.php:334
 msgid "Send the confirmation email to the guest"
 msgstr ""
 
-#: includes/class-admin.php:325
+#: includes/class-admin.php:338
 msgid "Save booking"
 msgstr ""
 
-#: includes/class-admin.php:342
-#: includes/class-admin.php:359
-#: includes/class-admin.php:369
-#: includes/class-admin.php:398
+#: includes/class-admin.php:355
+#: includes/class-admin.php:372
+#: includes/class-admin.php:382
+#: includes/class-admin.php:411
 msgid "You are not allowed to manage bookings."
 msgstr ""
 
@@ -307,7 +590,7 @@ msgid "Please choose valid check-in and check-out dates."
 msgstr ""
 
 #: includes/class-bookings.php:52
-#: includes/class-frontend.php:45
+#: includes/class-frontend.php:47
 msgid "Check-out must be after check-in."
 msgstr ""
 
@@ -338,105 +621,146 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %d: number of guests
-#: includes/class-bookings.php:173
+#: includes/class-bookings.php:158
 #, php-format
 msgid "Fits up to %d guest."
 msgid_plural "Fits up to %d guests."
 msgstr[0] ""
 msgstr[1] ""
 
-#. translators: %d: number of nights
-#: includes/class-bookings.php:176
-#, php-format
-msgid "Minimum stay %d night."
-msgid_plural "Minimum stay %d nights."
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/class-bookings.php:183
+#: includes/class-bookings.php:166
 msgid "Sold out for these dates."
 msgstr ""
 
 #. translators: %d: number of nights
-#: includes/class-bookings.php:208
+#: includes/class-bookings.php:199
 #, php-format
 msgid "Total for %d night"
 msgid_plural "Total for %d nights"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-bookings.php:239
+#. translators: 1: number of nights, 2: season name
+#: includes/class-bookings.php:209
+#, php-format
+msgid "Minimum stay %1$d night for arrivals in %2$s."
+msgid_plural "Minimum stay %1$d nights for arrivals in %2$s."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of nights
+#: includes/class-bookings.php:212
+#, php-format
+msgid "Minimum stay %d night."
+msgid_plural "Minimum stay %d nights."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-bookings.php:241
+#: includes/class-pricing.php:47
+#: includes/class-seasons.php:140
 msgid "Please choose a room."
 msgstr ""
 
 #. translators: %d: number of guests
-#: includes/class-bookings.php:264
+#: includes/class-bookings.php:273
 #, php-format
 msgid "This room fits up to %d guest."
 msgid_plural "This room fits up to %d guests."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-bookings.php:267
+#: includes/class-bookings.php:276
 msgid "Please enter your name."
 msgstr ""
 
-#: includes/class-bookings.php:270
+#: includes/class-bookings.php:279
 msgid "Please enter a valid email address."
 msgstr ""
 
-#: includes/class-bookings.php:273
+#: includes/class-bookings.php:282
 msgid "Please enter your phone number."
 msgstr ""
 
-#: includes/class-bookings.php:276
+#: includes/class-bookings.php:285
 msgid "Please enter the guest name."
 msgstr ""
 
-#: includes/class-bookings.php:281
-msgid "We are processing another booking for this room. Please try again in a moment."
-msgstr ""
-
-#: includes/class-bookings.php:286
+#: includes/class-bookings.php:301
 msgid "Sorry, this room is no longer available for the selected dates."
 msgstr ""
 
-#: includes/class-bookings.php:313
+#: includes/class-bookings.php:346
 msgid "The booking could not be saved. Please try again."
 msgstr ""
 
-#: includes/class-bookings.php:353
+#: includes/class-bookings.php:390
 msgid "(deleted room)"
 msgstr ""
 
-#: includes/class-bookings.php:368
+#: includes/class-bookings.php:405
 msgid "Booking not found."
 msgstr ""
 
-#: includes/class-bookings.php:371
+#: includes/class-bookings.php:408
 msgid "Invalid status."
 msgstr ""
 
-#: includes/class-bookings.php:382
+#: includes/class-bookings.php:423
 msgid "The room is no longer available for these dates."
 msgstr ""
 
+#. translators: 1: guest message set by the hotel, 2: first closed night, 3: last closed night
+#: includes/class-closures.php:103
+#, php-format
+msgid "%1$s (%2$s – %3$s)"
+msgstr ""
+
+#. translators: 1: first closed night, 2: last closed night
+#: includes/class-closures.php:107
+#, php-format
+msgid "We are closed from %1$s to %2$s. Please choose other dates."
+msgstr ""
+
+#. translators: 1: first closed night, 2: last closed night
+#: includes/class-closures.php:110
+#, php-format
+msgid "This room is closed from %1$s to %2$s."
+msgstr ""
+
+#: includes/class-closures.php:121
+msgid "Please choose a room or \"Whole property\"."
+msgstr ""
+
+#: includes/class-closures.php:127
+#: includes/class-seasons.php:151
+msgid "Please enter both dates as DD.MM.YYYY."
+msgstr ""
+
+#: includes/class-closures.php:130
+msgid "The closed period must end on or after its start date."
+msgstr ""
+
+#: includes/class-closures.php:156
+msgid "The closed period could not be saved."
+msgstr ""
+
 #. translators: 1: booking reference, 2: room name
-#: includes/class-emails.php:53
+#: includes/class-emails.php:55
 #, php-format
 msgid "New booking %1$s – %2$s"
 msgstr ""
 
-#: includes/class-emails.php:54
+#: includes/class-emails.php:56
 msgid "A new booking was made on your website."
 msgstr ""
 
-#: includes/class-emails.php:67
+#: includes/class-emails.php:69
 msgid "Manage bookings:"
 msgstr ""
 
 #. translators: %d: number of adults
-#: includes/class-emails.php:85
+#: includes/class-emails.php:87
 #, php-format
 msgid "%d adult"
 msgid_plural "%d adults"
@@ -444,15 +768,229 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %d: number of children
-#: includes/class-emails.php:91
+#: includes/class-emails.php:93
 #, php-format
 msgid "%d child"
 msgid_plural "%d children"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-emails.php:104
+#: includes/class-emails.php:111
 msgid "Nights"
+msgstr ""
+
+#: includes/class-features.php:46
+msgid "Booking requests"
+msgstr ""
+
+#: includes/class-features.php:47
+msgid "Guests send a request and you confirm it."
+msgstr ""
+
+#: includes/class-features.php:52
+msgid "Instant booking"
+msgstr ""
+
+#: includes/class-features.php:53
+msgid "Bookings are confirmed immediately, without your approval."
+msgstr ""
+
+#: includes/class-features.php:59
+msgid "Different prices and minimum stays for high and low season."
+msgstr ""
+
+#: includes/class-features.php:64
+msgid "Calendar sync"
+msgstr ""
+
+#: includes/class-features.php:65
+msgid "Keep availability in sync with Booking.com, Airbnb and others (iCal)."
+msgstr ""
+
+#: includes/class-features.php:70
+msgid "Rate plans"
+msgstr ""
+
+#: includes/class-features.php:71
+msgid "Offer options such as \"Breakfast included\" or \"Non-refundable\"."
+msgstr ""
+
+#: includes/class-features.php:76
+msgid "Children & ages"
+msgstr ""
+
+#: includes/class-features.php:77
+msgid "Ask for children's ages and charge by age."
+msgstr ""
+
+#: includes/class-features.php:82
+msgid "Tourist tax"
+msgstr ""
+
+#: includes/class-features.php:83
+msgid "Add the municipal tourist tax per person per night."
+msgstr ""
+
+#: includes/class-features.php:88
+msgid "Promo codes"
+msgstr ""
+
+#: includes/class-features.php:89
+msgid "Give discounts with codes such as SUMMER10."
+msgstr ""
+
+#: includes/class-features.php:94
+msgid "Privacy consent"
+msgstr ""
+
+#: includes/class-features.php:95
+msgid "Ask guests to accept your privacy policy and remove old guest data automatically."
+msgstr ""
+
+#: includes/class-features.php:100
+msgid "Invoice request"
+msgstr ""
+
+#: includes/class-features.php:101
+msgid "Let guests ask for an invoice with company details."
+msgstr ""
+
+#: includes/class-features.php:106
+msgid "Guest emails"
+msgstr ""
+
+#: includes/class-features.php:107
+msgid "Email guests when their booking is received, confirmed or cancelled."
+msgstr ""
+
+#: includes/class-features.php:112
+msgid "Conversion tracking"
+msgstr ""
+
+#: includes/class-features.php:113
+msgid "Send booking events to Google Analytics, Tag Manager or Meta."
+msgstr ""
+
+#: includes/class-features.php:118
+msgid "Online card payment"
+msgstr ""
+
+#: includes/class-features.php:119
+msgid "Guests pay by card when booking (Stripe)."
+msgstr ""
+
+#: includes/class-features.php:124
+msgid "Deposits"
+msgstr ""
+
+#: includes/class-features.php:125
+msgid "Take part of the price when booking and the rest at the property."
+msgstr ""
+
+#: includes/class-features.php:131
+msgid "Bank transfer"
+msgstr ""
+
+#: includes/class-features.php:132
+msgid "Guests pay a deposit or the full amount by bank transfer."
+msgstr ""
+
+#: includes/class-features.php:142
+msgid "Prices"
+msgstr ""
+
+#: includes/class-features.php:143
+msgid "Guests & communication"
+msgstr ""
+
+#: includes/class-features.php:144
+msgid "Payments"
+msgstr ""
+
+#: includes/class-features.php:317
+msgid "Switch on only what your property needs. Switching a feature off hides it from guests; your settings and existing bookings are kept."
+msgstr ""
+
+#: includes/class-features.php:335
+msgid "How do guests book?"
+msgstr ""
+
+#: includes/class-features.php:351
+msgid "On"
+msgstr ""
+
+#: includes/class-features.php:353
+#: includes/class-features.php:453
+msgid "Coming soon"
+msgstr ""
+
+#: includes/class-features.php:362
+msgid "Save features"
+msgstr ""
+
+#: includes/class-features.php:370
+msgid "You are not allowed to change booking features."
+msgstr ""
+
+#: includes/class-features.php:410
+#: includes/class-features.php:423
+msgid "Agency: available features"
+msgstr ""
+
+#: includes/class-features.php:410
+msgid "Agency"
+msgstr ""
+
+#: includes/class-features.php:416
+msgid "Sorry, you are not allowed to access this page."
+msgstr ""
+
+#: includes/class-features.php:424
+msgid "Choose which features this hotel can see and switch on under Settings → Features. Hotel administrators never see this screen."
+msgstr ""
+
+#: includes/class-features.php:427
+msgid "Controlled by FLEXO_BOOKING_FEATURES in wp-config.php:"
+msgstr ""
+
+#: includes/class-features.php:431
+msgid "No restriction set: all features are available."
+msgstr ""
+
+#: includes/class-features.php:434
+msgid "Available features saved."
+msgstr ""
+
+#: includes/class-features.php:442
+msgid "Available"
+msgstr ""
+
+#: includes/class-features.php:443
+msgid "Feature"
+msgstr ""
+
+#: includes/class-features.php:444
+msgid "Key"
+msgstr ""
+
+#: includes/class-features.php:453
+msgid "Ready · on"
+msgstr ""
+
+#: includes/class-features.php:453
+msgid "Ready · off"
+msgstr ""
+
+#: includes/class-features.php:460
+msgid "Save available features"
+msgstr ""
+
+#: includes/class-features.php:461
+msgid "Reset: make everything available"
+msgstr ""
+
+#: includes/class-features.php:472
+msgid "Sorry, you are not allowed to do that."
 msgstr ""
 
 #: includes/class-frontend.php:32
@@ -479,121 +1017,204 @@ msgstr ""
 msgid "per night"
 msgstr ""
 
-#. translators: %d: number of guests
+#. translators: %s: average price per night
 #: includes/class-frontend.php:39
+#, php-format
+msgid "avg. %s per night"
+msgstr ""
+
+#. translators: %d: number of guests
+#: includes/class-frontend.php:41
 #, php-format
 msgid "Up to %d guests"
 msgstr ""
 
 #. translators: %d: rooms left
-#: includes/class-frontend.php:41
+#: includes/class-frontend.php:43
 #, php-format
 msgid "Only %d left!"
 msgstr ""
 
-#: includes/class-frontend.php:42
+#: includes/class-frontend.php:44
 msgid "Sending…"
 msgstr ""
 
-#: includes/class-frontend.php:43
+#: includes/class-frontend.php:45
 msgid "Booking reference"
 msgstr ""
 
-#: includes/class-frontend.php:44
+#: includes/class-frontend.php:46
 msgid "Something went wrong. Please try again or contact us."
 msgstr ""
 
-#: includes/class-frontend.php:79
+#: includes/class-frontend.php:81
 msgid "Search"
 msgstr ""
 
-#: includes/class-frontend.php:79
+#: includes/class-frontend.php:81
 #: includes/elementor/class-booking-widget.php:102
 msgid "Check availability"
 msgstr ""
 
-#: includes/class-portability.php:88
+#: includes/class-inventory.php:87
+msgid "We are processing another booking for this room. Please try again in a moment."
+msgstr ""
+
+#: includes/class-migrations.php:120
+msgid "Flexo Booking:"
+msgstr ""
+
+#: includes/class-migrations.php:121
+msgid "the booking database update did not finish and will be retried automatically. If this message stays, please contact FlexoHotels support."
+msgstr ""
+
+#: includes/class-money.php:19
+msgid "Automatic (site language)"
+msgstr ""
+
+#: includes/class-money.php:31
+msgid "Before, no space (€120.00)"
+msgstr ""
+
+#: includes/class-money.php:32
+msgid "Before, with space (€ 120.00)"
+msgstr ""
+
+#: includes/class-money.php:33
+msgid "After, with space (120.00 €)"
+msgstr ""
+
+#: includes/class-money.php:34
+msgid "After, no space (120.00€)"
+msgstr ""
+
+#: includes/class-portability.php:114
 msgid "This is not a Flexo Booking export file."
 msgstr ""
 
-#: includes/class-portability.php:231
+#: includes/class-portability.php:323
 msgid "You are not allowed to export booking data."
 msgstr ""
 
-#: includes/class-portability.php:248
+#: includes/class-portability.php:340
 msgid "You are not allowed to import booking data."
 msgstr ""
 
-#: includes/class-portability.php:256
+#: includes/class-portability.php:348
 msgid "Please choose a valid export file (max 5 MB)."
 msgstr ""
 
-#: includes/class-portability.php:262
+#: includes/class-portability.php:354
 msgid "The file could not be read."
 msgstr ""
 
-#: includes/class-portability.php:296
+#: includes/class-portability.php:391
 msgid "Copy the booking setup (settings and rooms) from one site to another – for example from a template to a new client site built from it."
 msgstr ""
 
 #. translators: 1: rooms created, 2: rooms updated, 3: images, 4: bookings
-#: includes/class-portability.php:306
+#: includes/class-portability.php:401
 #, php-format
 msgid "Import complete: %1$d rooms created, %2$d rooms updated, %3$d images downloaded, %4$d bookings imported."
 msgstr ""
 
-#: includes/class-portability.php:313
+#. translators: 1: seasons, 2: closed periods
+#: includes/class-portability.php:411
+#, php-format
+msgid "%1$d seasons and %2$d closed periods imported."
+msgstr ""
+
+#: includes/class-portability.php:418
 msgid "Settings were updated."
 msgstr ""
 
-#: includes/class-portability.php:320
+#: includes/class-portability.php:425
 msgid "Export"
 msgstr ""
 
-#: includes/class-portability.php:321
+#: includes/class-portability.php:426
 msgid "Download a JSON file with all booking settings and rooms."
 msgstr ""
 
-#: includes/class-portability.php:325
+#: includes/class-portability.php:430
 msgid "Also include bookings (only when moving a live hotel site – never for templates)"
 msgstr ""
 
-#: includes/class-portability.php:326
+#: includes/class-portability.php:431
 msgid "Download export file"
 msgstr ""
 
-#: includes/class-portability.php:331
-#: includes/class-portability.php:341
+#: includes/class-portability.php:436
+#: includes/class-portability.php:450
 msgid "Import"
 msgstr ""
 
-#: includes/class-portability.php:332
+#: includes/class-portability.php:437
 msgid "Rooms with the same slug are updated; new rooms are created. Nothing is deleted."
 msgstr ""
 
-#: includes/class-portability.php:337
+#: includes/class-portability.php:442
 msgid "Import settings"
 msgstr ""
 
-#: includes/class-portability.php:338
+#: includes/class-portability.php:443
 msgid "Import rooms"
 msgstr ""
 
-#: includes/class-portability.php:339
+#: includes/class-portability.php:444
 msgid "Download room images from the source site (it must be online)"
 msgstr ""
 
-#: includes/class-portability.php:340
+#: includes/class-portability.php:446
+msgid "Import seasonal prices (replaces the seasons of the imported rooms)"
+msgstr ""
+
+#: includes/class-portability.php:448
+msgid "Import closed dates"
+msgstr ""
+
+#: includes/class-portability.php:449
 msgid "Import bookings contained in the file"
 msgstr ""
 
-#: includes/class-portability.php:346
+#: includes/class-portability.php:455
 msgid "Command line (WP-CLI)"
 msgstr ""
 
-#: includes/class-portability.php:347
+#: includes/class-portability.php:456
 msgid "Useful when setting up many sites at once:"
 msgstr ""
+
+#: includes/class-pricing.php:135
+msgid "Standard rate"
+msgstr ""
+
+#. translators: %s: season or rate name
+#: includes/class-pricing.php:148
+#, php-format
+msgid "%s – weekend"
+msgstr ""
+
+#. translators: %d: number of nights
+#: includes/class-pricing.php:168
+#: includes/class-pricing.php:247
+#, php-format
+msgid "Accommodation, %d night"
+msgid_plural "Accommodation, %d nights"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-pricing.php:180
+msgid "Price adjustment"
+msgstr ""
+
+#. translators: 1: season/rate name, 2: nights, 3: price per night, 4: amount
+#: includes/class-pricing.php:271
+#, php-format
+msgid "%1$s: %2$d night × %3$s = %4$s"
+msgid_plural "%1$s: %2$d nights × %3$s = %4$s"
+msgstr[0] ""
+msgstr[1] ""
 
 #: includes/class-rest.php:143
 msgid "Your booking could not be submitted."
@@ -603,15 +1224,15 @@ msgstr ""
 msgid "Please accept the terms and conditions."
 msgstr ""
 
-#: includes/class-rest.php:191
+#: includes/class-rest.php:192
 msgid "Your booking is confirmed! A confirmation has been sent to your email."
 msgstr ""
 
-#: includes/class-rest.php:192
+#: includes/class-rest.php:193
 msgid "Thank you! We received your booking request and will confirm it shortly by email."
 msgstr ""
 
-#: includes/class-rest.php:215
+#: includes/class-rest.php:216
 msgid "Too many booking attempts. Please try again later or contact us directly."
 msgstr ""
 
@@ -629,10 +1250,6 @@ msgstr ""
 msgid "Add new room"
 msgstr ""
 
-#: includes/class-rooms.php:42
-msgid "Edit room"
-msgstr ""
-
 #: includes/class-rooms.php:44
 msgid "Search rooms"
 msgstr ""
@@ -643,14 +1260,6 @@ msgstr ""
 
 #: includes/class-rooms.php:62
 msgid "Booking details"
-msgstr ""
-
-#: includes/class-rooms.php:71
-msgid "Price per night"
-msgstr ""
-
-#: includes/class-rooms.php:75
-msgid "Weekend price per night"
 msgstr ""
 
 #: includes/class-rooms.php:78
@@ -678,6 +1287,10 @@ msgstr ""
 msgid "Optional. Leave empty to use the global setting."
 msgstr ""
 
+#: includes/class-rooms.php:96
+msgid "Seasons can set their own minimum."
+msgstr ""
+
 #: includes/class-rooms.php:100
 msgid "\"Book now\" link"
 msgstr ""
@@ -694,11 +1307,33 @@ msgstr ""
 msgid "Slug (for links)"
 msgstr ""
 
-#: includes/class-settings.php:37
+#: includes/class-seasons.php:145
+msgid "Please give the season a name, for example \"High season\"."
+msgstr ""
+
+#: includes/class-seasons.php:154
+msgid "The season must end on or after its start date."
+msgstr ""
+
+#: includes/class-seasons.php:159
+msgid "Please enter the price per night."
+msgstr ""
+
+#. translators: 1: season name, 2: start date, 3: end date
+#: includes/class-seasons.php:172
+#, php-format
+msgid "These dates overlap with \"%1$s\" (%2$s – %3$s). Seasons of the same room cannot overlap – change the dates or edit that season."
+msgstr ""
+
+#: includes/class-seasons.php:226
+msgid "The season could not be saved."
+msgstr ""
+
+#: includes/class-settings.php:39
 msgid "We received your booking request {reference}"
 msgstr ""
 
-#: includes/class-settings.php:38
+#: includes/class-settings.php:40
 msgid ""
 "Hello {guest_name},\n"
 "\n"
@@ -710,11 +1345,11 @@ msgid ""
 "{site_name}"
 msgstr ""
 
-#: includes/class-settings.php:39
+#: includes/class-settings.php:41
 msgid "Your booking {reference} is confirmed"
 msgstr ""
 
-#: includes/class-settings.php:40
+#: includes/class-settings.php:42
 msgid ""
 "Hello {guest_name},\n"
 "\n"
@@ -728,11 +1363,11 @@ msgid ""
 "{site_name}"
 msgstr ""
 
-#: includes/class-settings.php:41
+#: includes/class-settings.php:43
 msgid "Your booking {reference} has been cancelled"
 msgstr ""
 
-#: includes/class-settings.php:42
+#: includes/class-settings.php:44
 msgid ""
 "Hello {guest_name},\n"
 "\n"
@@ -742,160 +1377,158 @@ msgid ""
 "{site_name}"
 msgstr ""
 
-#: includes/class-settings.php:175
+#: includes/class-settings.php:183
 msgid "General"
 msgstr ""
 
-#: includes/class-settings.php:178
-msgid "Booking mode"
-msgstr ""
-
-#: includes/class-settings.php:180
-msgid "Booking request: new bookings are \"pending\" until you confirm them"
-msgstr ""
-
-#: includes/class-settings.php:181
-msgid "Instant booking: new bookings are confirmed automatically"
+#: includes/class-settings.php:184
+msgid "Features"
 msgstr ""
 
 #: includes/class-settings.php:185
-msgid "Currency"
-msgstr ""
-
-#: includes/class-settings.php:187
-msgid "Currency code"
-msgstr ""
-
-#: includes/class-settings.php:188
-msgid "Currency symbol"
-msgstr ""
-
-#: includes/class-settings.php:189
-msgid "Symbol position"
-msgstr ""
-
-#: includes/class-settings.php:190
-msgid "Symbol before amount (€120.00)"
-msgstr ""
-
-#: includes/class-settings.php:191
-msgid "Symbol after amount (120.00 €)"
-msgstr ""
-
-#: includes/class-settings.php:196
-msgid "Stay length"
-msgstr ""
-
-#: includes/class-settings.php:198
-msgid "Minimum"
-msgstr ""
-
-#: includes/class-settings.php:199
-msgid "Maximum"
-msgstr ""
-
-#: includes/class-settings.php:200
-msgid "nights"
-msgstr ""
-
-#: includes/class-settings.php:201
-msgid "Individual rooms can override the minimum."
-msgstr ""
-
-#: includes/class-settings.php:205
-msgid "Book up to"
-msgstr ""
-
-#: includes/class-settings.php:206
-msgid "days in advance"
-msgstr ""
-
-#: includes/class-settings.php:209
-msgid "Guest selector limits"
-msgstr ""
-
-#: includes/class-settings.php:211
-msgid "Adults up to"
-msgstr ""
-
-#: includes/class-settings.php:212
-msgid "Children up to"
-msgstr ""
-
-#: includes/class-settings.php:213
-msgid "Set \"Children up to\" to 0 to hide the children field."
-msgstr ""
-
-#: includes/class-settings.php:217
-msgid "Check-in / check-out"
-msgstr ""
-
-#: includes/class-settings.php:219
-msgid "Check-in time"
-msgstr ""
-
-#: includes/class-settings.php:221
-msgid "Check-out time"
-msgstr ""
-
-#: includes/class-settings.php:225
-msgid "Thank-you page"
-msgstr ""
-
-#: includes/class-settings.php:228
-msgid "Optional. Use a path such as /thank-you/ so it keeps working when the site moves to another domain. Leave empty to show the confirmation inside the form."
-msgstr ""
-
-#: includes/class-settings.php:232
-msgid "Terms page"
-msgstr ""
-
-#: includes/class-settings.php:235
-msgid "Optional. When set, guests must accept the terms before booking."
-msgstr ""
-
-#: includes/class-settings.php:240
 msgid "Emails"
 msgstr ""
 
+#: includes/class-settings.php:208
+msgid "Features saved."
+msgstr ""
+
+#: includes/class-settings.php:225
+msgid "Currency"
+msgstr ""
+
+#: includes/class-settings.php:227
+msgid "Currency code"
+msgstr ""
+
+#: includes/class-settings.php:228
+msgid "Currency symbol"
+msgstr ""
+
+#: includes/class-settings.php:229
+msgid "Symbol position"
+msgstr ""
+
+#: includes/class-settings.php:235
+msgid "Number format"
+msgstr ""
+
 #: includes/class-settings.php:242
-msgid "Placeholders:"
+msgid "Decimals"
 msgstr ""
 
-#: includes/class-settings.php:247
-msgid "Send new booking alerts to"
+#. translators: %s: example price
+#: includes/class-settings.php:249
+#, php-format
+msgid "Example: %s. Changing the currency does not convert your prices – update room prices yourself."
 msgstr ""
 
-#: includes/class-settings.php:252
-msgid "Booking request received (to guest)"
+#: includes/class-settings.php:255
+msgid "Stay length"
 msgstr ""
 
-#: includes/class-settings.php:253
-msgid "Booking confirmed (to guest)"
+#: includes/class-settings.php:257
+msgid "Minimum"
 msgstr ""
 
-#: includes/class-settings.php:254
-msgid "Booking cancelled (to guest)"
+#: includes/class-settings.php:258
+msgid "Maximum"
 msgstr ""
 
-#: includes/class-settings.php:261
-msgid "Subject"
+#: includes/class-settings.php:260
+msgid "Rooms and seasons can set their own minimum."
 msgstr ""
 
-#: includes/class-settings.php:262
-msgid "Message"
+#: includes/class-settings.php:264
+msgid "Book up to"
+msgstr ""
+
+#: includes/class-settings.php:265
+msgid "days in advance"
 msgstr ""
 
 #: includes/class-settings.php:268
-msgid "Uninstall"
+msgid "Guest selector limits"
+msgstr ""
+
+#: includes/class-settings.php:270
+msgid "Adults up to"
 msgstr ""
 
 #: includes/class-settings.php:271
-msgid "Data removal"
+msgid "Children up to"
 msgstr ""
 
 #: includes/class-settings.php:272
-msgid "Delete all rooms, bookings and settings when the plugin is deleted"
+msgid "Set \"Children up to\" to 0 to hide the children field."
+msgstr ""
+
+#: includes/class-settings.php:276
+msgid "Check-in / check-out"
+msgstr ""
+
+#: includes/class-settings.php:278
+msgid "Check-in time"
+msgstr ""
+
+#: includes/class-settings.php:280
+msgid "Check-out time"
+msgstr ""
+
+#: includes/class-settings.php:284
+msgid "Thank-you page"
+msgstr ""
+
+#: includes/class-settings.php:287
+msgid "Optional. Use a path such as /thank-you/ so it keeps working when the site moves to another domain. Leave empty to show the confirmation inside the form."
+msgstr ""
+
+#: includes/class-settings.php:291
+msgid "Terms page"
+msgstr ""
+
+#: includes/class-settings.php:294
+msgid "Optional. When set, guests must accept the terms before booking."
+msgstr ""
+
+#: includes/class-settings.php:298
+msgid "Data removal"
+msgstr ""
+
+#: includes/class-settings.php:301
+msgid "Delete all rooms, bookings, prices and settings when the plugin is deleted"
+msgstr ""
+
+#: includes/class-settings.php:309
+msgid "Placeholders:"
+msgstr ""
+
+#: includes/class-settings.php:314
+msgid "Send new booking alerts to"
+msgstr ""
+
+#: includes/class-settings.php:320
+msgid "Booking request received (to guest)"
+msgstr ""
+
+#: includes/class-settings.php:321
+msgid "Booking confirmed (to guest)"
+msgstr ""
+
+#: includes/class-settings.php:322
+msgid "Booking cancelled (to guest)"
+msgstr ""
+
+#: includes/class-settings.php:329
+msgid "Subject"
+msgstr ""
+
+#: includes/class-settings.php:330
+msgid "Message"
+msgstr ""
+
+#: includes/class-settings.php:335
+msgid "Guest emails are switched off under Settings → Features. Only the new-booking alert above is sent."
 msgstr ""
 
 #: includes/elementor/class-booking-widget.php:21

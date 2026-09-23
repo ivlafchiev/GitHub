@@ -31,11 +31,14 @@ class Flexo_Booking_Portability {
 
 		$data = array(
 			'format'      => self::FORMAT,
+			'schema'      => 2,
 			'version'     => FLEXO_BOOKING_VERSION,
 			'exported_at' => gmdate( 'c' ),
 			'source'      => home_url(),
 			'settings'    => $settings,
+			'features'    => array( 'enabled' => Flexo_Booking_Features::stored_enabled() ),
 			'rooms'       => array(),
+			'closures'    => array(),
 		);
 
 		$slugs = array();
@@ -53,8 +56,31 @@ class Flexo_Booking_Portability {
 				'menu_order' => $post->menu_order,
 				'image'      => get_the_post_thumbnail_url( $post, 'full' ),
 				'meta'       => $meta,
+				'seasons'    => array(),
 			);
+			foreach ( Flexo_Booking_Seasons::for_room( $post->ID ) as $season ) {
+				$data['rooms'][ count( $data['rooms'] ) - 1 ]['seasons'][] = array(
+					'name'          => $season['name'],
+					'date_from'     => $season['date_from'],
+					'date_to'       => $season['date_to'],
+					'price'         => $season['price'],
+					'weekend_price' => $season['weekend_price'],
+					'min_nights'    => $season['min_nights'],
+				);
+			}
 			$slugs[ $post->ID ] = $post->post_name;
+		}
+
+		foreach ( Flexo_Booking_Closures::all() as $closure ) {
+			if ( $closure['room_id'] && ! isset( $slugs[ $closure['room_id'] ] ) ) {
+				continue;
+			}
+			$data['closures'][] = array(
+				'room'      => $closure['room_id'] ? $slugs[ $closure['room_id'] ] : '',
+				'date_from' => $closure['date_from'],
+				'date_to'   => $closure['date_to'],
+				'label'     => $closure['label'],
+			);
 		}
 
 		if ( $include_bookings ) {
@@ -95,6 +121,8 @@ class Flexo_Booking_Portability {
 				'rooms'    => true,
 				'images'   => false,
 				'bookings' => false,
+				'seasons'  => true,
+				'closures' => true,
 			)
 		);
 		$stats   = array(
@@ -103,6 +131,8 @@ class Flexo_Booking_Portability {
 			'rooms_updated' => 0,
 			'images'        => 0,
 			'bookings'      => 0,
+			'seasons'       => 0,
+			'closures'      => 0,
 		);
 
 		if ( $options['settings'] && ! empty( $data['settings'] ) && is_array( $data['settings'] ) ) {
@@ -113,6 +143,15 @@ class Flexo_Booking_Portability {
 			}
 			update_option( Flexo_Booking_Settings::OPTION, Flexo_Booking_Settings::sanitize( array_merge( $current, $incoming ) ) );
 			$stats['settings'] = 1;
+
+			// Feature switches travel with the settings, limited to what this
+			// site makes available. Choices for unavailable features are kept.
+			if ( isset( $data['features']['enabled'] ) && is_array( $data['features']['enabled'] ) ) {
+				$available = Flexo_Booking_Features::available_list();
+				$incoming  = array_intersect( Flexo_Booking_Features::parse_list( $data['features']['enabled'] ), $available );
+				$kept      = array_diff( Flexo_Booking_Features::stored_enabled(), $available );
+				Flexo_Booking_Features::set_enabled( array_merge( $incoming, $kept ) );
+			}
 		}
 
 		if ( $options['rooms'] && ! empty( $data['rooms'] ) && is_array( $data['rooms'] ) ) {
@@ -161,6 +200,55 @@ class Flexo_Booking_Portability {
 						++$stats['images'];
 					}
 				}
+
+				// The file's seasons replace this room's seasons.
+				if ( $options['seasons'] && isset( $room['seasons'] ) && is_array( $room['seasons'] ) ) {
+					Flexo_Booking_Seasons::delete_for_room( $post_id );
+					foreach ( $room['seasons'] as $season ) {
+						if ( is_array( $season ) && ! is_wp_error( Flexo_Booking_Seasons::save( array_merge( $season, array( 'room_id' => $post_id ) ) ) ) ) {
+							++$stats['seasons'];
+						}
+					}
+				}
+			}
+		}
+
+		if ( $options['closures'] && ! empty( $data['closures'] ) && is_array( $data['closures'] ) ) {
+			foreach ( $data['closures'] as $closure ) {
+				if ( ! is_array( $closure ) ) {
+					continue;
+				}
+				$room_id = 0;
+				if ( ! empty( $closure['room'] ) ) {
+					$room    = get_posts(
+						array(
+							'post_type'      => Flexo_Booking_Rooms::POST_TYPE,
+							'name'           => sanitize_title( $closure['room'] ),
+							'post_status'    => 'any',
+							'posts_per_page' => 1,
+						)
+					);
+					$room_id = $room ? $room[0]->ID : 0;
+					if ( ! $room_id ) {
+						continue;
+					}
+				}
+				$from = Flexo_Booking_Dates::parse( isset( $closure['date_from'] ) ? $closure['date_from'] : '' );
+				$to   = Flexo_Booking_Dates::parse( isset( $closure['date_to'] ) ? $closure['date_to'] : '' );
+				if ( ! $from || ! $to || Flexo_Booking_Closures::exists( $room_id, $from, $to ) ) {
+					continue;
+				}
+				$saved = Flexo_Booking_Closures::save(
+					array(
+						'room_id'   => $room_id,
+						'date_from' => $from,
+						'date_to'   => $to,
+						'label'     => isset( $closure['label'] ) ? $closure['label'] : '',
+					)
+				);
+				if ( ! is_wp_error( $saved ) ) {
+					++$stats['closures'];
+				}
 			}
 		}
 
@@ -201,6 +289,10 @@ class Flexo_Booking_Portability {
 			$row            = array_map( 'sanitize_text_field', $row );
 			$row['notes']   = isset( $booking['notes'] ) ? sanitize_textarea_field( $booking['notes'] ) : '';
 			$row['room_id'] = $room_ids[ $booking['room'] ];
+			// Price snapshot: stored as-is when it is valid JSON.
+			if ( ! empty( $booking['price_breakdown'] ) && is_array( json_decode( $booking['price_breakdown'], true ) ) ) {
+				$row['price_breakdown'] = wp_json_encode( json_decode( $booking['price_breakdown'], true ) );
+			}
 			if ( ! array_key_exists( $row['status'] ?? '', Flexo_Booking_Bookings::statuses() ) ) {
 				$row['status'] = 'pending';
 			}
@@ -269,6 +361,9 @@ class Flexo_Booking_Portability {
 				'settings' => ! empty( $_POST['import_settings'] ),
 				'rooms'    => ! empty( $_POST['import_rooms'] ),
 				'images'   => ! empty( $_POST['import_images'] ),
+				// Seasons are always imported when the feature is hidden, so no data is lost.
+				'seasons'  => Flexo_Booking_Features::is_available( 'seasonal_pricing' ) ? ! empty( $_POST['import_seasons'] ) : true,
+				'closures' => ! empty( $_POST['import_closures'] ),
 				'bookings' => ! empty( $_POST['import_bookings'] ),
 			)
 		);
@@ -309,6 +404,16 @@ class Flexo_Booking_Portability {
 						(int) ( $imported['images'] ?? 0 ),
 						(int) ( $imported['bookings'] ?? 0 )
 					);
+					if ( ! empty( $imported['seasons'] ) || ! empty( $imported['closures'] ) ) {
+						echo ' ' . esc_html(
+							sprintf(
+								/* translators: 1: seasons, 2: closed periods */
+								__( '%1$d seasons and %2$d closed periods imported.', 'flexo-booking' ),
+								(int) ( $imported['seasons'] ?? 0 ),
+								(int) ( $imported['closures'] ?? 0 )
+							)
+						);
+					}
 					if ( ! empty( $imported['settings'] ) ) {
 						echo ' ' . esc_html__( 'Settings were updated.', 'flexo-booking' );
 					}
@@ -337,6 +442,10 @@ class Flexo_Booking_Portability {
 					<p><label><input type="checkbox" name="import_settings" value="1" checked> <?php esc_html_e( 'Import settings', 'flexo-booking' ); ?></label></p>
 					<p><label><input type="checkbox" name="import_rooms" value="1" checked> <?php esc_html_e( 'Import rooms', 'flexo-booking' ); ?></label></p>
 					<p><label><input type="checkbox" name="import_images" value="1"> <?php esc_html_e( 'Download room images from the source site (it must be online)', 'flexo-booking' ); ?></label></p>
+					<?php if ( Flexo_Booking_Features::is_available( 'seasonal_pricing' ) ) : ?>
+						<p><label><input type="checkbox" name="import_seasons" value="1" checked> <?php esc_html_e( 'Import seasonal prices (replaces the seasons of the imported rooms)', 'flexo-booking' ); ?></label></p>
+					<?php endif; ?>
+					<p><label><input type="checkbox" name="import_closures" value="1" checked> <?php esc_html_e( 'Import closed dates', 'flexo-booking' ); ?></label></p>
 					<p><label><input type="checkbox" name="import_bookings" value="1"> <?php esc_html_e( 'Import bookings contained in the file', 'flexo-booking' ); ?></label></p>
 					<?php submit_button( __( 'Import', 'flexo-booking' ), 'primary', 'submit', false ); ?>
 				</form>
@@ -391,6 +500,12 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * [--images]
 		 * : Download room images from the source site.
 		 *
+		 * [--skip-seasons]
+		 * : Don't import seasonal prices.
+		 *
+		 * [--skip-closures]
+		 * : Don't import closed dates.
+		 *
 		 * [--bookings]
 		 * : Import bookings contained in the file.
 		 *
@@ -413,15 +528,29 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					'settings' => empty( $assoc_args['skip-settings'] ),
 					'rooms'    => empty( $assoc_args['skip-rooms'] ),
 					'images'   => ! empty( $assoc_args['images'] ),
+					'seasons'  => empty( $assoc_args['skip-seasons'] ),
+					'closures' => empty( $assoc_args['skip-closures'] ),
 					'bookings' => ! empty( $assoc_args['bookings'] ),
 				)
 			);
 			if ( is_wp_error( $result ) ) {
 				WP_CLI::error( $result->get_error_message() );
 			}
-			WP_CLI::success( sprintf( 'Rooms created: %d, updated: %d, images: %d, bookings: %d, settings: %s', $result['rooms_created'], $result['rooms_updated'], $result['images'], $result['bookings'], $result['settings'] ? 'yes' : 'no' ) );
+			WP_CLI::success( sprintf( 'Rooms created: %d, updated: %d, seasons: %d, closed periods: %d, images: %d, bookings: %d, settings: %s', $result['rooms_created'], $result['rooms_updated'], $result['seasons'], $result['closures'], $result['images'], $result['bookings'], $result['settings'] ? 'yes' : 'no' ) );
 		}
 	}
 
+	WP_CLI::add_command(
+		'flexo-booking migrate',
+		static function () {
+			$before = Flexo_Booking_Migrations::current_version();
+			if ( Flexo_Booking_Migrations::run() ) {
+				WP_CLI::success( sprintf( 'Database version %d (was %d).', Flexo_Booking_Migrations::current_version(), $before ) );
+			} else {
+				WP_CLI::error( 'Migration did not finish: ' . get_option( Flexo_Booking_Migrations::ERROR_OPTION, 'another request is migrating, try again' ) );
+			}
+		},
+		array( 'shortdesc' => 'Runs pending database migrations (they also run automatically on the next page load).' )
+	);
 	WP_CLI::add_command( 'flexo-booking', 'Flexo_Booking_CLI' );
 }

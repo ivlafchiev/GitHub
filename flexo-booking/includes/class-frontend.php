@@ -35,6 +35,8 @@ class Flexo_Booking_Frontend {
 					'select'       => __( 'Select', 'flexo-booking' ),
 					'unavailable'  => __( 'Unavailable', 'flexo-booking' ),
 					'perNight'     => __( 'per night', 'flexo-booking' ),
+					/* translators: %s: average price per night */
+					'avgPerNight'  => __( 'avg. %s per night', 'flexo-booking' ),
 					/* translators: %d: number of guests */
 					'upTo'         => __( 'Up to %d guests', 'flexo-booking' ),
 					/* translators: %d: rooms left */
@@ -99,7 +101,9 @@ class Flexo_Booking_Frontend {
 		}
 
 		$settings = Flexo_Booking_Settings::all();
-		$tz       = wp_timezone();
+		// The mode actually in use (feature switches can limit the choice).
+		$settings['booking_mode'] = Flexo_Booking_Features::booking_mode();
+		$tz                       = wp_timezone();
 		$today    = new DateTimeImmutable( 'today', $tz );
 
 		$vars = array(

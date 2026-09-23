@@ -28,6 +28,9 @@ foreach ( $flexo_rooms as $flexo_room_id ) {
 	wp_delete_post( $flexo_room_id, true );
 }
 
-$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}flexo_bookings" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange
-delete_option( 'flexo_booking_settings' );
-delete_option( 'flexo_booking_db_version' );
+foreach ( array( 'bookings', 'seasons', 'closures' ) as $flexo_table ) {
+	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}flexo_{$flexo_table}" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+}
+foreach ( array( 'flexo_booking_settings', 'flexo_booking_db_version', 'flexo_booking_enabled_features', 'flexo_booking_available_features', 'flexo_booking_migration_error' ) as $flexo_option ) {
+	delete_option( $flexo_option );
+}

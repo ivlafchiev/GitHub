@@ -82,71 +82,38 @@ class Flexo_Booking_Bookings {
 	}
 
 	/**
-	 * Total price of a stay. Friday and Saturday nights use the weekend price
-	 * when one is set.
+	 * Total price of a stay.
+	 *
+	 * @deprecated 1.1.0 Use Flexo_Booking_Pricing::quote(), which returns the itemised breakdown.
 	 */
 	public static function calculate_total( array $room, $check_in, $check_out ) {
-		$tz    = wp_timezone();
-		$night = new DateTimeImmutable( $check_in, $tz );
-		$end   = new DateTimeImmutable( $check_out, $tz );
-		$total = 0.0;
-
-		while ( $night < $end ) {
-			$is_weekend = in_array( (int) $night->format( 'N' ), array( 5, 6 ), true );
-			$total     += ( $is_weekend && $room['weekend_price'] > 0 ) ? $room['weekend_price'] : $room['price'];
-			$night      = $night->modify( '+1 day' );
-		}
-
-		return (float) apply_filters( 'flexo_booking_calculate_total', round( $total, 2 ), $room, $check_in, $check_out );
+		$quote = Flexo_Booking_Pricing::quote(
+			array(
+				'room'      => $room,
+				'check_in'  => $check_in,
+				'check_out' => $check_out,
+			)
+		);
+		return is_wp_error( $quote ) ? 0.0 : (float) $quote['total'];
 	}
 
 	/**
-	 * Number of rooms of this type still free for every night of the stay.
-	 *
-	 * Bookings are counted night by night, so two short stays that don't
-	 * overlap each other only take one unit.
+	 * @deprecated 1.1.0 Use Flexo_Booking_Inventory::units_available().
 	 */
 	public static function units_available( array $room, $check_in, $check_out, $exclude_id = 0 ) {
-		global $wpdb;
-
-		if ( $room['units'] < 1 ) {
-			return 0;
-		}
-
-		$table        = Flexo_Booking_Install::table();
-		$placeholders = implode( ',', array_fill( 0, count( self::OCCUPYING ), '%s' ) );
-		$params       = array_merge( array( $room['id'], $check_out, $check_in, (int) $exclude_id ), self::OCCUPYING );
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name and placeholders are built above.
-		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT check_in, check_out FROM {$table} WHERE room_id = %d AND check_in < %s AND check_out > %s AND id <> %d AND status IN ({$placeholders})", $params ) );
-
-		$tz       = wp_timezone();
-		$night    = new DateTimeImmutable( $check_in, $tz );
-		$end      = new DateTimeImmutable( $check_out, $tz );
-		$max_used = 0;
-
-		while ( $night < $end ) {
-			$date = $night->format( 'Y-m-d' );
-			$used = 0;
-			foreach ( $rows as $row ) {
-				if ( $row->check_in <= $date && $row->check_out > $date ) {
-					++$used;
-				}
-			}
-			$max_used = max( $max_used, $used );
-			$night    = $night->modify( '+1 day' );
-		}
-
-		return max( 0, $room['units'] - $max_used );
+		return Flexo_Booking_Inventory::units_available( $room, $check_in, $check_out, $exclude_id );
 	}
 
 	/**
 	 * Availability and price for all rooms (or one room) for a stay.
 	 *
+	 * Minimum stay is checked per room (arrival season → room → global), so
+	 * it can differ between rooms and seasons.
+	 *
 	 * @return array|WP_Error
 	 */
 	public static function search( $check_in, $check_out, $adults, $children, $room_id_or_slug = '' ) {
-		$stay = self::validate_dates( $check_in, $check_out );
+		$stay = self::validate_dates( $check_in, $check_out, true, 1 );
 		if ( is_wp_error( $stay ) ) {
 			return $stay;
 		}
@@ -158,47 +125,71 @@ class Flexo_Booking_Bookings {
 			$posts = Flexo_Booking_Rooms::all();
 		}
 
+		if ( Flexo_Booking_Seasons::enabled() ) {
+			Flexo_Booking_Seasons::preload( wp_list_pluck( $posts, 'ID' ), $stay['check_in'], $stay['check_out'] );
+		}
+
 		$guests  = (int) $adults + (int) $children;
 		$results = array();
 
 		foreach ( $posts as $post ) {
-			$room   = Flexo_Booking_Rooms::to_array( $post );
-			$reason = '';
-
+			$room = Flexo_Booking_Rooms::to_array( $post );
 			if ( $room['units'] < 1 ) {
 				continue;
 			}
-			if ( $guests > $room['capacity'] ) {
-				/* translators: %d: number of guests */
-				$reason = sprintf( _n( 'Fits up to %d guest.', 'Fits up to %d guests.', $room['capacity'], 'flexo-booking' ), $room['capacity'] );
-			} elseif ( $stay['nights'] < $room['min_nights'] ) {
-				/* translators: %d: number of nights */
-				$reason = sprintf( _n( 'Minimum stay %d night.', 'Minimum stay %d nights.', $room['min_nights'], 'flexo-booking' ), $room['min_nights'] );
+
+			$quote = Flexo_Booking_Pricing::quote(
+				array(
+					'room'      => $room,
+					'check_in'  => $stay['check_in'],
+					'check_out' => $stay['check_out'],
+					'adults'    => $adults,
+					'children'  => $children,
+					'context'   => 'search',
+				)
+			);
+			if ( is_wp_error( $quote ) ) {
+				continue;
 			}
 
-			$left  = self::units_available( $room, $stay['check_in'], $stay['check_out'] );
-			$total = self::calculate_total( $room, $stay['check_in'], $stay['check_out'] );
+			$reason = Flexo_Booking_Inventory::closed_reason( $room['id'], $stay['check_in'], $stay['check_out'] );
+			if ( ! $reason && $guests > $room['capacity'] ) {
+				/* translators: %d: number of guests */
+				$reason = sprintf( _n( 'Fits up to %d guest.', 'Fits up to %d guests.', $room['capacity'], 'flexo-booking' ), $room['capacity'] );
+			}
+			if ( ! $reason && $stay['nights'] < $quote['min_nights'] ) {
+				$reason = self::min_nights_message( $quote );
+			}
 
+			$left = Flexo_Booking_Inventory::units_available( $room, $stay['check_in'], $stay['check_out'] );
 			if ( ! $reason && $left < 1 ) {
 				$reason = __( 'Sold out for these dates.', 'flexo-booking' );
 			}
 
+			$average   = Flexo_Booking_Pricing::nightly_average( $quote );
 			$results[] = array(
-				'id'              => $room['id'],
-				'slug'            => $room['slug'],
-				'title'           => $room['title'],
-				'excerpt'         => $room['excerpt'],
-				'image'           => $room['image'],
-				'capacity'        => $room['capacity'],
-				'available'       => '' === $reason,
-				'reason'          => $reason,
-				'units_left'      => $left,
-				'price'           => $room['price'],
-				'price_formatted' => Flexo_Booking_Settings::format_price( $room['price'] ),
-				'total'           => $total,
-				'total_formatted' => Flexo_Booking_Settings::format_price( $total ),
+				'id'                      => $room['id'],
+				'slug'                    => $room['slug'],
+				'title'                   => $room['title'],
+				'excerpt'                 => $room['excerpt'],
+				'image'                   => $room['image'],
+				'capacity'                => $room['capacity'],
+				'available'               => '' === $reason,
+				'reason'                  => $reason,
+				'units_left'              => $left,
+				'price'                   => $room['price'],
+				'price_formatted'         => Flexo_Booking_Money::format( $room['price'] ),
+				'price_average'           => $average['average'],
+				'price_average_formatted' => Flexo_Booking_Money::format( $average['average'] ),
+				'price_varies'            => $average['varies'],
+				'min_nights'              => $quote['min_nights'],
+				'total'                   => $quote['total'],
+				'total_formatted'         => Flexo_Booking_Money::format( $quote['total'] ),
+				'breakdown'               => Flexo_Booking_Pricing::format_lines( $quote ),
 			);
 		}
+
+		$closure = Flexo_Booking_Closures::property_closure( $stay['check_in'], $stay['check_out'] );
 
 		return array(
 			'check_in'     => $stay['check_in'],
@@ -206,8 +197,19 @@ class Flexo_Booking_Bookings {
 			'nights'       => $stay['nights'],
 			/* translators: %d: number of nights */
 			'nights_label' => sprintf( _n( 'Total for %d night', 'Total for %d nights', $stay['nights'], 'flexo-booking' ), $stay['nights'] ),
+			'notice'       => $closure ? Flexo_Booking_Closures::guest_message( $closure ) : '',
 			'rooms'        => $results,
 		);
+	}
+
+	private static function min_nights_message( array $quote ) {
+		$min = $quote['min_nights'];
+		if ( ! empty( $quote['min_nights_season'] ) ) {
+			/* translators: 1: number of nights, 2: season name */
+			return sprintf( _n( 'Minimum stay %1$d night for arrivals in %2$s.', 'Minimum stay %1$d nights for arrivals in %2$s.', $min, 'flexo-booking' ), $min, $quote['min_nights_season'] );
+		}
+		/* translators: %d: number of nights */
+		return sprintf( _n( 'Minimum stay %d night.', 'Minimum stay %d nights.', $min, 'flexo-booking' ), $min );
 	}
 
 	/**
@@ -240,11 +242,18 @@ class Flexo_Booking_Bookings {
 		}
 		$room = Flexo_Booking_Rooms::to_array( $post );
 
+		$check_in = isset( $data['check_in'] ) ? (string) $data['check_in'] : '';
+		$min      = 1;
+		if ( ! $is_admin && Flexo_Booking_Dates::parse( $check_in ) === $check_in ) {
+			$min_rule = Flexo_Booking_Seasons::min_nights( $room, $check_in );
+			$min      = $min_rule['nights'];
+		}
+
 		$stay = self::validate_dates(
-			isset( $data['check_in'] ) ? $data['check_in'] : '',
+			$check_in,
 			isset( $data['check_out'] ) ? $data['check_out'] : '',
 			! $is_admin,
-			$room['min_nights']
+			$min
 		);
 		if ( is_wp_error( $stay ) ) {
 			return $stay;
@@ -256,7 +265,7 @@ class Flexo_Booking_Bookings {
 		$email    = sanitize_email( isset( $data['guest_email'] ) ? $data['guest_email'] : '' );
 		$phone    = sanitize_text_field( isset( $data['guest_phone'] ) ? $data['guest_phone'] : '' );
 		$notes    = sanitize_textarea_field( isset( $data['notes'] ) ? $data['notes'] : '' );
-		$status   = isset( $data['status'] ) && array_key_exists( $data['status'], self::statuses() ) ? $data['status'] : ( 'instant' === Flexo_Booking_Settings::get( 'booking_mode' ) ? 'confirmed' : 'pending' );
+		$status   = isset( $data['status'] ) && array_key_exists( $data['status'], self::statuses() ) ? $data['status'] : ( 'instant' === Flexo_Booking_Features::booking_mode() ? 'confirmed' : 'pending' );
 
 		if ( ! $is_admin ) {
 			if ( $adults + $children > $room['capacity'] ) {
@@ -276,45 +285,73 @@ class Flexo_Booking_Bookings {
 			return new WP_Error( 'flexo_missing_name', __( 'Please enter the guest name.', 'flexo-booking' ) );
 		}
 
-		$lock = 'flexo_booking_lock_' . $room['id'];
-		if ( ! self::acquire_lock( $lock ) ) {
-			return new WP_Error( 'flexo_busy', __( 'We are processing another booking for this room. Please try again in a moment.', 'flexo-booking' ) );
-		}
+		// Everything below runs under the room lock: closures, availability and
+		// the price are re-checked there, so two guests can never take the
+		// last unit and the stored price is the one calculated at that moment.
+		$booking = Flexo_Booking_Inventory::with_lock(
+			$room['id'],
+			static function () use ( $wpdb, $room, $stay, $status, $is_admin, $adults, $children, $name, $email, $phone, $notes ) {
+				if ( ! $is_admin ) {
+					$closed = Flexo_Booking_Inventory::closed_reason( $room['id'], $stay['check_in'], $stay['check_out'] );
+					if ( $closed ) {
+						return new WP_Error( 'flexo_closed', $closed );
+					}
+				}
+				if ( 'cancelled' !== $status && Flexo_Booking_Inventory::units_available( $room, $stay['check_in'], $stay['check_out'] ) < 1 ) {
+					return new WP_Error( 'flexo_unavailable', __( 'Sorry, this room is no longer available for the selected dates.', 'flexo-booking' ) );
+				}
 
-		try {
-			if ( 'cancelled' !== $status && self::units_available( $room, $stay['check_in'], $stay['check_out'] ) < 1 ) {
-				return new WP_Error( 'flexo_unavailable', __( 'Sorry, this room is no longer available for the selected dates.', 'flexo-booking' ) );
+				$quote = null;
+				if ( 'blocked' !== $status ) {
+					$quote = Flexo_Booking_Pricing::quote(
+						array(
+							'room'      => $room,
+							'check_in'  => $stay['check_in'],
+							'check_out' => $stay['check_out'],
+							'adults'    => $adults,
+							'children'  => $children,
+							'context'   => $is_admin ? 'admin' : 'booking',
+						)
+					);
+					if ( is_wp_error( $quote ) ) {
+						return $quote;
+					}
+				}
+
+				$now     = current_time( 'mysql' );
+				$booking = array(
+					'reference'       => self::generate_reference(),
+					'room_id'         => $room['id'],
+					'check_in'        => $stay['check_in'],
+					'check_out'       => $stay['check_out'],
+					'nights'          => $stay['nights'],
+					'adults'          => $adults,
+					'children'        => $children,
+					'guest_name'      => $name,
+					'guest_email'     => $email,
+					'guest_phone'     => $phone,
+					'notes'           => $notes,
+					'total'           => $quote ? $quote['total'] : 0,
+					'currency'        => Flexo_Booking_Money::currency(),
+					'status'          => $status,
+					'source'          => $is_admin ? 'admin' : 'website',
+					'price_breakdown' => $quote ? wp_json_encode( $quote ) : null,
+					'created_at'      => $now,
+					'updated_at'      => $now,
+				);
+
+				$booking = apply_filters( 'flexo_booking_before_insert', $booking, $room );
+
+				if ( ! $wpdb->insert( Flexo_Booking_Install::table(), $booking ) ) {
+					return new WP_Error( 'flexo_db_error', __( 'The booking could not be saved. Please try again.', 'flexo-booking' ) );
+				}
+				$booking['id'] = (int) $wpdb->insert_id;
+				return $booking;
 			}
+		);
 
-			$now     = current_time( 'mysql' );
-			$booking = array(
-				'reference'   => self::generate_reference(),
-				'room_id'     => $room['id'],
-				'check_in'    => $stay['check_in'],
-				'check_out'   => $stay['check_out'],
-				'nights'      => $stay['nights'],
-				'adults'      => $adults,
-				'children'    => $children,
-				'guest_name'  => $name,
-				'guest_email' => $email,
-				'guest_phone' => $phone,
-				'notes'       => $notes,
-				'total'       => 'blocked' === $status ? 0 : self::calculate_total( $room, $stay['check_in'], $stay['check_out'] ),
-				'currency'    => Flexo_Booking_Settings::get( 'currency' ),
-				'status'      => $status,
-				'source'      => $is_admin ? 'admin' : 'website',
-				'created_at'  => $now,
-				'updated_at'  => $now,
-			);
-
-			$booking = apply_filters( 'flexo_booking_before_insert', $booking, $room );
-
-			if ( ! $wpdb->insert( Flexo_Booking_Install::table(), $booking ) ) {
-				return new WP_Error( 'flexo_db_error', __( 'The booking could not be saved. Please try again.', 'flexo-booking' ) );
-			}
-			$booking['id'] = (int) $wpdb->insert_id;
-		} finally {
-			self::release_lock( $lock );
+		if ( is_wp_error( $booking ) ) {
+			return $booking;
 		}
 
 		$booking = self::get( $booking['id'] );
@@ -374,24 +411,34 @@ class Flexo_Booking_Bookings {
 			return true;
 		}
 
-		if ( ! in_array( $booking['status'], self::OCCUPYING, true ) && in_array( $status, self::OCCUPYING, true ) ) {
-			$post = get_post( $booking['room_id'] );
-			if ( $post ) {
-				$room = Flexo_Booking_Rooms::to_array( $post );
-				if ( self::units_available( $room, $booking['check_in'], $booking['check_out'], $booking['id'] ) < 1 ) {
-					return new WP_Error( 'flexo_unavailable', __( 'The room is no longer available for these dates.', 'flexo-booking' ) );
+		$result = Flexo_Booking_Inventory::with_lock(
+			$booking['room_id'],
+			static function () use ( $wpdb, $booking, $id, $status ) {
+				$occupying = Flexo_Booking_Inventory::occupying_statuses();
+				if ( ! in_array( $booking['status'], $occupying, true ) && in_array( $status, $occupying, true ) ) {
+					$post = get_post( $booking['room_id'] );
+					if ( $post ) {
+						$room = Flexo_Booking_Rooms::to_array( $post );
+						if ( Flexo_Booking_Inventory::units_available( $room, $booking['check_in'], $booking['check_out'], $booking['id'] ) < 1 ) {
+							return new WP_Error( 'flexo_unavailable', __( 'The room is no longer available for these dates.', 'flexo-booking' ) );
+						}
+					}
 				}
-			}
-		}
 
-		$wpdb->update(
-			Flexo_Booking_Install::table(),
-			array(
-				'status'     => $status,
-				'updated_at' => current_time( 'mysql' ),
-			),
-			array( 'id' => $id )
+				$wpdb->update(
+					Flexo_Booking_Install::table(),
+					array(
+						'status'     => $status,
+						'updated_at' => current_time( 'mysql' ),
+					),
+					array( 'id' => $id )
+				);
+				return true;
+			}
 		);
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
 
 		do_action( 'flexo_booking_status_changed', self::get( $id ), $booking['status'], $status );
 
@@ -476,38 +523,5 @@ class Flexo_Booking_Bookings {
 			$reference = 'FB-' . strtoupper( wp_generate_password( 6, false, false ) );
 		} while ( self::get_by_reference( $reference ) );
 		return $reference;
-	}
-
-	/**
-	 * Database-agnostic mutex built on the unique option_name key: a plain
-	 * INSERT of a row that already exists fails, so only one request wins.
-	 * (add_option() can't be used: it upserts.) Stale locks from a crashed
-	 * request expire after 30 seconds.
-	 */
-	private static function acquire_lock( $name ) {
-		global $wpdb;
-
-		for ( $i = 0; $i < 50; $i++ ) {
-			$suppress = $wpdb->suppress_errors( true );
-			$inserted = $wpdb->query( $wpdb->prepare( "INSERT INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %s, 'no')", $name, time() ) );
-			$wpdb->suppress_errors( $suppress );
-
-			if ( $inserted ) {
-				return true;
-			}
-
-			$since = (int) $wpdb->get_var( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $name ) );
-			if ( $since && time() - $since > 30 ) {
-				self::release_lock( $name );
-				continue;
-			}
-			usleep( 100000 );
-		}
-		return false;
-	}
-
-	private static function release_lock( $name ) {
-		global $wpdb;
-		$wpdb->delete( $wpdb->options, array( 'option_name' => $name ) );
 	}
 }

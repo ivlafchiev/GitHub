@@ -1,0 +1,321 @@
+<?php
+/**
+ * The unified pricing service. Every price shown or stored comes from here.
+ *
+ * quote() runs an ordered list of steps over a quote array:
+ *
+ *   10  nightly room price (season or room price, weekday/weekend)   Day 1
+ *   20  rate-plan adjustment                                          Day 3
+ *   30  extra guests and children                                     Day 3
+ *   40  promo discount                                                Day 3
+ *   50  tourist tax                                                   Day 3
+ *   90  totals                                                        Day 1
+ *   95  payment schedule (deposit / pay now / at property)            Day 5
+ *
+ * Steps are registered through the `flexo_booking_pricing_steps` filter and
+ * only when their feature is enabled. The result is JSON-safe and stored on
+ * each booking (price_breakdown), so a booking's price never changes later.
+ *
+ * @package FlexoBooking
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+class Flexo_Booking_Pricing {
+
+	const VERSION = 1;
+
+	/**
+	 * @param array $request {
+	 *     @type int|string|array $room      Room ID, slug, or Flexo_Booking_Rooms::to_array() result.
+	 *     @type string           $check_in  Y-m-d.
+	 *     @type string           $check_out Y-m-d.
+	 *     @type int              $adults
+	 *     @type int              $children
+	 *     @type string           $context   search | booking | admin.
+	 * }
+	 * @return array|WP_Error
+	 */
+	public static function quote( array $request ) {
+		$room = isset( $request['room'] ) ? $request['room'] : 0;
+		if ( ! is_array( $room ) ) {
+			$post = Flexo_Booking_Rooms::find( $room );
+			if ( ! $post ) {
+				$post = is_numeric( $room ) ? get_post( (int) $room ) : null;
+			}
+			if ( ! $post || Flexo_Booking_Rooms::POST_TYPE !== $post->post_type ) {
+				return new WP_Error( 'flexo_invalid_room', __( 'Please choose a room.', 'flexo-booking' ) );
+			}
+			$room = Flexo_Booking_Rooms::to_array( $post );
+		}
+
+		$stay = Flexo_Booking_Bookings::validate_dates(
+			isset( $request['check_in'] ) ? $request['check_in'] : '',
+			isset( $request['check_out'] ) ? $request['check_out'] : '',
+			false
+		);
+		if ( is_wp_error( $stay ) ) {
+			return $stay;
+		}
+
+		$request = wp_parse_args(
+			$request,
+			array(
+				'adults'   => 1,
+				'children' => 0,
+				'context'  => 'search',
+			)
+		);
+
+		$quote = array(
+			'version'        => self::VERSION,
+			'currency'       => Flexo_Booking_Money::currency(),
+			'room_id'        => (int) $room['id'],
+			'check_in'       => $stay['check_in'],
+			'check_out'      => $stay['check_out'],
+			'nights'         => $stay['nights'],
+			'adults'         => max( 1, (int) $request['adults'] ),
+			'children'       => max( 0, (int) $request['children'] ),
+			'nights_detail'  => array(),
+			'lines'          => array(),
+			'subtotal'       => 0.0,
+			'discount_total' => 0.0,
+			'tax_total'      => 0.0,
+			'total'          => 0.0,
+			'payable'        => array(
+				'now'         => 0.0,
+				'deposit'     => 0.0,
+				'at_property' => 0.0,
+			),
+			'min_nights'     => 1,
+			'messages'       => array(),
+		);
+
+		foreach ( self::steps( $request, $room ) as $step ) {
+			$quote = call_user_func( $step, $quote, $request, $room );
+		}
+
+		return apply_filters( 'flexo_booking_quote', $quote, $request, $room );
+	}
+
+	/**
+	 * @return callable[] Ordered by priority.
+	 */
+	private static function steps( array $request, array $room ) {
+		$steps = array(
+			10 => array( __CLASS__, 'step_nightly' ),
+			90 => array( __CLASS__, 'step_totals' ),
+		);
+		$steps = apply_filters( 'flexo_booking_pricing_steps', $steps, $request, $room );
+		ksort( $steps );
+		return $steps;
+	}
+
+	/**
+	 * Step 10: each night is priced by the season it falls in (when seasonal
+	 * prices are on), otherwise by the room. Friday and Saturday nights use
+	 * the weekend price when one is set.
+	 */
+	public static function step_nightly( array $quote, array $request, array $room ) {
+		$seasons = Flexo_Booking_Seasons::enabled() ? Flexo_Booking_Seasons::for_stay( $room['id'], $quote['check_in'], $quote['check_out'] ) : array();
+		$groups  = array();
+		$sum     = 0.0;
+
+		foreach ( Flexo_Booking_Dates::nights( $quote['check_in'], $quote['check_out'] ) as $date ) {
+			$weekend = Flexo_Booking_Dates::is_weekend_night( $date );
+			$season  = $seasons ? Flexo_Booking_Seasons::season_for_night( $seasons, $date ) : null;
+
+			if ( $season ) {
+				$use_weekend = $weekend && null !== $season['weekend_price'] && $season['weekend_price'] > 0;
+				$amount      = $use_weekend ? $season['weekend_price'] : $season['price'];
+				$label       = $season['name'];
+			} else {
+				$use_weekend = $weekend && $room['weekend_price'] > 0;
+				$amount      = $use_weekend ? $room['weekend_price'] : $room['price'];
+				$label       = __( 'Standard rate', 'flexo-booking' );
+			}
+			$amount = (float) $amount;
+			$sum   += $amount;
+
+			$quote['nights_detail'][] = array(
+				'date'      => $date,
+				'amount'    => $amount,
+				'season_id' => $season ? $season['id'] : 0,
+				'season'    => $season ? $season['name'] : '',
+				'weekend'   => $use_weekend,
+			);
+
+			$group_label = $use_weekend ? sprintf( /* translators: %s: season or rate name */ __( '%s – weekend', 'flexo-booking' ), $label ) : $label;
+			$group_key   = $group_label . '|' . $amount;
+			if ( ! isset( $groups[ $group_key ] ) ) {
+				$groups[ $group_key ] = array(
+					'label'  => $group_label,
+					'nights' => 0,
+					'unit'   => $amount,
+					'amount' => 0.0,
+				);
+			}
+			++$groups[ $group_key ]['nights'];
+			$groups[ $group_key ]['amount'] += $amount;
+		}
+
+		$accommodation = round( $sum, 2 );
+
+		$quote['lines'][] = array(
+			'key'     => 'accommodation',
+			'type'    => 'accommodation',
+			/* translators: %d: number of nights */
+			'label'   => sprintf( _n( 'Accommodation, %d night', 'Accommodation, %d nights', $quote['nights'], 'flexo-booking' ), $quote['nights'] ),
+			'amount'  => $accommodation,
+			'collect' => 'booking',
+			'groups'  => array_values( $groups ),
+		);
+
+		// 1.0.0 filter, applied to the accommodation amount as before.
+		$filtered = (float) apply_filters( 'flexo_booking_calculate_total', $accommodation, $room, $quote['check_in'], $quote['check_out'] );
+		if ( abs( $filtered - $accommodation ) >= 0.005 ) {
+			$quote['lines'][] = array(
+				'key'     => 'adjustment',
+				'type'    => 'adjustment',
+				'label'   => __( 'Price adjustment', 'flexo-booking' ),
+				'amount'  => $filtered - $accommodation,
+				'collect' => 'booking',
+			);
+		}
+
+		$min                 = Flexo_Booking_Seasons::min_nights( $room, $quote['check_in'] );
+		$quote['min_nights'] = $min['nights'];
+		if ( $min['season'] ) {
+			$quote['min_nights_season'] = $min['season']['name'];
+		}
+
+		return $quote;
+	}
+
+	/**
+	 * Step 90: round each line, then sum, so the breakdown always adds up.
+	 */
+	public static function step_totals( array $quote ) {
+		$subtotal = 0.0;
+		$discount = 0.0;
+		$tax      = 0.0;
+
+		foreach ( $quote['lines'] as $i => $line ) {
+			$amount                         = Flexo_Booking_Money::round( $line['amount'] );
+			$quote['lines'][ $i ]['amount'] = $amount;
+			if ( 'discount' === $line['type'] ) {
+				$discount += -$amount;
+			} elseif ( 'tax' === $line['type'] ) {
+				$tax += $amount;
+			} else {
+				$subtotal += $amount;
+			}
+		}
+
+		$quote['subtotal']       = Flexo_Booking_Money::round( $subtotal );
+		$quote['discount_total'] = Flexo_Booking_Money::round( $discount );
+		$quote['tax_total']      = Flexo_Booking_Money::round( $tax );
+		$quote['total']          = Flexo_Booking_Money::round( $subtotal - $discount + $tax );
+		$quote['payable']        = array(
+			'now'         => 0.0,
+			'deposit'     => 0.0,
+			'at_property' => $quote['total'],
+		);
+		return $quote;
+	}
+
+	/**
+	 * The stored breakdown of a booking. Bookings made before 1.1.0 have none;
+	 * they get a single accommodation line built from their total.
+	 */
+	public static function snapshot( array $booking ) {
+		if ( ! empty( $booking['price_breakdown'] ) ) {
+			$snapshot = json_decode( $booking['price_breakdown'], true );
+			if ( is_array( $snapshot ) && isset( $snapshot['lines'] ) ) {
+				return $snapshot;
+			}
+		}
+		$nights = isset( $booking['nights'] ) ? (int) $booking['nights'] : 1;
+		return array(
+			'version'  => 0,
+			'currency' => isset( $booking['currency'] ) ? $booking['currency'] : Flexo_Booking_Money::currency(),
+			'lines'    => array(
+				array(
+					'key'     => 'accommodation',
+					'type'    => 'accommodation',
+					/* translators: %d: number of nights */
+					'label'   => sprintf( _n( 'Accommodation, %d night', 'Accommodation, %d nights', $nights, 'flexo-booking' ), $nights ),
+					'amount'  => (float) $booking['total'],
+					'collect' => 'booking',
+					'groups'  => array(),
+				),
+			),
+			'total'    => (float) $booking['total'],
+		);
+	}
+
+	/**
+	 * Display rows for the booking form, emails, admin and CSV.
+	 *
+	 * @return array[] Each: label, amount, formatted, type, details (string[]).
+	 */
+	public static function format_lines( array $quote ) {
+		$currency = isset( $quote['currency'] ) ? $quote['currency'] : null;
+		$rows     = array();
+		foreach ( $quote['lines'] as $line ) {
+			$details = array();
+			if ( ! empty( $line['groups'] ) && count( $line['groups'] ) > 1 ) {
+				foreach ( $line['groups'] as $group ) {
+					$details[] = sprintf(
+						/* translators: 1: season/rate name, 2: nights, 3: price per night, 4: amount */
+						_n( '%1$s: %2$d night × %3$s = %4$s', '%1$s: %2$d nights × %3$s = %4$s', $group['nights'], 'flexo-booking' ),
+						$group['label'],
+						$group['nights'],
+						Flexo_Booking_Money::format( $group['unit'], $currency ),
+						Flexo_Booking_Money::format( $group['amount'], $currency )
+					);
+				}
+			}
+			$rows[] = array(
+				'type'      => $line['type'],
+				'label'     => $line['label'],
+				'amount'    => (float) $line['amount'],
+				'formatted' => Flexo_Booking_Money::format( $line['amount'], $currency ),
+				'details'   => $details,
+			);
+		}
+		return $rows;
+	}
+
+	/**
+	 * Plain-text breakdown (emails, CSV).
+	 */
+	public static function summary_text( array $quote ) {
+		$lines = array();
+		foreach ( self::format_lines( $quote ) as $row ) {
+			$lines[] = $row['label'] . ': ' . $row['formatted'];
+			foreach ( $row['details'] as $detail ) {
+				$lines[] = '  ' . $detail;
+			}
+		}
+		$lines[] = __( 'Total', 'flexo-booking' ) . ': ' . Flexo_Booking_Money::format( $quote['total'], isset( $quote['currency'] ) ? $quote['currency'] : null );
+		return implode( "\n", $lines );
+	}
+
+	/**
+	 * Average nightly price and whether nightly prices vary within the stay.
+	 */
+	public static function nightly_average( array $quote ) {
+		$amounts = wp_list_pluck( $quote['nights_detail'], 'amount' );
+		if ( ! $amounts ) {
+			return array(
+				'average' => 0.0,
+				'varies'  => false,
+			);
+		}
+		return array(
+			'average' => Flexo_Booking_Money::round( array_sum( $amounts ) / count( $amounts ) ),
+			'varies'  => count( array_unique( array_map( 'strval', $amounts ) ) ) > 1,
+		);
+	}
+}

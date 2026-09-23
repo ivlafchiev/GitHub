@@ -33,7 +33,7 @@
 	}
 
 	function fmt( str, n ) {
-		return String( str ).replace( '%d', n );
+		return String( str ).replace( '%d', n ).replace( '%s', n );
 	}
 
 	function parseDate( ymd ) {
@@ -169,6 +169,7 @@
 			.then( function ( data ) {
 				self.stay = { check_in: data.check_in, check_out: data.check_out, nights: data.nights, nightsLabel: data.nights_label, adults: v.adults, children: v.children };
 				self.setNotice( '' );
+				self.closedNotice = data.notice || '';
 				self.renderRooms( data.rooms );
 			} )
 			.catch( function ( err ) {
@@ -204,7 +205,10 @@
 			if ( room.excerpt ) {
 				body.appendChild( el( 'p', 'fb-room__excerpt', room.excerpt ) );
 			}
-			body.appendChild( el( 'p', 'fb-room__meta', fmt( t.upTo, room.capacity ) + ' · ' + room.price_formatted + ' ' + t.perNight ) );
+			var nightly = room.price_varies && t.avgPerNight
+				? fmt( t.avgPerNight, room.price_average_formatted )
+				: ( room.price_average_formatted || room.price_formatted ) + ' ' + t.perNight;
+			body.appendChild( el( 'p', 'fb-room__meta', fmt( t.upTo, room.capacity ) + ' · ' + nightly ) );
 			if ( room.available && room.units_left > 0 && room.units_left <= 2 ) {
 				body.appendChild( el( 'p', 'fb-room__urgency', fmt( t.onlyLeft, room.units_left ) ) );
 			}
@@ -229,7 +233,7 @@
 		} );
 
 		if ( ! anyAvailable ) {
-			this.setNotice( t.noRooms, true );
+			this.setNotice( this.closedNotice || t.noRooms, true );
 		}
 
 		this.results.appendChild( list );
@@ -261,6 +265,13 @@
 			line.appendChild( el( 'span', '', row[ 0 ] ) );
 			line.appendChild( el( 'span', '', row[ 1 ] ) );
 			this.summary.appendChild( line );
+		}, this );
+
+		// Itemised prices, e.g. "Low season: 2 nights × 100 €" when they vary.
+		( room.breakdown || [] ).forEach( function ( item ) {
+			( item.details || [] ).forEach( function ( detail ) {
+				this.summary.appendChild( el( 'div', 'fb-summary__detail', detail ) );
+			}, this );
 		}, this );
 
 		this.results.hidden = true;

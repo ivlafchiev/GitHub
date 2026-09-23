@@ -93,7 +93,7 @@ class Flexo_Booking_Rooms {
 				<th scope="row"><label for="flexo-min-nights"><?php esc_html_e( 'Minimum nights', 'flexo-booking' ); ?></label></th>
 				<td>
 					<input id="flexo-min-nights" type="number" min="0" name="_flexo_min_nights" value="<?php echo esc_attr( $room['min_nights_override'] ? $room['min_nights_override'] : '' ); ?>">
-					<p class="description"><?php esc_html_e( 'Optional. Leave empty to use the global setting.', 'flexo-booking' ); ?></p>
+					<p class="description"><?php esc_html_e( 'Optional. Leave empty to use the global setting.', 'flexo-booking' ); ?><?php echo Flexo_Booking_Seasons::enabled() ? ' ' . esc_html__( 'Seasons can set their own minimum.', 'flexo-booking' ) : ''; ?></p>
 				</td>
 			</tr>
 			<tr>
@@ -218,7 +218,7 @@ class Flexo_Booking_Rooms {
 		$room = self::to_array( get_post( $post_id ) );
 		switch ( $column ) {
 			case 'flexo_price':
-				echo esc_html( Flexo_Booking_Settings::format_price( $room['price'] ) );
+				echo esc_html( Flexo_Booking_Money::format( $room['price'] ) );
 				break;
 			case 'flexo_capacity':
 				echo esc_html( $room['capacity'] );
