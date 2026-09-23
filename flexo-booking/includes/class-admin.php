@@ -138,6 +138,60 @@ class Flexo_Booking_Admin {
 				</p></div>
 			<?php endif; ?>
 
+			<?php
+			$conflicts = Flexo_Booking_ICal::open_conflicts();
+			if ( $conflicts ) :
+				?>
+				<div class="flexo-conflicts" id="flexo-conflicts">
+					<h2>⚠ <?php esc_html_e( 'Possible double bookings from external calendars', 'flexo-booking' ); ?></h2>
+					<p><?php esc_html_e( 'These bookings came from Booking.com, Airbnb or another connected calendar and don\'t fit into your availability. Check them, contact the guest or the booking website, then mark them as reviewed.', 'flexo-booking' ); ?></p>
+					<table class="widefat">
+						<thead><tr>
+							<th><?php esc_html_e( 'Room', 'flexo-booking' ); ?></th>
+							<th><?php esc_html_e( 'Calendar', 'flexo-booking' ); ?></th>
+							<th><?php esc_html_e( 'Stay', 'flexo-booking' ); ?></th>
+							<th><?php esc_html_e( 'Details', 'flexo-booking' ); ?></th>
+							<th><span class="screen-reader-text"><?php esc_html_e( 'Actions', 'flexo-booking' ); ?></span></th>
+						</tr></thead>
+						<tbody>
+						<?php foreach ( $conflicts as $conflict ) : ?>
+							<tr>
+								<td><?php echo esc_html( get_the_title( $conflict['room_id'] ) ); ?></td>
+								<td>⇄ <?php echo esc_html( $conflict['calendar_name'] ); ?></td>
+								<td><?php echo esc_html( Flexo_Booking_Dates::display( $conflict['date_from'] ) . ' → ' . Flexo_Booking_Dates::display( $conflict['date_to'] ) ); ?></td>
+								<td><?php echo esc_html( $conflict['conflict_note'] ); ?></td>
+								<td class="flexo-actions">
+									<a class="button button-small" href="<?php echo esc_url( admin_url( 'admin.php?page=' . Flexo_Booking_Calendar_Admin::SLUG . '&month=' . substr( $conflict['date_from'], 0, 7 ) ) ); ?>"><?php esc_html_e( 'Show in calendar', 'flexo-booking' ); ?></a>
+									<a class="button button-small button-primary" href="<?php echo esc_url( Flexo_Booking_Sync_Admin::review_url( $conflict['id'] ) ); ?>"><?php esc_html_e( 'Mark as reviewed', 'flexo-booking' ); ?></a>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+						</tbody>
+					</table>
+				</div>
+			<?php endif; ?>
+
+			<?php
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$external_view = Flexo_Booking_ICal::enabled() && isset( $_GET['view'] ) && 'external' === $_GET['view'];
+			if ( Flexo_Booking_ICal::enabled() ) :
+				?>
+				<ul class="subsubsub flexo-views">
+					<li><a href="<?php echo esc_url( self::page_url() ); ?>" class="<?php echo $external_view ? '' : 'current'; ?>"><?php esc_html_e( 'Bookings on this website', 'flexo-booking' ); ?></a> |</li>
+					<li><a href="<?php echo esc_url( self::page_url( array( 'view' => 'external' ) ) ); ?>" class="<?php echo $external_view ? 'current' : ''; ?>">⇄ <?php esc_html_e( 'From external calendars', 'flexo-booking' ); ?></a></li>
+				</ul>
+				<br class="clear">
+			<?php endif; ?>
+
+			<?php
+			if ( $external_view ) {
+				self::render_external();
+				echo '</div>';
+				return;
+			}
+			$conflicted = self::conflicted_bookings( $conflicts );
+			?>
+
 			<form method="get" class="flexo-filters">
 				<input type="hidden" name="page" value="<?php echo esc_attr( self::MENU_SLUG ); ?>">
 				<select name="status" aria-label="<?php esc_attr_e( 'Status', 'flexo-booking' ); ?>">
@@ -178,14 +232,13 @@ class Flexo_Booking_Admin {
 					<tr>
 						<td>
 							<strong><?php echo esc_html( $b['reference'] ); ?></strong>
-							<div class="flexo-muted">
-								<?php
-								echo esc_html( mysql2date( $format . ' H:i', $b['created_at'] ) );
-								if ( 'admin' === $b['source'] ) {
-									echo ' · ' . esc_html__( 'added by staff', 'flexo-booking' );
-								}
-								?>
+							<div>
+								<?php echo self::source_badge( $b ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in source_badge(). ?>
+								<?php if ( isset( $conflicted[ $b['id'] ] ) ) : ?>
+									<a class="flexo-badge flexo-badge--conflict" href="#flexo-conflicts">⚠ <?php esc_html_e( 'Conflict', 'flexo-booking' ); ?></a>
+								<?php endif; ?>
 							</div>
+							<div class="flexo-muted"><?php echo esc_html( mysql2date( $format . ' H:i', $b['created_at'] ) ); ?></div>
 						</td>
 						<td>
 							<?php echo esc_html( $b['guest_name'] ? $b['guest_name'] : '—' ); ?>
@@ -260,11 +313,94 @@ class Flexo_Booking_Admin {
 		<?php
 	}
 
+	/**
+	 * Where a booking came from – shown as text, not only colour.
+	 */
+	public static function source_badge( array $b ) {
+		if ( 'blocked' === $b['status'] ) {
+			return '<span class="flexo-badge flexo-badge--blocked">⛔ ' . esc_html__( 'Blocked dates', 'flexo-booking' ) . '</span>';
+		}
+		if ( 'admin' === $b['source'] ) {
+			return '<span class="flexo-badge flexo-badge--staff">✎ ' . esc_html__( 'Added by staff', 'flexo-booking' ) . '</span>';
+		}
+		return '<span class="flexo-badge flexo-badge--website">' . esc_html__( 'Website', 'flexo-booking' ) . '</span>';
+	}
+
+	/**
+	 * Flexo bookings overlapping an open calendar conflict.
+	 *
+	 * @return array Booking ID => true.
+	 */
+	private static function conflicted_bookings( array $conflicts ) {
+		global $wpdb;
+		$ids      = array();
+		$table    = Flexo_Booking_Install::table();
+		$occupied = Flexo_Booking_Inventory::occupying_sql();
+		foreach ( $conflicts as $conflict ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			foreach ( (array) $wpdb->get_col( $wpdb->prepare( "SELECT id FROM {$table} WHERE room_id = %d AND check_in < %s AND check_out > %s AND {$occupied['sql']}", array_merge( array( $conflict['room_id'], $conflict['date_to'], $conflict['date_from'] ), $occupied['params'] ) ) ) as $id ) {
+				$ids[ (int) $id ] = true;
+			}
+		}
+		return $ids;
+	}
+
+	/**
+	 * Bookings imported from external calendars (read-only).
+	 */
+	private static function render_external() {
+		$events = Flexo_Booking_ICal::events_between( wp_date( 'Y-m-d' ), '9999-12-31' );
+		?>
+		<p class="description"><?php esc_html_e( 'Bookings imported from Booking.com, Airbnb and other connected calendars. They block availability here; to change or cancel them, use the booking website – they update here at the next sync.', 'flexo-booking' ); ?></p>
+		<table class="widefat striped">
+			<thead>
+				<tr>
+					<th><?php esc_html_e( 'Source', 'flexo-booking' ); ?></th>
+					<th><?php esc_html_e( 'Room', 'flexo-booking' ); ?></th>
+					<th><?php esc_html_e( 'Stay', 'flexo-booking' ); ?></th>
+					<th><?php esc_html_e( 'Text from the calendar', 'flexo-booking' ); ?></th>
+					<th><?php esc_html_e( 'Status', 'flexo-booking' ); ?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php if ( ! $events ) : ?>
+					<tr><td colspan="5"><?php esc_html_e( 'No current or upcoming bookings from external calendars.', 'flexo-booking' ); ?></td></tr>
+				<?php endif; ?>
+				<?php foreach ( $events as $event ) : ?>
+					<tr>
+						<td><span class="flexo-badge flexo-badge--external">⇄ <?php echo esc_html( $event['calendar_name'] ); ?></span></td>
+						<td><?php echo esc_html( get_the_title( $event['room_id'] ) . ( $event['unit'] ? ' – ' . Flexo_Booking_Sync_Admin::unit_label( $event['unit'] ) : '' ) ); ?></td>
+						<td><?php echo esc_html( Flexo_Booking_Dates::display( $event['date_from'] ) . ' → ' . Flexo_Booking_Dates::display( $event['date_to'] ) ); ?></td>
+						<td><?php echo esc_html( $event['summary'] ); ?></td>
+						<td>
+							<?php if ( $event['conflict'] ) : ?>
+								<span class="flexo-badge flexo-badge--conflict">⚠ <?php echo $event['conflict_reviewed'] ? esc_html__( 'Conflict (reviewed)', 'flexo-booking' ) : esc_html__( 'Conflict', 'flexo-booking' ); ?></span>
+								<div class="flexo-muted"><?php echo esc_html( $event['conflict_note'] ); ?></div>
+							<?php else : ?>
+								<span class="flexo-status flexo-status--confirmed">✓ <?php esc_html_e( 'Blocks availability', 'flexo-booking' ); ?></span>
+							<?php endif; ?>
+						</td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+		<?php
+	}
+
 	public static function render_add() {
 		if ( ! current_user_can( self::capability() ) ) {
 			return;
 		}
 		$rooms = Flexo_Booking_Rooms::all();
+		// Prefill from the calendar's quick actions.
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		$pre = array(
+			'room'      => isset( $_GET['room'] ) ? absint( $_GET['room'] ) : 0,
+			'check_in'  => isset( $_GET['check_in'] ) ? (string) Flexo_Booking_Dates::parse( sanitize_text_field( wp_unslash( $_GET['check_in'] ) ) ) : '',
+			'check_out' => isset( $_GET['check_out'] ) ? (string) Flexo_Booking_Dates::parse( sanitize_text_field( wp_unslash( $_GET['check_out'] ) ) ) : '',
+			'type'      => isset( $_GET['type'] ) ? sanitize_key( $_GET['type'] ) : 'confirmed',
+		);
+		// phpcs:enable
 		?>
 		<div class="wrap flexo-admin">
 			<h1><?php esc_html_e( 'Add booking', 'flexo-booking' ); ?></h1>
@@ -281,9 +417,9 @@ class Flexo_Booking_Admin {
 						<th scope="row"><label for="fb-status"><?php esc_html_e( 'Type', 'flexo-booking' ); ?></label></th>
 						<td>
 							<select id="fb-status" name="status">
-								<option value="confirmed"><?php esc_html_e( 'Confirmed booking', 'flexo-booking' ); ?></option>
-								<option value="pending"><?php esc_html_e( 'Pending booking', 'flexo-booking' ); ?></option>
-								<option value="blocked"><?php esc_html_e( 'Block dates (room closed)', 'flexo-booking' ); ?></option>
+								<option value="confirmed" <?php selected( $pre['type'], 'confirmed' ); ?>><?php esc_html_e( 'Confirmed booking', 'flexo-booking' ); ?></option>
+								<option value="pending" <?php selected( $pre['type'], 'pending' ); ?>><?php esc_html_e( 'Pending booking', 'flexo-booking' ); ?></option>
+								<option value="blocked" <?php selected( $pre['type'], 'blocked' ); ?>><?php esc_html_e( 'Block dates (room closed)', 'flexo-booking' ); ?></option>
 							</select>
 						</td>
 					</tr>
@@ -292,7 +428,7 @@ class Flexo_Booking_Admin {
 						<td>
 							<select id="fb-room" name="room" required>
 								<?php foreach ( $rooms as $room ) : ?>
-									<option value="<?php echo esc_attr( $room->ID ); ?>"><?php echo esc_html( get_the_title( $room ) ); ?></option>
+									<option value="<?php echo esc_attr( $room->ID ); ?>" <?php selected( $pre['room'], $room->ID ); ?>><?php echo esc_html( get_the_title( $room ) ); ?></option>
 								<?php endforeach; ?>
 							</select>
 						</td>
@@ -300,9 +436,9 @@ class Flexo_Booking_Admin {
 					<tr>
 						<th scope="row"><?php esc_html_e( 'Dates', 'flexo-booking' ); ?></th>
 						<td>
-							<input type="date" name="check_in" required aria-label="<?php esc_attr_e( 'Check-in', 'flexo-booking' ); ?>">
+							<input type="date" name="check_in" required value="<?php echo esc_attr( $pre['check_in'] ); ?>" aria-label="<?php esc_attr_e( 'Check-in', 'flexo-booking' ); ?>">
 							→
-							<input type="date" name="check_out" required aria-label="<?php esc_attr_e( 'Check-out', 'flexo-booking' ); ?>">
+							<input type="date" name="check_out" required value="<?php echo esc_attr( $pre['check_out'] ); ?>" aria-label="<?php esc_attr_e( 'Check-out', 'flexo-booking' ); ?>">
 						</td>
 					</tr>
 					<tr>

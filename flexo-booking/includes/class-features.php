@@ -62,9 +62,9 @@ class Flexo_Booking_Features {
 			),
 			'calendar_sync'    => array(
 				'label'       => __( 'Calendar sync', 'flexo-booking' ),
-				'description' => __( 'Keep availability in sync with Booking.com, Airbnb and others (iCal).', 'flexo-booking' ),
+				'description' => __( 'Keep availability in sync with Booking.com, Airbnb and others (iCal). Switching it off stops syncing and releases dates blocked by external calendars; your connections are kept.', 'flexo-booking' ),
 				'group'       => 'booking',
-				'ready'       => false,
+				'ready'       => true,
 			),
 			'rate_plans'       => array(
 				'label'       => __( 'Rate plans', 'flexo-booking' ),

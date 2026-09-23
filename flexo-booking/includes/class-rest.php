@@ -13,6 +13,7 @@ class Flexo_Booking_Rest {
 
 	public static function init() {
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
+		add_filter( 'rest_pre_serve_request', array( __CLASS__, 'serve_ical' ), 10, 4 );
 	}
 
 	public static function register_routes() {
@@ -48,6 +49,22 @@ class Flexo_Booking_Rest {
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( __CLASS__, 'rooms' ),
 				'permission_callback' => '__return_true',
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE_V1,
+			'/ical/(?P<room>\d+)(?:\.ics)?',
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( __CLASS__, 'ical' ),
+				'permission_callback' => '__return_true',
+				'args'                => array(
+					'token' => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+				),
 			)
 		);
 
@@ -104,6 +121,43 @@ class Flexo_Booking_Rest {
 				),
 			)
 		);
+	}
+
+	/**
+	 * iCal export feed of one room: /ical/{room}.ics?token=… (Calendar sync).
+	 */
+	public static function ical( WP_REST_Request $request ) {
+		if ( ! Flexo_Booking_ICal::enabled() ) {
+			return new WP_Error( 'flexo_ical_disabled', __( 'Calendar sync is switched off on this website.', 'flexo-booking' ), array( 'status' => 404 ) );
+		}
+		$room_id = (int) $request['room'];
+		$room    = get_post( $room_id );
+		if ( ! $room || Flexo_Booking_Rooms::POST_TYPE !== $room->post_type ) {
+			return new WP_Error( 'flexo_ical_room', __( 'Calendar not found.', 'flexo-booking' ), array( 'status' => 404 ) );
+		}
+		if ( ! Flexo_Booking_ICal::check_token( $room_id, (string) $request['token'] ) ) {
+			return new WP_Error( 'flexo_ical_token', __( 'This calendar link is not valid. It may have been reset – copy the new link from Bookings → Calendar Sync.', 'flexo-booking' ), array( 'status' => 403 ) );
+		}
+		$response = new WP_REST_Response( Flexo_Booking_ICal::export_feed( $room_id ), 200 );
+		$response->header( 'Content-Type', 'text/calendar; charset=utf-8' );
+		$response->header( 'Content-Disposition', 'inline; filename="' . sanitize_file_name( $room->post_name ) . '.ics"' );
+		$response->header( 'Cache-Control', 'no-cache, must-revalidate, max-age=0' );
+		$response->header( 'X-Robots-Tag', 'noindex' );
+		return $response;
+	}
+
+	/**
+	 * Sends the iCal feed as plain text instead of JSON.
+	 */
+	public static function serve_ical( $served, $result, $request, $server ) {
+		if ( $served || ! $request instanceof WP_REST_Request || ! preg_match( '#^/' . preg_quote( self::NAMESPACE_V1, '#' ) . '/ical/\d+#', $request->get_route() ) ) {
+			return $served;
+		}
+		if ( $result instanceof WP_REST_Response && 200 === $result->get_status() && is_string( $result->get_data() ) ) {
+			echo $result->get_data(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- iCal text, built and escaped in export_feed().
+			return true;
+		}
+		return $served;
 	}
 
 	public static function rooms() {

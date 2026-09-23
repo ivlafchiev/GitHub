@@ -40,31 +40,57 @@ class Flexo_Booking_Inventory {
 	 * only one unit.
 	 */
 	public static function units_available( array $room, $check_in, $check_out, $exclude_id = 0 ) {
-		global $wpdb;
-
 		if ( $room['units'] < 1 ) {
 			return 0;
 		}
+		$usage = self::nightly_usage( $room, $check_in, $check_out, $exclude_id );
+		return max( 0, $room['units'] - ( $usage ? max( $usage ) : 0 ) );
+	}
+
+	/**
+	 * Units taken on each night of a stay.
+	 *
+	 * Rule for bookings imported from external calendars (while Calendar sync
+	 * is on): each imported booking takes one unit, except when its calendar
+	 * is linked to a specific unit ("room no. 2"). Bookings from calendars
+	 * linked to the same unit take that unit only once per night, so the same
+	 * reservation appearing in two feeds (e.g. Airbnb repeating Booking.com)
+	 * is not counted twice.
+	 *
+	 * @return int[] Y-m-d => units taken.
+	 */
+	public static function nightly_usage( array $room, $check_in, $check_out, $exclude_id = 0 ) {
+		global $wpdb;
 
 		$table    = Flexo_Booking_Install::table();
 		$occupied = self::occupying_sql();
 		$params   = array_merge( array( $room['id'], $check_out, $check_in, (int) $exclude_id ), $occupied['params'] );
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name and placeholders are built above.
-		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT check_in, check_out FROM {$table} WHERE room_id = %d AND check_in < %s AND check_out > %s AND id <> %d AND {$occupied['sql']}", $params ) );
+		$rows   = $wpdb->get_results( $wpdb->prepare( "SELECT check_in, check_out FROM {$table} WHERE room_id = %d AND check_in < %s AND check_out > %s AND id <> %d AND {$occupied['sql']}", $params ) );
+		$events = Flexo_Booking_ICal::enabled() ? Flexo_Booking_ICal::events_for_room( $room['id'], $check_in, $check_out ) : array();
 
-		$max_used = 0;
+		$usage = array();
 		foreach ( Flexo_Booking_Dates::nights( $check_in, $check_out ) as $date ) {
-			$used = 0;
+			$used  = 0;
+			$units = array();
 			foreach ( $rows as $row ) {
 				if ( $row->check_in <= $date && $row->check_out > $date ) {
 					++$used;
 				}
 			}
-			$max_used = max( $max_used, $used );
+			foreach ( $events as $event ) {
+				if ( $event['date_from'] <= $date && $event['date_to'] > $date ) {
+					if ( $event['unit'] > 0 ) {
+						$units[ $event['unit'] ] = true;
+					} else {
+						++$used;
+					}
+				}
+			}
+			$usage[ $date ] = $used + count( $units );
 		}
-
-		return max( 0, $room['units'] - $max_used );
+		return $usage;
 	}
 
 	/**

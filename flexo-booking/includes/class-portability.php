@@ -31,7 +31,7 @@ class Flexo_Booking_Portability {
 
 		$data = array(
 			'format'      => self::FORMAT,
-			'schema'      => 2,
+			'schema'      => 3,
 			'version'     => FLEXO_BOOKING_VERSION,
 			'exported_at' => gmdate( 'c' ),
 			'source'      => home_url(),
@@ -57,6 +57,18 @@ class Flexo_Booking_Portability {
 				'image'      => get_the_post_thumbnail_url( $post, 'full' ),
 				'meta'       => $meta,
 				'seasons'    => array(),
+				// Connected Booking.com/Airbnb calendars. Export links (tokens)
+				// are never exported – each site creates its own.
+				'calendars'  => array_map(
+					static function ( $calendar ) {
+						return array(
+							'name' => $calendar['name'],
+							'url'  => $calendar['import_url'],
+							'unit' => $calendar['unit'],
+						);
+					},
+					Flexo_Booking_ICal::calendars( $post->ID )
+				),
 			);
 			foreach ( Flexo_Booking_Seasons::for_room( $post->ID ) as $season ) {
 				$data['rooms'][ count( $data['rooms'] ) - 1 ]['seasons'][] = array(
@@ -123,6 +135,9 @@ class Flexo_Booking_Portability {
 				'bookings' => false,
 				'seasons'  => true,
 				'closures' => true,
+				// Off by default: a template's Booking.com/Airbnb links belong
+				// to the template, not to the client's hotel.
+				'calendars' => false,
 			)
 		);
 		$stats   = array(
@@ -133,6 +148,7 @@ class Flexo_Booking_Portability {
 			'bookings'      => 0,
 			'seasons'       => 0,
 			'closures'      => 0,
+			'calendars'     => 0,
 		);
 
 		if ( $options['settings'] && ! empty( $data['settings'] ) && is_array( $data['settings'] ) ) {
@@ -198,6 +214,14 @@ class Flexo_Booking_Portability {
 				if ( $options['images'] && ! empty( $room['image'] ) && ! has_post_thumbnail( $post_id ) ) {
 					if ( self::sideload_image( $room['image'], $post_id ) ) {
 						++$stats['images'];
+					}
+				}
+
+				if ( $options['calendars'] && ! empty( $room['calendars'] ) && is_array( $room['calendars'] ) ) {
+					foreach ( $room['calendars'] as $calendar ) {
+						if ( is_array( $calendar ) && ! empty( $calendar['url'] ) && ! is_wp_error( Flexo_Booking_ICal::add_calendar( $post_id, isset( $calendar['name'] ) ? $calendar['name'] : '', $calendar['url'], isset( $calendar['unit'] ) ? (int) $calendar['unit'] : 0 ) ) ) {
+							++$stats['calendars'];
+						}
 					}
 				}
 
@@ -364,6 +388,7 @@ class Flexo_Booking_Portability {
 				// Seasons are always imported when the feature is hidden, so no data is lost.
 				'seasons'  => Flexo_Booking_Features::is_available( 'seasonal_pricing' ) ? ! empty( $_POST['import_seasons'] ) : true,
 				'closures' => ! empty( $_POST['import_closures'] ),
+				'calendars' => ! empty( $_POST['import_calendars'] ),
 				'bookings' => ! empty( $_POST['import_bookings'] ),
 			)
 		);
@@ -446,6 +471,9 @@ class Flexo_Booking_Portability {
 						<p><label><input type="checkbox" name="import_seasons" value="1" checked> <?php esc_html_e( 'Import seasonal prices (replaces the seasons of the imported rooms)', 'flexo-booking' ); ?></label></p>
 					<?php endif; ?>
 					<p><label><input type="checkbox" name="import_closures" value="1" checked> <?php esc_html_e( 'Import closed dates', 'flexo-booking' ); ?></label></p>
+					<?php if ( Flexo_Booking_Features::is_available( 'calendar_sync' ) ) : ?>
+						<p><label><input type="checkbox" name="import_calendars" value="1"> <?php esc_html_e( 'Import calendar connections (Booking.com, Airbnb… links) – only when moving the same hotel, never from a template. Each room gets a new export link here.', 'flexo-booking' ); ?></label></p>
+					<?php endif; ?>
 					<p><label><input type="checkbox" name="import_bookings" value="1"> <?php esc_html_e( 'Import bookings contained in the file', 'flexo-booking' ); ?></label></p>
 					<?php submit_button( __( 'Import', 'flexo-booking' ), 'primary', 'submit', false ); ?>
 				</form>
@@ -506,6 +534,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * [--skip-closures]
 		 * : Don't import closed dates.
 		 *
+		 * [--calendars]
+		 * : Import calendar connections (only when moving the same hotel).
+		 *
 		 * [--bookings]
 		 * : Import bookings contained in the file.
 		 *
@@ -530,13 +561,14 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					'images'   => ! empty( $assoc_args['images'] ),
 					'seasons'  => empty( $assoc_args['skip-seasons'] ),
 					'closures' => empty( $assoc_args['skip-closures'] ),
+					'calendars' => ! empty( $assoc_args['calendars'] ),
 					'bookings' => ! empty( $assoc_args['bookings'] ),
 				)
 			);
 			if ( is_wp_error( $result ) ) {
 				WP_CLI::error( $result->get_error_message() );
 			}
-			WP_CLI::success( sprintf( 'Rooms created: %d, updated: %d, seasons: %d, closed periods: %d, images: %d, bookings: %d, settings: %s', $result['rooms_created'], $result['rooms_updated'], $result['seasons'], $result['closures'], $result['images'], $result['bookings'], $result['settings'] ? 'yes' : 'no' ) );
+			WP_CLI::success( sprintf( 'Rooms created: %d, updated: %d, seasons: %d, closed periods: %d, calendars: %d, images: %d, bookings: %d, settings: %s', $result['rooms_created'], $result['rooms_updated'], $result['seasons'], $result['closures'], $result['calendars'], $result['images'], $result['bookings'], $result['settings'] ? 'yes' : 'no' ) );
 		}
 	}
 

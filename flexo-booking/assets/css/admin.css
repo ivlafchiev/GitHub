@@ -176,3 +176,100 @@
 .ui-datepicker .ui-state-disabled span {
 	color: #c3c4c7;
 }
+
+/* Sources and conflicts (Day 2) */
+.flexo-badge--website { background: #e7f0fa; color: #1f3d66; }
+.flexo-badge--staff { background: #efe7f7; color: #4b2a70; }
+.flexo-badge--blocked { background: #dcdcde; color: #1d2327; }
+.flexo-badge--external { background: #dde7f5; color: #1f3d66; }
+.flexo-badge--conflict { background: #fbe9e9; color: #8a1f1f; font-weight: 600; text-decoration: none; }
+
+.flexo-conflicts {
+	margin: 16px 0;
+	padding: 12px 16px;
+	background: #fff;
+	border: 1px solid #d63638;
+	border-left-width: 4px;
+}
+
+.flexo-conflicts h2 {
+	margin-top: 0;
+	color: #8a1f1f;
+}
+
+.flexo-views {
+	margin-bottom: 6px;
+}
+
+.flexo-status--error {
+	background: #f7d7d7;
+	color: #8a1f1f;
+}
+
+/* Calendar Sync screen */
+.flexo-sync .flexo-tools-card {
+	max-width: 1100px;
+}
+
+.flexo-sync-room__head {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	gap: 8px;
+}
+
+.flexo-sync-room h3 {
+	margin: 18px 0 6px;
+	font-size: 14px;
+}
+
+.flexo-copy {
+	display: flex;
+	gap: 6px;
+	flex-wrap: wrap;
+}
+
+.flexo-copy input {
+	flex: 1 1 320px;
+	min-width: 0;
+}
+
+.flexo-sync-error {
+	color: #8a1f1f;
+	max-width: 360px;
+}
+
+.flexo-url {
+	overflow-wrap: anywhere;
+}
+
+.flexo-sync-add {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 8px;
+	margin-top: 12px;
+}
+
+.flexo-sync-add label {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.flexo-sync-add__url {
+	flex: 1 1 280px;
+}
+
+.flexo-inline-form {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+}
+
+.flexo-notice-list {
+	list-style: disc;
+	margin-left: 20px;
+}

@@ -19,7 +19,7 @@ class Flexo_Booking_Migrations {
 
 	const OPTION       = 'flexo_booking_db_version';
 	const ERROR_OPTION = 'flexo_booking_migration_error';
-	const LATEST       = 2;
+	const LATEST       = 3;
 
 	/**
 	 * @return array Version => method name.
@@ -28,6 +28,7 @@ class Flexo_Booking_Migrations {
 		return array(
 			1 => 'migrate_1_initial',
 			2 => 'migrate_2_day1',
+			3 => 'migrate_3_day2',
 		);
 	}
 
@@ -106,6 +107,18 @@ class Flexo_Booking_Migrations {
 		// Seasonal prices stay off until the hotel switches them on.
 		if ( false === get_option( Flexo_Booking_Features::ENABLED_OPTION ) ) {
 			add_option( Flexo_Booking_Features::ENABLED_OPTION, Flexo_Booking_Features::default_enabled() );
+		}
+		return true;
+	}
+
+	/**
+	 * Day 2 (1.2.0): calendar sync tables.
+	 */
+	private static function migrate_3_day2() {
+		foreach ( array( 'calendars', 'calendar_events' ) as $table ) {
+			if ( ! Flexo_Booking_Schema::table_exists( $table ) ) {
+				return new WP_Error( 'flexo_migration', $table . ' table missing' );
+			}
 		}
 		return true;
 	}

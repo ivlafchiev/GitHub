@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Flexo Booking 1.1.0\n"
+"Project-Id-Version: Flexo Booking 1.2.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/flexo-booking\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-23T15:27:41+00:00\n"
+"POT-Creation-Date: 2026-09-23T17:17:38+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: flexo-booking\n"
@@ -36,6 +36,391 @@ msgstr ""
 msgid "FlexoHotels"
 msgstr ""
 
+#: includes/admin/class-calendar-admin.php:25
+#: includes/admin/class-calendar-admin.php:456
+msgid "Booking calendar"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:25
+#: includes/admin/class-calendar-admin.php:324
+#: includes/admin/class-sync-admin.php:213
+#: includes/class-admin.php:151
+msgid "Calendar"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:64
+msgid "New booking"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:65
+msgid "Block dates"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:66
+#: includes/admin/class-calendar-admin.php:590
+msgid "Close"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:67
+#: includes/admin/class-calendar-admin.php:375
+#: includes/admin/class-calendar-admin.php:376
+#: includes/admin/class-calendar-admin.php:536
+msgid "Closed"
+msgstr ""
+
+#. translators: %d: nights
+#. translators: %d: number of nights
+#: includes/admin/class-calendar-admin.php:219
+#: includes/admin/class-seasons-admin.php:206
+#: includes/class-admin.php:261
+#, php-format
+msgid "%d night"
+msgid_plural "%d nights"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/class-calendar-admin.php:230
+msgid "Blocked"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:231
+msgid "Blocked dates (by staff)"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:241
+msgid "Booking added by staff"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:241
+msgid "Website booking"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:248
+#: includes/admin/class-calendar-admin.php:323
+#: includes/class-admin.php:417
+msgid "Type"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:249
+#: includes/class-admin.php:217
+#: includes/class-emails.php:107
+msgid "Reference"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:250
+#: includes/admin/class-sync-admin.php:218
+#: includes/class-admin.php:197
+#: includes/class-admin.php:223
+#: includes/class-admin.php:362
+#: includes/class-emails.php:117
+#: includes/class-features.php:445
+msgid "Status"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:253
+#: includes/class-admin.php:218
+#: includes/class-emails.php:59
+msgid "Guest"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:255
+#: includes/class-admin.php:456
+#: includes/class-admin.php:469
+#: includes/class-emails.php:61
+#: templates/booking-form.php:86
+msgid "Email"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:258
+#: includes/class-admin.php:460
+#: includes/class-emails.php:63
+#: templates/booking-form.php:90
+msgid "Phone"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:261
+#: includes/admin/class-calendar-admin.php:325
+#: includes/admin/class-calendar-admin.php:502
+#: includes/admin/class-seasons-admin.php:159
+#: includes/class-admin.php:150
+#: includes/class-admin.php:203
+#: includes/class-admin.php:219
+#: includes/class-admin.php:359
+#: includes/class-admin.php:427
+#: includes/class-emails.php:108
+#: includes/class-rooms.php:39
+#: includes/elementor/class-booking-widget.php:79
+#: includes/elementor/class-room-link-tag.php:41
+msgid "Room"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:262
+#: includes/admin/class-calendar-admin.php:326
+msgid "Arrival"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:263
+#: includes/admin/class-calendar-admin.php:327
+msgid "Departure"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:265
+#: includes/class-admin.php:221
+#: includes/class-admin.php:445
+#: includes/class-emails.php:112
+msgid "Guests"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:266
+#: includes/class-admin.php:222
+#: includes/class-emails.php:113
+#: includes/class-pricing.php:301
+msgid "Total"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:269
+#: includes/class-admin.php:464
+#: includes/class-emails.php:67
+msgid "Notes"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:272
+msgid "Warning"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:272
+msgid "Overlaps a booking from an external calendar – possible double booking."
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:278
+#: includes/class-admin.php:281
+msgid "Confirm"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:285
+msgid "Cancel booking"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:287
+#: includes/class-admin.php:286
+msgid "Cancel this booking? The guest will be notified by email."
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:292
+msgid "Remove block"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:294
+msgid "Remove this block? The dates become available again."
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:298
+msgid "Show in bookings list"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:312
+#: includes/class-admin.php:321
+msgid "Blocked dates"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:320
+msgid "External calendar"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:323
+msgid "Booking from an external calendar (synced)"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:330
+#: includes/class-admin.php:361
+msgid "Text from the calendar"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:334
+#: includes/admin/class-calendar-admin.php:357
+#: includes/class-admin.php:238
+#: includes/class-admin.php:377
+msgid "Conflict"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:334
+msgid "(marked as reviewed)"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:337
+#: includes/class-admin.php:165
+msgid "Mark as reviewed"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:343
+msgid "Note"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:343
+msgid "Details and changes are managed on the booking website. It disappears here when it is cancelled there."
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:345
+#: includes/admin/class-sync-admin.php:27
+#: includes/admin/class-sync-admin.php:135
+msgid "Calendar Sync"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:357
+msgid "External booking"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:378
+#: includes/admin/class-calendar-admin.php:581
+msgid "Closed period"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:380
+#: includes/admin/class-closures-admin.php:83
+#: includes/admin/class-closures-admin.php:117
+msgid "Applies to"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:380
+#: includes/admin/class-closures-admin.php:96
+#: includes/admin/class-closures-admin.php:120
+msgid "Whole property"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:381
+#: includes/admin/class-closures-admin.php:84
+#: includes/admin/class-closures-admin.php:130
+#: includes/admin/class-seasons-admin.php:184
+#: includes/admin/class-seasons-admin.php:234
+msgid "From"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:382
+#: includes/admin/class-closures-admin.php:85
+#: includes/admin/class-closures-admin.php:131
+#: includes/admin/class-seasons-admin.php:185
+#: includes/admin/class-seasons-admin.php:235
+msgid "To (last night)"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:383
+msgid "Guests see"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:387
+msgid "Edit closed dates"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:457
+#: includes/class-admin.php:41
+#: includes/class-admin.php:128
+#: includes/class-admin.php:406
+msgid "Add booking"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:460
+#: includes/admin/class-calendar-admin.php:486
+msgid "Today"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:463
+msgid "Arriving today"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:464
+msgid "Leaving today"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:465
+msgid "Staying tonight"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:478
+msgid "Nobody"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:485
+msgid "Previous month"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:487
+msgid "Next month"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:492
+msgid "Show cancelled"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:497
+#: includes/admin/class-seasons-admin.php:107
+#: includes/admin/class-sync-admin.php:176
+#: includes/class-admin.php:410
+msgid "Add your first room"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:499
+msgid "Booking calendar – scroll sideways to see all days"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:523
+msgid "1 room"
+msgstr ""
+
+#. translators: %d: identical rooms
+#: includes/admin/class-calendar-admin.php:525
+#, php-format
+msgid "%d rooms"
+msgstr ""
+
+#. translators: 1: free units, 2: total units
+#: includes/admin/class-calendar-admin.php:538
+#, php-format
+msgid "%1$d of %2$d free"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:572
+msgid "Legend"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:573
+#: includes/class-bookings.php:21
+msgid "Confirmed"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:574
+msgid "Pending (waiting for you)"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:575
+#: includes/class-admin.php:324
+msgid "Added by staff"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:576
+msgid "Blocked by staff"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:578
+msgid "From an external calendar (Booking.com, Airbnb…)"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:579
+msgid "Conflict – possible double booking"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:583
+#: includes/class-bookings.php:22
+msgid "Cancelled"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:585
+msgid "Fully booked day"
+msgstr ""
+
+#: includes/admin/class-calendar-admin.php:586
+msgid "Click a booking for details, or an empty day to add a booking or block dates."
+msgstr ""
+
 #: includes/admin/class-closures-admin.php:23
 #: includes/admin/class-closures-admin.php:76
 msgid "Closed dates"
@@ -49,25 +434,6 @@ msgstr ""
 msgid "Close the whole property (e.g. for the winter) or a single room type. Guests cannot book nights inside a closed period and see a clear message instead. To take just one room out of service, use Add booking → Block dates."
 msgstr ""
 
-#: includes/admin/class-closures-admin.php:83
-#: includes/admin/class-closures-admin.php:117
-msgid "Applies to"
-msgstr ""
-
-#: includes/admin/class-closures-admin.php:84
-#: includes/admin/class-closures-admin.php:130
-#: includes/admin/class-seasons-admin.php:184
-#: includes/admin/class-seasons-admin.php:234
-msgid "From"
-msgstr ""
-
-#: includes/admin/class-closures-admin.php:85
-#: includes/admin/class-closures-admin.php:131
-#: includes/admin/class-seasons-admin.php:185
-#: includes/admin/class-seasons-admin.php:235
-msgid "To (last night)"
-msgstr ""
-
 #: includes/admin/class-closures-admin.php:86
 #: includes/admin/class-closures-admin.php:136
 msgid "Message for guests"
@@ -75,17 +441,14 @@ msgstr ""
 
 #: includes/admin/class-closures-admin.php:87
 #: includes/admin/class-seasons-admin.php:189
-#: includes/class-admin.php:170
+#: includes/admin/class-sync-admin.php:220
+#: includes/class-admin.php:154
+#: includes/class-admin.php:224
 msgid "Actions"
 msgstr ""
 
 #: includes/admin/class-closures-admin.php:92
 msgid "No closed dates. The property is open all year."
-msgstr ""
-
-#: includes/admin/class-closures-admin.php:96
-#: includes/admin/class-closures-admin.php:120
-msgid "Whole property"
 msgstr ""
 
 #: includes/admin/class-closures-admin.php:101
@@ -99,7 +462,7 @@ msgstr ""
 
 #: includes/admin/class-closures-admin.php:102
 #: includes/admin/class-seasons-admin.php:212
-#: includes/class-admin.php:235
+#: includes/class-admin.php:288
 msgid "Delete"
 msgstr ""
 
@@ -113,7 +476,7 @@ msgstr ""
 
 #: includes/admin/class-closures-admin.php:128
 #: includes/admin/class-seasons-admin.php:232
-#: includes/class-admin.php:301
+#: includes/class-admin.php:437
 msgid "Dates"
 msgstr ""
 
@@ -139,7 +502,7 @@ msgstr ""
 
 #: includes/admin/class-closures-admin.php:145
 #: includes/admin/class-seasons-admin.php:260
-#: includes/class-admin.php:233
+#: includes/class-admin.php:286
 msgid "Cancel"
 msgstr ""
 
@@ -183,22 +546,6 @@ msgstr ""
 
 #: includes/admin/class-seasons-admin.php:103
 msgid "Set different prices for high and low season. Each night is priced by the season it falls in; nights outside any season use the room's normal price."
-msgstr ""
-
-#: includes/admin/class-seasons-admin.php:107
-#: includes/class-admin.php:274
-msgid "Add your first room"
-msgstr ""
-
-#: includes/admin/class-seasons-admin.php:159
-#: includes/class-admin.php:149
-#: includes/class-admin.php:165
-#: includes/class-admin.php:291
-#: includes/class-emails.php:108
-#: includes/class-rooms.php:39
-#: includes/elementor/class-booking-widget.php:79
-#: includes/elementor/class-room-link-tag.php:41
-msgid "Room"
 msgstr ""
 
 #: includes/admin/class-seasons-admin.php:165
@@ -245,16 +592,6 @@ msgstr ""
 msgid "No seasons yet – this room uses its normal price all year."
 msgstr ""
 
-#. translators: %d: nights
-#. translators: %d: number of nights
-#: includes/admin/class-seasons-admin.php:206
-#: includes/class-admin.php:208
-#, php-format
-msgid "%d night"
-msgid_plural "%d nights"
-msgstr[0] ""
-msgstr[1] ""
-
 #: includes/admin/class-seasons-admin.php:212
 msgid "Delete this season?"
 msgstr ""
@@ -268,6 +605,7 @@ msgid "Add a season"
 msgstr ""
 
 #: includes/admin/class-seasons-admin.php:228
+#: includes/admin/class-sync-admin.php:264
 msgid "Name"
 msgstr ""
 
@@ -289,7 +627,7 @@ msgid "Optional. Friday and Saturday nights in this season. Leave empty to use t
 msgstr ""
 
 #: includes/admin/class-seasons-admin.php:253
-#: includes/class-settings.php:259
+#: includes/class-settings.php:263
 msgid "nights"
 msgstr ""
 
@@ -354,24 +692,244 @@ msgstr ""
 msgid "Save the room first, then add its seasons."
 msgstr ""
 
+#: includes/admin/class-sync-admin.php:39
+msgid "Copied!"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:40
+msgid "Reset this link? Booking.com, Airbnb and other sites using the old link will stop receiving updates until you paste the new link there."
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:69
+msgid "You are not allowed to manage calendar sync."
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:83
+msgid "never"
+msgstr ""
+
+#. translators: %s: time difference, e.g. "5 mins"
+#: includes/admin/class-sync-admin.php:86
+#, php-format
+msgid "%s ago"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:99
+msgid "Calendar sync is failing"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:99
+msgid "bookings from these calendars may be missing, so double bookings are possible:"
+msgstr ""
+
+#. translators: %d: number of failed attempts
+#: includes/admin/class-sync-admin.php:107
+#, php-format
+msgid "(failed %d time in a row)"
+msgid_plural "(failed %d times in a row)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/class-sync-admin.php:110
+msgid "Open Calendar Sync"
+msgstr ""
+
+#. translators: %d: number of conflicts
+#: includes/admin/class-sync-admin.php:118
+#, php-format
+msgid "%d possible double booking"
+msgid_plural "%d possible double bookings"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/class-sync-admin.php:119
+msgid "from external calendars needs your attention."
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:121
+msgid "Review"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:139
+msgid "How it works"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:141
+msgid "Copy each room's link below into Booking.com, Airbnb or other sites, so they block dates booked on this website."
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:142
+msgid "Paste the calendar (iCal) link from those sites under \"Calendars imported into this room\", so their bookings block dates here."
+msgstr ""
+
+#. translators: %d: minutes
+#: includes/admin/class-sync-admin.php:148
+#, php-format
+msgid "Good to know: calendar links are not instant. This website checks the other calendars every %d minutes, and Booking.com or Airbnb read this website's link on their own schedule (often every few hours). A guest could book the same dates in between. If you also sell on Booking.com or Airbnb, we recommend \"Booking requests\" (Settings → Features), so you confirm each website booking yourself."
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:156
+msgid "Check other calendars"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:162
+msgid "Save"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:163
+msgid "Sync all now"
+msgstr ""
+
+#. translators: %s: time until the next automatic check
+#: includes/admin/class-sync-admin.php:168
+#, php-format
+msgid "Next automatic check in %s."
+msgstr ""
+
+#. translators: %d: units
+#: includes/admin/class-sync-admin.php:190
+#, php-format
+msgid "%d rooms of this type"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:194
+msgid "Sync this room now"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:198
+msgid "This room's calendar link (give it to Booking.com, Airbnb…)"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:200
+msgid "Calendar link"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:201
+msgid "Copy link"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:202
+msgid "Reset link"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:205
+msgid "Booking.com: Extranet → Rates & Availability → Sync calendars → Import calendar → paste the link. Airbnb: Calendar → Availability → Connect to another website (Import calendar) → paste the link. The link contains only dates – no guest details or prices. Keep it private; \"Reset link\" makes the old one stop working."
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:208
+msgid "Calendars imported into this room"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:215
+#: includes/admin/class-sync-admin.php:271
+msgid "Counts as"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:217
+msgid "Last sync"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:219
 #: includes/class-admin.php:39
 #: includes/class-admin.php:127
 #: includes/class-features.php:141
 msgid "Bookings"
 msgstr ""
 
+#: includes/admin/class-sync-admin.php:236
+msgid "Error"
+msgstr ""
+
+#. translators: %d: attempts
+#: includes/admin/class-sync-admin.php:239
+#, php-format
+msgid "Failed %d time in a row"
+msgid_plural "Failed %d times in a row"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/class-sync-admin.php:242
+msgid "OK"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:244
+msgid "Not synced yet"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:249
+msgid "Sync now"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:250
+msgid "Remove this calendar? Dates blocked by its bookings become available again on this website."
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:250
+msgid "Remove"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:257
+msgid "No calendars connected yet."
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:265
+msgid "e.g. Booking.com"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:267
+msgid "Calendar link (iCal)"
+msgstr ""
+
+#. translators: %d: room number
+#: includes/admin/class-sync-admin.php:273
+#: includes/admin/class-sync-admin.php:293
+msgid "One room of this type"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:280
+msgid "Add calendar"
+msgstr ""
+
+#: includes/admin/class-sync-admin.php:283
+msgid "\"One room of this type\": each imported booking takes one of the identical rooms. Choose a room number when the calendar belongs to one specific room (e.g. its own Airbnb listing) – bookings from calendars with the same number are then never counted twice."
+msgstr ""
+
+#. translators: %d: room number
+#: includes/admin/class-sync-admin.php:293
+#, php-format
+msgid "Room no. %d"
+msgstr ""
+
+#. translators: 1: imported bookings, 2: new, 3: changed, 4: removed
+#: includes/admin/class-sync-admin.php:307
+#, php-format
+msgid "Synced: %1$d bookings (%2$d new, %3$d changed, %4$d removed)."
+msgstr ""
+
+#. translators: 1: calendars synced, 2: calendars failed
+#: includes/admin/class-sync-admin.php:359
+#, php-format
+msgid "%1$d calendars synced, %2$d failed – see the status column."
+msgstr ""
+
+#. translators: %d: calendars synced
+#: includes/admin/class-sync-admin.php:362
+#, php-format
+msgid "%d calendar synced."
+msgid_plural "%d calendars synced."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/class-sync-admin.php:381
+msgid "New link created. Paste it into Booking.com, Airbnb and the other sites – the old link no longer works."
+msgstr ""
+
 #: includes/class-admin.php:40
 msgid "All bookings"
 msgstr ""
 
-#: includes/class-admin.php:41
-#: includes/class-admin.php:128
-#: includes/class-admin.php:270
-msgid "Add booking"
-msgstr ""
-
 #: includes/class-admin.php:45
-#: includes/class-settings.php:200
+#: includes/class-settings.php:204
 msgid "Booking settings"
 msgstr ""
 
@@ -381,7 +939,7 @@ msgid "Settings"
 msgstr ""
 
 #: includes/class-admin.php:46
-#: includes/class-portability.php:390
+#: includes/class-portability.php:415
 msgid "Import / Export"
 msgstr ""
 
@@ -409,176 +967,155 @@ msgstr ""
 msgid "Add a room"
 msgstr ""
 
-#: includes/class-admin.php:143
-#: includes/class-admin.php:169
-#: includes/class-emails.php:117
-#: includes/class-features.php:445
-msgid "Status"
+#: includes/class-admin.php:146
+msgid "Possible double bookings from external calendars"
 msgstr ""
 
-#: includes/class-admin.php:144
-msgid "All statuses"
+#: includes/class-admin.php:147
+msgid "These bookings came from Booking.com, Airbnb or another connected calendar and don't fit into your availability. Check them, contact the guest or the booking website, then mark them as reviewed."
 msgstr ""
 
-#: includes/class-admin.php:150
-msgid "All rooms"
-msgstr ""
-
-#: includes/class-admin.php:155
-msgid "Current & upcoming only"
-msgstr ""
-
-#: includes/class-admin.php:156
-msgid "Reference, name, email or phone"
-msgstr ""
-
-#: includes/class-admin.php:157
-msgid "Filter"
-msgstr ""
-
-#: includes/class-admin.php:163
-#: includes/class-emails.php:107
-msgid "Reference"
-msgstr ""
-
-#: includes/class-admin.php:164
-#: includes/class-emails.php:59
-msgid "Guest"
-msgstr ""
-
-#: includes/class-admin.php:166
+#: includes/class-admin.php:152
+#: includes/class-admin.php:220
+#: includes/class-admin.php:360
 msgid "Stay"
 msgstr ""
 
-#: includes/class-admin.php:167
-#: includes/class-admin.php:309
-#: includes/class-emails.php:112
-msgid "Guests"
+#: includes/class-admin.php:153
+msgid "Details"
 msgstr ""
 
-#: includes/class-admin.php:168
-#: includes/class-emails.php:113
-#: includes/class-pricing.php:301
-msgid "Total"
+#: includes/class-admin.php:164
+msgid "Show in calendar"
 msgstr ""
 
-#: includes/class-admin.php:175
+#: includes/class-admin.php:180
+msgid "Bookings on this website"
+msgstr ""
+
+#: includes/class-admin.php:181
+msgid "From external calendars"
+msgstr ""
+
+#: includes/class-admin.php:198
+msgid "All statuses"
+msgstr ""
+
+#: includes/class-admin.php:204
+msgid "All rooms"
+msgstr ""
+
+#: includes/class-admin.php:209
+msgid "Current & upcoming only"
+msgstr ""
+
+#: includes/class-admin.php:210
+msgid "Reference, name, email or phone"
+msgstr ""
+
+#: includes/class-admin.php:211
+msgid "Filter"
+msgstr ""
+
+#: includes/class-admin.php:229
 msgid "No bookings found."
 msgstr ""
 
-#: includes/class-admin.php:185
-msgid "added by staff"
-msgstr ""
-
-#: includes/class-admin.php:228
-msgid "Confirm"
-msgstr ""
-
-#: includes/class-admin.php:231
+#: includes/class-admin.php:284
 msgid "Reinstate"
 msgstr ""
 
-#: includes/class-admin.php:233
-msgid "Cancel this booking? The guest will be notified by email."
-msgstr ""
-
-#: includes/class-admin.php:235
+#: includes/class-admin.php:288
 msgid "Permanently delete this booking?"
 msgstr ""
 
-#: includes/class-admin.php:271
+#: includes/class-admin.php:326
+msgid "Website"
+msgstr ""
+
+#: includes/class-admin.php:354
+msgid "Bookings imported from Booking.com, Airbnb and other connected calendars. They block availability here; to change or cancel them, use the booking website – they update here at the next sync."
+msgstr ""
+
+#: includes/class-admin.php:358
+msgid "Source"
+msgstr ""
+
+#: includes/class-admin.php:367
+msgid "No current or upcoming bookings from external calendars."
+msgstr ""
+
+#: includes/class-admin.php:377
+msgid "Conflict (reviewed)"
+msgstr ""
+
+#: includes/class-admin.php:380
+msgid "Blocks availability"
+msgstr ""
+
+#: includes/class-admin.php:407
 msgid "Record a phone, walk-in or other-channel booking, or block dates (e.g. maintenance) so they can’t be booked online."
 msgstr ""
 
-#: includes/class-admin.php:281
-msgid "Type"
-msgstr ""
-
-#: includes/class-admin.php:284
+#: includes/class-admin.php:420
 msgid "Confirmed booking"
 msgstr ""
 
-#: includes/class-admin.php:285
+#: includes/class-admin.php:421
 msgid "Pending booking"
 msgstr ""
 
-#: includes/class-admin.php:286
+#: includes/class-admin.php:422
 msgid "Block dates (room closed)"
 msgstr ""
 
-#: includes/class-admin.php:303
+#: includes/class-admin.php:439
 #: includes/class-emails.php:109
 #: templates/booking-form.php:42
 #: templates/search-bar.php:33
 msgid "Check-in"
 msgstr ""
 
-#: includes/class-admin.php:305
+#: includes/class-admin.php:441
 #: includes/class-emails.php:110
 #: templates/booking-form.php:46
 #: templates/search-bar.php:37
 msgid "Check-out"
 msgstr ""
 
-#: includes/class-admin.php:311
+#: includes/class-admin.php:447
 #: templates/booking-form.php:50
 #: templates/search-bar.php:41
 msgid "Adults"
 msgstr ""
 
-#: includes/class-admin.php:312
+#: includes/class-admin.php:448
 #: templates/booking-form.php:59
 #: templates/search-bar.php:50
 msgid "Children"
 msgstr ""
 
-#: includes/class-admin.php:316
+#: includes/class-admin.php:452
 msgid "Guest name"
 msgstr ""
 
-#: includes/class-admin.php:320
-#: includes/class-admin.php:333
-#: includes/class-emails.php:61
-#: templates/booking-form.php:86
-msgid "Email"
-msgstr ""
-
-#: includes/class-admin.php:324
-#: includes/class-emails.php:63
-#: templates/booking-form.php:90
-msgid "Phone"
-msgstr ""
-
-#: includes/class-admin.php:328
-#: includes/class-emails.php:67
-msgid "Notes"
-msgstr ""
-
-#: includes/class-admin.php:334
+#: includes/class-admin.php:470
 msgid "Send the confirmation email to the guest"
 msgstr ""
 
-#: includes/class-admin.php:338
+#: includes/class-admin.php:474
 msgid "Save booking"
 msgstr ""
 
-#: includes/class-admin.php:355
-#: includes/class-admin.php:372
-#: includes/class-admin.php:382
-#: includes/class-admin.php:411
+#: includes/class-admin.php:491
+#: includes/class-admin.php:508
+#: includes/class-admin.php:518
+#: includes/class-admin.php:547
 msgid "You are not allowed to manage bookings."
 msgstr ""
 
 #: includes/class-bookings.php:20
 msgid "Pending"
-msgstr ""
-
-#: includes/class-bookings.php:21
-msgid "Confirmed"
-msgstr ""
-
-#: includes/class-bookings.php:22
-msgid "Cancelled"
 msgstr ""
 
 #: includes/class-bookings.php:23
@@ -657,6 +1194,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: includes/class-bookings.php:241
+#: includes/class-ical.php:185
 #: includes/class-pricing.php:47
 #: includes/class-seasons.php:140
 msgid "Please choose a room."
@@ -804,7 +1342,7 @@ msgid "Calendar sync"
 msgstr ""
 
 #: includes/class-features.php:65
-msgid "Keep availability in sync with Booking.com, Airbnb and others (iCal)."
+msgid "Keep availability in sync with Booking.com, Airbnb and others (iCal). Switching it off stops syncing and releases dates blocked by external calendars; your connections are kept."
 msgstr ""
 
 #: includes/class-features.php:70
@@ -1056,15 +1594,141 @@ msgstr ""
 msgid "Check availability"
 msgstr ""
 
-#: includes/class-inventory.php:87
+#: includes/class-ical.php:43
+msgid "Every 15 minutes"
+msgstr ""
+
+#: includes/class-ical.php:44
+msgid "Every 30 minutes"
+msgstr ""
+
+#: includes/class-ical.php:45
+msgid "Every hour"
+msgstr ""
+
+#: includes/class-ical.php:98
+msgid "Unexpected error while reading the calendar."
+msgstr ""
+
+#: includes/class-ical.php:189
+msgid "Please paste the full calendar link, starting with https://"
+msgstr ""
+
+#: includes/class-ical.php:193
+msgid "This calendar is already connected to this room."
+msgstr ""
+
+#: includes/class-ical.php:270
+msgid "The calendar website did not answer in time. It may be temporarily down – we will try again automatically."
+msgstr ""
+
+#: includes/class-ical.php:273
+msgid "The calendar address could not be found. Check the link for typos."
+msgstr ""
+
+#: includes/class-ical.php:276
+msgid "This address cannot be used (it is not a public web address)."
+msgstr ""
+
+#: includes/class-ical.php:279
+msgid "A secure connection to the calendar website failed (certificate problem)."
+msgstr ""
+
+#. translators: %s: technical error message
+#: includes/class-ical.php:282
+#, php-format
+msgid "Could not connect to the calendar website (%s)."
+msgstr ""
+
+#. translators: %d: HTTP status code
+#: includes/class-ical.php:288
+#, php-format
+msgid "The calendar link no longer exists (HTTP %d). It may have been reset on the booking website – copy the export link again."
+msgstr ""
+
+#. translators: %d: HTTP status code
+#: includes/class-ical.php:292
+#, php-format
+msgid "Access to the calendar was refused (HTTP %d). Check that you copied the complete link."
+msgstr ""
+
+#. translators: %d: HTTP status code
+#: includes/class-ical.php:296
+#, php-format
+msgid "The calendar website had a problem (HTTP %d). We will try again automatically."
+msgstr ""
+
+#. translators: %d: HTTP status code
+#: includes/class-ical.php:300
+#, php-format
+msgid "Unexpected answer from the calendar website (HTTP %d)."
+msgstr ""
+
+#: includes/class-ical.php:305
+msgid "The link opened a web page, not a calendar. Copy the iCal / export link (it usually ends in .ics)."
+msgstr ""
+
+#: includes/class-ical.php:467
+msgid "Calendar connection not found."
+msgstr ""
+
+#: includes/class-ical.php:723
+msgid "Overlaps other bookings from external calendars."
+msgstr ""
+
+#. translators: %s: booking references
+#: includes/class-ical.php:726
+#, php-format
+msgid "Overlaps %s."
+msgstr ""
+
+#. translators: %s: booking reference
+#: includes/class-ical.php:730
+#, php-format
+msgid "Same dates as %s – the other website may be repeating your own booking back."
+msgstr ""
+
+#: includes/class-ical.php:739
+msgid "A booking imported from an external calendar does not fit into your availability. Please check it as soon as possible."
+msgstr ""
+
+#. translators: 1: room name, 2: number of rooms of this type
+#: includes/class-ical.php:742
+#, php-format
+msgid "Room: %1$s (%2$d of this type)"
+msgstr ""
+
+#. translators: %s: calendar name
+#: includes/class-ical.php:748
+#, php-format
+msgid "Calendar: %s"
+msgstr ""
+
+#. translators: 1: arrival, 2: departure
+#: includes/class-ical.php:750
+#, php-format
+msgid "Dates: %1$s – %2$s"
+msgstr ""
+
+#: includes/class-ical.php:754
+msgid "What to do: compare the bookings, then contact the guest or the booking website to resolve the double booking. When it is handled, click \"Mark as reviewed\" in Bookings → Calendar."
+msgstr ""
+
+#. translators: 1: room name, 2: arrival date
+#: includes/class-ical.php:758
+#, php-format
+msgid "Possible double booking: %1$s from %2$s"
+msgstr ""
+
+#: includes/class-inventory.php:113
 msgid "We are processing another booking for this room. Please try again in a moment."
 msgstr ""
 
-#: includes/class-migrations.php:120
+#: includes/class-migrations.php:133
 msgid "Flexo Booking:"
 msgstr ""
 
-#: includes/class-migrations.php:121
+#: includes/class-migrations.php:134
 msgid "the booking database update did not finish and will be retried automatically. If this message stays, please contact FlexoHotels support."
 msgstr ""
 
@@ -1088,100 +1752,104 @@ msgstr ""
 msgid "After, no space (120.00€)"
 msgstr ""
 
-#: includes/class-portability.php:114
+#: includes/class-portability.php:126
 msgid "This is not a Flexo Booking export file."
 msgstr ""
 
-#: includes/class-portability.php:323
+#: includes/class-portability.php:347
 msgid "You are not allowed to export booking data."
 msgstr ""
 
-#: includes/class-portability.php:340
+#: includes/class-portability.php:364
 msgid "You are not allowed to import booking data."
 msgstr ""
 
-#: includes/class-portability.php:348
+#: includes/class-portability.php:372
 msgid "Please choose a valid export file (max 5 MB)."
 msgstr ""
 
-#: includes/class-portability.php:354
+#: includes/class-portability.php:378
 msgid "The file could not be read."
 msgstr ""
 
-#: includes/class-portability.php:391
+#: includes/class-portability.php:416
 msgid "Copy the booking setup (settings and rooms) from one site to another – for example from a template to a new client site built from it."
 msgstr ""
 
 #. translators: 1: rooms created, 2: rooms updated, 3: images, 4: bookings
-#: includes/class-portability.php:401
+#: includes/class-portability.php:426
 #, php-format
 msgid "Import complete: %1$d rooms created, %2$d rooms updated, %3$d images downloaded, %4$d bookings imported."
 msgstr ""
 
 #. translators: 1: seasons, 2: closed periods
-#: includes/class-portability.php:411
+#: includes/class-portability.php:436
 #, php-format
 msgid "%1$d seasons and %2$d closed periods imported."
 msgstr ""
 
-#: includes/class-portability.php:418
+#: includes/class-portability.php:443
 msgid "Settings were updated."
 msgstr ""
 
-#: includes/class-portability.php:425
+#: includes/class-portability.php:450
 msgid "Export"
 msgstr ""
 
-#: includes/class-portability.php:426
+#: includes/class-portability.php:451
 msgid "Download a JSON file with all booking settings and rooms."
 msgstr ""
 
-#: includes/class-portability.php:430
+#: includes/class-portability.php:455
 msgid "Also include bookings (only when moving a live hotel site – never for templates)"
 msgstr ""
 
-#: includes/class-portability.php:431
+#: includes/class-portability.php:456
 msgid "Download export file"
 msgstr ""
 
-#: includes/class-portability.php:436
-#: includes/class-portability.php:450
+#: includes/class-portability.php:461
+#: includes/class-portability.php:478
 msgid "Import"
 msgstr ""
 
-#: includes/class-portability.php:437
+#: includes/class-portability.php:462
 msgid "Rooms with the same slug are updated; new rooms are created. Nothing is deleted."
 msgstr ""
 
-#: includes/class-portability.php:442
+#: includes/class-portability.php:467
 msgid "Import settings"
 msgstr ""
 
-#: includes/class-portability.php:443
+#: includes/class-portability.php:468
 msgid "Import rooms"
 msgstr ""
 
-#: includes/class-portability.php:444
+#: includes/class-portability.php:469
 msgid "Download room images from the source site (it must be online)"
 msgstr ""
 
-#: includes/class-portability.php:446
+#: includes/class-portability.php:471
 msgid "Import seasonal prices (replaces the seasons of the imported rooms)"
 msgstr ""
 
-#: includes/class-portability.php:448
+#: includes/class-portability.php:473
 msgid "Import closed dates"
 msgstr ""
 
-#: includes/class-portability.php:449
+#: includes/class-portability.php:475
+msgid "Import calendar connections (Booking.com, Airbnb… links) – only when moving the same hotel, never from a template. Each room gets a new export link here."
+msgstr ""
+
+#: includes/class-portability.php:477
 msgid "Import bookings contained in the file"
 msgstr ""
 
-#: includes/class-portability.php:455
+#: includes/class-portability.php:483
 msgid "Command line (WP-CLI)"
 msgstr ""
 
-#: includes/class-portability.php:456
+#: includes/class-portability.php:484
 msgid "Useful when setting up many sites at once:"
 msgstr ""
 
@@ -1216,23 +1884,35 @@ msgid_plural "%1$s: %2$d nights × %3$s = %4$s"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-rest.php:143
+#: includes/class-rest.php:131
+msgid "Calendar sync is switched off on this website."
+msgstr ""
+
+#: includes/class-rest.php:136
+msgid "Calendar not found."
+msgstr ""
+
+#: includes/class-rest.php:139
+msgid "This calendar link is not valid. It may have been reset – copy the new link from Bookings → Calendar Sync."
+msgstr ""
+
+#: includes/class-rest.php:197
 msgid "Your booking could not be submitted."
 msgstr ""
 
-#: includes/class-rest.php:147
+#: includes/class-rest.php:201
 msgid "Please accept the terms and conditions."
 msgstr ""
 
-#: includes/class-rest.php:192
+#: includes/class-rest.php:246
 msgid "Your booking is confirmed! A confirmation has been sent to your email."
 msgstr ""
 
-#: includes/class-rest.php:193
+#: includes/class-rest.php:247
 msgid "Thank you! We received your booking request and will confirm it shortly by email."
 msgstr ""
 
-#: includes/class-rest.php:216
+#: includes/class-rest.php:270
 msgid "Too many booking attempts. Please try again later or contact us directly."
 msgstr ""
 
@@ -1377,157 +2057,157 @@ msgid ""
 "{site_name}"
 msgstr ""
 
-#: includes/class-settings.php:183
+#: includes/class-settings.php:187
 msgid "General"
 msgstr ""
 
-#: includes/class-settings.php:184
+#: includes/class-settings.php:188
 msgid "Features"
 msgstr ""
 
-#: includes/class-settings.php:185
+#: includes/class-settings.php:189
 msgid "Emails"
 msgstr ""
 
-#: includes/class-settings.php:208
+#: includes/class-settings.php:212
 msgid "Features saved."
 msgstr ""
 
-#: includes/class-settings.php:225
+#: includes/class-settings.php:229
 msgid "Currency"
 msgstr ""
 
-#: includes/class-settings.php:227
+#: includes/class-settings.php:231
 msgid "Currency code"
 msgstr ""
 
-#: includes/class-settings.php:228
+#: includes/class-settings.php:232
 msgid "Currency symbol"
 msgstr ""
 
-#: includes/class-settings.php:229
+#: includes/class-settings.php:233
 msgid "Symbol position"
 msgstr ""
 
-#: includes/class-settings.php:235
+#: includes/class-settings.php:239
 msgid "Number format"
 msgstr ""
 
-#: includes/class-settings.php:242
+#: includes/class-settings.php:246
 msgid "Decimals"
 msgstr ""
 
 #. translators: %s: example price
-#: includes/class-settings.php:249
+#: includes/class-settings.php:253
 #, php-format
 msgid "Example: %s. Changing the currency does not convert your prices – update room prices yourself."
 msgstr ""
 
-#: includes/class-settings.php:255
+#: includes/class-settings.php:259
 msgid "Stay length"
 msgstr ""
 
-#: includes/class-settings.php:257
+#: includes/class-settings.php:261
 msgid "Minimum"
 msgstr ""
 
-#: includes/class-settings.php:258
+#: includes/class-settings.php:262
 msgid "Maximum"
 msgstr ""
 
-#: includes/class-settings.php:260
+#: includes/class-settings.php:264
 msgid "Rooms and seasons can set their own minimum."
 msgstr ""
 
-#: includes/class-settings.php:264
+#: includes/class-settings.php:268
 msgid "Book up to"
 msgstr ""
 
-#: includes/class-settings.php:265
+#: includes/class-settings.php:269
 msgid "days in advance"
 msgstr ""
 
-#: includes/class-settings.php:268
+#: includes/class-settings.php:272
 msgid "Guest selector limits"
 msgstr ""
 
-#: includes/class-settings.php:270
+#: includes/class-settings.php:274
 msgid "Adults up to"
 msgstr ""
 
-#: includes/class-settings.php:271
+#: includes/class-settings.php:275
 msgid "Children up to"
 msgstr ""
 
-#: includes/class-settings.php:272
+#: includes/class-settings.php:276
 msgid "Set \"Children up to\" to 0 to hide the children field."
 msgstr ""
 
-#: includes/class-settings.php:276
+#: includes/class-settings.php:280
 msgid "Check-in / check-out"
 msgstr ""
 
-#: includes/class-settings.php:278
+#: includes/class-settings.php:282
 msgid "Check-in time"
 msgstr ""
 
-#: includes/class-settings.php:280
+#: includes/class-settings.php:284
 msgid "Check-out time"
 msgstr ""
 
-#: includes/class-settings.php:284
+#: includes/class-settings.php:288
 msgid "Thank-you page"
 msgstr ""
 
-#: includes/class-settings.php:287
+#: includes/class-settings.php:291
 msgid "Optional. Use a path such as /thank-you/ so it keeps working when the site moves to another domain. Leave empty to show the confirmation inside the form."
 msgstr ""
 
-#: includes/class-settings.php:291
+#: includes/class-settings.php:295
 msgid "Terms page"
 msgstr ""
 
-#: includes/class-settings.php:294
+#: includes/class-settings.php:298
 msgid "Optional. When set, guests must accept the terms before booking."
 msgstr ""
 
-#: includes/class-settings.php:298
+#: includes/class-settings.php:302
 msgid "Data removal"
 msgstr ""
 
-#: includes/class-settings.php:301
+#: includes/class-settings.php:305
 msgid "Delete all rooms, bookings, prices and settings when the plugin is deleted"
 msgstr ""
 
-#: includes/class-settings.php:309
+#: includes/class-settings.php:313
 msgid "Placeholders:"
 msgstr ""
 
-#: includes/class-settings.php:314
+#: includes/class-settings.php:318
 msgid "Send new booking alerts to"
 msgstr ""
 
-#: includes/class-settings.php:320
+#: includes/class-settings.php:324
 msgid "Booking request received (to guest)"
 msgstr ""
 
-#: includes/class-settings.php:321
+#: includes/class-settings.php:325
 msgid "Booking confirmed (to guest)"
 msgstr ""
 
-#: includes/class-settings.php:322
+#: includes/class-settings.php:326
 msgid "Booking cancelled (to guest)"
 msgstr ""
 
-#: includes/class-settings.php:329
+#: includes/class-settings.php:333
 msgid "Subject"
 msgstr ""
 
-#: includes/class-settings.php:330
+#: includes/class-settings.php:334
 msgid "Message"
 msgstr ""
 
-#: includes/class-settings.php:335
+#: includes/class-settings.php:339
 msgid "Guest emails are switched off under Settings → Features. Only the new-booking alert above is sent."
 msgstr ""
 

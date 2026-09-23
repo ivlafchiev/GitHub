@@ -42,6 +42,7 @@ class Flexo_Booking_Settings {
 			'email_confirmed_body'     => __( "Hello {guest_name},\n\nYour booking at {site_name} is confirmed. We look forward to welcoming you!\n\n{booking_details}\n\nCheck-in from {check_in_time}, check-out until {check_out_time}.\n\nKind regards,\n{site_name}", 'flexo-booking' ),
 			'email_cancelled_subject'  => __( 'Your booking {reference} has been cancelled', 'flexo-booking' ),
 			'email_cancelled_body'     => __( "Hello {guest_name},\n\nYour booking {reference} at {site_name} has been cancelled. If you have any questions, simply reply to this email.\n\nKind regards,\n{site_name}", 'flexo-booking' ),
+			'ical_interval'            => 30,
 			'delete_data_on_uninstall' => 0,
 		);
 	}
@@ -107,6 +108,9 @@ class Flexo_Booking_Settings {
 					break;
 				case 'max_children':
 					$clean[ $key ] = absint( $value );
+					break;
+				case 'ical_interval':
+					$clean[ $key ] = in_array( (int) $value, array( 15, 30, 60 ), true ) ? (int) $value : 30;
 					break;
 				case 'delete_data_on_uninstall':
 					$clean[ $key ] = empty( $value ) ? 0 : 1;

@@ -9,6 +9,8 @@
  * Date conventions:
  * - bookings: check_in = first night, check_out = departure day (exclusive).
  * - seasons, closures: date_from / date_to = first / last night (inclusive).
+ * - calendar_events: date_from = first night, date_to = departure (exclusive),
+ *   exactly like an iCal all-day DTSTART / DTEND.
  *
  * @package FlexoBooking
  */
@@ -81,6 +83,44 @@ class Flexo_Booking_Schema {
 			created_at datetime NOT NULL,
 			updated_at datetime NOT NULL,
 			PRIMARY KEY  (id),
+			KEY room_dates (room_id,date_from,date_to)
+		) {$charset};";
+
+		$tables['calendars'] = 'CREATE TABLE ' . self::table( 'calendars' ) . " (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			room_id bigint(20) unsigned NOT NULL,
+			name varchar(100) NOT NULL DEFAULT '',
+			import_url text NOT NULL,
+			unit smallint(5) unsigned NOT NULL DEFAULT 0,
+			active tinyint(1) NOT NULL DEFAULT 1,
+			last_synced_at datetime NULL,
+			last_status varchar(20) NOT NULL DEFAULT '',
+			last_error text NULL,
+			fail_count smallint(5) unsigned NOT NULL DEFAULT 0,
+			event_count int(10) unsigned NOT NULL DEFAULT 0,
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			PRIMARY KEY  (id),
+			KEY room (room_id)
+		) {$charset};";
+
+		$tables['calendar_events'] = 'CREATE TABLE ' . self::table( 'calendar_events' ) . " (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			calendar_id bigint(20) unsigned NOT NULL,
+			room_id bigint(20) unsigned NOT NULL,
+			unit smallint(5) unsigned NOT NULL DEFAULT 0,
+			uid varchar(255) NOT NULL,
+			date_from date NOT NULL,
+			date_to date NOT NULL,
+			summary varchar(190) NOT NULL DEFAULT '',
+			conflict tinyint(1) NOT NULL DEFAULT 0,
+			conflict_note varchar(255) NOT NULL DEFAULT '',
+			conflict_notified tinyint(1) NOT NULL DEFAULT 0,
+			conflict_reviewed tinyint(1) NOT NULL DEFAULT 0,
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			PRIMARY KEY  (id),
+			UNIQUE KEY cal_uid (calendar_id,uid(191)),
 			KEY room_dates (room_id,date_from,date_to)
 		) {$charset};";
 
