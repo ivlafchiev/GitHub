@@ -1,0 +1,63 @@
+.flexo-admin .flexo-filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+	margin: 16px 0;
+}
+
+.flexo-admin .flexo-muted {
+	color: #646970;
+	font-size: 12px;
+}
+
+.flexo-admin .flexo-notes {
+	max-width: 260px;
+	white-space: pre-line;
+}
+
+.flexo-admin .flexo-actions {
+	white-space: nowrap;
+}
+
+.flexo-admin .flexo-actions .button {
+	margin: 0 4px 4px 0;
+}
+
+.flexo-status {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 10px;
+	font-size: 12px;
+	font-weight: 600;
+	background: #f0f0f1;
+	color: #50575e;
+}
+
+.flexo-status--pending {
+	background: #fcf0c3;
+	color: #6d4c00;
+}
+
+.flexo-status--confirmed {
+	background: #d1f0d8;
+	color: #0a5c1f;
+}
+
+.flexo-status--cancelled {
+	background: #f7d7d7;
+	color: #8a1f1f;
+}
+
+.flexo-status--blocked {
+	background: #dcdcde;
+	color: #1d2327;
+}
+
+.flexo-admin .flexo-tools-card {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	padding: 16px 20px;
+	margin: 16px 0;
+	max-width: 780px;
+}

@@ -1,0 +1,359 @@
+/*
+ * Flexo Booking – front-end styles.
+ *
+ * Colours and fonts inherit from Elementor's Global Colors / Global Fonts
+ * (Site Settings) when available, so each template automatically gets a
+ * matching booking form. Override any variable in Elementor's widget Style
+ * tab, or in your theme:  .flexo-booking { --fb-primary: #b08d57; }
+ */
+.flexo-booking {
+	--fb-primary: var(--e-global-color-accent, var(--e-global-color-primary, #1f6f5c));
+	--fb-primary-contrast: #fff;
+	--fb-text: var(--e-global-color-text, #1f2933);
+	--fb-muted: color-mix(in srgb, var(--fb-text) 65%, transparent);
+	--fb-bg: #fff;
+	--fb-field-bg: #fff;
+	--fb-border: color-mix(in srgb, var(--fb-text) 18%, transparent);
+	--fb-radius: 8px;
+	--fb-gap: 16px;
+	--fb-font: var(--e-global-typography-text-font-family, inherit);
+	--fb-heading-font: var(--e-global-typography-primary-font-family, inherit);
+	--fb-error: #b42318;
+
+	box-sizing: border-box;
+	color: var(--fb-text);
+	font-family: var(--fb-font);
+	background: var(--fb-bg);
+	border-radius: var(--fb-radius);
+	padding: var(--fb-padding, 24px);
+	max-width: 100%;
+}
+
+.flexo-booking *,
+.flexo-booking *::before,
+.flexo-booking *::after {
+	box-sizing: border-box;
+}
+
+.flexo-booking [hidden] {
+	display: none !important;
+}
+
+.flexo-booking .fb-title,
+.flexo-booking .fb-step-title,
+.flexo-booking .fb-room__title {
+	font-family: var(--fb-heading-font);
+	color: var(--fb-text);
+	margin: 0 0 12px;
+}
+
+.flexo-booking .fb-selected-room {
+	margin: 0 0 12px;
+}
+
+/* Fields */
+.flexo-booking .fb-search {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--fb-gap);
+	align-items: flex-end;
+}
+
+.flexo-booking .fb-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	flex: 1 1 160px;
+	min-width: 0;
+}
+
+.flexo-booking .fb-field--small {
+	flex: 0 1 100px;
+}
+
+.flexo-booking .fb-field--action {
+	flex: 0 0 auto;
+}
+
+.flexo-booking label {
+	font-size: 0.875em;
+	font-weight: 600;
+	color: var(--fb-text);
+}
+
+.flexo-booking input[type="date"],
+.flexo-booking input[type="text"],
+.flexo-booking input[type="email"],
+.flexo-booking input[type="tel"],
+.flexo-booking select,
+.flexo-booking textarea {
+	width: 100%;
+	min-height: 46px;
+	padding: 10px 12px;
+	font: inherit;
+	color: var(--fb-text);
+	background: var(--fb-field-bg);
+	border: 1px solid var(--fb-border);
+	border-radius: calc(var(--fb-radius) * 0.75);
+	outline: none;
+	transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.flexo-booking input:focus,
+.flexo-booking select:focus,
+.flexo-booking textarea:focus {
+	border-color: var(--fb-primary);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--fb-primary) 25%, transparent);
+}
+
+/* Buttons */
+.flexo-booking .fb-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 46px;
+	padding: 10px 22px;
+	font: inherit;
+	font-weight: 600;
+	line-height: 1.2;
+	color: var(--fb-primary-contrast);
+	background: var(--fb-primary);
+	border: 1px solid var(--fb-primary);
+	border-radius: calc(var(--fb-radius) * 0.75);
+	cursor: pointer;
+	transition: filter 0.15s, opacity 0.15s;
+	white-space: nowrap;
+}
+
+.flexo-booking .fb-button:hover:not(:disabled) {
+	filter: brightness(1.08);
+}
+
+.flexo-booking .fb-button:focus-visible {
+	outline: 3px solid color-mix(in srgb, var(--fb-primary) 40%, transparent);
+	outline-offset: 2px;
+}
+
+.flexo-booking .fb-button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.flexo-booking .fb-button--ghost {
+	color: var(--fb-primary);
+	background: transparent;
+}
+
+/* Notices */
+.flexo-booking .fb-notice {
+	margin-top: var(--fb-gap);
+	padding: 12px 14px;
+	border-radius: calc(var(--fb-radius) * 0.75);
+	background: color-mix(in srgb, var(--fb-primary) 10%, transparent);
+}
+
+.flexo-booking .fb-notice--error {
+	color: var(--fb-error);
+	background: color-mix(in srgb, var(--fb-error) 10%, transparent);
+}
+
+.flexo-booking.is-loading .fb-search .fb-button {
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+/* Results */
+.flexo-booking .fb-results {
+	margin-top: var(--fb-gap);
+}
+
+.flexo-booking .fb-rooms {
+	display: grid;
+	gap: var(--fb-gap);
+	margin-bottom: var(--fb-gap);
+}
+
+.flexo-booking .fb-room {
+	display: grid;
+	grid-template-columns: 180px 1fr auto;
+	gap: var(--fb-gap);
+	align-items: center;
+	padding: 12px;
+	border: 1px solid var(--fb-border);
+	border-radius: var(--fb-radius);
+}
+
+.flexo-booking .fb-room:not(:has(.fb-room__image)) {
+	grid-template-columns: 1fr auto;
+}
+
+.flexo-booking .fb-room.is-unavailable {
+	opacity: 0.65;
+}
+
+.flexo-booking .fb-room__image {
+	width: 100%;
+	height: 120px;
+	object-fit: cover;
+	border-radius: calc(var(--fb-radius) * 0.75);
+	display: block;
+}
+
+.flexo-booking .fb-room__title {
+	margin-bottom: 4px;
+}
+
+.flexo-booking .fb-room__excerpt,
+.flexo-booking .fb-room__meta {
+	margin: 0 0 4px;
+	color: var(--fb-muted);
+	font-size: 0.9375em;
+}
+
+.flexo-booking .fb-room__urgency {
+	margin: 0;
+	color: var(--fb-primary);
+	font-weight: 600;
+	font-size: 0.875em;
+}
+
+.flexo-booking .fb-room__reason {
+	margin: 0;
+	color: var(--fb-error);
+	font-size: 0.875em;
+}
+
+.flexo-booking .fb-room__side {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 6px;
+	text-align: right;
+}
+
+.flexo-booking .fb-room__total-label {
+	font-size: 0.8125em;
+	color: var(--fb-muted);
+}
+
+.flexo-booking .fb-room__total {
+	font-size: 1.25em;
+}
+
+/* Guest details */
+.flexo-booking .fb-details {
+	margin-top: var(--fb-gap);
+}
+
+.flexo-booking .fb-summary {
+	margin-bottom: var(--fb-gap);
+	padding: 12px 14px;
+	border-radius: calc(var(--fb-radius) * 0.75);
+	background: color-mix(in srgb, var(--fb-primary) 8%, transparent);
+}
+
+.flexo-booking .fb-summary__row {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.flexo-booking .fb-summary__row:first-child {
+	font-weight: 600;
+}
+
+.flexo-booking .fb-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: var(--fb-gap);
+}
+
+.flexo-booking .fb-field--wide {
+	grid-column: 1 / -1;
+}
+
+.flexo-booking .fb-terms {
+	display: flex;
+	gap: 8px;
+	align-items: flex-start;
+	margin-top: var(--fb-gap);
+	font-weight: 400;
+}
+
+.flexo-booking .fb-terms a {
+	color: var(--fb-primary);
+}
+
+.flexo-booking .fb-actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 12px;
+	margin-top: var(--fb-gap);
+}
+
+/* Honeypot: hidden from people, visible to bots. */
+.flexo-booking .fb-hp {
+	position: absolute !important;
+	left: -9999px !important;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}
+
+/* Success */
+.flexo-booking .fb-success {
+	padding: 20px;
+	border-radius: var(--fb-radius);
+	background: color-mix(in srgb, var(--fb-primary) 10%, transparent);
+	outline: none;
+}
+
+.flexo-booking .fb-success p {
+	margin: 0 0 8px;
+}
+
+.flexo-booking .fb-success__message {
+	font-size: 1.125em;
+	font-weight: 600;
+}
+
+/* Search bar layout */
+.flexo-booking--search {
+	--fb-padding: 16px;
+}
+
+@media (max-width: 767px) {
+	.flexo-booking .fb-field,
+	.flexo-booking .fb-field--small,
+	.flexo-booking .fb-field--action {
+		flex: 1 1 100%;
+	}
+
+	.flexo-booking .fb-field--small {
+		flex-basis: calc(50% - var(--fb-gap) / 2);
+	}
+
+	.flexo-booking .fb-button {
+		width: 100%;
+	}
+
+	.flexo-booking .fb-actions .fb-button {
+		width: auto;
+		flex: 1;
+	}
+
+	.flexo-booking .fb-room,
+	.flexo-booking .fb-room:not(:has(.fb-room__image)) {
+		grid-template-columns: 1fr;
+	}
+
+	.flexo-booking .fb-room__image {
+		height: 180px;
+	}
+
+	.flexo-booking .fb-room__side {
+		align-items: stretch;
+		text-align: left;
+	}
+}
