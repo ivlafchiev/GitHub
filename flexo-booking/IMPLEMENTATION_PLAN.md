@@ -1,9 +1,8 @@
 # Flexo Booking: implementation plan (Days 1–5)
 
-Status: **Day 1 done (1.1.0).** Plan approved; implementation, tests and
-docs are complete. See §9 for what was built, the deviations and the test
-results. Days 2–5 follow the schema and pipeline below. Read together with
-`ROADMAP.md`.
+Status: **Day 2 done (1.2.0).** Day 1 (1.1.0) is in §9 and Day 2 in §10,
+each with what was built, the deviations and the test results. Days 3–5
+follow the schema and pipeline below. Read together with `ROADMAP.md`.
 
 Contents:
 
@@ -16,6 +15,7 @@ Contents:
 7. Decisions (approved as proposed)
 8. Day 1 test plan
 9. Day 1 status, deviations and test results
+10. Day 2 status, deviations and test results
 
 ---
 
@@ -70,10 +70,10 @@ Day 1 scope):
 
 Principles:
 
-- **Occupancy has one source of truth: the bookings table.** Anything that
-  takes a room is a row there: guest bookings, staff blocks, iCal imports
-  (Day 2) and payment holds (Day 5). Availability code therefore never needs
-  restructuring.
+- **Occupancy is counted in one place:** `Flexo_Booking_Inventory::nightly_usage()`.
+  Guest bookings, staff blocks and payment holds (Day 5) are rows in the
+  bookings table. iCal imports (Day 2) live in `flexo_calendar_events` and are
+  counted by the same function (see §10.2).
 - **Every booking keeps a price snapshot.** It stores the itemised pricing
   result at booking time, so later price or feature changes never alter
   existing bookings.
@@ -202,9 +202,9 @@ flexo_calendar_events (
   `/wp-json/flexo-booking/v1/ical/{room}.ics?token=…`. UIDs look like
   `flexo-{reference}@{host}`. Events carrying our own UID domain are skipped on
   import to avoid echo loops.
-- **Imports mirror into the bookings table.** Each imported event becomes a
-  blocked booking row, so availability, the admin calendar and conflicts work
-  unchanged.
+- ~~Imports mirror into the bookings table.~~ **Changed on Day 2 (see §10.2):**
+  imported bookings stay in `flexo_calendar_events` and are counted by the
+  single availability function, `Flexo_Booking_Inventory::nightly_usage()`.
 - **Conflicts.** When an import overlaps a room that is already full, the event
   is still stored (it's a real external booking). It gets `conflict=1`, an
   admin notice and a hotel email.
@@ -747,3 +747,51 @@ Run on **MariaDB 10.11**, which uses `GET_LOCK`, and on **SQLite**, which uses t
 | Browser (Playwright, MariaDB site with Elementor): guest booking across seasons with itemised summary, season minimum, closed notice, search bar, mobile; admin menu, Features toggle, Seasonal prices CRUD (overlap error keeps input, edit, copy, delete), Closed dates, CSV, Agency screen hides features from the hotel admin, Elementor widget/colour/global-colour inheritance/booking-link tag | 37/37 |
 
 **Not covered here:** the Elementor *editor* UI, since the source checkout has no compiled editor scripts (the widget, controls, CSS generation and dynamic tag were tested server-side and on the front end); real email delivery (emails were captured); and PHP 7.4 at runtime (syntax checked only).
+
+---
+
+## 10. Day 2 status, deviations and test results
+
+### 10.1 Built (1.2.0, migration 3)
+
+| Area | Files |
+|---|---|
+| Schema | `flexo_calendars` (room, name, URL, `unit`, status, `fail_count`, `event_count`) and `flexo_calendar_events` (UID per calendar, dates with exclusive end, conflict flags). Migration 3. |
+| Sync engine | `class-ical.php`, in five parts: **parser** (unfolding, VALARM, TZID/UTC/floating times, DURATION, missing DTEND, CANCELLED); **fetch** (`wp_safe_remote_get`, 15 s timeout, 5 MB limit, plain-language errors); **sync** (UID upsert, removal releases dates, a failed download keeps existing data, past bookings dropped, our own UIDs skipped); **conflicts** (flag, one email, review); **export** (tokens, no guest data, RFC 5545 folding/CRLF); **WP-Cron** (15/30/60 min). |
+| Availability | `Flexo_Booking_Inventory::nightly_usage()` counts bookings plus imported bookings using the unit rule. `units_available()` uses it. |
+| REST | `GET /ical/{room}.ics?token=` served as `text/calendar` |
+| Admin | `admin/class-sync-admin.php` (Calendar Sync screen, notices for failures and conflicts), `admin/class-calendar-admin.php` (month timeline), `assets/js/admin-calendar.js`, `admin-sync.js`, `assets/css/admin-calendar.css` |
+| Bookings list | Source badges (Website / Added by staff / Blocked dates), ⚠ conflict box and badges, "From external calendars" view, *Add booking* pre-filled from the calendar |
+| Import/Export | Schema 3: `calendars` per room (name, URL, unit). Imported only with the option / `--calendars`; tokens never exported. |
+| Feature | `calendar_sync` is ready. When off, syncing stops, imported bookings don't block, the screen is hidden and the export returns 404. Data is kept. |
+
+### 10.2 Deviations and decisions
+
+1. **Imported bookings are not copied into the bookings table.** The plan said to copy them in as blocked booking rows. Two things made a separate table better:
+   - *The requested unit rule.* Bookings from calendars linked to the same unit must be merged (e.g. Airbnb repeating a Booking.com stay for apartment 2), not added up. That can't be expressed with plain booking rows.
+   - *No leakage.* Copied rows would have leaked into guest emails, the CSV, "include bookings" exports, the pending counter and booking hooks.
+
+   Availability still has one source of truth: `nightly_usage()` counts both tables. **Please confirm this is OK.**
+2. **Unit rule:** each imported booking takes one unit; calendars linked to "Room no. N" take unit N once per night. Flexo bookings are never assigned to units, since there's no room assignment.
+3. **Feature off → imported bookings no longer block** and the export link returns 404. The Calendar Sync screen is invisible then, so hidden, stale blocks would be confusing and would silently lose sales. Connections and data are kept, and switching back on restores blocking immediately. The Features tab says this next to the switch.
+4. **Airbnb echo.** Airbnb's export repeats dates it imported from us. This can't be told apart from a genuine double booking, so it is **still flagged**. When the dates match a website booking exactly, the note says it may be an echo, and one click marks it reviewed. Nothing is silently ignored.
+5. **The export feed also contains bookings imported from the room's *other* calendars.** This lets Booking.com learn about Airbnb bookings and vice versa (hub model). Events carrying this site's own UIDs are skipped on import, to avoid loops.
+6. **Calendar connections are not imported by default**, because a template's OTA links would attach another property's bookings to the client's site. Tokens are never exported.
+7. **Fetching refuses local/private addresses** (`wp_safe_remote_get`), as SSRF protection. Tests allow localhost through a test-only mu-plugin.
+8. **The Calendar screen is core**; only Calendar Sync is behind the feature. It's placed right after *All bookings* in the menu.
+9. **Weekend shading** in the calendar is Saturday/Sunday. Pricing weekends are still Friday/Saturday nights.
+
+### 10.3 Tests run (MariaDB 10.11 and SQLite)
+
+| Test | Result |
+|---|---|
+| `test-ical.php` (engine): parser (generic, Booking.com, Airbnb fixtures); import with blocked nights and a free check-out day; guest search/booking refused; re-sync (no duplicates, changed dates updated, removed released); broken feeds (timeout, 404, HTML page) with others still syncing and 3-failure notice; failed download keeps data; empty feed releases; own UIDs skipped; multi-unit (1 per event; same unit merged; full ≠ conflict); conflict flag, note, single email, review, auto-clear on cancel, echo note; export (CRLF, ≤75 octets, no guest data, all booking types, closures, other calendars, cancelled excluded); tokens (wrong/empty/regenerated); cron (30 min default, 15 after change, cron run syncs); feature off/on | 66/66 on both databases |
+| HTTP: export endpoint (200 `text/calendar`, 403 wrong/missing token, plain-permalink URL); real feed fetched over HTTP; WP-Cron event listed at 30 min and run through `wp-cron.php` (synced, rescheduled about 30 min out) | Pass |
+| `portability-calendars.php`: schema 3, no tokens in file, not imported by default, imported with option (unit kept), no duplicates, new token on target | 12/12 |
+| Upgrade 1.0.0 → 1.2.0 (all 5 tables) and 1.1.0 → 1.2.0 (live test site) | 19/19, pass |
+| Browser `e2e/day2.js`: menu order; list badges, conflict box/badge, external view; calendar (all types, 0/3 full, 2/3 with unit-linked event, closed shading, legend, cancelled toggle, month navigation); dialog details and working actions (Confirm, Remove block, Mark as reviewed); empty day → pre-filled Add booking / Block dates; phone width (page doesn't scroll, dialog fits); Calendar Sync (status OK, readable 404, unit select only for multi-unit rooms, delay note, Copy link, Reset link → old 403 / new 200, add syncs immediately, Sync now without duplicates, Remove); failure and conflict notices on the dashboard; feature off (menu, calendar, 404) and back on | 51/51 |
+| Regression: pricing parity, seasons, features (+constants), regression, concurrency (CLI) and `e2e/day1.js` (guest flow, seasons, admin, Agency, CSV, Elementor widget/tag/colours) | All pass |
+
+Bugs found and fixed during testing:
+- **Dialog action links:** they were HTML-escaped (`&amp;`) when passed as JSON, which would break Confirm/Cancel/Remove/Review from the calendar.
+- **Dialog width on phones:** the dialog was 8 px wider than a 390 px screen.

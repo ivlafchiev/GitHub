@@ -58,7 +58,7 @@ before changing code.
 | Day | Status |
 |---|---|
 | Day 1 | **Done** (1.1.0): feature system, migrations, currency, pricing service, locking, seasonal prices, closed dates |
-| Day 2 | Not started |
+| Day 2 | **Done** (1.2.0): iCal calendar sync (import/export/conflicts/cron), admin booking calendar |
 | Day 3 | Not started |
 | Day 4 | Not started |
 | Day 5 | Not started |

@@ -6,7 +6,7 @@ Guests pick dates and guests, see which rooms are free with the price, enter the
 
 It's one plugin that works with any theme or template. Extra features are switched on only where a property needs them, so a simple guest house still gets just *dates → room → details → booking request*.
 
-> Version **1.1.0**. Development follows `ROADMAP.md`; technical design is in `IMPLEMENTATION_PLAN.md`.
+> Version **1.2.0**. Development follows `ROADMAP.md`; technical design is in `IMPLEMENTATION_PLAN.md`.
 
 ---
 
@@ -18,12 +18,14 @@ It's one plugin that works with any theme or template. Extra features are switch
 4. [Setting prices](#4-setting-prices)
 5. [Seasonal prices](#5-seasonal-prices)
 6. [Closed dates](#6-closed-dates)
-7. [Putting the booking form on the site](#7-putting-the-booking-form-on-the-site)
-8. [Daily use: managing bookings](#8-daily-use-managing-bookings)
-9. [Templates and moving between sites](#9-templates-and-moving-between-sites)
-10. [Settings reference](#10-settings-reference)
-11. [For developers](#11-for-developers)
-12. [Testing](#12-testing)
+7. [Calendar sync (Booking.com, Airbnb…)](#7-calendar-sync-bookingcom-airbnb)
+8. [The booking calendar](#8-the-booking-calendar)
+9. [Putting the booking form on the site](#9-putting-the-booking-form-on-the-site)
+10. [Daily use: managing bookings](#10-daily-use-managing-bookings)
+11. [Templates and moving between sites](#11-templates-and-moving-between-sites)
+12. [Settings reference](#12-settings-reference)
+13. [For developers](#13-for-developers)
+14. [Testing](#14-testing)
 
 ---
 
@@ -34,16 +36,16 @@ It's one plugin that works with any theme or template. Extra features are switch
 - Elementor 3.5+ for the widget (Elementor Pro works too). Without Elementor, the `[flexo_booking]` shortcode still works.
 
 **Install:**
-1. Build the zip with `bin/build-zip.sh`, or use the provided `flexo-booking-1.1.0.zip`.
+1. Build the zip with `bin/build-zip.sh`, or use the provided `flexo-booking-1.2.0.zip`.
 2. Go to **Plugins → Add New → Upload Plugin**, choose the zip, then **Install** and **Activate**.
 3. A **Bookings** menu appears in the admin.
 4. Check **Settings → General → Timezone**. It must be the hotel's city, because "today" and arrival dates depend on it.
 
-**Upgrade from 1.0.0:** upload the new zip and choose **Replace current with uploaded**.
+**Upgrade from 1.0.0 or 1.1.0:** upload the new zip and choose **Replace current with uploaded**.
 - The database updates itself on the next page load. No reinstall is needed, and rooms, bookings and settings are kept.
 - If an update step ever fails, a red notice appears in the admin and the step is retried automatically.
 - On staging or in scripts you can also run `wp flexo-booking migrate`.
-- After upgrading, **Seasonal prices is off**. Switch it on under **Bookings → Settings → Features** if the hotel needs it.
+- After upgrading, **Seasonal prices** and **Calendar sync** are off. Switch it on under **Bookings → Settings → Features** if the hotel needs it.
 
 ---
 
@@ -67,7 +69,7 @@ The hotel only ever sees features you made available. Switching a feature off hi
 | How do guests book? | **Booking requests** (you confirm) or **Instant booking** | Ready |
 | Seasonal prices | Different prices and minimum stays for high and low season | Ready (1.1.0) |
 | Guest emails | Emails to guests when a booking is received, confirmed or cancelled | Ready |
-| Calendar sync | iCal sync with Booking.com, Airbnb… | Coming soon |
+| Calendar sync | iCal sync with Booking.com, Airbnb, Vrbo… | Ready (1.2.0) |
 | Rate plans, Children & ages, Tourist tax, Promo codes | | Coming soon |
 | Privacy consent, Invoice request, Conversion tracking | | Coming soon |
 | Online card payment, Deposits, Bank transfer | | Coming soon |
@@ -185,7 +187,97 @@ Switching Seasonal prices off makes new quotes use the room prices again. Season
 
 ---
 
-## 7. Putting the booking form on the site
+## 7. Calendar sync (Booking.com, Airbnb…)
+
+Calendar sync reduces the risk of double bookings when a property also sells on Booking.com, Airbnb, Vrbo or similar sites. It uses standard **iCal links**, which every booking site supports. It is not a channel manager: prices and room details are still managed on each site separately.
+
+Switch it on under **Settings → Features → Calendar sync**. A **Bookings → Calendar Sync** screen appears with one card per room. Each card has:
+
+- **This room's calendar link**, which you give to Booking.com, Airbnb and so on
+- **Calendars imported into this room**, where you paste their links
+
+### Step by step: Booking.com
+
+1. **Bookings → Calendar Sync**, room card → **Copy link**.
+2. In the Booking.com **Extranet**: **Rates & Availability → Sync calendars** (shown only for room types that allow calendar sync).
+3. Choose **Import calendar**, paste the link, give it a name (e.g. "Website") and save. Booking.com now blocks dates booked on your website.
+4. On the same Booking.com page, choose **Export calendar** and copy Booking.com's link.
+5. Back on **Calendar Sync**, under "Calendars imported into this room": Name *Booking.com*, paste the link, **Add calendar**. It syncs immediately and shows **✓ OK** and the number of bookings.
+
+### Step by step: Airbnb
+
+1. **Copy link** for the room, as above.
+2. In Airbnb: **Calendar →** select the listing **→ Availability → Connect to another website** (sometimes called *Import calendar*). Paste the link, name it, save.
+3. On the same Airbnb screen, choose **Export calendar** and copy Airbnb's link.
+4. On **Calendar Sync**: Name *Airbnb*, paste the link, **Add calendar**.
+
+Do the same for Vrbo, Google Calendar or any site that offers an iCal (`.ics`) link. Links starting with `webcal://` work too.
+
+### How it behaves
+
+- **Imported bookings block availability.** Guests can't book those nights on your website. Imported bookings have no guest details; they are managed on the booking site.
+- **Check-out day stays free.** A Booking.com stay from 10 to 13 October blocks the nights of 10, 11 and 12; a new guest can arrive on the 13th.
+- **Changes follow automatically.** A moved booking is updated (matched by its unique ID, never duplicated). A cancelled booking disappears and **its dates are released**.
+- **Automatic checks** run every 30 minutes by default (15 or 60 selectable at the top of the screen). **Sync now** works per calendar, **Sync this room now** per room, and **Sync all now** for everything. Each check waits at most 15 seconds per calendar, and **one broken link never stops the others**.
+- **Errors are explained in plain words**, e.g. *"The calendar link no longer exists (HTTP 404)…"* or *"The link opened a web page, not a calendar…"*. If a calendar fails 3 times in a row, a red notice appears on every admin screen. When a download fails, the previously imported bookings are **kept**, not released.
+- **Your export link contains only dates** (booked, blocked, closed). It never contains guest names, emails, phone numbers or prices. It includes website bookings, staff bookings and blocks, closed periods, and bookings imported from your *other* calendars, so every site learns about every other. **Reset link** makes the old link stop working; paste the new one into the booking sites.
+- **Delay.** iCal is not instant: this website checks every 15–60 minutes, and Booking.com or Airbnb read your link on their own schedule (often every few hours). A double booking is still possible in that window. If you sell on booking sites, use **Booking requests** mode (Settings → Features) so you confirm each website booking yourself.
+
+### Rooms with several identical units
+
+For a room type with, say, 3 identical apartments:
+
+- **Default: "One room of this type".** Each imported booking takes **one** of the 3 units. Three overlapping imported bookings fill the room type.
+- **"Room no. 2"** (chosen when adding the calendar) is for calendars that belong to one specific apartment, e.g. its own Airbnb listing. Bookings from all calendars linked to the same number take that unit **once per night**. So if Airbnb repeats a Booking.com booking of apartment 2, it isn't counted twice.
+
+### Conflicts (possible double bookings)
+
+If an imported booking doesn't fit, meaning the room type is already full on those nights with website, staff or other imported bookings, it is marked as a **conflict**:
+
+- a **⚠ Conflict** box at the top of **All bookings**, with a badge on the affected website booking
+- **⚠** on both bookings in **Bookings → Calendar**, and a notice on every admin screen
+- **one email** to the notification address (Settings → Emails), naming the room, calendar, dates and overlapping booking reference
+
+Resolve it with the guest or the booking site, then click **Mark as reviewed**. Cancelling one of the bookings clears the conflict automatically.
+
+*Airbnb "echo":* Airbnb's own export also contains dates it imported from your website, labelled *Airbnb (Not available)*. If such a copy lands on exactly the same dates as your website booking, the conflict note says so (*"Same dates as FB-… – the other website may be repeating your own booking back"*), so you can simply mark it as reviewed.
+
+### Switching Calendar sync off
+
+Syncing stops, the **Calendar Sync** screen disappears, and your export links answer "not found". Imported bookings **no longer block** your website's availability. Your connections and the last imported bookings are kept, and switching it on again restores everything at the next sync.
+
+---
+
+## 8. The booking calendar
+
+**Bookings → Calendar** is the hotel's overview. It shows one month, with rooms as rows and days as columns.
+
+- **Today at a glance** (top): who is **arriving today**, **leaving today** and **staying tonight**.
+- **Bars** start in the afternoon of arrival and end in the morning of departure, so a departure and an arrival on the same day sit side by side.
+- **Every type has its own colour, icon and pattern**, so it's readable without relying on colour. The legend is under the calendar:
+
+| Looks like | Meaning |
+|---|---|
+| ✓ green | Confirmed website booking |
+| ⏳ yellow, dashed | Pending request waiting for you |
+| ✎ | Booking added by staff |
+| ⛔ grey, hatched | Dates blocked by staff |
+| ⇄ blue, striped | Booking from an external calendar (Booking.com, Airbnb…) |
+| ⚠ red border | Conflict – possible double booking |
+| ✕ dotted, hatched days | Closed period |
+| ⊘ struck through | Cancelled (only with "Show cancelled" ticked) |
+
+- **Rooms with several units** show "free of total" under every day (e.g. *2/3*). A full day shows *0/3* in red.
+- **Click a booking** for its details: guest, dates, total and status. Pending bookings can be **confirmed**, bookings **cancelled** and blocks **removed** right there, and conflicts **marked as reviewed**.
+- **Click an empty day** to see how many units are free, then **New booking** or **Block dates**. The *Add booking* form opens with the room and dates filled in.
+- **‹ Today ›** moves between months.
+- **On a phone** the page stays still and only the calendar scrolls sideways, starting at today. Details open in a window that fits the screen.
+
+The calendar is for inventory and reservations only. It has no housekeeping or room assignment.
+
+---
+
+## 9. Putting the booking form on the site
 
 1. **Booking page (required):** edit your *Booking / Reservations* page in Elementor, search the panel for **"Flexo"** and drag in **Flexo Booking Form** (*FlexoHotels* category). Keep *Layout* set to **Full booking form**. Note the page path (default `/booking/`).
 2. **Hero search bar (optional):** add the widget on the home page with *Layout* **Search bar** and *Booking page path* `/booking/`.
@@ -204,7 +296,7 @@ Switching Seasonal prices off makes new quotes use the room prices again. Season
 
 ---
 
-## 8. Daily use: managing bookings
+## 10. Daily use: managing bookings
 
 **Bookings → All bookings** has filters by status and room, "Current & upcoming only", and search by reference, name, email or phone. Each booking shows its total and, when nights had different prices, the itemised breakdown.
 
@@ -221,23 +313,26 @@ Actions on each booking:
 - **Reinstate** works only if the room is still free.
 - **Delete** removes the booking.
 
-**Add booking** records phone, walk-in or other-channel bookings, or blocks dates. **Export CSV** includes a *Price details* column.
+Each booking shows where it came from: **Website**, **✎ Added by staff** or **⛔ Blocked dates**. With Calendar sync on, a second tab, **⇄ From external calendars**, lists the imported bookings (read-only), and a **⚠ Conflict** box appears at the top when something needs attention (see §7).
+
+**Add booking** records phone, walk-in or other-channel bookings, or blocks dates. It is also reachable from empty days in the **Calendar**. **Export CSV** includes a *Price details* column.
 
 **Who can do what:**
-- Editors and Administrators can manage bookings, seasonal prices and closed dates.
+- Editors and Administrators can manage bookings, the calendar, seasonal prices, closed dates and calendar sync.
 - Only Administrators can change Settings and use Import / Export.
 
 **No double bookings:** availability is counted night by night against the number of rooms. The final check, price calculation and save happen under a per-room lock. When two guests try to take the last room at the same moment, one gets it and the other is told it's no longer available.
 
 ---
 
-## 9. Templates and moving between sites
+## 11. Templates and moving between sites
 
 | Part | Where it lives | How it moves |
 |---|---|---|
 | Plugin code | `wp-content/plugins/flexo-booking` | Install the zip, or it comes with a full-site clone |
 | Widget placement and styling | Elementor page/template data | Elementor template/kit export |
 | Rooms, **seasons, closed dates**, settings, enabled features | Posts, plugin tables, options | **Bookings → Import / Export** (JSON) or WP-CLI |
+| Calendar connections (Booking.com/Airbnb links) | Plugin table | In the export file, but imported **only when ticked** (moving the same hotel) |
 | Bookings | `wp_flexo_bookings` table | Full-site migration, or export with "include bookings" |
 
 **A. Prepare a template (once):**
@@ -258,7 +353,8 @@ How the import behaves:
 - A room's seasons in the file **replace** that room's seasons.
 - Closed dates are added unless an identical one exists.
 - Enabled features are applied only if they're available on the new site.
-- Files from 1.0.0 still import.
+- Calendar connections are **not** imported unless you tick *Import calendar connections* (or use `--calendars`). A template's Booking.com links belong to the template, not to the client. Export links are never copied: every site creates its own, so paste the new links into the booking sites after moving a hotel.
+- Files from 1.0.0 and 1.1.0 still import.
 
 **C. Add-on sale:**
 1. Install the plugin on the client site.
@@ -274,12 +370,12 @@ How the import behaves:
 ```bash
 wp flexo-booking export > template.flexo-booking.json            # rooms, seasons, closed dates, settings, features
 wp flexo-booking export --bookings > full-backup.json
-wp flexo-booking import template.flexo-booking.json --images      # --skip-settings --skip-rooms --skip-seasons --skip-closures --bookings
+wp flexo-booking import template.flexo-booking.json --images      # --skip-settings --skip-rooms --skip-seasons --skip-closures --calendars --bookings
 ```
 
 ---
 
-## 10. Settings reference
+## 12. Settings reference
 
 **Settings → General:**
 - Currency: code, symbol, position, number format, decimals
@@ -306,7 +402,7 @@ Email placeholders:
 
 ---
 
-## 11. For developers
+## 13. For developers
 
 **REST API** (public, used by the form):
 
@@ -315,8 +411,9 @@ Email placeholders:
 | GET | `/wp-json/flexo-booking/v1/rooms` | Bookable rooms |
 | GET | `/wp-json/flexo-booking/v1/availability?check_in=&check_out=&adults=&children=[&room=]` | Availability, totals, per-night average, `breakdown`, `min_nights`, and `notice` (property closed) |
 | POST | `/wp-json/flexo-booking/v1/bookings` | Create a booking. Returns 201; 409 if no longer available or closed. |
+| GET | `/wp-json/flexo-booking/v1/ical/{room}.ics?token=…` | The room's iCal export (Calendar sync). 403 for a wrong token, 404 while the feature is off. |
 
-**Architecture (1.1.0):**
+**Architecture (1.2.0):**
 
 | Class | Role |
 |---|---|
@@ -326,6 +423,8 @@ Email placeholders:
 | `Flexo_Booking_Features` | Available/enabled rules |
 | `Flexo_Booking_Migrations` + `Flexo_Booking_Schema` | Versioned migrations; tables are only ever added to |
 | `Flexo_Booking_Money` | Currency formatting |
+| `Flexo_Booking_ICal` | iCal parser, fetch (`wp_safe_remote_get`), sync, conflicts, export feed, tokens, WP-Cron (`flexo_booking_ical_sync`) |
+| Imported bookings | Table `flexo_calendar_events` (not bookings rows), counted by `Flexo_Booking_Inventory::nightly_usage()` with the unit rule in §7 |
 
 **Hooks:**
 
@@ -337,12 +436,13 @@ Email placeholders:
 | `flexo_booking_available_features` | filter `( $keys )` | Where a licence/package module plugs in |
 | `flexo_booking_occupying_statuses` | filter | Statuses that take a room |
 | `flexo_booking_created`, `flexo_booking_status_changed` | actions | Integrations |
+| `flexo_booking_ical_timeout` | filter | Seconds to wait for a calendar download (default 15) |
 | `flexo_booking_before_insert`, `flexo_booking_guest_email`, `flexo_booking_admin_email`, `flexo_booking_email_placeholders`, `flexo_booking_manage_capability`, `flexo_booking_rate_limit`, `flexo_booking_template`, `flexo_booking_use_mysql_locks` | filters | As named |
 
 **Build:** `bin/build-zip.sh` → `dist/flexo-booking-<version>.zip`.
 
 ---
 
-## 12. Testing
+## 14. Testing
 
-The `tests/` folder in the repository is not shipped in the zip. It holds WP-CLI test scripts, a concurrency test (two simultaneous bookings for the last unit), the upgrade and portability tests, and a Playwright browser test. See `tests/README.md`. Run them against a throwaway site only.
+The `tests/` folder in the repository is not shipped in the zip. It holds WP-CLI test scripts (including the calendar-sync engine test with Booking.com/Airbnb-style sample feeds), a concurrency test (two simultaneous bookings for the last unit), the upgrade and portability tests, and Playwright browser tests for Day 1 and Day 2. See `tests/README.md`. Run them against a throwaway site only.
