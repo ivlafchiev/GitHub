@@ -57,7 +57,7 @@ before changing code.
 
 | Day | Status |
 |---|---|
-| Day 1 | Planned: waiting for plan approval |
+| Day 1 | **Done** (1.1.0): feature system, migrations, currency, pricing service, locking, seasonal prices, closed dates |
 | Day 2 | Not started |
 | Day 3 | Not started |
 | Day 4 | Not started |

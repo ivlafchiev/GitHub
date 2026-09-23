@@ -1,7 +1,9 @@
 # Flexo Booking: implementation plan (Days 1–5)
 
-Status: **Day 1 plan, waiting for approval.** No code has been changed yet.
-Read together with `ROADMAP.md`.
+Status: **Day 1 done (1.1.0).** Plan approved; implementation, tests and
+docs are complete. See §9 for what was built, the deviations and the test
+results. Days 2–5 follow the schema and pipeline below. Read together with
+`ROADMAP.md`.
 
 Contents:
 
@@ -11,8 +13,9 @@ Contents:
 4. Feature system
 5. Day 1 build list: reuse vs add
 6. Backwards-compatibility risks
-7. Decisions that need approval
+7. Decisions (approved as proposed)
 8. Day 1 test plan
+9. Day 1 status, deviations and test results
 
 ---
 
@@ -628,7 +631,7 @@ with the target site's *available* list.
 
 ---
 
-## 7. Decisions that need your approval
+## 7. Decisions (approved as proposed)
 
 1. **Closed periods are core, not part of "Seasonal prices".** Otherwise,
    switching seasonal prices off would silently **re-open** dates the hotel
@@ -692,3 +695,55 @@ covered where available. Browser checks use Playwright.
   - Elementor widget and Elementor booking link
   - shortcode, global style inheritance
   - Import/Export to a fresh site (including seasons and closures)
+
+---
+
+## 9. Day 1 status, deviations and test results
+
+### 9.1 Built
+
+| Area | Files |
+|---|---|
+| Versioned migrations | `class-schema.php`, `class-migrations.php` (LATEST = 2), `class-install.php` (thin wrapper). `wp flexo-booking migrate`. |
+| Feature system | `class-features.php`: registry of 15 features, available/enabled, Features tab, Agency screen, `wp flexo-booking features …` |
+| Currency | `class-money.php`, plus new settings `currency_decimals` and `number_format` (4 symbol positions) |
+| Pricing service | `class-pricing.php`: steps 10 (nightly) and 90 (totals); snapshot stored in `flexo_bookings.price_breakdown` |
+| Concurrency | `class-lock.php` (GET_LOCK / options-row fallback), `class-inventory.php` (`with_lock`, `units_available`, closures) |
+| Seasonal prices | `class-seasons.php`, `admin/class-seasons-admin.php`, `assets/js/admin-dates.js` |
+| Closed dates | `class-closures.php`, `admin/class-closures-admin.php` (core) |
+| Wiring | `class-bookings.php` (search/create/status use the services), REST, front end (average per night, breakdown, closed notice), emails (`{price_breakdown}`, itemised `{booking_details}`), admin list and CSV (*Price details*), import/export (schema 2), uninstall |
+| Tests | `tests/` in the repository root (not in the zip) |
+
+### 9.2 Deviations from the plan, and behaviour changes to know about
+
+1. **Minimum stay in search is now explained per room.**
+   - Before: a search shorter than the *global* minimum returned one error for the whole search.
+   - Now: seasons and rooms can set their own (even lower) minimum, so each room card shows its reason, e.g. "Minimum stay 3 nights for arrivals in High season".
+   - The global minimum still applies to rooms without their own.
+2. **Closed dates block website bookings only.** Staff can still record a booking inside a closed period with *Add booking*, consistent with other staff bookings that skip website rules.
+3. **Weekends inside a season.** When a season has no weekend price, Friday and Saturday nights use the *season's* price, not the room's weekend price. The season fully defines prices for its nights.
+4. **Admin date picker has no min-date restriction.** Testing showed that jQuery UI's `minDate` rewrote a typed "To" date, producing values like `26.10.202602.11.2026`. The "To" calendar now just opens at the "From" month; the server validates the date order.
+5. **The booking-mode choice moved to Settings → Features**, as "How do guests book?". Settings is now split into tabs: General / Features / Emails.
+6. **`guest_emails` is wired now**, since guest emails already existed in 1.0. When it's off, only the hotel alert is sent, and the *Send confirmation email* option disappears from *Add booking*.
+7. **Emails for rooms with a weekend price** now list the nights under the total, e.g. *Standard rate – weekend: 2 nights × 150.00 €*. The total is unchanged.
+8. **Room cards show "avg. X per night"** when nightly prices differ within the stay; before, they showed the room's base price. The REST field `price_formatted` is unchanged; `price_average_formatted` and `price_varies` were added.
+9. **REST returns 409** (instead of 400) for `flexo_closed` and `flexo_busy`, the same as `flexo_unavailable`.
+10. **Seasonal prices and closed dates are managed by booking managers** (Editors and Administrators, `flexo_booking_manage_capability`). Settings, Features and Import/Export stay Administrator-only.
+11. **Features that aren't built yet** can be made available but not switched on. They show as "Coming soon".
+
+### 9.3 Tests run
+
+Run on **MariaDB 10.11**, which uses `GET_LOCK`, and on **SQLite**, which uses the fallback lock. WordPress 7.x with PHP 8.4. The code was also checked for PHP 7.4-compatible syntax.
+
+| Test | Result |
+|---|---|
+| Upgrade 1.0.0 → 1.1.0 with rooms, bookings (incl. blocked) and custom settings: all rows, fields, settings and room meta unchanged; new tables/column present; old bookings still block | 17/17 on both databases |
+| Pricing parity with a verbatim copy of the 1.0.0 code: 520 random stays × 2 modes (seasonal off / on without seasons), legacy filter, breakdown sums | 8/8 (1,040 stays identical) |
+| Seasons: inside, crossing (2 low + 3 high), outside, weekend inside season, inclusive end, arrival-season minimum, room minimum fallback, overlap rejected (message), self-edit, adjacent, other room, invalid input, copy to next year (29.02, New Year, re-copy skipped), closures (property/room, departure on first closed day, staff override, copy), feature off keeps data and existing prices | 46/46 |
+| Features: defaults, not-ready features locked, agency list, hotel choice kept, booking-mode fallback, unavailable hidden from Features tab / Import screen / guest form, licence filter, guest emails off, settings tabs keep each other's values; constant + agency users | 28/28 + 6/6 |
+| Regression: validation, search, capacity, per-night inventory, overbooking, cancel/reinstate, blocked dates, manual booking, instant booking, emails, admin query, CSV text, currency formats, no conversion on currency change | 43/43 |
+| Concurrency: two processes book the last unit with a 2 s pause inside the lock → exactly one booking, the other `flexo_unavailable` after waiting | Pass on both databases |
+| Portability: template with rooms, seasons, closures, features → fresh site via `wp flexo-booking import`; re-import doesn't duplicate; 1.0.0 export file still imports | 11/11 + 3/3 |
+| Browser (Playwright, MariaDB site with Elementor): guest booking across seasons with itemised summary, season minimum, closed notice, search bar, mobile; admin menu, Features toggle, Seasonal prices CRUD (overlap error keeps input, edit, copy, delete), Closed dates, CSV, Agency screen hides features from the hotel admin, Elementor widget/colour/global-colour inheritance/booking-link tag | 37/37 |
+
+**Not covered here:** the Elementor *editor* UI, since the source checkout has no compiled editor scripts (the widget, controls, CSS generation and dynamic tag were tested server-side and on the front end); real email delivery (emails were captured); and PHP 7.4 at runtime (syntax checked only).
