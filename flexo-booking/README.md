@@ -6,7 +6,7 @@ Guests pick dates and guests, see which rooms are free with the price, enter the
 
 It's one plugin that works with any theme or template. Extra features are switched on only where a property needs them, so a simple guest house still gets just *dates → room → details → booking request*.
 
-> Version **1.3.0**. Development follows `ROADMAP.md`; technical design is in `IMPLEMENTATION_PLAN.md`.
+> Version **1.4.0**. Development follows `ROADMAP.md`; technical design is in `IMPLEMENTATION_PLAN.md`.
 
 ---
 
@@ -26,10 +26,15 @@ It's one plugin that works with any theme or template. Extra features are switch
 12. [The booking calendar](#12-the-booking-calendar)
 13. [Putting the booking form on the site](#13-putting-the-booking-form-on-the-site)
 14. [Daily use: managing bookings](#14-daily-use-managing-bookings)
-15. [Templates and moving between sites](#15-templates-and-moving-between-sites)
-16. [Settings reference](#16-settings-reference)
-17. [For developers](#17-for-developers)
-18. [Testing](#18-testing)
+15. [Privacy and data retention](#15-privacy-and-data-retention)
+16. [Invoice requests](#16-invoice-requests)
+17. [Emails](#17-emails)
+18. [Languages: Bulgarian, English, Polylang and WPML](#18-languages-bulgarian-english-polylang-and-wpml)
+19. [Conversion tracking (Google Tag Manager, GA4, Meta)](#19-conversion-tracking-google-tag-manager-ga4-meta)
+20. [Templates and moving between sites](#20-templates-and-moving-between-sites)
+21. [Settings reference](#21-settings-reference)
+22. [For developers](#22-for-developers)
+23. [Testing](#23-testing)
 
 ---
 
@@ -40,16 +45,17 @@ It's one plugin that works with any theme or template. Extra features are switch
 - Elementor 3.5+ for the widget (Elementor Pro works too). Without Elementor, the `[flexo_booking]` shortcode still works.
 
 **Install:**
-1. Build the zip with `bin/build-zip.sh`, or use the provided `flexo-booking-1.3.0.zip`.
+1. Build the zip with `bin/build-zip.sh`, or use the provided `flexo-booking-1.4.0.zip`.
 2. Go to **Plugins → Add New → Upload Plugin**, choose the zip, then **Install** and **Activate**.
 3. A **Bookings** menu appears in the admin.
 4. Check **Settings → General → Timezone**. It must be the hotel's city, because "today" and arrival dates depend on it.
 
-**Upgrade from 1.0.0, 1.1.0 or 1.2.0:** upload the new zip and choose **Replace current with uploaded**.
+**Upgrade from any earlier version (1.0.0–1.3.0):** upload the new zip and choose **Replace current with uploaded**.
 - The database updates itself on the next page load. No reinstall is needed, and rooms, bookings and settings are kept.
 - If an update step ever fails, a red notice appears in the admin and the step is retried automatically.
 - On staging or in scripts you can also run `wp flexo-booking migrate`.
-- After upgrading, **Seasonal prices**, **Calendar sync**, **Children & ages**, **Rate plans**, **Tourist tax** and **Promo codes** are off. Switch on what the hotel needs under **Bookings → Settings → Features**. The six ready-made rate plans are added switched off, so nothing changes for guests until you use them.
+- After upgrading, **Seasonal prices**, **Calendar sync**, **Children & ages**, **Rate plans**, **Tourist tax**, **Promo codes**, **Privacy consent**, **Invoice request** and **Conversion tracking** are off. Switch on what the hotel needs under **Bookings → Settings → Features**. The six ready-made rate plans are added switched off, so nothing changes for guests until you use them.
+- Emails keep working as before and now look like simple HTML emails. Bookings made before 1.4.0 have no stored language; their emails use the site language.
 
 ---
 
@@ -72,13 +78,15 @@ The hotel only ever sees features you made available. Switching a feature off hi
 |---|---|---|
 | How do guests book? | **Booking requests** (you confirm) or **Instant booking** | Ready |
 | Seasonal prices | Different prices and minimum stays for high and low season | Ready (1.1.0) |
-| Guest emails | Emails to guests when a booking is received, confirmed or cancelled | Ready |
+| Guest emails | Emails to guests when a booking is received, confirmed or cancelled, plus an optional reminder before arrival and a review request after the stay | Ready (reminders and review requests: 1.4.0) |
 | Calendar sync | iCal sync with Booking.com, Airbnb, Vrbo… | Ready (1.2.0) |
 | Children & ages | Ask each child's age, "max adults" per room, children charged by age for per-person extras | Ready (1.3.0) |
 | Rate plans | Room Only, Breakfast, Half Board, Non-refundable… with their own price and cancellation text | Ready (1.3.0) |
 | Tourist tax | Per person per night, as its own line; in the total or paid at the property | Ready (1.3.0) |
 | Promo codes | Discount codes such as DIRECT10, with dates, limits and conditions | Ready (1.3.0) |
-| Privacy consent, Invoice request, Conversion tracking | | Coming soon |
+| Privacy consent | Consent checkbox with proof, automatic removal of old guest data, "Anonymise" button | Ready (1.4.0) |
+| Invoice request | "I would like an invoice" with details for a person or a company | Ready (1.4.0) |
+| Conversion tracking | Booking events for Google Tag Manager, GA4 and Meta | Ready (1.4.0) |
 | Online card payment, Deposits, Bank transfer | | Coming soon |
 
 "Coming soon" features are listed greyed out, so hotels can see what's planned. To hide them completely, make them unavailable.
@@ -462,13 +470,137 @@ Each booking shows where it came from: **Website**, **✎ Added by staff** or **
 
 ---
 
-## 15. Templates and moving between sites
+## 15. Privacy and data retention
+
+**Always available** (whatever the feature switches):
+- **Tools → Export Personal Data** and **Tools → Erase Personal Data** include the guest's bookings, invoice details, privacy consent and the emails sent to them. Search by the guest's email address. *Erase* anonymises the bookings (see below) and removes the emails from the email log.
+- **Settings → Privacy → Policy Guide** has a suggested *Room bookings* section for your privacy policy. Copy it into your policy page and replace *[X] months* with your retention period.
+
+**Switch on Settings → Features → Privacy consent** for the rest. Settings are under **Bookings → Settings → Privacy**:
+
+| Setting | Default | Notes |
+|---|---|---|
+| Consent checkbox: guests must tick it to book | On | Off = the checkbox is shown but optional |
+| Text next to the checkbox | *I agree to the {privacy_policy} and consent to my information being processed for the purpose of my booking.* | `{privacy_policy}` becomes the link |
+| Privacy policy page | Empty = the page chosen under **Settings → Privacy** | A path such as `/privacy/`. With Polylang/WPML the page in the guest's language is used. |
+| Remove guest details … months after check-out | 0 = never | See *Data retention* |
+
+**Consent.** The checkbox is **never ticked in advance**, and the server checks it too, so a booking can't be sent without it. For each consent the booking keeps the **date and time**, the **exact text** the guest agreed to (in their language, with the privacy page address) and a **text version** (a fingerprint of that text), which changes whenever you edit the text. You can see it on the booking's page and in the CSV.
+
+**Data minimisation.** Under **Settings → General → Guest details form**, only name and email are always required. *Phone* can be required, optional or not asked, and *Special requests* optional or not asked. Fields that aren't asked are never stored, even if something sends them.
+
+**Data retention.** With a number of months set, once a day every booking whose check-out is older than that is **anonymised**: the guest's name, email, phone, special requests and invoice details are removed. The dates, room, guests, prices, promo code and status stay, so your statistics keep working. The consent record stays as proof, without personal data. It's off by default. Many hotels choose **24 months**, which still covers returning guests and complaints. Invoices you issued live in your accounting software and follow accounting law. Ask your accountant or lawyer if unsure.
+
+**Anonymise one booking now.** Open the booking (click its reference) → **Anonymise**. It can't be undone.
+
+---
+
+## 16. Invoice requests
+
+Switch on **Settings → Features → Invoice request**. The guest details form then shows **☐ I would like an invoice**. When it's ticked, the guest chooses **A person** or **A company**:
+
+| For | Fields (default) |
+|---|---|
+| A person | Full name (required), Address (required) |
+| A company | Company name (required), Company ID – EIK/BULSTAT (required), VAT number (optional), Registered address (required), Contact person (optional) |
+
+Under **Settings → Invoices** each field can be **Required**, **Optional** or **Hidden**.
+
+**Checks are light on purpose.** A company ID made only of digits must have 9 or 13 digits, the Bulgarian EIK/BULSTAT format; spaces are removed. IDs with letters (foreign companies) and VAT numbers of any country are accepted as typed.
+
+**Where you see it:**
+- **Bookings list:** 🧾 *Invoice* badge.
+- **Booking page:** an *Invoice requested* box with all details.
+- **Hotel's new-booking email:** an *INVOICE REQUESTED* block.
+- **CSV:** *Invoice*, *Invoice name / company*, *Company ID*, *VAT number*, *Invoice address* and *Contact person* columns.
+
+The details are stored apart from the guest details, and are included in the WordPress personal data export and erase. This is **not** an invoicing system: it only collects the details, and you issue the invoice in your accounting software.
+
+---
+
+## 17. Emails
+
+**Bookings → Settings → Emails.**
+
+**Your hotel:**
+- **Send hotel notifications to:** one or more addresses separated by commas, e.g. `reception@hotel.bg, owner@hotel.bg`. Guests' replies go to the first one. It's empty on a new site, which means the WordPress admin email.
+- **Notify the hotel about:** new booking or booking request · booking cancelled · possible double booking from an external calendar (with Calendar sync on). Each can be switched off.
+- **Hotel phone**, for `{hotel_phone}` and the email footer.
+- **Email design:** colour and logo. Leave the logo empty to use the site logo.
+
+**Emails to guests** (with the *Guest emails* feature on), each with an editable subject and text:
+
+| Email | When |
+|---|---|
+| Booking request received | A guest sends a booking request |
+| Booking confirmed | Instant booking, or you click **Confirm** |
+| Booking cancelled | You cancel the booking |
+| Before arrival (reminder) | Optional. *N* days before arrival (default 3), to confirmed bookings. Add check-in time, directions and parking to the text. |
+| After the stay (review request) | Optional. *N* days after check-out (default 1), with your **review link** (e.g. Google). Without a link, it isn't sent. |
+
+Templates for online payments (waiting for deposit, payment received, payment failed) are prepared for version 1.5 and not shown yet.
+
+**Placeholders:** `{guest_name}` `{booking_ref}` `{room}` `{check_in}` `{check_out}` `{nights}` `{guests}` `{rate_plan}` `{total}` `{price_breakdown}` `{cancellation_policy}` `{promo_code}` `{status}` `{booking_details}` `{check_in_time}` `{check_out_time}` `{hotel_name}` `{hotel_phone}` `{hotel_email}` `{review_link}` `{guest_email}` `{guest_phone}`. The older `{reference}` and `{site_name}` still work.
+
+**Scheduled emails** (reminders and review requests) are sent by WordPress's scheduled tasks once an hour, between 08:00 and 21:00 hotel time. They go **only once per booking** and **never for cancelled bookings**: the booking is checked again just before sending. A review request is sent only within 2 days of its due date, so switching it on doesn't email guests from long ago. On quiet sites, set up a real server cron job (as for Calendar sync, §11) so they go out on time.
+
+**What the emails look like:** simple HTML that works on phones, in the hotel colour with the logo, plus a plain-text version for email programs that don't show HTML.
+
+**Deliverability, please read.** By default WordPress sends email from the web server without logging in to a mail server. Many providers then put booking confirmations in spam or drop them. While no SMTP plugin is detected, a yellow notice on the booking screens says so.
+1. Install **WP Mail SMTP** or **FluentSMTP** (both free).
+2. Connect it to the hotel's email account: its SMTP server, or Gmail/Google Workspace or Microsoft 365. Use an address on the hotel's own domain, e.g. `booking@hotel.bg`, and set up SPF and DKIM for that domain with the hosting company.
+3. Go to **Bookings → Settings → Emails → Send a test email**. It sends the *Booking confirmed* email with example details.
+4. Check **Recent emails** at the bottom of the same page. Every email the plugin sends is listed with recipient, type, time and **Sent** or **Failed** (with the reason). *Sent* means the website handed the email to the mail server. The log is kept for 90 days by default (configurable) and cleaned up automatically. Each booking's page also lists its emails.
+
+---
+
+## 18. Languages: Bulgarian, English, Polylang and WPML
+
+- **Everything is translatable:** admin screens, booking form, messages and emails use the `flexo-booking` text domain. The plugin ships a **complete Bulgarian translation** (`languages/flexo-booking-bg_BG.*`), and English is built in. On a site set to Bulgarian (**Settings → General → Site Language**), everything is Bulgarian. `languages/flexo-booking.pot` is the template for other languages (e.g. with Loco Translate).
+- **Dates:** guests see dates in their language's format: **DD.MM.YYYY** for Bulgarian (e.g. *28.10.2026*), *October 28, 2026* for English. The admin always uses DD.MM.YYYY.
+- **The guest's language is stored on each booking** (shown on the booking's page and in the CSV), and **all their emails are sent in that language**, including later ones such as the confirmation, reminder and review request, whichever language the staff member's admin uses. **Hotel notifications use the site language.**
+- **Email texts:** texts you haven't changed are translated automatically into the guest's language. Texts you changed are sent as you wrote them, unless you translate them with Polylang or WPML (below).
+
+**Polylang** (tested) and **WPML** (supported through WPML's standard hooks, not tested here because WPML is a paid plugin):
+1. Create the booking page in each language (e.g. `/booking/` and `/en/booking/`) with the Flexo Booking Form widget or `[flexo_booking]`, and link them as translations. For the hero search bar in each language, set *Booking page path* to that language's booking page.
+2. The form follows the page's language: texts, prices, dates, messages, and which language the booking is stored in.
+3. The **privacy policy**, **terms** and **thank-you** pages are opened in the guest's language when you have translated them and linked the translations.
+4. Your own texts (email subjects and texts you changed, the consent text, rate plan names, descriptions and cancellation texts) appear under **Languages → Translations** (Polylang) or **WPML → String Translation**, in the group **Flexo Booking**. Translate them there.
+5. Rooms are the same in every language. Room names come from the room itself; use rate plans' own names for anything guests should read in their language.
+
+---
+
+## 19. Conversion tracking (Google Tag Manager, GA4, Meta)
+
+Switch on **Settings → Features → Conversion tracking**. The booking form then adds events to the Google Tag Manager **data layer** (`window.dataLayer`). The plugin does **not** add Google or Meta scripts itself, so your cookie/consent plugin and Tag Manager (with Consent Mode) stay in control of what is sent.
+
+| Event | When | Data |
+|---|---|---|
+| `search` | The guest searches | `search_term`, `check_in`, `check_out`, `nights`, `adults`, `children` |
+| `room_select` | The guest chooses a room (and rate plan) | `room`, `rate_plan`, `value`, `currency`, `ecommerce.items` |
+| `begin_checkout` | The details form is shown | `value`, `currency`, `ecommerce` (GA4 format) |
+| `booking_complete` | The booking or request was sent | `booking_reference`, `booking_status`, `room`, `rate_plan`, `value`, `currency`, `ecommerce.transaction_id` |
+
+- **No personal data:** names, emails, phones and invoice details are never included.
+- **No duplicates:** `booking_complete` fires once per booking reference, and reloading the page or the thank-you page doesn't repeat it. With a thank-you page, the form waits until Tag Manager has received the event (at most 1.5 s) before moving on.
+
+**Setting up GA4 in Tag Manager:**
+1. Install your Tag Manager container on the site: a GTM plugin, the theme, or the Elementor custom code.
+2. In GTM, create **Triggers → Custom Event** for `search`, `begin_checkout` and `booking_complete`.
+3. Create a **GA4 Event** tag for each. For `booking_complete` use the event name `purchase`, tick *Send Ecommerce data* (data layer), and add the parameter `transaction_id` = `{{DLV – booking_reference}}` (a Data Layer Variable). The value and currency come with the ecommerce data. For `begin_checkout`, send the ecommerce data the same way.
+4. Mark `purchase` as a key event (conversion) in GA4. Booking **requests** are counted when sent. Filter by `booking_status` (`pending` / `confirmed`) if you only want confirmed ones.
+
+**Meta Pixel:** in Tag Manager, add Meta Pixel tags on the same triggers (`Search`, `InitiateCheckout`, `Purchase` with value and currency). Only if the pixel is on the site **without** Tag Manager, tick **Settings → Tracking → Also send … to the Meta Pixel directly**. Don't use both, or events are counted twice.
+
+---
+
+## 20. Templates and moving between sites
 
 | Part | Where it lives | How it moves |
 |---|---|---|
 | Plugin code | `wp-content/plugins/flexo-booking` | Install the zip, or it comes with a full-site clone |
 | Widget placement and styling | Elementor page/template data | Elementor template/kit export |
-| Rooms, **seasons, closed dates**, settings (incl. child prices and tourist tax), enabled features, **rate plans** (and which rooms offer them), **promo codes** | Posts, plugin tables, options | **Bookings → Import / Export** (JSON) or WP-CLI |
+| Rooms, **seasons, closed dates**, settings (incl. child prices, tourist tax, **email texts, privacy, invoice fields and tracking settings**), enabled features, **rate plans** (and which rooms offer them), **promo codes** | Posts, plugin tables, options | **Bookings → Import / Export** (JSON) or WP-CLI |
 | Calendar connections (Booking.com/Airbnb links) | Plugin table | In the export file, but imported **only when ticked** (moving the same hotel) |
 | Bookings | `wp_flexo_bookings` table | Full-site migration, or export with "include bookings" |
 
@@ -482,7 +614,7 @@ Each booking shows where it came from: **Website**, **✎ Added by staff** or **
 **B. New client site from a template:**
 1. Clone the site, or install the plugin **before** importing the Elementor kit.
 2. **Import / Export → Import** the template's file.
-3. Adjust rooms, prices, seasons and the **notification email**. The notification email is never exported, so the new site uses its own admin email.
+3. Adjust rooms, prices, seasons, the **notification addresses**, the **hotel phone**, the **review link** and the **privacy page**. Notification addresses are never exported, so the new site uses its own admin email until you set them.
 4. Make a test booking.
 
 How the import behaves:
@@ -514,7 +646,7 @@ wp flexo-booking import template.flexo-booking.json --images      # --skip-setti
 
 ---
 
-## 16. Settings reference
+## 21. Settings reference
 
 **Settings → General:**
 - Currency: code, symbol, position, number format, decimals
@@ -523,6 +655,7 @@ wp flexo-booking import template.flexo-booking.json --images      # --skip-setti
 - Guest selector limits (0 children hides that field)
 - Check-in and check-out times
 - Thank-you page and terms page, as **paths** such as `/terms/`
+- Guest details form: phone required / optional / not asked; special requests optional / not asked (§15)
 - Data removal on uninstall
 
 **Settings → Features:** see §2.
@@ -531,13 +664,13 @@ wp flexo-booking import template.flexo-booking.json --images      # --skip-setti
 
 **Settings → Tourist tax** (with *Tourist tax* on): amount per adult per night, children, included in the total or paid at the property (§9).
 
-**Settings → Emails:**
-- Notification address for new-booking alerts
-- Guest email texts, shown only while *Guest emails* is on
+**Settings → Privacy** (with *Privacy consent* on): consent checkbox, its text, privacy page, retention period (§15).
 
-Email placeholders:
+**Settings → Invoices** (with *Invoice request* on): required / optional / hidden for each field (§16).
 
-`{reference}` `{guest_name}` `{guest_email}` `{guest_phone}` `{room}` `{check_in}` `{check_out}` `{nights}` `{guests}` `{total}` `{price_breakdown}` `{rate_plan}` `{cancellation_policy}` `{promo_code}` `{status}` `{booking_details}` `{check_in_time}` `{check_out_time}` `{site_name}`
+**Settings → Emails:** notification addresses and which notifications, hotel phone, colour and logo, guest email texts with the reminder and review-request schedule and review link, email log period, test email, recent emails (§17).
+
+**Settings → Tracking** (with *Conversion tracking* on): the events for Tag Manager and the optional direct Meta Pixel (§19).
 
 `{booking_details}` lists the guests (with children's ages), the rate plan, the promo code, the total with its price lines (plan, discount, tourist tax, anything payable at the property) and the cancellation text.
 
@@ -545,7 +678,7 @@ Email placeholders:
 
 ---
 
-## 17. For developers
+## 22. For developers
 
 **REST API** (public, used by the form):
 
@@ -554,10 +687,12 @@ Email placeholders:
 | GET | `/wp-json/flexo-booking/v1/rooms` | Bookable rooms |
 | GET | `/wp-json/flexo-booking/v1/availability?check_in=&check_out=&adults=&children=[&children_ages=4,11][&room=]` | Availability, totals, per-night average, `breakdown`, `min_nights`, `notice` (property closed); per room `quote`, `plans` (one priced view per rate plan) and `price_from` |
 | GET | `/wp-json/flexo-booking/v1/quote?room=&check_in=&check_out=&adults=&children=&children_ages=&rate_plan=&promo_code=` | Price of one room, plan and code: `lines`, `subtotal`, `discount_formatted`, `total`, `due_at_property`, `rate_plan`, `promo`, `promo_error`. 429 after too many wrong codes. |
-| POST | `/wp-json/flexo-booking/v1/bookings` | Create a booking (`children_ages`, `rate_plan`, `promo_code`, optional `expected_total`). Returns 201; 409 if no longer available, closed, or the price differs from `expected_total`; 400 for an invalid code or missing ages. A `total` field is ignored: the server always calculates the price. |
+| POST | `/wp-json/flexo-booking/v1/bookings` | Create a booking (`children_ages`, `rate_plan`, `promo_code`, `privacy_consent`, `invoice` object, `locale`, optional `expected_total`). Returns 201; 409 if no longer available, closed, or the price differs from `expected_total`; 400 for an invalid code or missing ages. A `total` field is ignored: the server always calculates the price. |
 | GET | `/wp-json/flexo-booking/v1/ical/{room}.ics?token=…` | The room's iCal export (Calendar sync). 403 for a wrong token, 404 while the feature is off. |
 
-**Architecture (1.3.0):**
+All routes accept `locale` (e.g. `en_US`): the answer is in that language, and a booking stores it.
+
+**Architecture (1.4.0):**
 
 | Class | Role |
 |---|---|
@@ -567,6 +702,11 @@ Email placeholders:
 | `Flexo_Booking_Children` | Child rules (global / per room), age parsing, `factor()` |
 | `Flexo_Booking_Rate_Plans` | Plans (table `flexo_rate_plans`), presets, room assignments (room meta `_flexo_rate_plans`), `adjustment()` |
 | `Flexo_Booking_Promo_Codes` | Codes (table `flexo_promo_codes`), `validate()`, usage from confirmed bookings (`bookings.promo_id`) |
+| `Flexo_Booking_Privacy` | Consent evidence (table `flexo_consents`), `anonymise()`, retention (daily `flexo_booking_daily`), WordPress personal data exporter/eraser, policy guide text |
+| `Flexo_Booking_Invoices` | Invoice details (table `flexo_invoices`), field settings, light EIK check |
+| `Flexo_Booking_Emails` | Guest and hotel emails, templates per language, HTML layout + plain text, email log (table `flexo_email_log`), scheduled emails (hourly `flexo_booking_hourly`), test email, SMTP check |
+| `Flexo_Booking_I18n` | Guest language, `with_locale()`, Polylang/WPML strings and pages, date format per language |
+| `Flexo_Booking_Tracking` | Settings for the dataLayer events sent by `booking.js` |
 | `Flexo_Booking_Features` | Available/enabled rules |
 | `Flexo_Booking_Migrations` + `Flexo_Booking_Schema` | Versioned migrations; tables are only ever added to |
 | `Flexo_Booking_Money` | Currency formatting |
@@ -584,12 +724,18 @@ Email placeholders:
 | `flexo_booking_occupying_statuses` | filter | Statuses that take a room |
 | `flexo_booking_created`, `flexo_booking_status_changed` | actions | Integrations |
 | `flexo_booking_ical_timeout` | filter | Seconds to wait for a calendar download (default 15) |
+| `flexo_booking_email` | filter `( $message )` | Every email just before sending: to, subject, html, text, headers, type |
+| `flexo_booking_email_html` | filter `( $html, $subject, $text )` | Replace the email layout |
+| `flexo_booking_email_hours_from`, `flexo_booking_email_hours_to` | filters | Hours for scheduled emails (8, 21) |
+| `flexo_booking_date_format` | filter `( $format, $locale )` | Guest date format per language |
+| `flexo_booking_smtp_detected` | filter | Tell the plugin a mail setup exists (hides the SMTP notice) |
+| `flexo_booking_anonymised` | action `( $booking_id )` | After a booking was anonymised |
 | `flexo_booking_before_insert`, `flexo_booking_guest_email`, `flexo_booking_admin_email`, `flexo_booking_email_placeholders`, `flexo_booking_manage_capability`, `flexo_booking_rate_limit`, `flexo_booking_promo_attempts`, `flexo_booking_template`, `flexo_booking_use_mysql_locks` | filters | As named |
 
 **Build:** `bin/build-zip.sh` → `dist/flexo-booking-<version>.zip`.
 
 ---
 
-## 18. Testing
+## 23. Testing
 
-The `tests/` folder in the repository is not shipped in the zip. It holds WP-CLI test scripts (including the calendar-sync engine test with Booking.com/Airbnb-style sample feeds), a concurrency test (two simultaneous bookings for the last unit), the upgrade and portability tests, a promo-code race test (two bookings for a code's last use), and Playwright browser tests for Days 1–3. See `tests/README.md`. Run them against a throwaway site only.
+The `tests/` folder in the repository is not shipped in the zip. It holds WP-CLI test scripts (including the calendar-sync engine test with Booking.com/Airbnb-style sample feeds), a concurrency test (two simultaneous bookings for the last unit), the upgrade and portability tests, a promo-code race test (two bookings for a code's last use), privacy/email/invoice tests, a Bulgarian-site language test, a Polylang test, and Playwright browser tests for Days 1–4. See `tests/README.md`. Run them against a throwaway site only.

@@ -1,9 +1,9 @@
 # Flexo Booking: implementation plan (Days 1–5)
 
-Status: **Day 3 done (1.3.0).** Day 1 (1.1.0) is in §9, Day 2 (1.2.0) in §10
-and Day 3 in §11, each with what was built, the deviations and the test
-results. Days 4–5 follow the schema and pipeline below. Read together with
-`ROADMAP.md`.
+Status: **Day 4 done (1.4.0).** Day 1 (1.1.0) is in §9, Day 2 (1.2.0) in
+§10, Day 3 (1.3.0) in §11 and Day 4 in §12, each with what was built, the
+deviations and the test results. Day 5 follows the schema and pipeline below.
+Read together with `ROADMAP.md`.
 
 Contents:
 
@@ -18,6 +18,7 @@ Contents:
 9. Day 1 status, deviations and test results
 10. Day 2 status, deviations and test results
 11. Day 3 status, deviations and test results
+12. Day 4 status, deviations and test results
 
 ---
 
@@ -276,6 +277,13 @@ flexo_promo_usage (
 
 ### 2.6 Day 4: consent, invoices, email log
 
+> **As built (1.4.0), see §12.** Differences from this draft: the consent
+> table has no email or IP hash (it links to the booking only, so it holds no
+> personal data); the invoice table is `flexo_invoices` with separate person
+> and company fields; bookings also get `emails_sent` (which scheduled emails
+> went out). Invoice data is removed with the booking's personal data (the
+> issued invoice lives in the hotel's accounting).
+
 ```sql
 flexo_consents (
   id, booking_id bigint unsigned DEFAULT 0,
@@ -450,10 +458,10 @@ All 15 features are registered on Day 1:
 | `children` | Children & ages | Ask for children's ages and charge by age. | Day 3 (built) |
 | `tourist_tax` | Tourist tax | Add the municipal tourist tax per person per night. | Day 3 (built) |
 | `promo_codes` | Promo codes | Give discounts with codes such as SUMMER10. | Day 3 (built) |
-| `privacy_consent` | Privacy consent | Ask guests to accept your privacy policy and remove old guest data automatically. | Day 4 |
-| `invoice_request` | Invoice request | Let guests ask for an invoice with company details. | Day 4 |
+| `privacy_consent` | Privacy consent | Ask guests to accept your privacy policy and remove old guest data automatically. | Day 4 (built) |
+| `invoice_request` | Invoice request | Let guests ask for an invoice with company details. | Day 4 (built) |
 | `guest_emails` | Guest emails | Email guests when their booking is received, confirmed or cancelled. | 1.0 |
-| `tracking` | Conversion tracking | Send booking events to Google Analytics / Tag Manager / Meta. | Day 4 |
+| `tracking` | Conversion tracking | Send booking events to Google Analytics / Tag Manager / Meta. | Day 4 (built) |
 | `online_payment` | Online card payment | Guests pay by card when booking (Stripe). | Day 5 |
 | `deposit` | Deposits | Take part of the price when booking, the rest at the property. Requires card payment or bank transfer. | Day 5 |
 | `bank_transfer` | Bank transfer | Guests pay a deposit or the full amount by bank transfer. | Day 5 |
@@ -762,6 +770,7 @@ Run on **MariaDB 10.11**, which uses `GET_LOCK`, and on **SQLite**, which uses t
 
 ## 10. Day 2 status, deviations and test results
 11. Day 3 status, deviations and test results
+12. Day 4 status, deviations and test results
 
 ### 10.1 Built (1.2.0, migration 3)
 
@@ -810,6 +819,7 @@ Bugs found and fixed during testing:
 ---
 
 ## 11. Day 3 status, deviations and test results
+12. Day 4 status, deviations and test results
 
 ### 11.1 Built (1.3.0, migration 4)
 
@@ -858,4 +868,54 @@ Bugs found and fixed during testing:
 Found and fixed during testing:
 - The ready-made plans were created before translations loaded (WordPress notice, English names on non-English sites) → moved to `init`.
 - On phones, amounts in the summary wrapped ("300.00" / "€") and the first price line was bold like the room name → CSS fixed.
+
+---
+
+## 12. Day 4 status, deviations and test results
+
+### 12.1 Built (1.4.0, migration 5)
+
+| Area | Files |
+|---|---|
+| Schema | `flexo_consents` (booking, type, text, text hash, language, time), `flexo_invoices` (person/company fields), `flexo_email_log`; bookings get `locale`, `emails_sent`, `anonymized_at` (+ key on `guest_email`). Migration 5. |
+| Privacy | `class-privacy.php`: consent text (per language, `{privacy_policy}` link), consent record, `anonymise()`, daily retention, manual *Anonymise* (admin-post), WordPress exporter/eraser (bookings, invoice details, consent, email log), policy guide text. Guest form fields: phone required/optional/not asked, special requests optional/not asked. |
+| Invoice request | `class-invoices.php`: fields with required/optional/hidden settings, person/company, light EIK check (9 or 13 digits when numeric), storage, text block, form markup |
+| Emails | `class-emails.php` rewritten: guest types (request, confirmed, cancelled, pre-arrival, review; deposit/payment reserved for Day 5), hotel types (new, cancelled, iCal conflict – moved here from `class-ical.php`) with on/off, several notification addresses, per-language templates, HTML layout + plain text (PHPMailer AltBody), email log with daily cleanup, hourly scheduled sending (08–21 h, once, confirmed only, lock), test email, SMTP detection notice |
+| Translation | `class-i18n.php` (guest language, `with_locale()`, site language, Polylang/WPML strings, languages and page translations, date format per language); `languages/`: `.pot`, complete `bg_BG` `.po/.mo/.l10n.php` (868 strings); form sends `locale`, REST switches to it, bookings store it |
+| Tracking | `class-tracking.php` (config), `booking.js`: `search`, `room_select`, `begin_checkout`, `booking_complete` to `dataLayer` (GA4 ecommerce, cleared before each), once per reference (localStorage), redirect waits for `eventCallback` (≤ 1.5 s), optional direct Meta Pixel |
+| Admin | Settings tabs *Privacy*, *Invoices*, *Emails* (rewritten), *Tracking*; General → guest form fields; booking page: invoice box, consent, language, emails sent, *Anonymise*; list: 🧾 Invoice and *Anonymised* badges; CSV columns appended (language, consent, invoice ×6, anonymised) |
+| Import/Export | New settings travel automatically (templates, schedule, review link, privacy, invoice fields, tracking); notification addresses still never exported |
+
+### 12.2 Deviations and decisions
+
+1. **WordPress Export/Erase Personal Data and the policy-guide text are always on**, not behind *Privacy consent*. A guest's right to a copy or erasure doesn't depend on a feature switch, and they add nothing to the hotel's screens. Consent, retention and the *Anonymise* button are behind the feature.
+2. **Anonymising removes the invoice details too.** The brief keeps "dates, room, prices, status"; invoice requests are personal data (names, addresses). The invoice the hotel issued lives in its accounting software, which is where accounting law applies.
+3. **The consent record is kept after anonymising**, as proof of consent; it contains no personal data (booking ID, text, time, language).
+4. **"Required" off still shows the consent checkbox**, as optional; only ticked consents are recorded.
+5. **Built-in email texts are translated automatically; texts the hotel changed are its own.** Existing sites store the English defaults in their settings, so the plugin recognises unchanged defaults (in English or the site language) and uses the built-in text in the guest's language. Only changed texts are offered to Polylang/WPML string translation (group "Flexo Booking").
+6. **Hotel emails use the site language** (Polylang/WPML default language), not the admin user's language and not the guest's.
+7. **Scheduled emails:** sent between 08:00 and 21:00; reminders only for arrivals after today; review requests only within 2 days of their due date (so switching it on doesn't email old stays); a booking is marked before sending, so a failure is logged but never retried every hour. Pending requests get no reminder.
+8. **HTML emails are generated from the plain-text templates** (hotel colour, logo, footer). There is no visual email editor, so the templates stay simple to edit and translate.
+9. **SMTP detection** treats any plugin that takes over `wp_mail` or configures PHPMailer as "set up"; the notice shows only on the plugin's screens and can be hidden per user.
+10. **Tracking goes only to `dataLayer`** (no Google/Meta scripts are added). Direct Meta Pixel calls are an opt-in setting for sites without Tag Manager, default off, because the brief says to fire only through the data layer so consent tools stay in control.
+11. **`booking_complete` fires for booking requests too** (with `booking_status` = `pending`), because the request is the website conversion; GTM can filter on the status.
+12. **WPML** is implemented through its public hooks (`wpml_register_single_string`, `wpml_translate_single_string`, `wpml_object_id`, `wpml_active_languages`, `wpml_default_language`) but not tested: it's a paid plugin. **Polylang** was tested with the real plugin.
+13. **Bulgarian dates (DD.MM.YYYY) are also used for other languages that write dates that way** (de, ru, ro, el, …; filter `flexo_booking_date_format`).
+14. **Invoice fields are not on the staff *Add booking* form** (the brief asks for them in the guest checkout); staff can put details in the notes.
+15. **Polylang room translations are not needed:** rooms are shared by all languages; the booking pages are translated.
+
+### 12.3 Tests run (MariaDB 10.11 and SQLite)
+
+| Test | Result |
+|---|---|
+| `test-day4.php`. **Consent:** off → hidden; required → refused (engine and REST 400), "false" is not consent, never pre-ticked, record with time, text and hash, new text → new version, optional mode. **Form fields:** phone required/optional/not asked, fields not asked never stored. **Invoice:** off → ignored; no invoice; person; required field missing; company with EIK 12345 refused, "203 456 789" accepted, foreign ID with letters accepted, VAT not checked; configurable fields; REST 400; details page; hotel email; text block. **Retention:** off by default, 12 months anonymises only the older booking, fields removed, dates/prices kept, invoice removed, idempotent, feature off → nothing; manual anonymise; consent kept; no email to anonymised bookings. **WP Export/Erase:** registered, bookings + invoice + emails + consent exported, erase anonymises and clears the log, nothing left. **Emails:** request/confirmed/cancelled to guest, new/cancelled to hotel (two addresses), HTML in the hotel colour, text part, switching hotel notices off, edited template with `{booking_ref}`/`{hotel_phone}`, emptied template → built-in text. **Scheduled:** not at night, reminder in 2 days + review for yesterday only (not cancelled/pending/later/old), not twice, cancelled before its reminder, no link → no review, guest emails off → nothing, cron events scheduled. **Log/test email:** test email, sent entry, failure with reason, cleanup after 90 days, SMTP check, real PHPMailer gets the plain-text part and logs the failure. **Import/Export** of the new settings. | 93/93 on both |
+| `test-i18n.php` (site in Bulgarian): English guest → English emails with English dates, hotel email in Bulgarian with the guest's language, later emails still English; Bulgarian guest → Bulgarian text and DD.MM.YYYY; changed text used as written; Bulgarian admin texts and plural forms; REST in the requested language | 18/18 on both |
+| `polylang-test.php` (real Polylang, Bulgarian default + English): booking page per language (texts, script texts, `data-locale`, date format), consent linking to the privacy page of that language, English booking over HTTP → English answer, English thank-you page, stored language, English consent text, English guest email + Bulgarian hotel email, hotel's own subject translated in Polylang string translation, Bulgarian original for Bulgarian guests; strings listed under Languages → Translations | 21/21 + screen check |
+| Browser `e2e/day4.js`: consent (shown, not ticked, link, blocks sending), invoice (hidden until ticked, person/company fields, EIK error from the server, success), tracking (4 events with correct values, GA4 ecommerce and clearing, no personal data, `booking_complete` once, reload doesn't repeat, redirect to the thank-you page after the event, Meta Pixel only when switched on), phone 390 px, admin (invoice badge, details with invoice/consent/emails, hotel email with invoice, CSV columns, anonymise), settings tabs, review request setting, test email + log, no SMTP notice with a mail plugin, privacy tab text, tracking tab, policy guide, features off → invisible and booking still works | 48/48 |
+| Upgrade 1.0.0 → 1.4.0 (MariaDB) and 1.3.0 → 1.4.0 (SQLite, with a Day 3 booking: stored breakdown byte-identical) | 24/24; pass |
+| Regression: pricing parity, seasons, features (+ constants), regression, iCal, Day 3, both concurrency tests, Import/Export Day 3, browser Days 1–3 | All pass |
+
+Found and fixed during testing:
+- Hotel emails followed the guest's language during a guest's request (`get_locale()` is switched) → the site language is now read from the settings / Polylang default.
+- Polylang listed every unchanged built-in email text for translation → only texts the hotel changed are registered.
 
