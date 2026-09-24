@@ -1,8 +1,9 @@
 # Flexo Booking: implementation plan (Days 1–5)
 
-Status: **Day 2 done (1.2.0).** Day 1 (1.1.0) is in §9 and Day 2 in §10,
-each with what was built, the deviations and the test results. Days 3–5
-follow the schema and pipeline below. Read together with `ROADMAP.md`.
+Status: **Day 3 done (1.3.0).** Day 1 (1.1.0) is in §9, Day 2 (1.2.0) in §10
+and Day 3 in §11, each with what was built, the deviations and the test
+results. Days 4–5 follow the schema and pipeline below. Read together with
+`ROADMAP.md`.
 
 Contents:
 
@@ -16,6 +17,7 @@ Contents:
 8. Day 1 test plan
 9. Day 1 status, deviations and test results
 10. Day 2 status, deviations and test results
+11. Day 3 status, deviations and test results
 
 ---
 
@@ -211,6 +213,14 @@ flexo_calendar_events (
 
 ### 2.5 Day 3: rate plans, children, tourist tax, promo codes
 
+> **As built (1.3.0), see §11.** The Day 3 brief simplified this draft:
+> child prices are one rule set (free / % / adult) in settings with an
+> optional per-room override in room meta, not a `flexo_child_rules` table;
+> there is no extra-adult occupancy pricing; which rooms offer a plan is
+> room meta `_flexo_rate_plans`; and promo usage is counted from confirmed
+> bookings (`bookings.promo_id`), so there is no `flexo_promo_usage` table.
+> The draft below is kept for reference.
+
 ```sql
 flexo_rate_plans (
   id, name varchar(100), description text,
@@ -398,11 +408,11 @@ placeholder), the admin and the CSV.
 | Priority | Step | Feature gate | Day |
 |---|---|---|---|
 | 10 | **Nightly room price.** Each night uses its season's price if one applies, otherwise the room price. Fri/Sat nights use the weekend price if one is set. The result is the `accommodation` line. The legacy filter `flexo_booking_calculate_total` is applied here to the accommodation amount; if it changes it, an "adjustment" line is added. | seasons: `seasonal_pricing` | 1 |
-| 20 | **Rate-plan adjustment** (percent / per night / per stay) | `rate_plans` | 3 |
-| 30 | **Occupancy and children.** Extra adults above the base occupancy, then child age-band rules: free, fixed per night, or % of the adult price. | `children` | 3 |
-| 40 | **Promo discount.** Applies to lines 10–30, never to tax. | `promo_codes` | 3 |
-| 50 | **Tourist tax.** Per person per night, age-exempt, with `collect` = booking or property. | `tourist_tax` | 3 |
-| 90 | **Totals.** Round each line to 2 decimals, then sum, so the breakdown always adds up exactly. | core | 1 |
+| 20 | **Rate-plan adjustment**: per night / per booking / per guest per night (children by age) / % of the room price | `rate_plans` | 3 |
+| ~~30~~ | ~~Occupancy and children~~ – not built: the Day 3 brief applies child prices only to per-person amounts (steps 20 and 50), not to the room price | – | – |
+| 40 | **Promo discount.** Applies to room + rate plan, never to tax; capped so the total never goes below zero. | `promo_codes` | 3 |
+| 50 | **Tourist tax.** Per person per night; children like adults, exempt under an age, or by the child rules; `collect` = booking or property | `tourist_tax` | 3 |
+| 90 | **Totals.** Round each line, then sum, so the breakdown always adds up exactly. Lines with `collect = property` are shown but kept out of `total` (in `due_at_property`). | core | 1 |
 | 95 | **Payment schedule**: deposit, pay now, pay at property | `online_payment` / `deposit` / `bank_transfer` | 5 |
 
 Steps are registered through `flexo_booking_pricing_steps` (priority →
@@ -436,10 +446,10 @@ All 15 features are registered on Day 1:
 | `instant_booking` | Instant booking | Bookings are confirmed immediately, without your approval. | 1.0 |
 | `seasonal_pricing` | Seasonal prices | Different prices and minimum stays for high and low season. | Day 1 |
 | `calendar_sync` | Calendar sync | Keep availability in sync with Booking.com, Airbnb and others (iCal). | Day 2 |
-| `rate_plans` | Rate plans | Offer options such as "Breakfast included" or "Non-refundable". | Day 3 |
-| `children` | Children & ages | Ask for children's ages and charge by age. | Day 3 |
-| `tourist_tax` | Tourist tax | Add the municipal tourist tax per person per night. | Day 3 |
-| `promo_codes` | Promo codes | Give discounts with codes such as SUMMER10. | Day 3 |
+| `rate_plans` | Rate plans | Offer options such as "Breakfast included" or "Non-refundable". | Day 3 (built) |
+| `children` | Children & ages | Ask for children's ages and charge by age. | Day 3 (built) |
+| `tourist_tax` | Tourist tax | Add the municipal tourist tax per person per night. | Day 3 (built) |
+| `promo_codes` | Promo codes | Give discounts with codes such as SUMMER10. | Day 3 (built) |
 | `privacy_consent` | Privacy consent | Ask guests to accept your privacy policy and remove old guest data automatically. | Day 4 |
 | `invoice_request` | Invoice request | Let guests ask for an invoice with company details. | Day 4 |
 | `guest_emails` | Guest emails | Email guests when their booking is received, confirmed or cancelled. | 1.0 |
@@ -751,6 +761,7 @@ Run on **MariaDB 10.11**, which uses `GET_LOCK`, and on **SQLite**, which uses t
 ---
 
 ## 10. Day 2 status, deviations and test results
+11. Day 3 status, deviations and test results
 
 ### 10.1 Built (1.2.0, migration 3)
 
@@ -795,3 +806,56 @@ Run on **MariaDB 10.11**, which uses `GET_LOCK`, and on **SQLite**, which uses t
 Bugs found and fixed during testing:
 - **Dialog action links:** they were HTML-escaped (`&amp;`) when passed as JSON, which would break Confirm/Cancel/Remove/Review from the calendar.
 - **Dialog width on phones:** the dialog was 8 px wider than a 390 px screen.
+
+---
+
+## 11. Day 3 status, deviations and test results
+
+### 11.1 Built (1.3.0, migration 4)
+
+| Area | Files |
+|---|---|
+| Schema | `flexo_rate_plans`, `flexo_promo_codes`; bookings get `children_ages`, `rate_plan_id`, `promo_id` (+ key), `promo_code`, `discount_total`, `tax_total`. Migration 4 checks them and flags the six ready-made plans to be added (switched off) on `init`, once translations are loaded. |
+| Children | `class-children.php`: global rules (settings `child_free_under` 3 / `child_percent` 50 / `child_adult_from` 12), per-room override (meta `_flexo_child_rules`), `factor()`, age parsing and validation (0–17, one per child). Room meta `_flexo_max_adults`. |
+| Rate plans | `class-rate-plans.php` (repository, presets, room assignments in meta `_flexo_rate_plans` with optional per-room amount, `adjustment()`), `admin/class-rate-plans-admin.php` (**Bookings → Rate plans**) |
+| Promo codes | `class-promo-codes.php` (repository, `validate()` with guest messages, usage = confirmed bookings, attempt limiter), `admin/class-promo-codes-admin.php` (**Bookings → Promo codes**) |
+| Pricing | Steps 20 (rate plan), 40 (promo), 50 (tourist tax); `per_person()` helper; totals exclude property-collected lines; `public_view()` for the form; rate plan and promo are part of the stored snapshot |
+| Booking engine | `search()` takes ages, checks max adults, quotes every plan (room price = cheapest, `price_from`); `create()` takes ages, plan, code, `expected_total`, re-validates the code inside the room lock, and takes a second lock per limited code for confirmed bookings |
+| REST | `children_ages` on availability/bookings; new `GET /quote`; `expected_total` → 409 `flexo_price_changed`; promo attempts limited per IP |
+| Front end | Age selectors (full form and search bar, `children_ages[]`), plan chooser in the room card (skipped for one plan), itemised summary with subtotal/discount/final total, "Have a promo code?" field, cancellation text, price-changed recovery |
+| Admin | Settings tabs *Children* and *Tourist tax*; room screen (max adults, child prices, plans summary); bookings list (ages, plan, % code badge, price lines); new booking details view (`?page=flexo-booking&booking=ID`); Add booking with ages, plan and code; calendar dialog lines; CSV columns appended at the end; warning when confirming a request takes a code over its limit |
+| Emails | `{booking_details}` lists ages, plan, code, all price lines and the cancellation text; new placeholders `{rate_plan}`, `{cancellation_policy}`, `{promo_code}` |
+| Import/Export | Schema 4: `rate_plans` (top level), per room `rate_plans` (by name, with amount) and `child_rules`, `promo_codes` (rooms by slug, plans by name, no usage). Options/CLI `--skip-rate-plans`, `--skip-promo-codes`. Imported bookings are re-linked to plans and codes by name/code. |
+
+### 11.2 Deviations and decisions
+
+1. **With the feature off, the form keeps today's *Adults* + *Children* counts.** The brief says "a single Guests count as today", but 1.0–1.2 already show Adults and Children (Children hidden when *Children up to* = 0). Nothing changes for existing sites; ages, max adults and child prices appear only with the feature on.
+2. **Child prices apply to per-person amounts only**, as the brief says (per-guest rate-plan supplements, and the tourist tax when chosen). The plan's draft "extra adult price / base occupancy" was not built.
+3. **Tourist tax and children:** three choices: *same as adults* (default), *exempt under age N* (older children pay in full), or *use the child price rules*. This covers both "optional child exemption by age" (C) and "child pricing rules for … tourist tax" (A).
+4. **"Paid at the property" tax is not in `total`.** It's shown as its own line and in `due_at_property` / *Payable at the property*. This reverses the draft note in §2.2 ("total includes tax"); Day 5 payments will charge `total`.
+5. **A room offering several plans requires a choice**; with one plan it's used automatically. A room with no plan (or the feature off) uses the normal price. Plans switched off or not offered for the room are refused with a clear message.
+6. **Room assignments are edited on the rate plan's form** (tick rooms + optional room amount), and the room screen shows a summary with a link. The data still lives on the room, so it travels with it.
+7. **Promo usage limit and booking requests.** Only confirmed bookings count, as asked. A pending request with a code that's since been used up can still be confirmed by staff; they get a warning, and the discount stays.
+8. **An invalid or used-up code blocks the booking** with the reason, instead of silently booking without the discount.
+9. **Stay-date validity means every night** must be inside the code's stay dates (like seasons: inclusive last night).
+10. **"Manipulated client-side total rejected"**: the browser never sends a price the server uses. The form sends the total the guest saw as `expected_total`; if the server's price differs (tampering, or prices/codes changed meanwhile), the booking is refused with the new price and the summary refreshes. A `total` field is ignored.
+11. **Admin booking details view** (`?page=flexo-booking&booking=ID`) is new: there was no single-booking screen, and the brief asks for "booking details". References in the list link to it; the calendar dialog has a *Booking details* button.
+12. **CSV:** new columns are appended after the existing ones, so spreadsheets built on the old column order keep working.
+13. **Ready-made plans are added on `init` after migration 4**, not inside it, so their names are in the site's language (WordPress 6.7 warns about translations loaded before `init`).
+14. **Promo attempts:** more than 20 wrong codes per visitor per hour → 429 (filter `flexo_booking_promo_attempts`), against code guessing.
+
+### 11.3 Tests run (MariaDB 10.11 and SQLite)
+
+| Test | Result |
+|---|---|
+| `test-day3.php`. **Children:** feature off keeps counts; ages required and 0–17; capacity includes children and babies; max adults; free / 50 % / adult bands; per-room override; staff ages. **Rate plans:** no plan; Room Only; per night; per booking; per guest per night with children; percentage (negative); per-room amount; crossing two seasons with a per-person plan and with a percentage; one plan skips the choice; several plans require one; switched-off / not-offered plans refused; feature off. **Tourist tax:** adults; same as adults; exemption age; child rules; included vs at the property; stored total. **Promo:** percentage; fixed; expired; not yet; switched off; unknown; room and rate-plan restrictions; minimum amount; minimum nights; stay dates; total never negative; usage only on confirmation; limit reached; re-validated when booking; over-limit warning; cancellation restores; instant booking uses at once; feature off. **Manipulated totals** (engine and REST 409, `total` ignored). **REST** quote/availability/booking. **Snapshot** unchanged after editing room, season, plan, promo, tax and child prices, and after deleting the plan. Admin details view. | 122/122 on both |
+| `concurrency-promo.sh`: two instant bookings in different rooms race for a code's last use | Exactly one wins, on both |
+| `portability-day3.php`: export (schema 4, no usage) → fresh site: child rules, tax settings, features, max adults, room child rules, plans (details, off stays off), room offers by name incl. amounts, codes with conditions re-linked, usage 0, re-import doesn't duplicate, same price as the template, both optional | 4/4 + 21/21 |
+| Upgrade 1.0.0 → 1.3.0 (MariaDB) and 1.2.0 → 1.3.0 (SQLite): data intact, all tables, presets added once, an existing booking's stored breakdown byte-identical | 21/21; pass (the one "count" difference was the extra booking added for the comparison) |
+| Browser `e2e/day3.js`: ages (selectors, required), capacity, "from" price, plan chooser (order, ✕ Non-refundable text), summary lines (plan, ages, child supplement, tax with exempt child, total, cancellation), promo collapsed / expired message / applied with Subtotal–Discount–Final total, booking sent; one-plan room skips the choice; hotel changes the price meanwhile → refused with the new price, summary refreshed, rebooked; room without plans; search bar passes ages; phone 390 px (results, plans, summary, promo) without horizontal scroll; admin list/details, promo usage after confirming, Expired label, promo form validation, staff booking with ages + plan + code, room screen, settings tabs, CSV, calendar dialog; all four features off → invisible, old bookings keep their breakdown; back on | 63/63 |
+| Regression: pricing parity, seasons, features (+constants), regression, iCal, concurrency, `e2e/day1.js`, `e2e/day2.js` | All pass |
+
+Found and fixed during testing:
+- The ready-made plans were created before translations loaded (WordPress notice, English names on non-English sites) → moved to `init`.
+- On phones, amounts in the summary wrapped ("300.00" / "€") and the first price line was bold like the room name → CSS fixed.
+

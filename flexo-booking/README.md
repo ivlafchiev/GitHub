@@ -6,7 +6,7 @@ Guests pick dates and guests, see which rooms are free with the price, enter the
 
 It's one plugin that works with any theme or template. Extra features are switched on only where a property needs them, so a simple guest house still gets just *dates → room → details → booking request*.
 
-> Version **1.2.0**. Development follows `ROADMAP.md`; technical design is in `IMPLEMENTATION_PLAN.md`.
+> Version **1.3.0**. Development follows `ROADMAP.md`; technical design is in `IMPLEMENTATION_PLAN.md`.
 
 ---
 
@@ -18,14 +18,18 @@ It's one plugin that works with any theme or template. Extra features are switch
 4. [Setting prices](#4-setting-prices)
 5. [Seasonal prices](#5-seasonal-prices)
 6. [Closed dates](#6-closed-dates)
-7. [Calendar sync (Booking.com, Airbnb…)](#7-calendar-sync-bookingcom-airbnb)
-8. [The booking calendar](#8-the-booking-calendar)
-9. [Putting the booking form on the site](#9-putting-the-booking-form-on-the-site)
-10. [Daily use: managing bookings](#10-daily-use-managing-bookings)
-11. [Templates and moving between sites](#11-templates-and-moving-between-sites)
-12. [Settings reference](#12-settings-reference)
-13. [For developers](#13-for-developers)
-14. [Testing](#14-testing)
+7. [Children and child prices](#7-children-and-child-prices)
+8. [Rate plans](#8-rate-plans)
+9. [Tourist tax](#9-tourist-tax)
+10. [Promo codes](#10-promo-codes)
+11. [Calendar sync (Booking.com, Airbnb…)](#11-calendar-sync-bookingcom-airbnb)
+12. [The booking calendar](#12-the-booking-calendar)
+13. [Putting the booking form on the site](#13-putting-the-booking-form-on-the-site)
+14. [Daily use: managing bookings](#14-daily-use-managing-bookings)
+15. [Templates and moving between sites](#15-templates-and-moving-between-sites)
+16. [Settings reference](#16-settings-reference)
+17. [For developers](#17-for-developers)
+18. [Testing](#18-testing)
 
 ---
 
@@ -36,16 +40,16 @@ It's one plugin that works with any theme or template. Extra features are switch
 - Elementor 3.5+ for the widget (Elementor Pro works too). Without Elementor, the `[flexo_booking]` shortcode still works.
 
 **Install:**
-1. Build the zip with `bin/build-zip.sh`, or use the provided `flexo-booking-1.2.0.zip`.
+1. Build the zip with `bin/build-zip.sh`, or use the provided `flexo-booking-1.3.0.zip`.
 2. Go to **Plugins → Add New → Upload Plugin**, choose the zip, then **Install** and **Activate**.
 3. A **Bookings** menu appears in the admin.
 4. Check **Settings → General → Timezone**. It must be the hotel's city, because "today" and arrival dates depend on it.
 
-**Upgrade from 1.0.0 or 1.1.0:** upload the new zip and choose **Replace current with uploaded**.
+**Upgrade from 1.0.0, 1.1.0 or 1.2.0:** upload the new zip and choose **Replace current with uploaded**.
 - The database updates itself on the next page load. No reinstall is needed, and rooms, bookings and settings are kept.
 - If an update step ever fails, a red notice appears in the admin and the step is retried automatically.
 - On staging or in scripts you can also run `wp flexo-booking migrate`.
-- After upgrading, **Seasonal prices** and **Calendar sync** are off. Switch it on under **Bookings → Settings → Features** if the hotel needs it.
+- After upgrading, **Seasonal prices**, **Calendar sync**, **Children & ages**, **Rate plans**, **Tourist tax** and **Promo codes** are off. Switch on what the hotel needs under **Bookings → Settings → Features**. The six ready-made rate plans are added switched off, so nothing changes for guests until you use them.
 
 ---
 
@@ -70,7 +74,10 @@ The hotel only ever sees features you made available. Switching a feature off hi
 | Seasonal prices | Different prices and minimum stays for high and low season | Ready (1.1.0) |
 | Guest emails | Emails to guests when a booking is received, confirmed or cancelled | Ready |
 | Calendar sync | iCal sync with Booking.com, Airbnb, Vrbo… | Ready (1.2.0) |
-| Rate plans, Children & ages, Tourist tax, Promo codes | | Coming soon |
+| Children & ages | Ask each child's age, "max adults" per room, children charged by age for per-person extras | Ready (1.3.0) |
+| Rate plans | Room Only, Breakfast, Half Board, Non-refundable… with their own price and cancellation text | Ready (1.3.0) |
+| Tourist tax | Per person per night, as its own line; in the total or paid at the property | Ready (1.3.0) |
+| Promo codes | Discount codes such as DIRECT10, with dates, limits and conditions | Ready (1.3.0) |
 | Privacy consent, Invoice request, Conversion tracking | | Coming soon |
 | Online card payment, Deposits, Bank transfer | | Coming soon |
 
@@ -117,7 +124,10 @@ Go to **Bookings → Rooms → Add room** and create one entry per **room type**
 | Title, description, excerpt, featured image | Shown in the search results (the excerpt is the short line) |
 | **Price per night** | The normal price (see §4) |
 | **Weekend price per night** | Optional. Used for Friday and Saturday nights. |
-| **Max guests** | Adults and children together |
+| **Max guests** | Adults and children together, babies included |
+| **Max adults** | Optional, shown with *Children & ages* on. E.g. a family room for 4 guests but at most 2 adults. |
+| **Child prices** | Optional, shown with *Children & ages* on: tick *Use different child prices for this room* to override the general rules (§7) |
+| **Rate plans** | Shown with *Rate plans* on: which plans this room offers, with a link to choose them (§8) |
 | **Number of rooms of this type** | E.g. 5 identical doubles means `5`. Enter `0` to stop selling this type. |
 | **Minimum nights** | Optional. Overrides the global minimum. |
 | Order | Lower numbers are listed first |
@@ -135,7 +145,15 @@ How a night is priced:
 1. If **Seasonal prices** is on and the night falls in a season of that room, the **season's** price is used. On Friday and Saturday nights, the season's weekend price is used if it has one.
 2. Otherwise the room's **normal price** is used, or its **weekend price** on Friday and Saturday nights.
 
-The stay total is the sum of its nights. When nights have different prices, guests see the average per night on the room card and an itemised list before they confirm, e.g. *Low season: 2 nights × 80.00 € · High season: 3 nights × 150.00 €*.
+The room price of a stay is the sum of its nights. Optional extras are then added in this order, each as its own line the guest can see:
+
+1. **Room price** (season or normal price, night by night)
+2. **Rate plan** price change, e.g. breakfast per guest per night, or −10% for non-refundable (§8)
+3. **Promo code** discount on the room price and rate plan (§10)
+4. **Tourist tax** (§9), never discounted
+5. **Total**. Tourist tax paid at the property is shown but not part of the total.
+
+When nights have different prices, guests see the average per night on the room card and an itemised list before they confirm, e.g. *Low season: 2 nights × 80.00 € · High season: 3 nights × 150.00 €*.
 
 **Currency** is set under **Settings → General**:
 - Code (default **EUR**; Bulgaria uses the euro since 01.01.2026)
@@ -187,7 +205,122 @@ Switching Seasonal prices off makes new quotes use the room prices again. Season
 
 ---
 
-## 7. Calendar sync (Booking.com, Airbnb…)
+## 7. Children and child prices
+
+Switch on **Settings → Features → Children & ages**.
+
+**What guests see:** the form keeps *Adults* and *Children*. For each child an **Age of child 1, 2…** selector appears (0–17), and the search waits until every age is chosen. The hero search bar asks for ages too and passes them to the booking page.
+
+**Capacity:** children count towards each room's **Max guests**, babies included. A room can also have **Max adults** (e.g. 4 guests, at most 2 adults). Rooms that don't fit show why: *"Fits up to 4 guests."* or *"Fits up to 2 adults."*
+
+**Child prices** (**Settings → Children**) apply to per-person amounts: rate plans charged *per guest per night* (breakfast, half board…) and, if you choose, the tourist tax. The room price itself stays the same.
+
+| Setting | Default | Meaning |
+|---|---|---|
+| Free for children under | 3 | Ages 0–2 pay nothing |
+| Older children pay | 50 % | Ages 3–11 pay half the adult amount |
+| Adult price from age | 12 | 12 and older pay like adults |
+
+The settings screen explains the current rules in one line, e.g. *"Under 3: free · 3–11: 50% of the adult price · 12 and older: adult price"*. A room can use its own rules: edit the room → **Child prices** → *Use different child prices for this room*.
+
+**Example:** Half Board +18 € per guest per night, 3 nights, 2 adults + children aged 2 and 6: 2 × 3 × 18 = 108 € + child 2 free + child 6: 3 × 9 = 27 € → **135 €**. The guest sees each line.
+
+**Switched off:** the form shows *Adults* and *Children* counts exactly as before (set *Children up to* to 0 under Settings → General to hide children completely), and "max adults" isn't applied. Existing bookings keep their ages.
+
+---
+
+## 8. Rate plans
+
+Switch on **Settings → Features → Rate plans**. A **Bookings → Rate plans** screen appears. Hotels are never forced to use them: a room that offers no plan is booked at its normal price, exactly as before.
+
+A rate plan is one way of selling a room: **name**, **description for guests**, **price change**, **refundable yes/no** and **cancellation text**. Create only the combinations you really sell, e.g. *Room Only*, *Breakfast Included*, *Half Board*, *Half Board – Non-refundable*. There is no meal × policy grid to fill in.
+
+**Ready-made plans.** Six plans are waiting, switched off: Room Only, Breakfast Included (+8 per guest per night), Half Board (+18), Full Board (+28), All Inclusive (+35) and Non-refundable (−10%). Edit the amounts and texts, tick the rooms, and tick *Offer this plan to guests*. If you delete them, **Add the ready-made plans** brings back the missing ones.
+
+**Price change types:**
+
+| Type | Example | How it's charged |
+|---|---|---|
+| Fixed amount per night | Parking +10 | 10 × nights |
+| Fixed amount per booking | Welcome pack +25 | Once |
+| Amount per guest per night | Breakfast +8 | Adults × nights × 8, children by age (§7) |
+| Percentage of the room price | Non-refundable −10 | 10 % off the **room price only** |
+
+Use a minus sign for a lower price. Percentages never apply to other plans, discounts or taxes.
+
+**Which rooms offer a plan:** in the plan's form, tick *Offer for this room* for each room. The optional **Different amount for this room** changes the amount for that room only (e.g. breakfast 12 in the suite). The room edit screen lists its plans.
+
+**Example (EUR):** Standard Room 100 per night, 3 nights, 2 adults:
+
+| Plan | Price change | Total |
+|---|---|---|
+| Room Only | +0 | 300.00 |
+| Breakfast Included | +8 per guest per night | 348.00 |
+| Half Board | +18 per guest per night | 408.00 |
+| All Inclusive | +35 per guest per night | 510.00 |
+| Non-refundable | −10 % | 270.00 |
+
+**What guests see:** the room card shows the price **"from"** the cheapest plan. After *Select*, the plans are listed with their description, **✓ Refundable** / **✕ Non-refundable** and total, each with a *Choose* button. If a room offers only **one** plan, the choice is skipped. The summary then shows the room, the plan, nights, each price line, the total and the cancellation text, which is also in the guest's emails.
+
+**Changing or deleting a plan** never changes existing bookings: each booking keeps the plan's name, price and cancellation text as they were when it was made. Switching the feature off hides the plans; rooms are then booked at their normal price.
+
+---
+
+## 9. Tourist tax
+
+Switch on **Settings → Features → Tourist tax**, then set it under **Settings → Tourist tax**:
+
+- **Amount per adult per night**, as set by the municipality. 0 means no tax.
+- **Children:** *pay the same as adults*, or *younger than N years don't pay* (older children pay the full amount), or *use the child price rules* (§7).
+- **Payment:** *Included in the booking total*, or *Paid separately at the property*. In the second case guests see the tax (*"Tourist tax (paid at the property)"* and *"Payable at the property: 9.00 €"*) but it isn't part of the booking total.
+
+The tax is always its own line in the breakdown, emails, admin and CSV, and promo codes never reduce it.
+
+---
+
+## 10. Promo codes
+
+Switch on **Settings → Features → Promo codes**. A **Bookings → Promo codes** screen appears.
+
+Each code has:
+
+| Field | Notes |
+|---|---|
+| **Code** | Letters, numbers, `-` and `_`. Stored in capitals; guests can type `direct10` or `DIRECT10`. |
+| **Discount** | A percentage (`10 % off`) or a fixed amount off the booking |
+| **Can be used when booking** From / Until | Optional. The day the guest books. After *Until* the code has expired. |
+| **For stays** From / To (last night) | Optional. Every night of the stay must be inside. |
+| Minimum booking amount | Optional. Room price with rate plan, before the discount. |
+| Minimum nights | Optional |
+| **Can be used … times in total** | Optional usage limit |
+| Only for these rooms / rate plans | Optional. Leave unticked for all. |
+| Status | *Guests can use this code* |
+
+Rules:
+- The discount applies to the **room price and rate plan**, never to the tourist tax, and the total never goes below zero.
+- **One code per booking.**
+- **Usage counts confirmed bookings only.** A booking request counts once you confirm it, and cancelling a booking gives its use back. Instant bookings count straight away. If confirming a request takes a code past its limit, the booking is still confirmed and you get a note.
+- Everything is checked on the server when the guest applies the code **and again when the booking is saved**. Two guests can't both take a code's last use.
+
+**What guests see:** under the price summary, a small **Have a promo code?** link opens the field. After *Apply* the summary shows **Subtotal**, **Discount** and **Final total**. If the code can't be used, the guest is told why:
+
+| Situation | Message |
+|---|---|
+| Unknown or switched off | This promo code is not valid. |
+| Past its *Until* date | This promo code has expired. |
+| Before its *From* date | This promo code can be used from 1 June 2027. |
+| Stay outside its dates | This promo code is valid for stays between … and …. |
+| Wrong room / rate plan | This promo code is not valid for this room. / … for the selected rate. |
+| Too short / too cheap | This promo code needs a stay of at least 5 nights. / … applies to bookings of 500.00 € or more. |
+| Limit reached | This promo code has already been fully used. |
+
+The **Promo codes** list shows each code's discount, conditions, uses (e.g. *3 of 50 confirmed bookings*) and status (Active, Switched off, Expired, Fully used). Bookings show the code as a **% DIRECT10** badge.
+
+To stop code guessing, a visitor who tries more than 20 wrong codes in an hour has to wait.
+
+---
+
+## 11. Calendar sync (Booking.com, Airbnb…)
 
 Calendar sync reduces the risk of double bookings when a property also sells on Booking.com, Airbnb, Vrbo or similar sites. It uses standard **iCal links**, which every booking site supports. It is not a channel manager: prices and room details are still managed on each site separately.
 
@@ -248,7 +381,7 @@ Syncing stops, the **Calendar Sync** screen disappears, and your export links an
 
 ---
 
-## 8. The booking calendar
+## 12. The booking calendar
 
 **Bookings → Calendar** is the hotel's overview. It shows one month, with rooms as rows and days as columns.
 
@@ -277,7 +410,7 @@ The calendar is for inventory and reservations only. It has no housekeeping or r
 
 ---
 
-## 9. Putting the booking form on the site
+## 13. Putting the booking form on the site
 
 1. **Booking page (required):** edit your *Booking / Reservations* page in Elementor, search the panel for **"Flexo"** and drag in **Flexo Booking Form** (*FlexoHotels* category). Keep *Layout* set to **Full booking form**. Note the page path (default `/booking/`).
 2. **Hero search bar (optional):** add the widget on the home page with *Layout* **Search bar** and *Booking page path* `/booking/`.
@@ -296,9 +429,11 @@ The calendar is for inventory and reservations only. It has no housekeeping or r
 
 ---
 
-## 10. Daily use: managing bookings
+## 14. Daily use: managing bookings
 
-**Bookings → All bookings** has filters by status and room, "Current & upcoming only", and search by reference, name, email or phone. Each booking shows its total and, when nights had different prices, the itemised breakdown.
+**Bookings → All bookings** has filters by status and room, "Current & upcoming only", and search by reference, name, email or phone. Each booking shows its guests (with children's ages), rate plan, promo code, total and price lines.
+
+Click a **reference** to open the booking: stay, guest, rate plan with its cancellation text, guests with ages, promo code and the **full price breakdown** (subtotal, discount, tourist tax, total, anything payable at the property), with Confirm / Cancel buttons.
 
 | Status | Meaning | Holds the room? |
 |---|---|---|
@@ -313,25 +448,27 @@ Actions on each booking:
 - **Reinstate** works only if the room is still free.
 - **Delete** removes the booking.
 
-Each booking shows where it came from: **Website**, **✎ Added by staff** or **⛔ Blocked dates**. With Calendar sync on, a second tab, **⇄ From external calendars**, lists the imported bookings (read-only), and a **⚠ Conflict** box appears at the top when something needs attention (see §7).
+Each booking shows where it came from: **Website**, **✎ Added by staff** or **⛔ Blocked dates**. With Calendar sync on, a second tab, **⇄ From external calendars**, lists the imported bookings (read-only), and a **⚠ Conflict** box appears at the top when something needs attention (see §11).
 
-**Add booking** records phone, walk-in or other-channel bookings, or blocks dates. It is also reachable from empty days in the **Calendar**. **Export CSV** includes a *Price details* column.
+**Add booking** records phone, walk-in or other-channel bookings, or blocks dates. It is also reachable from empty days in the **Calendar**. When the features are on, staff can enter **children's ages** (e.g. `4, 11`), choose a **rate plan** and apply a **promo code**; the price is calculated automatically.
+
+**Export CSV** includes a *Price details* column and, at the end (so existing spreadsheets keep working), *Children ages*, *Rate plan*, *Refundable*, *Promo code*, *Discount*, *Tourist tax* and *Payable at property*.
 
 **Who can do what:**
-- Editors and Administrators can manage bookings, the calendar, seasonal prices, closed dates and calendar sync.
+- Editors and Administrators can manage bookings, the calendar, seasonal prices, closed dates, calendar sync, rate plans and promo codes.
 - Only Administrators can change Settings and use Import / Export.
 
 **No double bookings:** availability is counted night by night against the number of rooms. The final check, price calculation and save happen under a per-room lock. When two guests try to take the last room at the same moment, one gets it and the other is told it's no longer available.
 
 ---
 
-## 11. Templates and moving between sites
+## 15. Templates and moving between sites
 
 | Part | Where it lives | How it moves |
 |---|---|---|
 | Plugin code | `wp-content/plugins/flexo-booking` | Install the zip, or it comes with a full-site clone |
 | Widget placement and styling | Elementor page/template data | Elementor template/kit export |
-| Rooms, **seasons, closed dates**, settings, enabled features | Posts, plugin tables, options | **Bookings → Import / Export** (JSON) or WP-CLI |
+| Rooms, **seasons, closed dates**, settings (incl. child prices and tourist tax), enabled features, **rate plans** (and which rooms offer them), **promo codes** | Posts, plugin tables, options | **Bookings → Import / Export** (JSON) or WP-CLI |
 | Calendar connections (Booking.com/Airbnb links) | Plugin table | In the export file, but imported **only when ticked** (moving the same hotel) |
 | Bookings | `wp_flexo_bookings` table | Full-site migration, or export with "include bookings" |
 
@@ -353,8 +490,10 @@ How the import behaves:
 - A room's seasons in the file **replace** that room's seasons.
 - Closed dates are added unless an identical one exists.
 - Enabled features are applied only if they're available on the new site.
+- **Rate plans** are matched by name (updated, never duplicated) and the file decides which plans each imported room offers, including room-specific amounts. Each room's own child prices and max adults come along.
+- **Promo codes** are matched by code. Their room and rate-plan limits are re-linked by room slug and plan name. **Usage is not copied**: it's counted from each site's own bookings, so it starts at 0.
 - Calendar connections are **not** imported unless you tick *Import calendar connections* (or use `--calendars`). A template's Booking.com links belong to the template, not to the client. Export links are never copied: every site creates its own, so paste the new links into the booking sites after moving a hotel.
-- Files from 1.0.0 and 1.1.0 still import.
+- Files from 1.0.0–1.2.0 still import.
 
 **C. Add-on sale:**
 1. Install the plugin on the client site.
@@ -370,12 +509,12 @@ How the import behaves:
 ```bash
 wp flexo-booking export > template.flexo-booking.json            # rooms, seasons, closed dates, settings, features
 wp flexo-booking export --bookings > full-backup.json
-wp flexo-booking import template.flexo-booking.json --images      # --skip-settings --skip-rooms --skip-seasons --skip-closures --calendars --bookings
+wp flexo-booking import template.flexo-booking.json --images      # --skip-settings --skip-rooms --skip-seasons --skip-closures --skip-rate-plans --skip-promo-codes --calendars --bookings
 ```
 
 ---
 
-## 12. Settings reference
+## 16. Settings reference
 
 **Settings → General:**
 - Currency: code, symbol, position, number format, decimals
@@ -388,61 +527,69 @@ wp flexo-booking import template.flexo-booking.json --images      # --skip-setti
 
 **Settings → Features:** see §2.
 
+**Settings → Children** (with *Children & ages* on): free under age, percentage for older children, adult price from age (§7).
+
+**Settings → Tourist tax** (with *Tourist tax* on): amount per adult per night, children, included in the total or paid at the property (§9).
+
 **Settings → Emails:**
 - Notification address for new-booking alerts
 - Guest email texts, shown only while *Guest emails* is on
 
 Email placeholders:
 
-`{reference}` `{guest_name}` `{guest_email}` `{guest_phone}` `{room}` `{check_in}` `{check_out}` `{nights}` `{guests}` `{total}` `{price_breakdown}` `{status}` `{booking_details}` `{check_in_time}` `{check_out_time}` `{site_name}`
+`{reference}` `{guest_name}` `{guest_email}` `{guest_phone}` `{room}` `{check_in}` `{check_out}` `{nights}` `{guests}` `{total}` `{price_breakdown}` `{rate_plan}` `{cancellation_policy}` `{promo_code}` `{status}` `{booking_details}` `{check_in_time}` `{check_out_time}` `{site_name}`
 
-`{booking_details}` lists the itemised nights under the total when prices vary.
+`{booking_details}` lists the guests (with children's ages), the rate plan, the promo code, the total with its price lines (plan, discount, tourist tax, anything payable at the property) and the cancellation text.
 
 **Uninstalling:** deleting the plugin keeps all data, unless **Settings → General → Data removal** is ticked first.
 
 ---
 
-## 13. For developers
+## 17. For developers
 
 **REST API** (public, used by the form):
 
 | Method | Route | Purpose |
 |---|---|---|
 | GET | `/wp-json/flexo-booking/v1/rooms` | Bookable rooms |
-| GET | `/wp-json/flexo-booking/v1/availability?check_in=&check_out=&adults=&children=[&room=]` | Availability, totals, per-night average, `breakdown`, `min_nights`, and `notice` (property closed) |
-| POST | `/wp-json/flexo-booking/v1/bookings` | Create a booking. Returns 201; 409 if no longer available or closed. |
+| GET | `/wp-json/flexo-booking/v1/availability?check_in=&check_out=&adults=&children=[&children_ages=4,11][&room=]` | Availability, totals, per-night average, `breakdown`, `min_nights`, `notice` (property closed); per room `quote`, `plans` (one priced view per rate plan) and `price_from` |
+| GET | `/wp-json/flexo-booking/v1/quote?room=&check_in=&check_out=&adults=&children=&children_ages=&rate_plan=&promo_code=` | Price of one room, plan and code: `lines`, `subtotal`, `discount_formatted`, `total`, `due_at_property`, `rate_plan`, `promo`, `promo_error`. 429 after too many wrong codes. |
+| POST | `/wp-json/flexo-booking/v1/bookings` | Create a booking (`children_ages`, `rate_plan`, `promo_code`, optional `expected_total`). Returns 201; 409 if no longer available, closed, or the price differs from `expected_total`; 400 for an invalid code or missing ages. A `total` field is ignored: the server always calculates the price. |
 | GET | `/wp-json/flexo-booking/v1/ical/{room}.ics?token=…` | The room's iCal export (Calendar sync). 403 for a wrong token, 404 while the feature is off. |
 
-**Architecture (1.2.0):**
+**Architecture (1.3.0):**
 
 | Class | Role |
 |---|---|
 | `Flexo_Booking_Pricing` | The only pricing code: `quote()` → itemised result, stored on each booking as `price_breakdown` |
 | `Flexo_Booking_Inventory` | `units_available()`, closed dates, and `with_lock()` (MySQL `GET_LOCK`, with an options-row fallback) |
 | `Flexo_Booking_Seasons`, `Flexo_Booking_Closures` | Repositories |
+| `Flexo_Booking_Children` | Child rules (global / per room), age parsing, `factor()` |
+| `Flexo_Booking_Rate_Plans` | Plans (table `flexo_rate_plans`), presets, room assignments (room meta `_flexo_rate_plans`), `adjustment()` |
+| `Flexo_Booking_Promo_Codes` | Codes (table `flexo_promo_codes`), `validate()`, usage from confirmed bookings (`bookings.promo_id`) |
 | `Flexo_Booking_Features` | Available/enabled rules |
 | `Flexo_Booking_Migrations` + `Flexo_Booking_Schema` | Versioned migrations; tables are only ever added to |
 | `Flexo_Booking_Money` | Currency formatting |
 | `Flexo_Booking_ICal` | iCal parser, fetch (`wp_safe_remote_get`), sync, conflicts, export feed, tokens, WP-Cron (`flexo_booking_ical_sync`) |
-| Imported bookings | Table `flexo_calendar_events` (not bookings rows), counted by `Flexo_Booking_Inventory::nightly_usage()` with the unit rule in §7 |
+| Imported bookings | Table `flexo_calendar_events` (not bookings rows), counted by `Flexo_Booking_Inventory::nightly_usage()` with the unit rule in §11 |
 
 **Hooks:**
 
 | Hook | Type | Use |
 |---|---|---|
-| `flexo_booking_pricing_steps` | filter `( $steps, $request, $room )` | Add pricing steps by priority. 10 nightly, 20 rate plan, 30 guests, 40 promo, 50 tax, 90 totals, 95 payments. |
+| `flexo_booking_pricing_steps` | filter `( $steps, $request, $room )` | Add pricing steps by priority. 10 nightly, 20 rate plan, 40 promo, 50 tourist tax, 90 totals, 95 payments (Day 5). |
 | `flexo_booking_quote` | filter `( $quote, $request, $room )` | Final quote |
 | `flexo_booking_calculate_total` | filter (1.0) | Still applied to the accommodation amount; a change shows as an "adjustment" line |
 | `flexo_booking_available_features` | filter `( $keys )` | Where a licence/package module plugs in |
 | `flexo_booking_occupying_statuses` | filter | Statuses that take a room |
 | `flexo_booking_created`, `flexo_booking_status_changed` | actions | Integrations |
 | `flexo_booking_ical_timeout` | filter | Seconds to wait for a calendar download (default 15) |
-| `flexo_booking_before_insert`, `flexo_booking_guest_email`, `flexo_booking_admin_email`, `flexo_booking_email_placeholders`, `flexo_booking_manage_capability`, `flexo_booking_rate_limit`, `flexo_booking_template`, `flexo_booking_use_mysql_locks` | filters | As named |
+| `flexo_booking_before_insert`, `flexo_booking_guest_email`, `flexo_booking_admin_email`, `flexo_booking_email_placeholders`, `flexo_booking_manage_capability`, `flexo_booking_rate_limit`, `flexo_booking_promo_attempts`, `flexo_booking_template`, `flexo_booking_use_mysql_locks` | filters | As named |
 
 **Build:** `bin/build-zip.sh` → `dist/flexo-booking-<version>.zip`.
 
 ---
 
-## 14. Testing
+## 18. Testing
 
-The `tests/` folder in the repository is not shipped in the zip. It holds WP-CLI test scripts (including the calendar-sync engine test with Booking.com/Airbnb-style sample feeds), a concurrency test (two simultaneous bookings for the last unit), the upgrade and portability tests, and Playwright browser tests for Day 1 and Day 2. See `tests/README.md`. Run them against a throwaway site only.
+The `tests/` folder in the repository is not shipped in the zip. It holds WP-CLI test scripts (including the calendar-sync engine test with Booking.com/Airbnb-style sample feeds), a concurrency test (two simultaneous bookings for the last unit), the upgrade and portability tests, a promo-code race test (two bookings for a code's last use), and Playwright browser tests for Days 1–3. See `tests/README.md`. Run them against a throwaway site only.
