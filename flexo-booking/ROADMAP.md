@@ -61,4 +61,4 @@ before changing code.
 | Day 2 | **Done** (1.2.0): iCal calendar sync (import/export/conflicts/cron), admin booking calendar |
 | Day 3 | **Done** (1.3.0): children & ages, rate plans, tourist tax, promo codes, booking details view |
 | Day 4 | **Done** (1.4.0): privacy consent and data retention, invoice request, guest/hotel emails (HTML, log, reminders, review requests), Bulgarian translation and Polylang/WPML, conversion tracking |
-| Day 5 | Not started |
+| Day 5 | **Done** (1.5.0): payments (Stripe Checkout with holds and signed idempotent webhooks, deposits, bank transfer with reminders and auto-cancel, refunds, conflicts), responsive centred mobile/tablet flow, final regression, final README |

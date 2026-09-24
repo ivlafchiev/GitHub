@@ -1,8 +1,11 @@
 # Flexo Booking: implementation plan (Days 1–5)
 
-Status: **Day 4 done (1.4.0).** Day 1 (1.1.0) is in §9, Day 2 (1.2.0) in
-§10, Day 3 (1.3.0) in §11 and Day 4 in §12, each with what was built, the
-deviations and the test results. Day 5 follows the schema and pipeline below.
+Status: **All five days done (1.5.0).** Day 1 (1.1.0) is in §9, Day 2
+(1.2.0) in §10, Day 3 (1.3.0) in §11, Day 4 (1.4.0) in §12 and Day 5 (1.5.0)
+in §13, each with what was built, the deviations and the test results. §14
+is the final status: the complete feature list, the final regression, known
+limitations and what to check before installing on a client site. Sections
+1–8 are the original plan; where Day 5 differs from it, §13.2 says so.
 Read together with `ROADMAP.md`.
 
 Contents:
@@ -19,6 +22,8 @@ Contents:
 10. Day 2 status, deviations and test results
 11. Day 3 status, deviations and test results
 12. Day 4 status, deviations and test results
+13. Day 5 status, deviations and test results
+14. Final status
 
 ---
 
@@ -324,6 +329,9 @@ flexo_email_log (
 
 ### 2.7 Day 5: payments
 
+*The original plan is below. What was built differs: a history table plus
+summary columns on the booking. See §13.1 and §13.2.*
+
 ```sql
 flexo_payments (
   id, booking_id bigint unsigned NOT NULL,
@@ -342,7 +350,8 @@ flexo_payments (
 ### 2.8 Inventory holds (Day 5): design decision
 
 A hold is a **booking row** with status `awaiting_payment` and
-`hold_expires_at`. There is no separate holds table. The reasons:
+`hold_expires_at` (built as status **`pending_payment`**; `awaiting_payment`
+is used for bank transfers, see §13.2). There is no separate holds table. The reasons:
 
 - The held booking needs all the guest data anyway, for Stripe metadata and
   the webhook.
@@ -771,6 +780,8 @@ Run on **MariaDB 10.11**, which uses `GET_LOCK`, and on **SQLite**, which uses t
 ## 10. Day 2 status, deviations and test results
 11. Day 3 status, deviations and test results
 12. Day 4 status, deviations and test results
+13. Day 5 status, deviations and test results
+14. Final status
 
 ### 10.1 Built (1.2.0, migration 3)
 
@@ -820,6 +831,8 @@ Bugs found and fixed during testing:
 
 ## 11. Day 3 status, deviations and test results
 12. Day 4 status, deviations and test results
+13. Day 5 status, deviations and test results
+14. Final status
 
 ### 11.1 Built (1.3.0, migration 4)
 
@@ -919,3 +932,99 @@ Found and fixed during testing:
 - Hotel emails followed the guest's language during a guest's request (`get_locale()` is switched) → the site language is now read from the settings / Polylang default.
 - Polylang listed every unchanged built-in email text for translation → only texts the hotel changed are registered.
 
+
+---
+
+## 13. Day 5 status, deviations and test results
+
+### 13.1 Built (1.5.0, migration 6)
+
+| Area | Files |
+|---|---|
+| Schema | `flexo_payments` (history: payment / refund / failed attempt, gateway, amount, currency, transaction ID, note, non-sensitive meta, staff user, time), `flexo_webhook_events` (unique event ID → idempotency); bookings get `payment_method`, `payment_status`, `amount_due`, `amount_paid`, `amount_refunded`, `hold_expires_at`, `payment_due_at`, `payment_session`, `payment_conflict`, `access_key` (SHA-256 of the guest's link key). Migration 6 also drops the stored copies of the three 1.4.0 placeholder payment emails. |
+| Statuses | `pending_payment` (card hold; occupies only while `hold_expires_at` is in the future – `Inventory::occupying_sql()` / `is_occupying()`), `awaiting_payment` (bank transfer, occupying), `expired` (not paid in time, not occupying). `update_status()` takes a `$context` (`notify`, `force`, `reason`) and runs the filter `flexo_booking_update_status_target`. |
+| Payments service | `class-payments.php`: modes (property / deposit / full) × booking mode, gateway registry, pricing step 95 (payment schedule; deposit % or fixed, capped at the total; lines paid at the property always stay there), `prepare()`/`apply()` in `Bookings::create()` inside the room lock, `start()`, `complete()` (idempotent per transaction, confirms when the amount due is covered; late payment → confirmed if the room is free, else a conflict; busy lock → undone, and the webhook answers 500 so Stripe retries), `refund()`, `release_hold()`, `retry()`, an hourly job (expired holds, bank reminders 08–21 h, auto-cancel), a single WP-Cron event at each hold's end, lazy release (status endpoint, bookings list), guest views, conflict list. Keys live in the separate option `flexo_booking_payment_secrets`. |
+| Gateways | `payments/interface-gateway.php`. `class-gateway-stripe.php`: Checkout Session through `wp_remote_request` to a filterable API base, idempotency key, `expires_at` ≥ 31 min, session closed when the hold ends, locale, metadata on the session and the PaymentIntent. Webhook: v1 HMAC-SHA256 signature with a 5-minute tolerance, checked against the test and live secrets; livemode check; event dedupe; dispatch of 6 event types; cumulative refunds. `class-gateway-bank-transfer.php`: instructions, reference format, IBAN grouping, text for emails. |
+| Guest flow | Payment choice in the details form (`Frontend::payment_fields()`, also injected into old template overrides); summary rows *Deposit (30%) – to pay now* / *At the property* / *Payment: at the property*; submit label per method; redirect to Stripe; return page (`?fb_payment=return|cancel&fb_ref&fb_key`) polling `GET /payment`; *Pay now* retry; *Search again*; bank details with copy buttons; `booking_complete` only after a confirmed card payment |
+| REST | `POST /bookings` (+ `payment_method`, `return_url`; the response has `payment`), `GET /payment`, `POST /payment/retry`, `POST /stripe-webhook` |
+| Emails | Payment templates in use: waiting for payment (bank details), reminder, payment received (it is also the confirmation), payment failed, cancelled – not paid. Hotel types *Refunds made in Stripe* and *Payment conflict*. Placeholders `{payment_method}` `{amount_due}` `{amount_paid}` `{balance_due}` `{payment_deadline}` `{payment_instructions}`. Payment lines in `{booking_details}`. No emails for a card hold until it is paid. |
+| Admin | Settings → Payments (modes with a live example; ways to pay and whether each is ready; Stripe test/live keys, masked; webhook address and event list; hold minutes; bank details and rules). A notice when card payment is paused by request mode. Booking page *Payments* box (summary, history with a Stripe dashboard link, *Payment received*, record payment/refund). List badges and a *Payment received* button. *Confirm & ask for payment* / *Confirm without payment*. Payment-conflict box. Calendar items 💳/🏦 with payment lines and legend. 8 CSV columns appended. |
+| Portability | Export schema 5: payment settings travel; Stripe secrets (separate option) and the bank account never do, like the notification email. A bookings export carries the payment history; open holds import as expired. |
+| Responsive | `booking.css`. Up to 1024 px: centred flow (container, headings, room cards in one column, prices, rate plans, summary box, promo, buttons, result, bank details); inputs and long texts stay left-aligned. Up to 767 px: 44 px tap targets, a sticky total + continue bar, full-width buttons. Desktop rules untouched. |
+| Other | Features `online_payment`, `deposit` and `bank_transfer` ready (all 15 features built); privacy policy guide paragraph about Stripe; uninstall drops the 2 new tables, the secrets option and the hold events; Bulgarian translation complete (1044 strings) |
+
+### 13.2 Deviations and decisions
+
+1. **Stripe could not be reached from the build environment** (`api.stripe.com`, `checkout.stripe.com`, `js.stripe.com`: proxy 403). Card payments were tested against Stripe's documented API and webhook format with (a) a fake inside WordPress (`pre_http_request`) and (b) a local stand-in server with a hosted payment page and signed webhooks. **A real Stripe test-mode run is still needed** (README §24).
+2. **The hold status is `pending_payment`**, not `awaiting_payment` as sketched in §2.8; `awaiting_payment` is the bank-transfer wait. A hold occupies the room only while it is valid, directly in the availability SQL, so availability is right the moment it ends. Cron only tidies up.
+3. **Stripe keeps a Checkout page open for at least 30 minutes**, but the hold is 20–30 minutes (setting). When the hold ends, the plugin closes the page through the API. A payment that still slips through is the "late payment" case: confirmed if the room is free, otherwise a conflict.
+4. **The payments table is a history** (one row per payment, refund or failed attempt) plus summary columns on the booking, instead of the planned one-row-per-payment-with-status design. This makes reporting and the CSV simpler, and gives idempotency by transaction ID.
+5. **Modes A–E** are the booking mode plus a payment choice: *Nothing online* (E; with the payment features off it is A/B), *A deposit* (C), *The full amount* (D). "Pay at the property" is stored on the booking as payment method `property`.
+6. **Bank transfer with booking requests**: the details go out when the hotel accepts (*Confirm & ask for payment*), and the deadline counts from then. *Confirm without payment* exists for trusted guests.
+7. **Bank account details are not exported** (like the notification email), although the brief only excluded keys and secrets: a template's IBAN must never appear on a client's site.
+8. **Card bookings send no email until paid.** The hotel's *New booking* email is sent when the payment is confirmed and serves as the payment notification. Payments recorded by staff don't email the hotel; refunds made in Stripe do.
+9. **A declined card** is noted in the history but sends nothing, because the guest can retry on Stripe's page. *Payment failed* is sent when the hold ends after a decline, or when a delayed method fails. Abandoned payments send nothing.
+10. **Payment conflicts don't email the guest automatically.** The return page tells them the hotel will contact them; the hotel gets the alert and a list with *Mark as resolved*.
+11. **Refunds never change the booking status.** The hotel cancels separately if the stay is cancelled.
+12. **Delayed payment methods** (e.g. SEPA): the hold is extended by 7 days while Stripe processes; the README recommends cards only.
+13. **Two extra guest templates** (payment reminder, cancelled – not paid) beside the three reserved on Day 4, because the brief asks for reminder and auto-cancel emails.
+14. **Thank-you page:** bank-transfer bookings stay on the form page so the bank details are visible; card bookings go to the thank-you page after the payment is confirmed.
+15. **Responsive:** summary lines keep label left / amount right inside a centred box, for readability. Centring applies up to 1024 px; the sticky bar is on phones only.
+16. **Old bookings** keep their totals; they get payment method `''` and no payment rows.
+17. **Fiscal receipts** (e.g. Наредба Н-18) are not issued by the plugin; there is a README note only, as briefed.
+
+### 13.3 Tests run (MariaDB 10.11 and SQLite)
+
+| Test | Result |
+|---|---|
+| `test-day5.php`. **Configuration:** methods per booking mode, keys per mode, deposit without the feature, secrets never lost or printed. **Amounts:** full, 30% of 800 = 240/560, fixed, cap, % cap, tax at the property and with the booking, payments off. **Card, full payment:** hold, Stripe request contents, held room unavailable, key check, webhook confirms, history, emails, duplicate event, same payment in another event. **Deposit.** **Webhooks:** 6 signature/mode rejections, unknown booking, currency mismatch → retry, too-small payment. **Failures:** declined + expired (email), async failure, abandoned (released without cron, session closed, no email), lapsed hold released on the status check. **Late payment:** room free / taken (conflict, alert, no overbooking, guest view, resolve); a cancelled booking paid; room lock busy (undone, retry confirms). **Refunds:** partial, duplicate, full, cap, manual. **Retry:** new page, old key invalid, old session ignored, 409 when the room is taken. **Stripe unreachable:** 502, no hold. **Bank transfer, instant:** status, deadline, instructions, emails, occupancy, received; deposit by transfer; reminder window and hours; auto-cancel (emails, no generic ones, room free); auto-cancel off. **Requests:** details after accepting, force; card refused in request mode. **Other modes:** pay at the property, no payments (instant and request). **Manipulated amounts:** expected_total, extra amount fields, unknown method. **Admin, emails, settings:** admin card/badge/calendar, email templates, settings tab, Import/Export. | **258/258** on both |
+| Browser `e2e/day5.js` (local Stripe stand-in). **Card deposit end to end:** summary, choices, labels, 240 EUR on the payment page, webhook confirmation, result page, tracking once, emails. **Payment problems:** cancel → held → pay again; declined → expired via webhook; wrong key; search again. **Bank transfer at 390 px:** sticky bar, details, copy buttons, centring. **Layout at 360/390/414/768/1024/1280** (search, results, rate plans, details): no horizontal scroll, centred headings and form, left-aligned inputs, 44 px targets, desktop card unchanged. **Modes:** request mode; minimal package (only booking requests). **Admin:** list statuses, booking page, Stripe link, *Payment received*, *Confirm & ask for payment*, calendar, settings, CSV. | **179/179** |
+| `concurrency.sh` with `RACE_PAY=1`: two guests start paying for the last unit at once; one hold, one refusal | pass (both DBs) |
+| `portability-full.php`: all 15 features configured → fresh site. No keys, secrets, bank account or notification email in the file; payment settings imported; payments inactive until the new site's own details are entered; identical totals, tax, discount, deposit and amount at the property. | 7/7 + 30/30 |
+| Upgrade 1.0.0 → 1.5.0 (MariaDB, `upgrade-verify.php`) | 26/26, DB version 6 |
+| Upgrade 1.4.0 → 1.5.0 (MariaDB, Day 4 booking with invoice + consent) | bookings, invoice, consent and features kept; placeholder payment texts dropped; payments off |
+
+Found and fixed during testing:
+- Three admin edits had not applied (booking page payment box, CSV payment values, *Payment recorded* message); the browser test caught them.
+- A busy room lock during a webhook would have been treated as a payment conflict, and Stripe's retry then seen as a duplicate. The payment is now undone and the webhook answers 500, so the retry is processed.
+- The tablet rate-plan panel shrank to its content inside the centred card; it is now full width (max 520 px).
+- Older tests depended on state left by other tests (rate limit, phone field); they now reset or restore it.
+
+---
+
+## 14. Final status
+
+### 14.1 Features (1.5.0)
+
+| Area | What the hotel gets |
+|---|---|
+| Booking | Booking requests or instant booking; staff bookings and blocked dates; per-room lock (no double booking, also for payment holds and promo-code limits); availability counted night by night over identical units |
+| Prices | Nightly prices with weekend prices; seasonal prices and minimum stays; closed dates; children by age with child rules (global / per room) and max adults; rate plans (6 presets, per-room amounts, cancellation text); tourist tax (in the total or at the property); promo codes (dates, limits, rooms, plans); one server-side pricing service with stored breakdowns |
+| Payments | Nothing online / deposit (% or fixed) / full amount; Stripe Checkout (test/live, signed idempotent webhooks, holds, late-payment conflicts, refunds from Stripe); bank transfer (instructions, received, reminder, auto-cancel); payment history, balance, badges, CSV |
+| Calendar | Admin month calendar (rooms × days, today overview, quick actions); iCal import/export with Booking.com/Airbnb, conflicts and alerts |
+| Guests | Privacy consent with proof, retention and anonymising, WP export/erase; invoice requests (person/company); HTML emails with a log, reminders, review requests and payment emails; languages (full Bulgarian, Polylang tested, WPML hooks) |
+| Marketing | dataLayer events for GTM/GA4/Meta without personal data |
+| Platform | Feature system (made available by FlexoHotels via constant / Agency screen / WP-CLI, enabled by the hotel); versioned migrations from 1.0.0; Import/Export and WP-CLI; Elementor widget + dynamic tag + shortcode; responsive, centred mobile/tablet flow inheriting Elementor global colours and fonts |
+
+### 14.2 Final regression (this session)
+
+| Suite | MariaDB | SQLite |
+|---|---|---|
+| Pricing parity / seasons / features / regression / iCal | 8 / 46 / 30 / 43 / 66 | same |
+| Day 3 / Day 4 / Day 5 / Bulgarian site / feature constants | 122 / 93 / 258 / 18 / 6 | same |
+| Concurrency: last unit / payment hold / promo last use | pass / pass / pass | pass / pass / pass |
+| Browser Days 1–5 | 37 / 51 / 63 / 48 / 179 | – |
+| Polylang (real plugin) | 21/21 | – |
+| Portability: Day 3, full configuration | 4+21, 7+30 | – |
+| Upgrades 1.0.0 → 1.5.0, 1.4.0 → 1.5.0 | pass | – |
+
+### 14.3 Known limitations and untested areas
+
+- **Real Stripe not exercised** (the network is blocked here). A test-mode payment, the real Checkout page, real webhook delivery and refunds must be checked once per site (README §24). The Stripe API version is pinned to `2024-06-20` in the request header.
+- **Elementor Pro editor UI not tested.** The Elementor source checkout used here has no compiled editor assets. The widget, dynamic tag, front-end rendering and style inheritance are tested; dragging the widget in the editor is not.
+- **WPML** is supported through its public hooks but untested (paid plugin).
+- **WP-Cron timing:** reminders, auto-cancel, iCal sync and scheduled emails need site traffic or a real cron job. Payment holds don't: availability ignores expired holds immediately.
+- **Delayed payment methods** in Stripe hold the room for up to 7 days; cards only is recommended.
+- **No fiscal receipts or invoices** are issued (the hotel's responsibility).
+- **Staff bookings** don't take online payments (payments are recorded manually).
+- **A payment conflict needs a person:** the plugin never moves a guest to another room by itself.
