@@ -734,29 +734,37 @@ class Flexo_Booking_ICal {
 		return $note;
 	}
 
+	/**
+	 * Tells the hotel (Emails → "Possible double booking" notification), in the site language.
+	 */
 	private static function send_conflict_email( array $room, array $conflicts ) {
-		$lines = array(
-			__( 'A booking imported from an external calendar does not fit into your availability. Please check it as soon as possible.', 'flexo-booking' ),
-			'',
-			/* translators: 1: room name, 2: number of rooms of this type */
-			sprintf( __( 'Room: %1$s (%2$d of this type)', 'flexo-booking' ), $room['title'], $room['units'] ),
-		);
-		foreach ( $conflicts as $conflict ) {
-			$calendar = self::get_calendar( $conflict['calendar_id'] );
-			$lines[]  = '';
-			/* translators: %s: calendar name */
-			$lines[] = sprintf( __( 'Calendar: %s', 'flexo-booking' ), $calendar ? $calendar['name'] : '?' );
-			/* translators: 1: arrival, 2: departure */
-			$lines[] = sprintf( __( 'Dates: %1$s – %2$s', 'flexo-booking' ), Flexo_Booking_Dates::display( $conflict['date_from'] ), Flexo_Booking_Dates::display( $conflict['date_to'] ) );
-			$lines[] = $conflict['conflict_note'];
-		}
-		$lines[] = '';
-		$lines[] = __( 'What to do: compare the bookings, then contact the guest or the booking website to resolve the double booking. When it is handled, click "Mark as reviewed" in Bookings → Calendar.', 'flexo-booking' );
-		$lines[] = admin_url( 'admin.php?page=' . Flexo_Booking_Calendar_Admin::SLUG . '&month=' . substr( $conflicts[0]['date_from'], 0, 7 ) );
+		Flexo_Booking_I18n::with_locale(
+			Flexo_Booking_I18n::site_locale(),
+			static function () use ( $room, $conflicts ) {
+				$lines = array(
+					__( 'A booking imported from an external calendar does not fit into your availability. Please check it as soon as possible.', 'flexo-booking' ),
+					'',
+					/* translators: 1: room name, 2: number of rooms of this type */
+					sprintf( __( 'Room: %1$s (%2$d of this type)', 'flexo-booking' ), $room['title'], $room['units'] ),
+				);
+				foreach ( $conflicts as $conflict ) {
+					$calendar = self::get_calendar( $conflict['calendar_id'] );
+					$lines[]  = '';
+					/* translators: %s: calendar name */
+					$lines[] = sprintf( __( 'Calendar: %s', 'flexo-booking' ), $calendar ? $calendar['name'] : '?' );
+					/* translators: 1: arrival, 2: departure */
+					$lines[] = sprintf( __( 'Dates: %1$s – %2$s', 'flexo-booking' ), Flexo_Booking_Dates::display( $conflict['date_from'] ), Flexo_Booking_Dates::display( $conflict['date_to'] ) );
+					$lines[] = $conflict['conflict_note'];
+				}
+				$lines[] = '';
+				$lines[] = __( 'What to do: compare the bookings, then contact the guest or the booking website to resolve the double booking. When it is handled, click "Mark as reviewed" in Bookings → Calendar.', 'flexo-booking' );
+				$lines[] = admin_url( 'admin.php?page=' . Flexo_Booking_Calendar_Admin::SLUG . '&month=' . substr( $conflicts[0]['date_from'], 0, 7 ) );
 
-		/* translators: 1: room name, 2: arrival date */
-		$subject = sprintf( __( 'Possible double booking: %1$s from %2$s', 'flexo-booking' ), $room['title'], Flexo_Booking_Dates::display( $conflicts[0]['date_from'] ) );
-		wp_mail( Flexo_Booking_Settings::notification_email(), $subject, implode( "\n", $lines ) );
+				/* translators: 1: room name, 2: arrival date */
+				$subject = sprintf( __( 'Possible double booking: %1$s from %2$s', 'flexo-booking' ), $room['title'], Flexo_Booking_Dates::display( $conflicts[0]['date_from'] ) );
+				Flexo_Booking_Emails::send_hotel( 'ical_conflict', $subject, implode( "\n", $lines ) );
+			}
+		);
 	}
 
 	/* ---------------------------------------------------------------------

@@ -28,10 +28,12 @@ foreach ( $flexo_rooms as $flexo_room_id ) {
 	wp_delete_post( $flexo_room_id, true );
 }
 
-foreach ( array( 'bookings', 'seasons', 'closures', 'calendars', 'calendar_events', 'rate_plans', 'promo_codes' ) as $flexo_table ) {
+foreach ( array( 'bookings', 'seasons', 'closures', 'calendars', 'calendar_events', 'rate_plans', 'promo_codes', 'consents', 'invoices', 'email_log' ) as $flexo_table ) {
 	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}flexo_{$flexo_table}" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 }
-foreach ( array( 'flexo_booking_settings', 'flexo_booking_db_version', 'flexo_booking_enabled_features', 'flexo_booking_available_features', 'flexo_booking_migration_error', 'flexo_booking_add_rate_plan_presets' ) as $flexo_option ) {
+foreach ( array( 'flexo_booking_settings', 'flexo_booking_db_version', 'flexo_booking_enabled_features', 'flexo_booking_available_features', 'flexo_booking_migration_error', 'flexo_booking_add_rate_plan_presets', 'flexo_booking_smtp_notice' ) as $flexo_option ) {
 	delete_option( $flexo_option );
 }
 wp_clear_scheduled_hook( 'flexo_booking_ical_sync' );
+wp_clear_scheduled_hook( 'flexo_booking_hourly' );
+wp_clear_scheduled_hook( 'flexo_booking_daily' );

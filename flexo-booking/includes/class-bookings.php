@@ -286,6 +286,9 @@ class Flexo_Booking_Bookings {
 	 *     @type string     $promo_code
 	 *     @type float      $expected_total Optional: the total the guest was shown. The booking is
 	 *                                      refused when the server's price differs.
+	 *     @type bool       $privacy_consent The guest ticked the privacy consent (feature "privacy_consent").
+	 *     @type array      $invoice         Invoice request (feature "invoice_request"), see Flexo_Booking_Invoices::validate().
+	 *     @type string     $locale          Language the guest booked in (default: the current language).
 	 *     @type string     $guest_name
 	 *     @type string     $guest_email
 	 *     @type string     $guest_phone
@@ -346,6 +349,11 @@ class Flexo_Booking_Bookings {
 		$notes    = sanitize_textarea_field( isset( $data['notes'] ) ? $data['notes'] : '' );
 		$status   = isset( $data['status'] ) && array_key_exists( $data['status'], self::statuses() ) ? $data['status'] : ( 'instant' === Flexo_Booking_Features::booking_mode() ? 'confirmed' : 'pending' );
 
+		$locale  = Flexo_Booking_I18n::sanitize_locale( isset( $data['locale'] ) ? $data['locale'] : '' );
+		$locale  = '' !== $locale ? $locale : Flexo_Booking_I18n::sanitize_locale( Flexo_Booking_I18n::current() );
+		$invoice = null;
+		$consent = false;
+
 		if ( ! $is_admin ) {
 			$capacity = self::capacity_error( $room, $adults, $children );
 			if ( $capacity ) {
@@ -357,8 +365,27 @@ class Flexo_Booking_Bookings {
 			if ( ! is_email( $email ) ) {
 				return new WP_Error( 'flexo_invalid_email', __( 'Please enter a valid email address.', 'flexo-booking' ) );
 			}
-			if ( '' === $phone ) {
+			// Guest form fields the hotel doesn't ask for are never stored.
+			$phone_mode = Flexo_Booking_Settings::get( 'field_phone' );
+			if ( 'hidden' === $phone_mode ) {
+				$phone = '';
+			} elseif ( 'required' === $phone_mode && '' === $phone ) {
 				return new WP_Error( 'flexo_missing_phone', __( 'Please enter your phone number.', 'flexo-booking' ) );
+			}
+			if ( 'hidden' === Flexo_Booking_Settings::get( 'field_notes' ) ) {
+				$notes = '';
+			}
+			if ( Flexo_Booking_Privacy::enabled() ) {
+				$consent = ! empty( $data['privacy_consent'] ) && 'false' !== $data['privacy_consent'];
+				if ( ! $consent && Flexo_Booking_Privacy::consent_required() ) {
+					return new WP_Error( 'flexo_consent', __( 'Please accept the privacy policy to send your booking.', 'flexo-booking' ) );
+				}
+			}
+			if ( Flexo_Booking_Invoices::enabled() ) {
+				$invoice = Flexo_Booking_Invoices::validate( isset( $data['invoice'] ) ? $data['invoice'] : null );
+				if ( is_wp_error( $invoice ) ) {
+					return $invoice;
+				}
 			}
 		} elseif ( 'blocked' !== $status && '' === $name ) {
 			return new WP_Error( 'flexo_missing_name', __( 'Please enter the guest name.', 'flexo-booking' ) );
@@ -370,7 +397,7 @@ class Flexo_Booking_Bookings {
 		// Everything below runs under the room lock: closures, availability and
 		// the price are re-checked there, so two guests can never take the
 		// last unit and the stored price is the one calculated at that moment.
-		$insert = static function () use ( $wpdb, $room, $stay, $status, $is_admin, $adults, $children, $ages, $plan_id, $promo, $expected, $name, $email, $phone, $notes ) {
+		$insert = static function () use ( $wpdb, $room, $stay, $status, $is_admin, $adults, $children, $ages, $plan_id, $promo, $expected, $name, $email, $phone, $notes, $locale ) {
 			if ( ! $is_admin ) {
 				$closed = Flexo_Booking_Inventory::closed_reason( $room['id'], $stay['check_in'], $stay['check_out'] );
 				if ( $closed ) {
@@ -438,6 +465,7 @@ class Flexo_Booking_Bookings {
 				'promo_code'      => $quote && $quote['promo'] ? $quote['promo']['code'] : '',
 				'discount_total'  => $quote ? $quote['discount_total'] : 0,
 				'tax_total'       => $quote ? $quote['tax_total'] : 0,
+				'locale'          => $locale,
 				'created_at'      => $now,
 				'updated_at'      => $now,
 			);
@@ -475,6 +503,14 @@ class Flexo_Booking_Bookings {
 			return $booking;
 		}
 
+		// Stored before the emails go out, so the hotel's email includes them.
+		if ( $invoice ) {
+			Flexo_Booking_Invoices::save( $booking['id'], $invoice );
+		}
+		if ( $consent ) {
+			Flexo_Booking_Privacy::record_consent( $booking['id'], $locale );
+		}
+
 		$booking = self::get( $booking['id'] );
 
 		/**
@@ -510,6 +546,10 @@ class Flexo_Booking_Bookings {
 			$row[ $key ] = isset( $row[ $key ] ) ? (float) $row[ $key ] : 0.0;
 		}
 		$row['children_ages'] = isset( $row['children_ages'] ) ? (string) $row['children_ages'] : '';
+		foreach ( array( 'locale', 'emails_sent' ) as $key ) {
+			$row[ $key ] = isset( $row[ $key ] ) ? (string) $row[ $key ] : '';
+		}
+		$row['anonymized_at'] = isset( $row['anonymized_at'] ) ? $row['anonymized_at'] : null;
 		$row['promo_code']    = isset( $row['promo_code'] ) ? (string) $row['promo_code'] : '';
 		$room              = get_post( $row['room_id'] );
 		$row['room_title'] = $room ? get_the_title( $room ) : __( '(deleted room)', 'flexo-booking' );

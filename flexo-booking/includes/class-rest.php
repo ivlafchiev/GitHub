@@ -45,6 +45,11 @@ class Flexo_Booking_Rest {
 				'type'    => array( 'string', 'array' ),
 				'default' => '',
 			),
+			// Language of the page the guest is on, e.g. "en_US".
+			'locale'        => array(
+				'type'    => 'string',
+				'default' => '',
+			),
 		);
 
 		register_rest_route(
@@ -149,6 +154,14 @@ class Flexo_Booking_Rest {
 							'type'    => 'string',
 							'default' => '',
 						),
+						'privacy_consent' => array(
+							'type'    => 'boolean',
+							'default' => false,
+						),
+						'invoice'        => array(
+							'type'    => array( 'object', 'null' ),
+							'default' => null,
+						),
 						'rate_plan'      => array(
 							'type'    => 'integer',
 							'default' => 0,
@@ -219,7 +232,19 @@ class Flexo_Booking_Rest {
 		return rest_ensure_response( $rooms );
 	}
 
+	/**
+	 * Answers in the guest's language (messages, prices, dates).
+	 */
+	private static function use_locale( WP_REST_Request $request ) {
+		$locale = Flexo_Booking_I18n::sanitize_locale( $request['locale'] );
+		if ( '' !== $locale && $locale !== determine_locale() ) {
+			switch_to_locale( $locale );
+		}
+		return $locale;
+	}
+
 	public static function availability( WP_REST_Request $request ) {
+		self::use_locale( $request );
 		$result = Flexo_Booking_Bookings::search(
 			$request['check_in'],
 			$request['check_out'],
@@ -242,6 +267,7 @@ class Flexo_Booking_Rest {
 	 * An invalid promo code still returns the price, with the reason.
 	 */
 	public static function quote( WP_REST_Request $request ) {
+		self::use_locale( $request );
 		$promo = Flexo_Booking_Promo_Codes::enabled() ? Flexo_Booking_Promo_Codes::normalize_code( $request['promo_code'] ) : '';
 		if ( '' !== $promo && Flexo_Booking_Promo_Codes::too_many_attempts() ) {
 			return new WP_Error( 'flexo_rate_limited', __( 'Too many promo code attempts. Please try again later.', 'flexo-booking' ), array( 'status' => 429 ) );
@@ -283,6 +309,7 @@ class Flexo_Booking_Rest {
 	}
 
 	public static function create_booking( WP_REST_Request $request ) {
+		$locale = self::use_locale( $request );
 		// Honeypot: real visitors never see or fill this field.
 		if ( '' !== trim( (string) $request['fb_website'] ) ) {
 			return new WP_Error( 'flexo_spam', __( 'Your booking could not be submitted.', 'flexo-booking' ), array( 'status' => 400 ) );
@@ -308,6 +335,9 @@ class Flexo_Booking_Rest {
 				'rate_plan'      => $request['rate_plan'],
 				'promo_code'     => $request['promo_code'],
 				'expected_total' => $request['expected_total'],
+				'privacy_consent' => $request['privacy_consent'],
+				'invoice'        => $request['invoice'],
+				'locale'         => $locale,
 				'guest_name'  => $request['guest_name'],
 				'guest_email' => $request['guest_email'],
 				'guest_phone' => $request['guest_phone'],
@@ -317,12 +347,16 @@ class Flexo_Booking_Rest {
 		);
 
 		if ( is_wp_error( $booking ) ) {
+			if ( in_array( $booking->get_error_code(), array( 'flexo_consent', 'flexo_invoice' ), true ) ) {
+				$booking->add_data( array( 'status' => 400 ) );
+				return $booking;
+			}
 			$booking->add_data( array_merge( (array) $booking->get_error_data(), array( 'status' => in_array( $booking->get_error_code(), array( 'flexo_unavailable', 'flexo_closed', 'flexo_busy', 'flexo_price_changed' ), true ) ? 409 : 400 ) ) );
 			return $booking;
 		}
 
 		$confirmed = 'confirmed' === $booking['status'];
-		$redirect  = Flexo_Booking_Settings::site_url_setting( 'thank_you_url' );
+		$redirect  = Flexo_Booking_I18n::page_url( Flexo_Booking_Settings::site_url_setting( 'thank_you_url' ), $booking['locale'] );
 		if ( $redirect ) {
 			$redirect = add_query_arg( 'booking', rawurlencode( $booking['reference'] ), $redirect );
 		}

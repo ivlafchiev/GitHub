@@ -17,11 +17,26 @@ class Flexo_Booking_Frontend {
 		add_shortcode( 'flexo_booking', array( __CLASS__, 'shortcode' ) );
 	}
 
+	/**
+	 * @var bool Whether the form's texts were already added to the page.
+	 */
+	private static $localized = false;
+
 	public static function register_assets() {
 		wp_register_style( 'flexo-booking', FLEXO_BOOKING_URL . 'assets/css/booking.css', array(), FLEXO_BOOKING_VERSION );
 		wp_register_script( 'flexo-booking', FLEXO_BOOKING_URL . 'assets/js/booking.js', array(), FLEXO_BOOKING_VERSION, true );
+	}
 
-		$settings = Flexo_Booking_Settings::all();
+	/**
+	 * Texts and settings for booking.js. Added when the first form is
+	 * rendered, when the page's language is known (Polylang / WPML).
+	 */
+	public static function localize() {
+		if ( self::$localized ) {
+			return;
+		}
+		self::$localized = true;
+		$settings        = Flexo_Booking_Settings::all();
 		wp_localize_script(
 			'flexo-booking',
 			'FlexoBookingConfig',
@@ -31,6 +46,7 @@ class Flexo_Booking_Frontend {
 				'children'  => Flexo_Booking_Children::enabled(),
 				'maxAge'    => Flexo_Booking_Children::MAX_AGE,
 				'promo'     => Flexo_Booking_Promo_Codes::enabled(),
+				'tracking'  => Flexo_Booking_Tracking::config(),
 				'i18n'      => array(
 					'checking'     => __( 'Checking availability…', 'flexo-booking' ),
 					'noRooms'      => __( 'No rooms are available for these dates. Please try different dates.', 'flexo-booking' ),
@@ -59,9 +75,13 @@ class Flexo_Booking_Frontend {
 					'choose'       => __( 'Choose', 'flexo-booking' ),
 					'rate'         => __( 'Rate', 'flexo-booking' ),
 					'guests'       => __( 'Guests', 'flexo-booking' ),
+					/* translators: %d: number of adults (1) */
 					'adult'        => __( '%d adult', 'flexo-booking' ),
+					/* translators: %d: number of adults (2 or more) */
 					'adults'       => __( '%d adults', 'flexo-booking' ),
+					/* translators: %d: number of children (1) */
 					'child'        => __( '%d child', 'flexo-booking' ),
+					/* translators: %d: number of children (2 or more) */
 					'childrenN'    => __( '%d children', 'flexo-booking' ),
 					/* translators: %s: ages */
 					'agesList'     => __( '(ages %s)', 'flexo-booking' ),
@@ -77,6 +97,7 @@ class Flexo_Booking_Frontend {
 					'remove'       => __( 'Remove', 'flexo-booking' ),
 					/* translators: 1: promo code, 2: discount, e.g. "−10%" */
 					'promoApplied' => __( 'Promo code %1$s applied (%2$s).', 'flexo-booking' ),
+					'consent'      => __( 'Please accept the privacy policy to send your booking.', 'flexo-booking' ),
 				),
 			)
 		);
@@ -151,17 +172,54 @@ class Flexo_Booking_Frontend {
 			'min_date'     => $today->format( 'Y-m-d' ),
 			'max_date'     => $today->modify( '+' . (int) $settings['max_advance_days'] . ' days' )->format( 'Y-m-d' ),
 			'booking_url'  => self::resolve_url( $atts['booking_page'] ),
-			'terms_url'    => Flexo_Booking_Settings::site_url_setting( 'terms_url' ),
 			'autosearch'   => $prefill['check_in'] && $prefill['check_out'],
 			'ask_ages'     => Flexo_Booking_Children::enabled() && (int) $settings['max_children'] > 0,
+			'terms_url'    => Flexo_Booking_I18n::page_url( Flexo_Booking_Settings::site_url_setting( 'terms_url' ) ),
 		);
 
 		wp_enqueue_style( 'flexo-booking' );
 		wp_enqueue_script( 'flexo-booking' );
+		self::localize();
 
 		ob_start();
 		self::load_template( 'search' === $atts['layout'] ? 'search-bar.php' : 'booking-form.php', $vars );
-		return ob_get_clean();
+		$html = ob_get_clean();
+
+		// Theme template overrides made before 1.4 have no place for the
+		// privacy consent and invoice fields: add them before the buttons.
+		if ( 'full' === $atts['layout'] && false === strpos( $html, 'data-fb-extra' ) ) {
+			$extra = self::extra_fields( $vars['uid'] );
+			if ( '' !== $extra ) {
+				$pos  = strpos( $html, '<div class="fb-actions">' );
+				$html = false === $pos ? $html : substr_replace( $html, $extra, $pos, 0 );
+			}
+		}
+		return $html;
+	}
+
+	/**
+	 * Language and date format of the page, for the form's REST requests.
+	 */
+	public static function locale_attributes() {
+		$locale = Flexo_Booking_I18n::current();
+		return ' data-locale="' . esc_attr( $locale ) . '" data-date-format="' . esc_attr( Flexo_Booking_I18n::date_format( $locale ) ) . '"';
+	}
+
+	/**
+	 * Privacy consent and invoice request fields of the guest details form
+	 * (only for features that are on).
+	 */
+	public static function extra_fields( $uid ) {
+		$html = '';
+		if ( Flexo_Booking_Invoices::enabled() ) {
+			$html .= Flexo_Booking_Invoices::render_fields( $uid );
+		}
+		if ( Flexo_Booking_Privacy::enabled() ) {
+			$required = Flexo_Booking_Privacy::consent_required();
+			// Never ticked in advance.
+			$html .= '<label class="fb-terms fb-consent"><input type="checkbox" name="privacy_consent" value="1"' . ( $required ? ' required' : '' ) . '> <span>' . Flexo_Booking_Privacy::consent_text( true ) . '</span></label>';
+		}
+		return '' === $html ? '' : '<div class="fb-extra" data-fb-extra>' . $html . '</div>';
 	}
 
 	private static function resolve_url( $value ) {

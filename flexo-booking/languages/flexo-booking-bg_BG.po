@@ -1,5 +1,3 @@
-# Copyright (C) 2026 FlexoHotels
-# This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
 "Project-Id-Version: Flexo Booking 1.4.0\n"
@@ -9,8 +7,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-24T12:23:40+00:00\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"POT-Creation-Date: 2026-09-24T12:10:42+00:00\n"
+"PO-Revision-Date: 2026-09-24 12:00+0300\n"
+"Language: bg_BG\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: flexo-booking\n"
 
@@ -18,55 +18,55 @@ msgstr ""
 #: flexo-booking.php
 #: includes/elementor/class-elementor.php:39
 msgid "Flexo Booking"
-msgstr ""
+msgstr "Flexo Booking"
 
 #. Plugin URI of the plugin
 #: flexo-booking.php
 msgid "https://github.com/ivlafchiev/GitHub"
-msgstr ""
+msgstr "https://github.com/ivlafchiev/GitHub"
 
 #. Description of the plugin
 #: flexo-booking.php
 msgid "Room & accommodation booking system for FlexoHotels websites. Works with any theme via the [flexo_booking] shortcode and ships a native Elementor widget. Settings and rooms can be exported/imported between sites."
-msgstr ""
+msgstr "Система за резервации на стаи и настаняване за сайтовете на FlexoHotels. Работи с всяка тема чрез кратък код [flexo_booking] и има собствен модул за Elementor. Настройките и стаите могат да се експортират и импортират между сайтове."
 
 #. Author of the plugin
 #: flexo-booking.php
 #: includes/elementor/class-elementor.php:26
 msgid "FlexoHotels"
-msgstr ""
+msgstr "FlexoHotels"
 
 #: includes/admin/class-calendar-admin.php:25
 #: includes/admin/class-calendar-admin.php:469
 msgid "Booking calendar"
-msgstr ""
+msgstr "Календар на резервациите"
 
 #: includes/admin/class-calendar-admin.php:25
 #: includes/admin/class-calendar-admin.php:337
 #: includes/admin/class-sync-admin.php:213
 #: includes/class-admin.php:159
 msgid "Calendar"
-msgstr ""
+msgstr "Календар"
 
 #: includes/admin/class-calendar-admin.php:64
 msgid "New booking"
-msgstr ""
+msgstr "Нова резервация"
 
 #: includes/admin/class-calendar-admin.php:65
 msgid "Block dates"
-msgstr ""
+msgstr "Блокиране на дати"
 
 #: includes/admin/class-calendar-admin.php:66
 #: includes/admin/class-calendar-admin.php:603
 msgid "Close"
-msgstr ""
+msgstr "Затвори"
 
 #: includes/admin/class-calendar-admin.php:67
 #: includes/admin/class-calendar-admin.php:388
 #: includes/admin/class-calendar-admin.php:389
 #: includes/admin/class-calendar-admin.php:549
 msgid "Closed"
-msgstr ""
+msgstr "Затворено"
 
 #. translators: %d: nights
 #. translators: %d: number of nights
@@ -83,30 +83,30 @@ msgstr ""
 #, php-format
 msgid "%d night"
 msgid_plural "%d nights"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d нощувка"
+msgstr[1] "%d нощувки"
 
 #: includes/admin/class-calendar-admin.php:230
 msgid "Blocked"
-msgstr ""
+msgstr "Блокирано"
 
 #: includes/admin/class-calendar-admin.php:231
 msgid "Blocked dates (by staff)"
-msgstr ""
+msgstr "Блокирани дати (от персонала)"
 
 #: includes/admin/class-calendar-admin.php:241
 msgid "Booking added by staff"
-msgstr ""
+msgstr "Резервация, добавена от персонала"
 
 #: includes/admin/class-calendar-admin.php:241
 msgid "Website booking"
-msgstr ""
+msgstr "Резервация от сайта"
 
 #: includes/admin/class-calendar-admin.php:248
 #: includes/admin/class-calendar-admin.php:336
 #: includes/class-admin.php:629
 msgid "Type"
-msgstr ""
+msgstr "Вид"
 
 #: includes/admin/class-calendar-admin.php:249
 #: includes/class-admin.php:226
@@ -114,7 +114,7 @@ msgstr ""
 #: includes/class-privacy.php:230
 #: includes/class-privacy.php:260
 msgid "Reference"
-msgstr ""
+msgstr "Номер"
 
 #: includes/admin/class-calendar-admin.php:250
 #: includes/admin/class-promo-codes-admin.php:167
@@ -129,14 +129,14 @@ msgstr ""
 #: includes/class-features.php:445
 #: includes/class-privacy.php:240
 msgid "Status"
-msgstr ""
+msgstr "Статус"
 
 #: includes/admin/class-calendar-admin.php:253
 #: includes/class-admin.php:227
 #: includes/class-admin.php:416
 #: includes/class-emails.php:397
 msgid "Guest"
-msgstr ""
+msgstr "Гост"
 
 #: includes/admin/class-calendar-admin.php:255
 #: includes/class-admin.php:419
@@ -147,7 +147,7 @@ msgstr ""
 #: includes/class-settings.php:746
 #: templates/booking-form.php:91
 msgid "Email"
-msgstr ""
+msgstr "Имейл"
 
 #: includes/admin/class-calendar-admin.php:258
 #: includes/class-admin.php:420
@@ -157,7 +157,7 @@ msgstr ""
 #: includes/class-settings.php:451
 #: templates/booking-form.php:97
 msgid "Phone"
-msgstr ""
+msgstr "Телефон"
 
 #: includes/admin/class-calendar-admin.php:261
 #: includes/admin/class-calendar-admin.php:338
@@ -175,19 +175,19 @@ msgstr ""
 #: includes/elementor/class-booking-widget.php:79
 #: includes/elementor/class-room-link-tag.php:41
 msgid "Room"
-msgstr ""
+msgstr "Стая"
 
 #: includes/admin/class-calendar-admin.php:262
 #: includes/admin/class-calendar-admin.php:339
 #: includes/class-admin.php:405
 msgid "Arrival"
-msgstr ""
+msgstr "Пристигане"
 
 #: includes/admin/class-calendar-admin.php:263
 #: includes/admin/class-calendar-admin.php:340
 #: includes/class-admin.php:406
 msgid "Departure"
-msgstr ""
+msgstr "Заминаване"
 
 #. translators: %d: nights
 #: includes/admin/class-calendar-admin.php:265
@@ -198,14 +198,14 @@ msgstr ""
 #: includes/class-frontend.php:77
 #: includes/class-privacy.php:234
 msgid "Guests"
-msgstr ""
+msgstr "Гости"
 
 #: includes/admin/class-calendar-admin.php:268
 #: includes/admin/class-rate-plans-admin.php:109
 #: includes/class-admin.php:397
 #: includes/class-admin.php:669
 msgid "Rate plan"
-msgstr ""
+msgstr "Тарифа"
 
 #: includes/admin/class-calendar-admin.php:271
 #: includes/class-admin.php:409
@@ -213,7 +213,7 @@ msgstr ""
 #: includes/class-emails.php:725
 #: includes/class-frontend.php:95
 msgid "Promo code"
-msgstr ""
+msgstr "Промо код"
 
 #: includes/admin/class-calendar-admin.php:273
 #: includes/class-admin.php:231
@@ -222,123 +222,123 @@ msgstr ""
 #: includes/class-frontend.php:90
 #: includes/class-pricing.php:567
 msgid "Total"
-msgstr ""
+msgstr "Общо"
 
 #: includes/admin/class-calendar-admin.php:276
 #: includes/class-admin.php:702
 msgid "Notes"
-msgstr ""
+msgstr "Бележки"
 
 #: includes/admin/class-calendar-admin.php:279
 msgid "Warning"
-msgstr ""
+msgstr "Внимание"
 
 #: includes/admin/class-calendar-admin.php:279
 msgid "Overlaps a booking from an external calendar – possible double booking."
-msgstr ""
+msgstr "Застъпва се с резервация от външен календар – възможна двойна резервация."
 
 #: includes/admin/class-calendar-admin.php:285
 #: includes/class-admin.php:321
 #: includes/class-admin.php:515
 msgid "Confirm"
-msgstr ""
+msgstr "Потвърди"
 
 #: includes/admin/class-calendar-admin.php:292
 #: includes/class-admin.php:520
 msgid "Cancel booking"
-msgstr ""
+msgstr "Отмени резервацията"
 
 #: includes/admin/class-calendar-admin.php:294
 #: includes/class-admin.php:326
 #: includes/class-admin.php:520
 msgid "Cancel this booking? The guest will be notified by email."
-msgstr ""
+msgstr "Да се отмени ли тази резервация? Гостът ще бъде уведомен по имейл."
 
 #: includes/admin/class-calendar-admin.php:299
 msgid "Remove block"
-msgstr ""
+msgstr "Премахни блокирането"
 
 #: includes/admin/class-calendar-admin.php:301
 msgid "Remove this block? The dates become available again."
-msgstr ""
+msgstr "Да се премахне ли блокирането? Датите отново стават свободни."
 
 #: includes/admin/class-calendar-admin.php:306
 #: includes/class-rooms.php:63
 msgid "Booking details"
-msgstr ""
+msgstr "Подробности за резервацията"
 
 #: includes/admin/class-calendar-admin.php:311
 msgid "Show in bookings list"
-msgstr ""
+msgstr "Покажи в списъка с резервации"
 
 #: includes/admin/class-calendar-admin.php:325
 #: includes/class-admin.php:533
 msgid "Blocked dates"
-msgstr ""
+msgstr "Блокирани дати"
 
 #: includes/admin/class-calendar-admin.php:333
 msgid "External calendar"
-msgstr ""
+msgstr "Външен календар"
 
 #: includes/admin/class-calendar-admin.php:336
 msgid "Booking from an external calendar (synced)"
-msgstr ""
+msgstr "Резервация от външен календар (синхронизирана)"
 
 #: includes/admin/class-calendar-admin.php:343
 #: includes/class-admin.php:573
 msgid "Text from the calendar"
-msgstr ""
+msgstr "Текст от календара"
 
 #: includes/admin/class-calendar-admin.php:347
 #: includes/admin/class-calendar-admin.php:370
 #: includes/class-admin.php:253
 #: includes/class-admin.php:589
 msgid "Conflict"
-msgstr ""
+msgstr "Конфликт"
 
 #: includes/admin/class-calendar-admin.php:347
 msgid "(marked as reviewed)"
-msgstr ""
+msgstr "(отбелязано като прегледано)"
 
 #: includes/admin/class-calendar-admin.php:350
 #: includes/class-admin.php:173
 msgid "Mark as reviewed"
-msgstr ""
+msgstr "Отбележи като прегледано"
 
 #: includes/admin/class-calendar-admin.php:356
 msgid "Note"
-msgstr ""
+msgstr "Бележка"
 
 #: includes/admin/class-calendar-admin.php:356
 msgid "Details and changes are managed on the booking website. It disappears here when it is cancelled there."
-msgstr ""
+msgstr "Подробностите и промените се управляват в сайта за резервации. Изчезва оттук, когато бъде отменена там."
 
 #: includes/admin/class-calendar-admin.php:358
 #: includes/admin/class-sync-admin.php:27
 #: includes/admin/class-sync-admin.php:135
 msgid "Calendar Sync"
-msgstr ""
+msgstr "Синхронизация на календари"
 
 #: includes/admin/class-calendar-admin.php:370
 msgid "External booking"
-msgstr ""
+msgstr "Външна резервация"
 
 #: includes/admin/class-calendar-admin.php:391
 #: includes/admin/class-calendar-admin.php:594
 msgid "Closed period"
-msgstr ""
+msgstr "Затворен период"
 
 #: includes/admin/class-calendar-admin.php:393
 #: includes/admin/class-closures-admin.php:83
 #: includes/admin/class-closures-admin.php:117
 msgid "Applies to"
-msgstr ""
+msgstr "Важи за"
 
 #: includes/admin/class-calendar-admin.php:393
 #: includes/admin/class-closures-admin.php:96
 #: includes/admin/class-closures-admin.php:120
 msgid "Whole property"
-msgstr ""
+msgstr "Целия обект"
 
 #: includes/admin/class-calendar-admin.php:394
 #: includes/admin/class-closures-admin.php:84
@@ -348,7 +348,7 @@ msgstr ""
 #: includes/admin/class-seasons-admin.php:184
 #: includes/admin/class-seasons-admin.php:234
 msgid "From"
-msgstr ""
+msgstr "От"
 
 #: includes/admin/class-calendar-admin.php:395
 #: includes/admin/class-closures-admin.php:85
@@ -357,143 +357,143 @@ msgstr ""
 #: includes/admin/class-seasons-admin.php:185
 #: includes/admin/class-seasons-admin.php:235
 msgid "To (last night)"
-msgstr ""
+msgstr "До (последна нощувка)"
 
 #: includes/admin/class-calendar-admin.php:396
 msgid "Guests see"
-msgstr ""
+msgstr "Гостите виждат"
 
 #: includes/admin/class-calendar-admin.php:400
 msgid "Edit closed dates"
-msgstr ""
+msgstr "Редактиране на затворените дати"
 
 #: includes/admin/class-calendar-admin.php:470
 #: includes/class-admin.php:41
 #: includes/class-admin.php:136
 #: includes/class-admin.php:618
 msgid "Add booking"
-msgstr ""
+msgstr "Добави резервация"
 
 #: includes/admin/class-calendar-admin.php:473
 #: includes/admin/class-calendar-admin.php:499
 msgid "Today"
-msgstr ""
+msgstr "Днес"
 
 #: includes/admin/class-calendar-admin.php:476
 msgid "Arriving today"
-msgstr ""
+msgstr "Пристигат днес"
 
 #: includes/admin/class-calendar-admin.php:477
 msgid "Leaving today"
-msgstr ""
+msgstr "Заминават днес"
 
 #: includes/admin/class-calendar-admin.php:478
 msgid "Staying tonight"
-msgstr ""
+msgstr "Нощуват тази нощ"
 
 #: includes/admin/class-calendar-admin.php:491
 msgid "Nobody"
-msgstr ""
+msgstr "Няма"
 
 #: includes/admin/class-calendar-admin.php:498
 msgid "Previous month"
-msgstr ""
+msgstr "Предишен месец"
 
 #: includes/admin/class-calendar-admin.php:500
 msgid "Next month"
-msgstr ""
+msgstr "Следващ месец"
 
 #: includes/admin/class-calendar-admin.php:505
 msgid "Show cancelled"
-msgstr ""
+msgstr "Покажи отменените"
 
 #: includes/admin/class-calendar-admin.php:510
 #: includes/admin/class-seasons-admin.php:107
 #: includes/admin/class-sync-admin.php:176
 #: includes/class-admin.php:622
 msgid "Add your first room"
-msgstr ""
+msgstr "Добавете първата си стая"
 
 #: includes/admin/class-calendar-admin.php:512
 msgid "Booking calendar – scroll sideways to see all days"
-msgstr ""
+msgstr "Календар на резервациите – плъзнете настрани, за да видите всички дни"
 
 #: includes/admin/class-calendar-admin.php:536
 msgid "1 room"
-msgstr ""
+msgstr "1 стая"
 
 #. translators: %d: identical rooms
 #: includes/admin/class-calendar-admin.php:538
 #, php-format
 msgid "%d rooms"
-msgstr ""
+msgstr "%d стаи"
 
 #. translators: 1: free units, 2: total units
 #: includes/admin/class-calendar-admin.php:551
 #, php-format
 msgid "%1$d of %2$d free"
-msgstr ""
+msgstr "%1$d от %2$d свободни"
 
 #: includes/admin/class-calendar-admin.php:585
 msgid "Legend"
-msgstr ""
+msgstr "Легенда"
 
 #: includes/admin/class-calendar-admin.php:586
 #: includes/class-bookings.php:21
 msgid "Confirmed"
-msgstr ""
+msgstr "Потвърдена"
 
 #: includes/admin/class-calendar-admin.php:587
 msgid "Pending (waiting for you)"
-msgstr ""
+msgstr "Чакаща (очаква вашето потвърждение)"
 
 #: includes/admin/class-calendar-admin.php:588
 #: includes/class-admin.php:536
 msgid "Added by staff"
-msgstr ""
+msgstr "Добавена от персонала"
 
 #: includes/admin/class-calendar-admin.php:589
 msgid "Blocked by staff"
-msgstr ""
+msgstr "Блокирано от персонала"
 
 #: includes/admin/class-calendar-admin.php:591
 msgid "From an external calendar (Booking.com, Airbnb…)"
-msgstr ""
+msgstr "От външен календар (Booking.com, Airbnb…)"
 
 #: includes/admin/class-calendar-admin.php:592
 msgid "Conflict – possible double booking"
-msgstr ""
+msgstr "Конфликт – възможна двойна резервация"
 
 #: includes/admin/class-calendar-admin.php:596
 #: includes/class-bookings.php:22
 msgid "Cancelled"
-msgstr ""
+msgstr "Отменена"
 
 #: includes/admin/class-calendar-admin.php:598
 msgid "Fully booked day"
-msgstr ""
+msgstr "Напълно зает ден"
 
 #: includes/admin/class-calendar-admin.php:599
 msgid "Click a booking for details, or an empty day to add a booking or block dates."
-msgstr ""
+msgstr "Щракнете върху резервация за подробности или върху празен ден, за да добавите резервация или да блокирате дати."
 
 #: includes/admin/class-closures-admin.php:23
 #: includes/admin/class-closures-admin.php:76
 msgid "Closed dates"
-msgstr ""
+msgstr "Затворени дати"
 
 #: includes/admin/class-closures-admin.php:33
 msgid "You are not allowed to manage closed dates."
-msgstr ""
+msgstr "Нямате право да управлявате затворените дати."
 
 #: includes/admin/class-closures-admin.php:77
 msgid "Close the whole property (e.g. for the winter) or a single room type. Guests cannot book nights inside a closed period and see a clear message instead. To take just one room out of service, use Add booking → Block dates."
-msgstr ""
+msgstr "Затворете целия обект (например за зимата) или само един тип стая. Гостите не могат да резервират нощувки в затворен период и виждат ясно съобщение. За да извадите от употреба само една стая, използвайте Добави резервация → Блокиране на дати."
 
 #: includes/admin/class-closures-admin.php:86
 #: includes/admin/class-closures-admin.php:136
 msgid "Message for guests"
-msgstr ""
+msgstr "Съобщение за гостите"
 
 #: includes/admin/class-closures-admin.php:87
 #: includes/admin/class-promo-codes-admin.php:168
@@ -503,22 +503,22 @@ msgstr ""
 #: includes/class-admin.php:162
 #: includes/class-admin.php:233
 msgid "Actions"
-msgstr ""
+msgstr "Действия"
 
 #: includes/admin/class-closures-admin.php:92
 msgid "No closed dates. The property is open all year."
-msgstr ""
+msgstr "Няма затворени дати. Обектът работи през цялата година."
 
 #: includes/admin/class-closures-admin.php:101
 #: includes/admin/class-promo-codes-admin.php:209
 #: includes/admin/class-rate-plans-admin.php:156
 #: includes/admin/class-seasons-admin.php:211
 msgid "Edit"
-msgstr ""
+msgstr "Редактирай"
 
 #: includes/admin/class-closures-admin.php:102
 msgid "Delete this closed period? The dates become bookable again."
-msgstr ""
+msgstr "Да се изтрие ли този затворен период? Датите отново стават достъпни за резервиране."
 
 #: includes/admin/class-closures-admin.php:102
 #: includes/admin/class-promo-codes-admin.php:211
@@ -526,41 +526,41 @@ msgstr ""
 #: includes/admin/class-seasons-admin.php:212
 #: includes/class-admin.php:328
 msgid "Delete"
-msgstr ""
+msgstr "Изтрий"
 
 #: includes/admin/class-closures-admin.php:110
 msgid "Edit closed period"
-msgstr ""
+msgstr "Редактиране на затворен период"
 
 #: includes/admin/class-closures-admin.php:110
 msgid "Add a closed period"
-msgstr ""
+msgstr "Добавяне на затворен период"
 
 #: includes/admin/class-closures-admin.php:128
 #: includes/admin/class-seasons-admin.php:232
 #: includes/class-admin.php:649
 msgid "Dates"
-msgstr ""
+msgstr "Дати"
 
 #: includes/admin/class-closures-admin.php:132
 msgid "Guests can still check out on the first closed day."
-msgstr ""
+msgstr "Гостите все пак могат да напуснат в първия затворен ден."
 
 #: includes/admin/class-closures-admin.php:138
 msgid "e.g. We are closed for the winter season"
-msgstr ""
+msgstr "напр. Затворени сме за зимния сезон"
 
 #: includes/admin/class-closures-admin.php:139
 msgid "Optional. The dates are added automatically."
-msgstr ""
+msgstr "По избор. Датите се добавят автоматично."
 
 #: includes/admin/class-closures-admin.php:143
 msgid "Save closed period"
-msgstr ""
+msgstr "Запази затворения период"
 
 #: includes/admin/class-closures-admin.php:143
 msgid "Add closed period"
-msgstr ""
+msgstr "Добави затворен период"
 
 #: includes/admin/class-closures-admin.php:145
 #: includes/admin/class-promo-codes-admin.php:301
@@ -568,332 +568,332 @@ msgstr ""
 #: includes/admin/class-seasons-admin.php:260
 #: includes/class-admin.php:326
 msgid "Cancel"
-msgstr ""
+msgstr "Отказ"
 
 #: includes/admin/class-closures-admin.php:152
 msgid "Copy closed dates to next year"
-msgstr ""
+msgstr "Копиране на затворените дати за следващата година"
 
 #: includes/admin/class-closures-admin.php:156
 msgid "Copy closed periods starting in"
-msgstr ""
+msgstr "Копирай затворените периоди, започващи през"
 
 #: includes/admin/class-closures-admin.php:163
 #: includes/admin/class-seasons-admin.php:281
 msgid "Copy to next year"
-msgstr ""
+msgstr "Копирай за следващата година"
 
 #. translators: 1: number copied, 2: year, 3: number skipped
 #: includes/admin/class-closures-admin.php:202
 #, php-format
 msgid "%1$d closed periods copied to %2$d (%3$d already existed)."
-msgstr ""
+msgstr "Копирани затворени периоди за %2$d: %1$d (%3$d вече съществуваха)."
 
 #: includes/admin/class-promo-codes-admin.php:24
 #: includes/admin/class-promo-codes-admin.php:154
 #: includes/class-features.php:88
 msgid "Promo codes"
-msgstr ""
+msgstr "Промо кодове"
 
 #: includes/admin/class-promo-codes-admin.php:41
 msgid "You are not allowed to manage promo codes."
-msgstr ""
+msgstr "Нямате право да управлявате промо кодовете."
 
 #. translators: 1: from date, 2: until date
 #: includes/admin/class-promo-codes-admin.php:59
 #, php-format
 msgid "Book %1$s – %2$s"
-msgstr ""
+msgstr "Резервация %1$s – %2$s"
 
 #. translators: 1: first night, 2: last night
 #: includes/admin/class-promo-codes-admin.php:67
 #, php-format
 msgid "Stays (nights) %1$s – %2$s"
-msgstr ""
+msgstr "Престой (нощувки) %1$s – %2$s"
 
 #. translators: %s: amount
 #: includes/admin/class-promo-codes-admin.php:74
 #, php-format
 msgid "From %s"
-msgstr ""
+msgstr "От %s"
 
 #. translators: %d: nights
 #: includes/admin/class-promo-codes-admin.php:78
 #, php-format
 msgid "At least %d night"
 msgid_plural "At least %d nights"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Поне %d нощувка"
+msgstr[1] "Поне %d нощувки"
 
 #. translators: %s: room names
 #: includes/admin/class-promo-codes-admin.php:86
 #, php-format
 msgid "Rooms: %s"
-msgstr ""
+msgstr "Стаи: %s"
 
 #. translators: %s: rate plan names
 #: includes/admin/class-promo-codes-admin.php:94
 #, php-format
 msgid "Rate plans: %s"
-msgstr ""
+msgstr "Тарифи: %s"
 
 #: includes/admin/class-promo-codes-admin.php:155
 #: includes/admin/class-promo-codes-admin.php:299
 msgid "Add promo code"
-msgstr ""
+msgstr "Добави промо код"
 
 #: includes/admin/class-promo-codes-admin.php:157
 msgid "Give guests a discount with a code such as DIRECT10. The discount applies to the room price and rate plan, never to the tourist tax. Guests enter the code before they send their booking; one code per booking."
-msgstr ""
+msgstr "Дайте на гостите отстъпка с код като DIRECT10. Отстъпката важи за цената на стаята и тарифата, никога за туристическия данък. Гостите въвеждат кода, преди да изпратят резервацията си; по един код на резервация."
 
 #: includes/admin/class-promo-codes-admin.php:163
 #: includes/admin/class-promo-codes-admin.php:227
 msgid "Code"
-msgstr ""
+msgstr "Код"
 
 #: includes/admin/class-promo-codes-admin.php:164
 #: includes/admin/class-promo-codes-admin.php:238
 #: includes/class-admin.php:482
 #: includes/class-frontend.php:89
 msgid "Discount"
-msgstr ""
+msgstr "Отстъпка"
 
 #: includes/admin/class-promo-codes-admin.php:165
 #: includes/admin/class-promo-codes-admin.php:264
 msgid "Conditions"
-msgstr ""
+msgstr "Условия"
 
 #: includes/admin/class-promo-codes-admin.php:166
 msgid "Used"
-msgstr ""
+msgstr "Използван"
 
 #: includes/admin/class-promo-codes-admin.php:173
 msgid "No promo codes yet."
-msgstr ""
+msgstr "Все още няма промо кодове."
 
 #: includes/admin/class-promo-codes-admin.php:190
 msgid "Any stay"
-msgstr ""
+msgstr "Всеки престой"
 
 #. translators: 1: uses, 2: limit
 #: includes/admin/class-promo-codes-admin.php:193
 #, php-format
 msgid "%1$d of %2$d"
-msgstr ""
+msgstr "%1$d от %2$d"
 
 #: includes/admin/class-promo-codes-admin.php:195
 msgid "confirmed bookings"
-msgstr ""
+msgstr "потвърдени резервации"
 
 #: includes/admin/class-promo-codes-admin.php:199
 #: includes/admin/class-rate-plans-admin.php:152
 msgid "Switched off"
-msgstr ""
+msgstr "Изключен"
 
 #: includes/admin/class-promo-codes-admin.php:201
 msgid "Expired"
-msgstr ""
+msgstr "Изтекъл"
 
 #: includes/admin/class-promo-codes-admin.php:203
 msgid "Fully used"
-msgstr ""
+msgstr "Изчерпан"
 
 #: includes/admin/class-promo-codes-admin.php:205
 msgid "Active"
-msgstr ""
+msgstr "Активен"
 
 #: includes/admin/class-promo-codes-admin.php:210
 #: includes/admin/class-rate-plans-admin.php:157
 msgid "Switch off"
-msgstr ""
+msgstr "Изключи"
 
 #: includes/admin/class-promo-codes-admin.php:210
 #: includes/admin/class-rate-plans-admin.php:157
 msgid "Switch on"
-msgstr ""
+msgstr "Включи"
 
 #: includes/admin/class-promo-codes-admin.php:211
 msgid "Delete this promo code? Bookings made with it keep their discount."
-msgstr ""
+msgstr "Да се изтрие ли този промо код? Резервациите, направени с него, запазват отстъпката си."
 
 #: includes/admin/class-promo-codes-admin.php:220
 msgid "Edit promo code"
-msgstr ""
+msgstr "Редактиране на промо код"
 
 #: includes/admin/class-promo-codes-admin.php:220
 msgid "Add a promo code"
-msgstr ""
+msgstr "Добавяне на промо код"
 
 #: includes/admin/class-promo-codes-admin.php:230
 msgid "Letters, numbers, - and _. Guests can type it in small or capital letters."
-msgstr ""
+msgstr "Букви, цифри, - и _. Гостите могат да го въведат с малки или главни букви."
 
 #: includes/admin/class-promo-codes-admin.php:234
 msgid "Note (only for you)"
-msgstr ""
+msgstr "Бележка (само за вас)"
 
 #: includes/admin/class-promo-codes-admin.php:235
 msgid "e.g. Newsletter summer campaign"
-msgstr ""
+msgstr "напр. Лятна кампания от бюлетина"
 
 #: includes/admin/class-promo-codes-admin.php:240
 msgid "Discount amount"
-msgstr ""
+msgstr "Размер на отстъпката"
 
 #: includes/admin/class-promo-codes-admin.php:241
 msgid "Discount type"
-msgstr ""
+msgstr "Вид отстъпка"
 
 #: includes/admin/class-promo-codes-admin.php:242
 msgid "% off"
-msgstr ""
+msgstr "% отстъпка"
 
 #. translators: %s: currency
 #: includes/admin/class-promo-codes-admin.php:243
 #, php-format
 msgid "%s off the booking"
-msgstr ""
+msgstr "%s отстъпка от резервацията"
 
 #: includes/admin/class-promo-codes-admin.php:248
 msgid "Can be used when booking"
-msgstr ""
+msgstr "Може да се използва при резервиране"
 
 #: includes/admin/class-promo-codes-admin.php:251
 msgid "Until"
-msgstr ""
+msgstr "До"
 
 #: includes/admin/class-promo-codes-admin.php:252
 msgid "Optional. The day the guest makes the booking. After \"until\" the code has expired."
-msgstr ""
+msgstr "По избор. Денят, в който гостът прави резервацията. След датата „до“ кодът е изтекъл."
 
 #: includes/admin/class-promo-codes-admin.php:256
 msgid "For stays"
-msgstr ""
+msgstr "За престои"
 
 #: includes/admin/class-promo-codes-admin.php:260
 msgid "Optional. Every night of the stay must be inside these dates."
-msgstr ""
+msgstr "По избор. Всяка нощувка от престоя трябва да е в рамките на тези дати."
 
 #: includes/admin/class-promo-codes-admin.php:266
 msgid "Minimum booking amount"
-msgstr ""
+msgstr "Минимална сума на резервацията"
 
 #: includes/admin/class-promo-codes-admin.php:267
 #: includes/class-rooms.php:127
 msgid "Minimum nights"
-msgstr ""
+msgstr "Минимален брой нощувки"
 
 #: includes/admin/class-promo-codes-admin.php:268
 msgid "Can be used"
-msgstr ""
+msgstr "Може да се използва"
 
 #: includes/admin/class-promo-codes-admin.php:268
 msgid "times in total"
-msgstr ""
+msgstr "пъти общо"
 
 #: includes/admin/class-promo-codes-admin.php:269
 msgid "All optional – leave empty for no limit. The minimum amount is the room price with the rate plan, before the discount. Only confirmed bookings count as uses; a cancelled booking gives its use back."
-msgstr ""
+msgstr "Всичко е по избор – оставете празно, ако няма ограничение. Минималната сума е цената на стаята с тарифата, преди отстъпката. Само потвърдените резервации се броят за използване; отменена резервация връща използването."
 
 #: includes/admin/class-promo-codes-admin.php:274
 msgid "Only for these rooms"
-msgstr ""
+msgstr "Само за тези стаи"
 
 #: includes/admin/class-promo-codes-admin.php:279
 msgid "Leave all unticked for every room."
-msgstr ""
+msgstr "Оставете всички без отметка за всички стаи."
 
 #: includes/admin/class-promo-codes-admin.php:285
 msgid "Only for these rate plans"
-msgstr ""
+msgstr "Само за тези тарифи"
 
 #: includes/admin/class-promo-codes-admin.php:290
 msgid "Leave all unticked for every rate plan."
-msgstr ""
+msgstr "Оставете всички без отметка за всички тарифи."
 
 #: includes/admin/class-promo-codes-admin.php:296
 msgid "Guests can use this code"
-msgstr ""
+msgstr "Гостите могат да използват този код"
 
 #: includes/admin/class-promo-codes-admin.php:299
 msgid "Save promo code"
-msgstr ""
+msgstr "Запази промо кода"
 
 #: includes/admin/class-rate-plans-admin.php:25
 #: includes/admin/class-rate-plans-admin.php:99
 #: includes/class-features.php:70
 #: includes/class-rooms.php:135
 msgid "Rate plans"
-msgstr ""
+msgstr "Тарифи"
 
 #: includes/admin/class-rate-plans-admin.php:40
 msgid "You are not allowed to manage rate plans."
-msgstr ""
+msgstr "Нямате право да управлявате тарифите."
 
 #: includes/admin/class-rate-plans-admin.php:100
 #: includes/admin/class-rate-plans-admin.php:248
 msgid "Add rate plan"
-msgstr ""
+msgstr "Добави тарифа"
 
 #: includes/admin/class-rate-plans-admin.php:102
 msgid "Rate plans are the different ways you sell a room – for example with breakfast, half board, or a cheaper non-refundable price. Create only the combinations you really sell, then choose which rooms offer them. Rooms without a rate plan are booked at their normal price."
-msgstr ""
+msgstr "Тарифите са различните начини, по които продавате една стая – например със закуска, полупансион или по-евтина цена без възстановяване. Създайте само комбинациите, които наистина продавате, след това изберете кои стаи ги предлагат. Стаите без тарифа се резервират на обичайната си цена."
 
 #: includes/admin/class-rate-plans-admin.php:103
 msgid "Guests choose a plan after choosing a room. If a room offers only one plan, it is used automatically."
-msgstr ""
+msgstr "Гостите избират тарифа, след като изберат стая. Ако стаята предлага само една тарифа, тя се използва автоматично."
 
 #: includes/admin/class-rate-plans-admin.php:110
 #: includes/admin/class-rate-plans-admin.php:191
 msgid "Price change"
-msgstr ""
+msgstr "Промяна на цената"
 
 #: includes/admin/class-rate-plans-admin.php:111
 #: includes/admin/class-rate-plans-admin.php:209
 #: includes/class-emails.php:731
 #: includes/class-frontend.php:93
 msgid "Cancellation"
-msgstr ""
+msgstr "Анулиране"
 
 #: includes/admin/class-rate-plans-admin.php:112
 msgid "Offered for"
-msgstr ""
+msgstr "Предлага се за"
 
 #: includes/admin/class-rate-plans-admin.php:119
 msgid "No rate plans yet. Guests book rooms at their normal price."
-msgstr ""
+msgstr "Все още няма тарифи. Гостите резервират стаите на обичайната им цена."
 
 #: includes/admin/class-rate-plans-admin.php:127
 msgid "Ready-made"
-msgstr ""
+msgstr "Готова"
 
 #: includes/admin/class-rate-plans-admin.php:137
 msgid "No rooms yet"
-msgstr ""
+msgstr "Все още няма стаи"
 
 #: includes/admin/class-rate-plans-admin.php:150
 msgid "Offered to guests"
-msgstr ""
+msgstr "Предлага се на гостите"
 
 #: includes/admin/class-rate-plans-admin.php:158
 msgid "Delete this rate plan? Existing bookings keep their plan and price."
-msgstr ""
+msgstr "Да се изтрие ли тази тарифа? Съществуващите резервации запазват тарифата и цената си."
 
 #: includes/admin/class-rate-plans-admin.php:169
 msgid "Add the ready-made plans"
-msgstr ""
+msgstr "Добави готовите тарифи"
 
 #: includes/admin/class-rate-plans-admin.php:170
 msgid "Room Only, Breakfast Included, Half Board, Full Board, All Inclusive and Non-refundable – added switched off, for you to edit."
-msgstr ""
+msgstr "Само нощувка, Със закуска, Полупансион, Пълен пансион, All Inclusive и Без възстановяване – добавят се изключени, за да ги редактирате."
 
 #: includes/admin/class-rate-plans-admin.php:176
 msgid "Edit rate plan"
-msgstr ""
+msgstr "Редактиране на тарифа"
 
 #: includes/admin/class-rate-plans-admin.php:176
 msgid "Add a rate plan"
-msgstr ""
+msgstr "Добавяне на тарифа"
 
 #: includes/admin/class-rate-plans-admin.php:183
 #: includes/admin/class-seasons-admin.php:228
@@ -901,642 +901,642 @@ msgstr ""
 #: includes/class-admin.php:418
 #: includes/class-privacy.php:235
 msgid "Name"
-msgstr ""
+msgstr "Име"
 
 #: includes/admin/class-rate-plans-admin.php:184
 msgid "e.g. Breakfast Included"
-msgstr ""
+msgstr "напр. Със закуска"
 
 #: includes/admin/class-rate-plans-admin.php:187
 msgid "Description for guests"
-msgstr ""
+msgstr "Описание за гостите"
 
 #: includes/admin/class-rate-plans-admin.php:198
 msgid "Amount"
-msgstr ""
+msgstr "Сума"
 
 #: includes/admin/class-rate-plans-admin.php:199
 msgid "Added to the room price. Use a minus sign for a lower price, e.g. -10 for 10% off a non-refundable rate. Percentages apply to the room price only."
-msgstr ""
+msgstr "Добавя се към цената на стаята. Използвайте знак минус за по-ниска цена, напр. -10 за 10% отстъпка при тарифа без възстановяване. Процентите се прилагат само към цената на стаята."
 
 #. translators: 1: child price rules
 #: includes/admin/class-rate-plans-admin.php:203
 #, php-format
 msgid "\"Per guest per night\" is charged for each adult; children pay by age (%s)."
-msgstr ""
+msgstr "„На гост на нощувка“ се начислява за всеки възрастен; децата плащат според възрастта (%s)."
 
 #. translators: 1: child price rules
 #: includes/admin/class-rate-plans-admin.php:203
 msgid "\"Per guest per night\" is charged for each adult and child."
-msgstr ""
+msgstr "„На гост на нощувка“ се начислява за всеки възрастен и всяко дете."
 
 #: includes/admin/class-rate-plans-admin.php:211
 #: includes/class-rate-plans.php:433
 msgid "Refundable"
-msgstr ""
+msgstr "С възстановяване"
 
 #: includes/admin/class-rate-plans-admin.php:212
 msgid "Cancellation policy"
-msgstr ""
+msgstr "Условия за анулиране"
 
 #: includes/admin/class-rate-plans-admin.php:212
 msgid "e.g. Free cancellation up to 7 days before arrival."
-msgstr ""
+msgstr "напр. Безплатно анулиране до 7 дни преди пристигане."
 
 #: includes/admin/class-rate-plans-admin.php:213
 msgid "Shown to guests before they book, and in their emails."
-msgstr ""
+msgstr "Показва се на гостите преди резервиране и в имейлите им."
 
 #: includes/admin/class-rate-plans-admin.php:217
 #: includes/class-rooms.php:39
 #: includes/class-rooms.php:44
 #: includes/class-rooms.php:279
 msgid "Rooms"
-msgstr ""
+msgstr "Стаи"
 
 #: includes/admin/class-rate-plans-admin.php:220
 msgid "Add rooms first."
-msgstr ""
+msgstr "Първо добавете стаи."
 
 #: includes/admin/class-rate-plans-admin.php:224
 msgid "Offer for this room"
-msgstr ""
+msgstr "Предлагай за тази стая"
 
 #: includes/admin/class-rate-plans-admin.php:225
 msgid "Different amount for this room (optional)"
-msgstr ""
+msgstr "Различна сума за тази стая (по избор)"
 
 #. translators: %s: room name
 #: includes/admin/class-rate-plans-admin.php:232
 #, php-format
 msgid "Different amount for %s"
-msgstr ""
+msgstr "Различна сума за %s"
 
 #: includes/admin/class-rate-plans-admin.php:243
 msgid "Offer this plan to guests"
-msgstr ""
+msgstr "Предлагай тази тарифа на гостите"
 
 #: includes/admin/class-rate-plans-admin.php:244
 msgid "Order"
-msgstr ""
+msgstr "Подредба"
 
 #: includes/admin/class-rate-plans-admin.php:248
 msgid "Save rate plan"
-msgstr ""
+msgstr "Запази тарифата"
 
 #: includes/admin/class-rate-plans-admin.php:277
 msgid "Please enter room amounts as numbers, e.g. 12 or -15."
-msgstr ""
+msgstr "Въведете сумите за стаите като числа, напр. 12 или -15."
 
 #. translators: %d: number of plans
 #: includes/admin/class-rate-plans-admin.php:330
 #, php-format
 msgid "%d ready-made plan added (switched off)."
 msgid_plural "%d ready-made plans added (switched off)."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Добавена е %d готова тарифа (изключена)."
+msgstr[1] "Добавени са %d готови тарифи (изключени)."
 
 #: includes/admin/class-seasons-admin.php:27
 #: includes/admin/class-seasons-admin.php:102
 #: includes/admin/class-seasons-admin.php:350
 #: includes/class-features.php:58
 msgid "Seasonal prices"
-msgstr ""
+msgstr "Сезонни цени"
 
 #: includes/admin/class-seasons-admin.php:56
 msgid "You are not allowed to manage seasonal prices."
-msgstr ""
+msgstr "Нямате право да управлявате сезонните цени."
 
 #: includes/admin/class-seasons-admin.php:81
 msgid "Saved."
-msgstr ""
+msgstr "Запазено."
 
 #: includes/admin/class-seasons-admin.php:82
 msgid "Deleted."
-msgstr ""
+msgstr "Изтрито."
 
 #: includes/admin/class-seasons-admin.php:103
 msgid "Set different prices for high and low season. Each night is priced by the season it falls in; nights outside any season use the room's normal price."
-msgstr ""
+msgstr "Задайте различни цени за висок и нисък сезон. Всяка нощувка се таксува по сезона, в който попада; нощувките извън сезон използват обичайната цена на стаята."
 
 #: includes/admin/class-seasons-admin.php:165
 msgid "Show"
-msgstr ""
+msgstr "Покажи"
 
 #. translators: 1: price per night, 2: weekend price
 #: includes/admin/class-seasons-admin.php:172
 #, php-format
 msgid "Normal price: %1$s per night%2$s. Used on dates without a season."
-msgstr ""
+msgstr "Обичайна цена: %1$s на нощувка%2$s. Използва се за дати без сезон."
 
 #. translators: %s: price
 #: includes/admin/class-seasons-admin.php:174
 #, php-format
 msgid ", weekends %s"
-msgstr ""
+msgstr ", през уикенда %s"
 
 #: includes/admin/class-seasons-admin.php:177
 #: includes/class-rooms.php:43
 msgid "Edit room"
-msgstr ""
+msgstr "Редактиране на стаята"
 
 #: includes/admin/class-seasons-admin.php:183
 msgid "Season"
-msgstr ""
+msgstr "Сезон"
 
 #: includes/admin/class-seasons-admin.php:186
 #: includes/admin/class-seasons-admin.php:240
 #: includes/class-rooms.php:72
 msgid "Price per night"
-msgstr ""
+msgstr "Цена на нощувка"
 
 #: includes/admin/class-seasons-admin.php:187
 msgid "Weekend price"
-msgstr ""
+msgstr "Цена през уикенда"
 
 #: includes/admin/class-seasons-admin.php:188
 #: includes/admin/class-seasons-admin.php:251
 msgid "Minimum stay"
-msgstr ""
+msgstr "Минимален престой"
 
 #: includes/admin/class-seasons-admin.php:194
 msgid "No seasons yet – this room uses its normal price all year."
-msgstr ""
+msgstr "Все още няма сезони – стаята използва обичайната си цена през цялата година."
 
 #: includes/admin/class-seasons-admin.php:212
 msgid "Delete this season?"
-msgstr ""
+msgstr "Да се изтрие ли този сезон?"
 
 #: includes/admin/class-seasons-admin.php:220
 msgid "Edit season"
-msgstr ""
+msgstr "Редактиране на сезон"
 
 #: includes/admin/class-seasons-admin.php:220
 msgid "Add a season"
-msgstr ""
+msgstr "Добавяне на сезон"
 
 #: includes/admin/class-seasons-admin.php:229
 msgid "e.g. High season"
-msgstr ""
+msgstr "напр. Висок сезон"
 
 #: includes/admin/class-seasons-admin.php:236
 msgid "Both dates are nights inside the season. Example: 01.07.2026 – 31.08.2026 includes the night of 31 August (check-out 1 September)."
-msgstr ""
+msgstr "И двете дати са нощувки в рамките на сезона. Пример: 01.07.2026 – 31.08.2026 включва нощувката на 31 август (напускане на 1 септември)."
 
 #: includes/admin/class-seasons-admin.php:244
 #: includes/class-rooms.php:76
 msgid "Weekend price per night"
-msgstr ""
+msgstr "Цена на нощувка през уикенда"
 
 #: includes/admin/class-seasons-admin.php:247
 msgid "Optional. Friday and Saturday nights in this season. Leave empty to use the price above every night."
-msgstr ""
+msgstr "По избор. Нощувките в петък и събота през този сезон. Оставете празно, за да важи цената по-горе за всяка нощувка."
 
 #: includes/admin/class-seasons-admin.php:253
 #: includes/class-settings.php:409
 msgid "nights"
-msgstr ""
+msgstr "нощувки"
 
 #: includes/admin/class-seasons-admin.php:254
 msgid "Optional. Applies to guests arriving during this season. Leave empty to use the room's minimum."
-msgstr ""
+msgstr "По избор. Важи за гостите, пристигащи през този сезон. Оставете празно, за да важи минимумът на стаята."
 
 #: includes/admin/class-seasons-admin.php:258
 msgid "Save season"
-msgstr ""
+msgstr "Запази сезона"
 
 #: includes/admin/class-seasons-admin.php:258
 msgid "Add season"
-msgstr ""
+msgstr "Добави сезон"
 
 #: includes/admin/class-seasons-admin.php:266
 msgid "Copy seasons to next year"
-msgstr ""
+msgstr "Копиране на сезоните за следващата година"
 
 #: includes/admin/class-seasons-admin.php:267
 msgid "Creates the same seasons one year later with the same prices. Seasons that would overlap an existing one are skipped."
-msgstr ""
+msgstr "Създава същите сезони година по-късно със същите цени. Сезоните, които биха се застъпили със съществуващ, се пропускат."
 
 #: includes/admin/class-seasons-admin.php:272
 msgid "Copy seasons starting in"
-msgstr ""
+msgstr "Копирай сезоните, започващи през"
 
 #. translators: %s: room name
 #: includes/admin/class-seasons-admin.php:279
 #, php-format
 msgid "for %s"
-msgstr ""
+msgstr "за %s"
 
 #. translators: %s: room name
 #: includes/admin/class-seasons-admin.php:280
 msgid "for all rooms"
-msgstr ""
+msgstr "за всички стаи"
 
 #. translators: 1: number of seasons, 2: year
 #: includes/admin/class-seasons-admin.php:334
 #, php-format
 msgid "%1$d season copied to %2$d."
 msgid_plural "%1$d seasons copied to %2$d."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%1$d сезон е копиран за %2$d."
+msgstr[1] "%1$d сезона са копирани за %2$d."
 
 #. translators: %s: list of skipped seasons
 #: includes/admin/class-seasons-admin.php:340
 #, php-format
 msgid "Skipped because they overlap an existing season: %s."
-msgstr ""
+msgstr "Пропуснати, защото се застъпват със съществуващ сезон: %s."
 
 #: includes/admin/class-seasons-admin.php:376
 msgid "No current or upcoming seasons – the normal price applies all year."
-msgstr ""
+msgstr "Няма текущи или предстоящи сезони – обичайната цена важи през цялата година."
 
 #: includes/admin/class-seasons-admin.php:379
 msgid "Edit seasonal prices"
-msgstr ""
+msgstr "Редактиране на сезонните цени"
 
 #: includes/admin/class-seasons-admin.php:381
 msgid "Save the room first, then add its seasons."
-msgstr ""
+msgstr "Първо запазете стаята, след това добавете сезоните ѝ."
 
 #: includes/admin/class-sync-admin.php:39
 msgid "Copied!"
-msgstr ""
+msgstr "Копирано!"
 
 #: includes/admin/class-sync-admin.php:40
 msgid "Reset this link? Booking.com, Airbnb and other sites using the old link will stop receiving updates until you paste the new link there."
-msgstr ""
+msgstr "Да се смени ли тази връзка? Booking.com, Airbnb и другите сайтове, които използват старата връзка, ще спрат да получават промени, докато не поставите новата връзка там."
 
 #: includes/admin/class-sync-admin.php:69
 msgid "You are not allowed to manage calendar sync."
-msgstr ""
+msgstr "Нямате право да управлявате синхронизацията на календари."
 
 #: includes/admin/class-sync-admin.php:83
 msgid "never"
-msgstr ""
+msgstr "никога"
 
 #. translators: %s: time difference, e.g. "5 mins"
 #: includes/admin/class-sync-admin.php:86
 #, php-format
 msgid "%s ago"
-msgstr ""
+msgstr "преди %s"
 
 #: includes/admin/class-sync-admin.php:99
 msgid "Calendar sync is failing"
-msgstr ""
+msgstr "Синхронизацията на календари не работи"
 
 #: includes/admin/class-sync-admin.php:99
 msgid "bookings from these calendars may be missing, so double bookings are possible:"
-msgstr ""
+msgstr "възможно е да липсват резервации от тези календари, така че са възможни двойни резервации:"
 
 #. translators: %d: number of failed attempts
 #: includes/admin/class-sync-admin.php:107
 #, php-format
 msgid "(failed %d time in a row)"
 msgid_plural "(failed %d times in a row)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "(неуспешна %d път подред)"
+msgstr[1] "(неуспешна %d пъти подред)"
 
 #: includes/admin/class-sync-admin.php:110
 msgid "Open Calendar Sync"
-msgstr ""
+msgstr "Отвори Синхронизация на календари"
 
 #. translators: %d: number of conflicts
 #: includes/admin/class-sync-admin.php:118
 #, php-format
 msgid "%d possible double booking"
 msgid_plural "%d possible double bookings"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d възможна двойна резервация"
+msgstr[1] "%d възможни двойни резервации"
 
 #: includes/admin/class-sync-admin.php:119
 msgid "from external calendars needs your attention."
-msgstr ""
+msgstr "от външни календари изисква вниманието ви."
 
 #: includes/admin/class-sync-admin.php:121
 msgid "Review"
-msgstr ""
+msgstr "Преглед"
 
 #: includes/admin/class-sync-admin.php:139
 msgid "How it works"
-msgstr ""
+msgstr "Как работи"
 
 #: includes/admin/class-sync-admin.php:141
 msgid "Copy each room's link below into Booking.com, Airbnb or other sites, so they block dates booked on this website."
-msgstr ""
+msgstr "Копирайте връзката на всяка стая по-долу в Booking.com, Airbnb или други сайтове, за да блокират датите, резервирани на този сайт."
 
 #: includes/admin/class-sync-admin.php:142
 msgid "Paste the calendar (iCal) link from those sites under \"Calendars imported into this room\", so their bookings block dates here."
-msgstr ""
+msgstr "Поставете връзката към календара (iCal) от тези сайтове в „Календари, внесени в тази стая“, за да блокират техните резервации датите тук."
 
 #. translators: %d: minutes
 #: includes/admin/class-sync-admin.php:148
 #, php-format
 msgid "Good to know: calendar links are not instant. This website checks the other calendars every %d minutes, and Booking.com or Airbnb read this website's link on their own schedule (often every few hours). A guest could book the same dates in between. If you also sell on Booking.com or Airbnb, we recommend \"Booking requests\" (Settings → Features), so you confirm each website booking yourself."
-msgstr ""
+msgstr "Добре е да знаете: връзките към календари не са мигновени. Този сайт проверява другите календари на всеки %d минути, а Booking.com или Airbnb четат връзката на този сайт по свой график (често на няколко часа). Междувременно гост може да резервира същите дати. Ако продавате и в Booking.com или Airbnb, препоръчваме „Заявки за резервация“ (Настройки → Функции), за да потвърждавате сами всяка резервация от сайта."
 
 #: includes/admin/class-sync-admin.php:156
 msgid "Check other calendars"
-msgstr ""
+msgstr "Проверявай другите календари"
 
 #: includes/admin/class-sync-admin.php:162
 msgid "Save"
-msgstr ""
+msgstr "Запази"
 
 #: includes/admin/class-sync-admin.php:163
 msgid "Sync all now"
-msgstr ""
+msgstr "Синхронизирай всички сега"
 
 #. translators: %s: time until the next automatic check
 #: includes/admin/class-sync-admin.php:168
 #, php-format
 msgid "Next automatic check in %s."
-msgstr ""
+msgstr "Следваща автоматична проверка след %s."
 
 #. translators: %d: units
 #: includes/admin/class-sync-admin.php:190
 #, php-format
 msgid "%d rooms of this type"
-msgstr ""
+msgstr "%d стаи от този тип"
 
 #: includes/admin/class-sync-admin.php:194
 msgid "Sync this room now"
-msgstr ""
+msgstr "Синхронизирай тази стая сега"
 
 #: includes/admin/class-sync-admin.php:198
 msgid "This room's calendar link (give it to Booking.com, Airbnb…)"
-msgstr ""
+msgstr "Връзка към календара на тази стая (дайте я на Booking.com, Airbnb…)"
 
 #: includes/admin/class-sync-admin.php:200
 msgid "Calendar link"
-msgstr ""
+msgstr "Връзка към календара"
 
 #: includes/admin/class-sync-admin.php:201
 msgid "Copy link"
-msgstr ""
+msgstr "Копирай връзката"
 
 #: includes/admin/class-sync-admin.php:202
 msgid "Reset link"
-msgstr ""
+msgstr "Смени връзката"
 
 #: includes/admin/class-sync-admin.php:205
 msgid "Booking.com: Extranet → Rates & Availability → Sync calendars → Import calendar → paste the link. Airbnb: Calendar → Availability → Connect to another website (Import calendar) → paste the link. The link contains only dates – no guest details or prices. Keep it private; \"Reset link\" makes the old one stop working."
-msgstr ""
+msgstr "Booking.com: Extranet → Цени и наличност → Синхронизиране на календари → Импортиране на календар → поставете връзката. Airbnb: Календар → Наличност → Свързване с друг уебсайт (Импортиране на календар) → поставете връзката. Връзката съдържа само дати – без данни за гости или цени. Пазете я в тайна; „Смени връзката“ прави старата неизползваема."
 
 #: includes/admin/class-sync-admin.php:208
 msgid "Calendars imported into this room"
-msgstr ""
+msgstr "Календари, внесени в тази стая"
 
 #: includes/admin/class-sync-admin.php:215
 #: includes/admin/class-sync-admin.php:271
 msgid "Counts as"
-msgstr ""
+msgstr "Брои се като"
 
 #: includes/admin/class-sync-admin.php:217
 msgid "Last sync"
-msgstr ""
+msgstr "Последна синхронизация"
 
 #: includes/admin/class-sync-admin.php:219
 #: includes/class-admin.php:39
 #: includes/class-admin.php:135
 #: includes/class-features.php:141
 msgid "Bookings"
-msgstr ""
+msgstr "Резервации"
 
 #: includes/admin/class-sync-admin.php:236
 msgid "Error"
-msgstr ""
+msgstr "Грешка"
 
 #. translators: %d: attempts
 #: includes/admin/class-sync-admin.php:239
 #, php-format
 msgid "Failed %d time in a row"
 msgid_plural "Failed %d times in a row"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Неуспешна %d път подред"
+msgstr[1] "Неуспешна %d пъти подред"
 
 #: includes/admin/class-sync-admin.php:242
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: includes/admin/class-sync-admin.php:244
 msgid "Not synced yet"
-msgstr ""
+msgstr "Все още не е синхронизиран"
 
 #: includes/admin/class-sync-admin.php:249
 msgid "Sync now"
-msgstr ""
+msgstr "Синхронизирай сега"
 
 #: includes/admin/class-sync-admin.php:250
 msgid "Remove this calendar? Dates blocked by its bookings become available again on this website."
-msgstr ""
+msgstr "Да се премахне ли този календар? Датите, блокирани от неговите резервации, отново стават свободни на този сайт."
 
 #: includes/admin/class-sync-admin.php:250
 #: includes/class-frontend.php:97
 msgid "Remove"
-msgstr ""
+msgstr "Премахни"
 
 #: includes/admin/class-sync-admin.php:257
 msgid "No calendars connected yet."
-msgstr ""
+msgstr "Все още няма свързани календари."
 
 #: includes/admin/class-sync-admin.php:265
 msgid "e.g. Booking.com"
-msgstr ""
+msgstr "напр. Booking.com"
 
 #: includes/admin/class-sync-admin.php:267
 msgid "Calendar link (iCal)"
-msgstr ""
+msgstr "Връзка към календара (iCal)"
 
 #. translators: %d: room number
 #: includes/admin/class-sync-admin.php:273
 #: includes/admin/class-sync-admin.php:293
 msgid "One room of this type"
-msgstr ""
+msgstr "Една стая от този тип"
 
 #: includes/admin/class-sync-admin.php:280
 msgid "Add calendar"
-msgstr ""
+msgstr "Добави календар"
 
 #: includes/admin/class-sync-admin.php:283
 msgid "\"One room of this type\": each imported booking takes one of the identical rooms. Choose a room number when the calendar belongs to one specific room (e.g. its own Airbnb listing) – bookings from calendars with the same number are then never counted twice."
-msgstr ""
+msgstr "„Една стая от този тип“: всяка внесена резервация заема една от еднаквите стаи. Изберете номер на стая, когато календарът принадлежи на конкретна стая (напр. собствена обява в Airbnb) – тогава резервациите от календари с един и същ номер никога не се броят два пъти."
 
 #. translators: %d: room number
 #: includes/admin/class-sync-admin.php:293
 #, php-format
 msgid "Room no. %d"
-msgstr ""
+msgstr "Стая № %d"
 
 #. translators: 1: imported bookings, 2: new, 3: changed, 4: removed
 #: includes/admin/class-sync-admin.php:307
 #, php-format
 msgid "Synced: %1$d bookings (%2$d new, %3$d changed, %4$d removed)."
-msgstr ""
+msgstr "Синхронизирано: %1$d резервации (%2$d нови, %3$d променени, %4$d премахнати)."
 
 #. translators: 1: calendars synced, 2: calendars failed
 #: includes/admin/class-sync-admin.php:359
 #, php-format
 msgid "%1$d calendars synced, %2$d failed – see the status column."
-msgstr ""
+msgstr "Синхронизирани календари: %1$d, неуспешни: %2$d – вижте колоната за статус."
 
 #. translators: %d: calendars synced
 #: includes/admin/class-sync-admin.php:362
 #, php-format
 msgid "%d calendar synced."
 msgid_plural "%d calendars synced."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Синхронизиран е %d календар."
+msgstr[1] "Синхронизирани са %d календара."
 
 #: includes/admin/class-sync-admin.php:381
 msgid "New link created. Paste it into Booking.com, Airbnb and the other sites – the old link no longer works."
-msgstr ""
+msgstr "Създадена е нова връзка. Поставете я в Booking.com, Airbnb и другите сайтове – старата връзка вече не работи."
 
 #: includes/class-admin.php:40
 #: includes/class-admin.php:371
 msgid "All bookings"
-msgstr ""
+msgstr "Всички резервации"
 
 #: includes/class-admin.php:45
 #: includes/class-settings.php:349
 msgid "Booking settings"
-msgstr ""
+msgstr "Настройки на резервациите"
 
 #: includes/class-admin.php:45
 #: includes/class-admin.php:58
 msgid "Settings"
-msgstr ""
+msgstr "Настройки"
 
 #: includes/class-admin.php:46
 #: includes/class-portability.php:551
 msgid "Import / Export"
-msgstr ""
+msgstr "Внос / Износ"
 
 #: includes/class-admin.php:89
 msgid "Booking updated."
-msgstr ""
+msgstr "Резервацията е обновена."
 
 #: includes/class-admin.php:90
 msgid "Booking deleted."
-msgstr ""
+msgstr "Резервацията е изтрита."
 
 #: includes/class-admin.php:91
 msgid "Booking added."
-msgstr ""
+msgstr "Резервацията е добавена."
 
 #: includes/class-admin.php:92
 msgid "The guest's personal data was removed from this booking."
-msgstr ""
+msgstr "Личните данни на госта са премахнати от тази резервация."
 
 #: includes/class-admin.php:137
 msgid "Export CSV"
-msgstr ""
+msgstr "Износ в CSV"
 
 #: includes/class-admin.php:144
 msgid "Start by adding your rooms, then place the booking form on a page with the [flexo_booking] shortcode or the \"Flexo Booking Form\" Elementor widget."
-msgstr ""
+msgstr "Започнете с добавяне на стаите си, след това поставете формата за резервации на страница с кратък код [flexo_booking] или с модула „Flexo Booking Form“ за Elementor."
 
 #: includes/class-admin.php:145
 msgid "Add a room"
-msgstr ""
+msgstr "Добави стая"
 
 #: includes/class-admin.php:154
 msgid "Possible double bookings from external calendars"
-msgstr ""
+msgstr "Възможни двойни резервации от външни календари"
 
 #: includes/class-admin.php:155
 msgid "These bookings came from Booking.com, Airbnb or another connected calendar and don't fit into your availability. Check them, contact the guest or the booking website, then mark them as reviewed."
-msgstr ""
+msgstr "Тези резервации са дошли от Booking.com, Airbnb или друг свързан календар и не се вместват в наличността ви. Проверете ги, свържете се с госта или със сайта за резервации, след това ги отбележете като прегледани."
 
 #: includes/class-admin.php:160
 #: includes/class-admin.php:229
 #: includes/class-admin.php:393
 #: includes/class-admin.php:572
 msgid "Stay"
-msgstr ""
+msgstr "Престой"
 
 #: includes/class-admin.php:161
 msgid "Details"
-msgstr ""
+msgstr "Подробности"
 
 #: includes/class-admin.php:172
 #: includes/class-admin.php:522
 msgid "Show in calendar"
-msgstr ""
+msgstr "Покажи в календара"
 
 #: includes/class-admin.php:188
 msgid "Bookings on this website"
-msgstr ""
+msgstr "Резервации от този сайт"
 
 #: includes/class-admin.php:189
 msgid "From external calendars"
-msgstr ""
+msgstr "От външни календари"
 
 #: includes/class-admin.php:207
 msgid "All statuses"
-msgstr ""
+msgstr "Всички статуси"
 
 #: includes/class-admin.php:213
 msgid "All rooms"
-msgstr ""
+msgstr "Всички стаи"
 
 #: includes/class-admin.php:218
 msgid "Current & upcoming only"
-msgstr ""
+msgstr "Само текущи и предстоящи"
 
 #: includes/class-admin.php:219
 msgid "Reference, name, email or phone"
-msgstr ""
+msgstr "Номер, име, имейл или телефон"
 
 #: includes/class-admin.php:220
 msgid "Filter"
-msgstr ""
+msgstr "Филтрирай"
 
 #: includes/class-admin.php:238
 msgid "No bookings found."
-msgstr ""
+msgstr "Няма намерени резервации."
 
 #: includes/class-admin.php:247
 msgid "Invoice"
-msgstr ""
+msgstr "Фактура"
 
 #: includes/class-admin.php:250
 msgid "Anonymised"
-msgstr ""
+msgstr "Анонимизирана"
 
 #: includes/class-admin.php:259
 #: includes/class-admin.php:418
 msgid "Anonymised guest"
-msgstr ""
+msgstr "Анонимизиран гост"
 
 #. translators: %s: children's ages
 #: includes/class-admin.php:295
 #, php-format
 msgid "ages %s"
-msgstr ""
+msgstr "възраст %s"
 
 #: includes/class-admin.php:324
 #: includes/class-admin.php:518
 msgid "Reinstate"
-msgstr ""
+msgstr "Възстанови"
 
 #: includes/class-admin.php:328
 msgid "Permanently delete this booking?"
-msgstr ""
+msgstr "Да се изтрие ли окончателно тази резервация?"
 
 #: includes/class-admin.php:373
 #: includes/class-bookings.php:570
 msgid "Booking not found."
-msgstr ""
+msgstr "Резервацията не е намерена."
 
 #. translators: %s: booking reference
 #: includes/class-admin.php:384
 #, php-format
 msgid "Booking %s"
-msgstr ""
+msgstr "Резервация %s"
 
 #: includes/class-admin.php:411
 msgid "Booked"
-msgstr ""
+msgstr "Резервирана на"
 
 #: includes/class-admin.php:421
 #: includes/class-emails.php:408
@@ -1544,127 +1544,127 @@ msgstr ""
 #: includes/class-settings.php:457
 #: templates/booking-form.php:103
 msgid "Special requests"
-msgstr ""
+msgstr "Специални желания"
 
 #: includes/class-admin.php:423
 #: includes/class-emails.php:405
 #: includes/class-privacy.php:242
 msgid "Language"
-msgstr ""
+msgstr "Език"
 
 #: includes/class-admin.php:427
 #: includes/class-features.php:94
 #: includes/class-privacy.php:247
 msgid "Privacy consent"
-msgstr ""
+msgstr "Съгласие за поверителност"
 
 #. translators: %s: date and time
 #: includes/class-admin.php:430
 #, php-format
 msgid "Given on %s"
-msgstr ""
+msgstr "Дадено на %s"
 
 #. translators: %s: short fingerprint of the text
 #: includes/class-admin.php:433
 #, php-format
 msgid "Text version %s"
-msgstr ""
+msgstr "Версия на текста %s"
 
 #. translators: %s: date
 #: includes/class-admin.php:441
 #, php-format
 msgid "Personal data removed on %s."
-msgstr ""
+msgstr "Личните данни са премахнати на %s."
 
 #: includes/class-admin.php:445
 msgid "Remove this guest's name, email, phone, special requests and invoice details from the booking? Dates, room and price stay. This cannot be undone."
-msgstr ""
+msgstr "Да се премахнат ли името, имейлът, телефонът, специалните желания и данните за фактура на госта от резервацията? Датите, стаята и цената остават. Това не може да бъде отменено."
 
 #: includes/class-admin.php:445
 msgid "Anonymise"
-msgstr ""
+msgstr "Анонимизирай"
 
 #: includes/class-admin.php:452
 msgid "Invoice requested"
-msgstr ""
+msgstr "Поискана е фактура"
 
 #: includes/class-admin.php:458
 msgid "Issue the invoice in your accounting software."
-msgstr ""
+msgstr "Издайте фактурата в счетоводния си софтуер."
 
 #: includes/class-admin.php:464
 #: includes/class-privacy.php:239
 msgid "Price"
-msgstr ""
+msgstr "Цена"
 
 #: includes/class-admin.php:481
 #: includes/class-frontend.php:88
 msgid "Subtotal"
-msgstr ""
+msgstr "Междинна сума"
 
 #: includes/class-admin.php:486
 msgid "Also payable at the property"
-msgstr ""
+msgstr "Плаща се допълнително в обекта"
 
 #: includes/class-admin.php:490
 msgid "This is the price calculated when the booking was made. Later price changes don't affect it."
-msgstr ""
+msgstr "Това е цената, изчислена при създаването на резервацията. По-късните промени на цените не ѝ влияят."
 
 #: includes/class-admin.php:498
 #: includes/class-settings.php:331
 msgid "Emails"
-msgstr ""
+msgstr "Имейли"
 
 #: includes/class-admin.php:505
 #: includes/class-privacy.php:280
 #: includes/class-settings.php:763
 msgid "Sent"
-msgstr ""
+msgstr "Изпратен"
 
 #: includes/class-admin.php:505
 #: includes/class-settings.php:765
 msgid "Failed"
-msgstr ""
+msgstr "Неуспешен"
 
 #: includes/class-admin.php:538
 msgid "Website"
-msgstr ""
+msgstr "Сайт"
 
 #: includes/class-admin.php:566
 msgid "Bookings imported from Booking.com, Airbnb and other connected calendars. They block availability here; to change or cancel them, use the booking website – they update here at the next sync."
-msgstr ""
+msgstr "Резервации, внесени от Booking.com, Airbnb и други свързани календари. Те заемат наличност тук; за да ги промените или отмените, използвайте сайта за резервации – тук се обновяват при следващата синхронизация."
 
 #: includes/class-admin.php:570
 msgid "Source"
-msgstr ""
+msgstr "Източник"
 
 #: includes/class-admin.php:579
 msgid "No current or upcoming bookings from external calendars."
-msgstr ""
+msgstr "Няма текущи или предстоящи резервации от външни календари."
 
 #: includes/class-admin.php:589
 msgid "Conflict (reviewed)"
-msgstr ""
+msgstr "Конфликт (прегледан)"
 
 #: includes/class-admin.php:592
 msgid "Blocks availability"
-msgstr ""
+msgstr "Заема наличност"
 
 #: includes/class-admin.php:619
 msgid "Record a phone, walk-in or other-channel booking, or block dates (e.g. maintenance) so they can’t be booked online."
-msgstr ""
+msgstr "Въведете резервация по телефона, на място или от друг канал, или блокирайте дати (напр. за ремонт), за да не могат да се резервират онлайн."
 
 #: includes/class-admin.php:632
 msgid "Confirmed booking"
-msgstr ""
+msgstr "Потвърдена резервация"
 
 #: includes/class-admin.php:633
 msgid "Pending booking"
-msgstr ""
+msgstr "Чакаща резервация"
 
 #: includes/class-admin.php:634
 msgid "Block dates (room closed)"
-msgstr ""
+msgstr "Блокиране на дати (стаята е затворена)"
 
 #: includes/class-admin.php:651
 #: includes/class-emails.php:716
@@ -1672,7 +1672,7 @@ msgstr ""
 #: templates/booking-form.php:43
 #: templates/search-bar.php:34
 msgid "Check-in"
-msgstr ""
+msgstr "Настаняване"
 
 #: includes/class-admin.php:653
 #: includes/class-emails.php:717
@@ -1680,21 +1680,21 @@ msgstr ""
 #: templates/booking-form.php:47
 #: templates/search-bar.php:38
 msgid "Check-out"
-msgstr ""
+msgstr "Напускане"
 
 #: includes/class-admin.php:659
 #: templates/booking-form.php:51
 #: templates/search-bar.php:42
 msgid "Adults"
-msgstr ""
+msgstr "Възрастни"
 
 #: includes/class-admin.php:661
 msgid "Children's ages"
-msgstr ""
+msgstr "Възраст на децата"
 
 #: includes/class-admin.php:661
 msgid "e.g. 4, 11 – empty if no children"
-msgstr ""
+msgstr "напр. 4, 11 – празно, ако няма деца"
 
 #: includes/class-admin.php:663
 #: includes/class-settings.php:320
@@ -1702,137 +1702,137 @@ msgstr ""
 #: templates/booking-form.php:60
 #: templates/search-bar.php:51
 msgid "Children"
-msgstr ""
+msgstr "Деца"
 
 #: includes/class-admin.php:672
 msgid "The room's only plan / normal price"
-msgstr ""
+msgstr "Единствената тарифа на стаята / обичайна цена"
 
 #: includes/class-admin.php:679
 msgid "The plan must be offered for the chosen room. The price is calculated automatically."
-msgstr ""
+msgstr "Тарифата трябва да се предлага за избраната стая. Цената се изчислява автоматично."
 
 #: includes/class-admin.php:690
 msgid "Guest name"
-msgstr ""
+msgstr "Име на госта"
 
 #: includes/class-admin.php:708
 msgid "Send the confirmation email to the guest"
-msgstr ""
+msgstr "Изпрати имейла за потвърждение на госта"
 
 #: includes/class-admin.php:712
 msgid "Save booking"
-msgstr ""
+msgstr "Запази резервацията"
 
 #: includes/class-admin.php:729
 #: includes/class-admin.php:750
 #: includes/class-admin.php:760
 #: includes/class-admin.php:789
 msgid "You are not allowed to manage bookings."
-msgstr ""
+msgstr "Нямате право да управлявате резервациите."
 
 #: includes/class-bookings.php:20
 msgid "Pending"
-msgstr ""
+msgstr "Чакаща"
 
 #: includes/class-bookings.php:23
 msgid "Blocked (closed)"
-msgstr ""
+msgstr "Блокирана (затворено)"
 
 #: includes/class-bookings.php:47
 msgid "Please choose valid check-in and check-out dates."
-msgstr ""
+msgstr "Моля, изберете валидни дати за настаняване и напускане."
 
 #: includes/class-bookings.php:52
 #: includes/class-frontend.php:66
 msgid "Check-out must be after check-in."
-msgstr ""
+msgstr "Датата на напускане трябва да е след датата на настаняване."
 
 #: includes/class-bookings.php:58
 msgid "Check-in cannot be in the past."
-msgstr ""
+msgstr "Датата на настаняване не може да е в миналото."
 
 #. translators: %d: number of days
 #: includes/class-bookings.php:63
 #, php-format
 msgid "Bookings can be made up to %d days in advance."
-msgstr ""
+msgstr "Резервации могат да се правят до %d дни напред."
 
 #. translators: %d: number of nights
 #: includes/class-bookings.php:69
 #, php-format
 msgid "The minimum stay is %d night."
 msgid_plural "The minimum stay is %d nights."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Минималният престой е %d нощувка."
+msgstr[1] "Минималният престой е %d нощувки."
 
 #. translators: %d: number of nights
 #: includes/class-bookings.php:73
 #, php-format
 msgid "The maximum stay is %d night."
 msgid_plural "The maximum stay is %d nights."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Максималният престой е %d нощувка."
+msgstr[1] "Максималният престой е %d нощувки."
 
 #: includes/class-bookings.php:193
 msgid "Sold out for these dates."
-msgstr ""
+msgstr "Няма свободни места за тези дати."
 
 #. translators: %d: number of nights
 #: includes/class-bookings.php:233
 #, php-format
 msgid "Total for %d night"
 msgid_plural "Total for %d nights"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Общо за %d нощувка"
+msgstr[1] "Общо за %d нощувки"
 
 #. translators: %d: number of guests
 #: includes/class-bookings.php:250
 #, php-format
 msgid "Fits up to %d guest."
 msgid_plural "Fits up to %d guests."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "За до %d гост."
+msgstr[1] "За до %d гости."
 
 #. translators: %d: number of guests
 #: includes/class-bookings.php:252
 #, php-format
 msgid "This room fits up to %d guest."
 msgid_plural "This room fits up to %d guests."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Тази стая е за до %d гост."
+msgstr[1] "Тази стая е за до %d гости."
 
 #. translators: %d: number of adults
 #: includes/class-bookings.php:257
 #, php-format
 msgid "Fits up to %d adult."
 msgid_plural "Fits up to %d adults."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "За до %d възрастен."
+msgstr[1] "За до %d възрастни."
 
 #. translators: %d: number of adults
 #: includes/class-bookings.php:259
 #, php-format
 msgid "This room fits up to %d adult."
 msgid_plural "This room fits up to %d adults."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Тази стая е за до %d възрастен."
+msgstr[1] "Тази стая е за до %d възрастни."
 
 #. translators: 1: number of nights, 2: season name
 #: includes/class-bookings.php:268
 #, php-format
 msgid "Minimum stay %1$d night for arrivals in %2$s."
 msgid_plural "Minimum stay %1$d nights for arrivals in %2$s."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Минимален престой %1$d нощувка при пристигане през %2$s."
+msgstr[1] "Минимален престой %1$d нощувки при пристигане през %2$s."
 
 #. translators: %d: number of nights
 #: includes/class-bookings.php:271
 #, php-format
 msgid "Minimum stay %d night."
 msgid_plural "Minimum stay %d nights."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Минимален престой %d нощувка."
+msgstr[1] "Минимален престой %d нощувки."
 
 #: includes/class-bookings.php:308
 #: includes/class-ical.php:185
@@ -1840,83 +1840,83 @@ msgstr[1] ""
 #: includes/class-rest.php:278
 #: includes/class-seasons.php:140
 msgid "Please choose a room."
-msgstr ""
+msgstr "Моля, изберете стая."
 
 #: includes/class-bookings.php:363
 msgid "Please enter your name."
-msgstr ""
+msgstr "Моля, въведете името си."
 
 #: includes/class-bookings.php:366
 #: includes/class-emails.php:638
 msgid "Please enter a valid email address."
-msgstr ""
+msgstr "Моля, въведете валиден имейл адрес."
 
 #: includes/class-bookings.php:373
 msgid "Please enter your phone number."
-msgstr ""
+msgstr "Моля, въведете телефонния си номер."
 
 #: includes/class-bookings.php:381
 #: includes/class-frontend.php:100
 msgid "Please accept the privacy policy to send your booking."
-msgstr ""
+msgstr "Моля, приемете политиката за поверителност, за да изпратите резервацията си."
 
 #: includes/class-bookings.php:391
 msgid "Please enter the guest name."
-msgstr ""
+msgstr "Моля, въведете името на госта."
 
 #: includes/class-bookings.php:408
 msgid "Sorry, this room is no longer available for the selected dates."
-msgstr ""
+msgstr "За съжаление тази стая вече не е свободна за избраните дати."
 
 #. translators: %s: new total
 #: includes/class-bookings.php:438
 #, php-format
 msgid "The price for this stay is now %s. Please check it and send your booking again."
-msgstr ""
+msgstr "Цената за този престой вече е %s. Моля, проверете я и изпратете резервацията отново."
 
 #: includes/class-bookings.php:476
 msgid "The booking could not be saved. Please try again."
-msgstr ""
+msgstr "Резервацията не можа да бъде запазена. Моля, опитайте отново."
 
 #: includes/class-bookings.php:490
 msgid "We are processing another booking. Please try again in a moment."
-msgstr ""
+msgstr "В момента обработваме друга резервация. Моля, опитайте отново след малко."
 
 #: includes/class-bookings.php:555
 msgid "(deleted room)"
-msgstr ""
+msgstr "(изтрита стая)"
 
 #: includes/class-bookings.php:573
 msgid "Invalid status."
-msgstr ""
+msgstr "Невалиден статус."
 
 #: includes/class-bookings.php:588
 msgid "The room is no longer available for these dates."
-msgstr ""
+msgstr "Стаята вече не е свободна за тези дати."
 
 #. translators: %d: maximum child age
 #: includes/class-children.php:145
 #, php-format
 msgid "Please select the age of each child (0–%d years)."
-msgstr ""
+msgstr "Моля, изберете възрастта на всяко дете (0–%d години)."
 
 #. translators: %d: age
 #: includes/class-children.php:155
 #, php-format
 msgid "under %d: free"
-msgstr ""
+msgstr "под %d г.: безплатно"
 
 #. translators: 1: from age, 2: to age, 3: percentage
 #: includes/class-children.php:160
 #, php-format
 msgid "%1$d–%2$d: %3$s%% of the adult price"
-msgstr ""
+msgstr "%1$d–%2$d г.: %3$s%% от цената за възрастен"
 
 #. translators: %d: age
 #: includes/class-children.php:167
 #, php-format
 msgid "%d and older: adult price"
-msgstr ""
+msgstr "%d г. и повече: цена за възрастен"
 
 #. translators: %d: number of adults
 #. translators: %d: number of adults (1)
@@ -1925,8 +1925,8 @@ msgstr ""
 #, php-format
 msgid "%d adult"
 msgid_plural "%d adults"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d възрастен"
+msgstr[1] "%d възрастни"
 
 #. translators: %d: number of children
 #. translators: %d: number of children (1)
@@ -1935,8 +1935,8 @@ msgstr[1] ""
 #, php-format
 msgid "%d child"
 msgid_plural "%d children"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d дете"
+msgstr[1] "%d деца"
 
 #. translators: %s: ages, e.g. "4, 11"
 #. translators: %s: ages
@@ -1944,888 +1944,888 @@ msgstr[1] ""
 #: includes/class-frontend.php:87
 #, php-format
 msgid "(ages %s)"
-msgstr ""
+msgstr "(възраст %s)"
 
 #. translators: 1: guest message set by the hotel, 2: first closed night, 3: last closed night
 #: includes/class-closures.php:103
 #, php-format
 msgid "%1$s (%2$s – %3$s)"
-msgstr ""
+msgstr "%1$s (%2$s – %3$s)"
 
 #. translators: 1: first closed night, 2: last closed night
 #: includes/class-closures.php:107
 #, php-format
 msgid "We are closed from %1$s to %2$s. Please choose other dates."
-msgstr ""
+msgstr "Затворени сме от %1$s до %2$s. Моля, изберете други дати."
 
 #. translators: 1: first closed night, 2: last closed night
 #: includes/class-closures.php:110
 #, php-format
 msgid "This room is closed from %1$s to %2$s."
-msgstr ""
+msgstr "Тази стая е затворена от %1$s до %2$s."
 
 #: includes/class-closures.php:121
 msgid "Please choose a room or \"Whole property\"."
-msgstr ""
+msgstr "Моля, изберете стая или „Целия обект“."
 
 #: includes/class-closures.php:127
 #: includes/class-seasons.php:151
 msgid "Please enter both dates as DD.MM.YYYY."
-msgstr ""
+msgstr "Моля, въведете двете дати във формат ДД.ММ.ГГГГ."
 
 #: includes/class-closures.php:130
 msgid "The closed period must end on or after its start date."
-msgstr ""
+msgstr "Затвореният период трябва да завършва на или след началната си дата."
 
 #: includes/class-closures.php:156
 msgid "The closed period could not be saved."
-msgstr ""
+msgstr "Затвореният период не можа да бъде запазен."
 
 #: includes/class-emails.php:61
 msgid "Booking request received"
-msgstr ""
+msgstr "Получена заявка за резервация"
 
 #: includes/class-emails.php:62
 msgid "Booking confirmed"
-msgstr ""
+msgstr "Потвърдена резервация"
 
 #: includes/class-emails.php:63
 #: includes/class-emails.php:97
 msgid "Booking cancelled"
-msgstr ""
+msgstr "Отменена резервация"
 
 #: includes/class-emails.php:65
 msgid "Before arrival (reminder)"
-msgstr ""
+msgstr "Преди пристигане (напомняне)"
 
 #: includes/class-emails.php:69
 msgid "After the stay (review request)"
-msgstr ""
+msgstr "След престоя (молба за отзив)"
 
 #: includes/class-emails.php:73
 msgid "Waiting for deposit"
-msgstr ""
+msgstr "Очаква се депозит"
 
 #: includes/class-emails.php:77
 msgid "Payment received"
-msgstr ""
+msgstr "Получено плащане"
 
 #: includes/class-emails.php:81
 msgid "Payment failed"
-msgstr ""
+msgstr "Неуспешно плащане"
 
 #: includes/class-emails.php:93
 msgid "New booking or booking request"
-msgstr ""
+msgstr "Нова резервация или заявка за резервация"
 
 #: includes/class-emails.php:101
 msgid "Possible double booking from an external calendar"
-msgstr ""
+msgstr "Възможна двойна резервация от външен календар"
 
 #: includes/class-emails.php:109
 #: includes/class-emails.php:625
 msgid "Test email"
-msgstr ""
+msgstr "Тестов имейл"
 
 #. translators: %s: email type
 #: includes/class-emails.php:115
 #, php-format
 msgid "To the hotel: %s"
-msgstr ""
+msgstr "До хотела: %s"
 
 #. translators: %s: email type
 #: includes/class-emails.php:120
 #, php-format
 msgid "To the guest: %s"
-msgstr ""
+msgstr "До госта: %s"
 
 #. translators: 1: booking reference, 2: room name
 #: includes/class-emails.php:320
 #, php-format
 msgid "New booking request %1$s – %2$s"
-msgstr ""
+msgstr "Нова заявка за резервация %1$s – %2$s"
 
 #. translators: 1: booking reference, 2: room name
 #: includes/class-emails.php:320
 #, php-format
 msgid "New booking %1$s – %2$s"
-msgstr ""
+msgstr "Нова резервация %1$s – %2$s"
 
 #: includes/class-emails.php:321
 msgid "A new booking request was made on your website. Please confirm or decline it."
-msgstr ""
+msgstr "На сайта ви е направена нова заявка за резервация. Моля, потвърдете я или я откажете."
 
 #: includes/class-emails.php:321
 msgid "A new booking was made on your website."
-msgstr ""
+msgstr "На сайта ви е направена нова резервация."
 
 #: includes/class-emails.php:327
 #: includes/class-emails.php:361
 msgid "Open the booking:"
-msgstr ""
+msgstr "Отворете резервацията:"
 
 #. translators: 1: booking reference, 2: room name
 #: includes/class-emails.php:359
 #, php-format
 msgid "Booking cancelled %1$s – %2$s"
-msgstr ""
+msgstr "Отменена резервация %1$s – %2$s"
 
 #: includes/class-emails.php:360
 msgid "This booking has been cancelled. The dates are available again."
-msgstr ""
+msgstr "Тази резервация е отменена. Датите отново са свободни."
 
 #: includes/class-emails.php:441
 msgid "No valid recipient address."
-msgstr ""
+msgstr "Няма валиден адрес на получател."
 
 #: includes/class-emails.php:468
 msgid "The email could not be sent (wp_mail returned an error)."
-msgstr ""
+msgstr "Имейлът не можа да бъде изпратен (wp_mail върна грешка)."
 
 #: includes/class-emails.php:605
 msgid "Double Room with Sea View"
-msgstr ""
+msgstr "Двойна стая с изглед към морето"
 
 #: includes/class-emails.php:612
 msgid "Maria Ivanova"
-msgstr ""
+msgstr "Мария Иванова"
 
 #: includes/class-emails.php:626
 msgid "This is a test email from your booking system. If you can read it, emails to guests and to you are working."
-msgstr ""
+msgstr "Това е тестов имейл от системата ви за резервации. Ако можете да го прочетете, имейлите до гостите и до вас работят."
 
 #: includes/class-emails.php:633
 #: includes/class-privacy.php:182
 msgid "You are not allowed to do this."
-msgstr ""
+msgstr "Нямате право да направите това."
 
 #. translators: %s: email address
 #: includes/class-emails.php:645
 #, php-format
 msgid "Test email sent to %s. If it doesn't arrive within a few minutes, check the spam folder and the email log below."
-msgstr ""
+msgstr "Тестовият имейл е изпратен до %s. Ако не пристигне до няколко минути, проверете папката за спам и дневника на имейлите по-долу."
 
 #. translators: %s: email address
 #: includes/class-emails.php:647
 #, php-format
 msgid "The test email to %s could not be sent. See the email log below and set up an SMTP plugin."
-msgstr ""
+msgstr "Тестовият имейл до %s не можа да бъде изпратен. Вижте дневника на имейлите по-долу и настройте разширение за SMTP."
 
 #: includes/class-emails.php:672
 msgid "Booking emails may land in spam."
-msgstr ""
+msgstr "Имейлите за резервации може да попадат в спам."
 
 #: includes/class-emails.php:673
 msgid "This website sends email without a mail server login (SMTP). Many email providers then treat booking confirmations as spam or drop them. Install an SMTP plugin such as \"WP Mail SMTP\" or \"FluentSMTP\" and connect it to the hotel's email account, then use \"Send test email\" under Bookings → Settings → Emails."
-msgstr ""
+msgstr "Този сайт изпраща имейли без вход в пощенски сървър (SMTP). Тогава много доставчици третират потвържденията за резервации като спам или ги отхвърлят. Инсталирайте разширение за SMTP като „WP Mail SMTP“ или „FluentSMTP“ и го свържете с имейла на хотела, след това използвайте „Изпрати тестов имейл“ в Резервации → Настройки → Имейли."
 
 #: includes/class-emails.php:674
 msgid "Hide this message"
-msgstr ""
+msgstr "Скрий това съобщение"
 
 #: includes/class-emails.php:710
 #: includes/class-frontend.php:92
 #: includes/class-pricing.php:569
 msgid "Payable at the property"
-msgstr ""
+msgstr "Плаща се в обекта"
 
 #: includes/class-emails.php:718
 msgid "Nights"
-msgstr ""
+msgstr "Нощувки"
 
 #: includes/class-emails.php:722
 #: includes/class-frontend.php:76
 #: includes/class-pricing.php:559
 msgid "Rate"
-msgstr ""
+msgstr "Тарифа"
 
 #: includes/class-features.php:46
 msgid "Booking requests"
-msgstr ""
+msgstr "Заявки за резервация"
 
 #: includes/class-features.php:47
 msgid "Guests send a request and you confirm it."
-msgstr ""
+msgstr "Гостите изпращат заявка, а вие я потвърждавате."
 
 #: includes/class-features.php:52
 msgid "Instant booking"
-msgstr ""
+msgstr "Незабавна резервация"
 
 #: includes/class-features.php:53
 msgid "Bookings are confirmed immediately, without your approval."
-msgstr ""
+msgstr "Резервациите се потвърждават веднага, без вашето одобрение."
 
 #: includes/class-features.php:59
 msgid "Different prices and minimum stays for high and low season."
-msgstr ""
+msgstr "Различни цени и минимален престой за висок и нисък сезон."
 
 #: includes/class-features.php:64
 msgid "Calendar sync"
-msgstr ""
+msgstr "Синхронизация на календари"
 
 #: includes/class-features.php:65
 msgid "Keep availability in sync with Booking.com, Airbnb and others (iCal). Switching it off stops syncing and releases dates blocked by external calendars; your connections are kept."
-msgstr ""
+msgstr "Поддържайте наличността синхронизирана с Booking.com, Airbnb и други (iCal). Изключването спира синхронизацията и освобождава датите, блокирани от външни календари; връзките ви се запазват."
 
 #: includes/class-features.php:71
 msgid "Offer options such as \"Breakfast included\" or \"Non-refundable\"."
-msgstr ""
+msgstr "Предлагайте варианти като „Със закуска“ или „Без възстановяване“."
 
 #: includes/class-features.php:76
 msgid "Children & ages"
-msgstr ""
+msgstr "Деца и възраст"
 
 #: includes/class-features.php:77
 msgid "Ask for children's ages, set a maximum number of adults per room, and charge per-person extras by age."
-msgstr ""
+msgstr "Питайте за възрастта на децата, задайте максимален брой възрастни за стая и таксувайте допълненията на човек според възрастта."
 
 #: includes/class-features.php:82
 #: includes/class-pricing.php:427
 #: includes/class-settings.php:323
 msgid "Tourist tax"
-msgstr ""
+msgstr "Туристически данък"
 
 #: includes/class-features.php:83
 msgid "Add the municipal tourist tax per person per night, included in the total or paid at the property."
-msgstr ""
+msgstr "Добавете общинския туристически данък на човек на нощувка – включен в общата сума или платим в обекта."
 
 #: includes/class-features.php:89
 msgid "Give discounts with codes such as SUMMER10."
-msgstr ""
+msgstr "Давайте отстъпки с кодове като SUMMER10."
 
 #: includes/class-features.php:95
 msgid "Ask guests to accept your privacy policy and remove old guest data automatically."
-msgstr ""
+msgstr "Искайте от гостите да приемат политиката ви за поверителност и премахвайте автоматично старите данни на гостите."
 
 #: includes/class-features.php:100
 msgid "Invoice request"
-msgstr ""
+msgstr "Искане на фактура"
 
 #: includes/class-features.php:101
 msgid "Let guests ask for an invoice with company details."
-msgstr ""
+msgstr "Позволете на гостите да поискат фактура с данни на фирма."
 
 #: includes/class-features.php:106
 msgid "Guest emails"
-msgstr ""
+msgstr "Имейли до гостите"
 
 #: includes/class-features.php:107
 msgid "Email guests when their booking is received, confirmed or cancelled, plus an optional reminder before arrival and a review request after the stay."
-msgstr ""
+msgstr "Изпращайте имейл на гостите, когато резервацията им е получена, потвърдена или отменена, както и по желание напомняне преди пристигане и молба за отзив след престоя."
 
 #: includes/class-features.php:112
 msgid "Conversion tracking"
-msgstr ""
+msgstr "Проследяване на конверсии"
 
 #: includes/class-features.php:113
 msgid "Send booking events to Google Analytics, Tag Manager or Meta."
-msgstr ""
+msgstr "Изпращайте събития за резервации към Google Analytics, Tag Manager или Meta."
 
 #: includes/class-features.php:118
 msgid "Online card payment"
-msgstr ""
+msgstr "Онлайн плащане с карта"
 
 #: includes/class-features.php:119
 msgid "Guests pay by card when booking (Stripe)."
-msgstr ""
+msgstr "Гостите плащат с карта при резервиране (Stripe)."
 
 #: includes/class-features.php:124
 msgid "Deposits"
-msgstr ""
+msgstr "Депозити"
 
 #: includes/class-features.php:125
 msgid "Take part of the price when booking and the rest at the property."
-msgstr ""
+msgstr "Вземайте част от цената при резервиране, а остатъка – в обекта."
 
 #: includes/class-features.php:131
 msgid "Bank transfer"
-msgstr ""
+msgstr "Банков превод"
 
 #: includes/class-features.php:132
 msgid "Guests pay a deposit or the full amount by bank transfer."
-msgstr ""
+msgstr "Гостите плащат депозит или цялата сума по банков път."
 
 #: includes/class-features.php:142
 msgid "Prices"
-msgstr ""
+msgstr "Цени"
 
 #: includes/class-features.php:143
 msgid "Guests & communication"
-msgstr ""
+msgstr "Гости и комуникация"
 
 #: includes/class-features.php:144
 msgid "Payments"
-msgstr ""
+msgstr "Плащания"
 
 #: includes/class-features.php:317
 msgid "Switch on only what your property needs. Switching a feature off hides it from guests; your settings and existing bookings are kept."
-msgstr ""
+msgstr "Включете само това, от което обектът ви има нужда. Изключването на функция я скрива от гостите; настройките и съществуващите резервации се запазват."
 
 #: includes/class-features.php:335
 msgid "How do guests book?"
-msgstr ""
+msgstr "Как резервират гостите?"
 
 #: includes/class-features.php:351
 msgid "On"
-msgstr ""
+msgstr "Вкл."
 
 #: includes/class-features.php:353
 #: includes/class-features.php:453
 msgid "Coming soon"
-msgstr ""
+msgstr "Очаквайте скоро"
 
 #: includes/class-features.php:362
 msgid "Save features"
-msgstr ""
+msgstr "Запази функциите"
 
 #: includes/class-features.php:370
 msgid "You are not allowed to change booking features."
-msgstr ""
+msgstr "Нямате право да променяте функциите на резервациите."
 
 #: includes/class-features.php:410
 #: includes/class-features.php:423
 msgid "Agency: available features"
-msgstr ""
+msgstr "Агенция: достъпни функции"
 
 #: includes/class-features.php:410
 msgid "Agency"
-msgstr ""
+msgstr "Агенция"
 
 #: includes/class-features.php:416
 msgid "Sorry, you are not allowed to access this page."
-msgstr ""
+msgstr "Съжаляваме, нямате достъп до тази страница."
 
 #: includes/class-features.php:424
 msgid "Choose which features this hotel can see and switch on under Settings → Features. Hotel administrators never see this screen."
-msgstr ""
+msgstr "Изберете кои функции този хотел може да вижда и включва в Настройки → Функции. Администраторите на хотела никога не виждат този екран."
 
 #: includes/class-features.php:427
 msgid "Controlled by FLEXO_BOOKING_FEATURES in wp-config.php:"
-msgstr ""
+msgstr "Управлява се от FLEXO_BOOKING_FEATURES в wp-config.php:"
 
 #: includes/class-features.php:431
 msgid "No restriction set: all features are available."
-msgstr ""
+msgstr "Няма ограничение: всички функции са достъпни."
 
 #: includes/class-features.php:434
 msgid "Available features saved."
-msgstr ""
+msgstr "Достъпните функции са запазени."
 
 #: includes/class-features.php:442
 msgid "Available"
-msgstr ""
+msgstr "Достъпна"
 
 #: includes/class-features.php:443
 msgid "Feature"
-msgstr ""
+msgstr "Функция"
 
 #: includes/class-features.php:444
 msgid "Key"
-msgstr ""
+msgstr "Ключ"
 
 #: includes/class-features.php:453
 msgid "Ready · on"
-msgstr ""
+msgstr "Готова · вкл."
 
 #: includes/class-features.php:453
 msgid "Ready · off"
-msgstr ""
+msgstr "Готова · изкл."
 
 #: includes/class-features.php:460
 msgid "Save available features"
-msgstr ""
+msgstr "Запази достъпните функции"
 
 #: includes/class-features.php:461
 msgid "Reset: make everything available"
-msgstr ""
+msgstr "Нулиране: направи всичко достъпно"
 
 #: includes/class-features.php:472
 msgid "Sorry, you are not allowed to do that."
-msgstr ""
+msgstr "Съжаляваме, нямате право да направите това."
 
 #: includes/class-frontend.php:51
 msgid "Checking availability…"
-msgstr ""
+msgstr "Проверка на наличността…"
 
 #: includes/class-frontend.php:52
 msgid "No rooms are available for these dates. Please try different dates."
-msgstr ""
+msgstr "Няма свободни стаи за тези дати. Моля, опитайте с други дати."
 
 #: includes/class-frontend.php:53
 msgid "Show other rooms"
-msgstr ""
+msgstr "Покажи други стаи"
 
 #: includes/class-frontend.php:54
 msgid "Select"
-msgstr ""
+msgstr "Избери"
 
 #: includes/class-frontend.php:55
 msgid "Unavailable"
-msgstr ""
+msgstr "Няма свободни"
 
 #: includes/class-frontend.php:56
 msgid "per night"
-msgstr ""
+msgstr "на нощувка"
 
 #. translators: %s: average price per night
 #: includes/class-frontend.php:58
 #, php-format
 msgid "avg. %s per night"
-msgstr ""
+msgstr "ср. %s на нощувка"
 
 #. translators: %d: number of guests
 #: includes/class-frontend.php:60
 #, php-format
 msgid "Up to %d guests"
-msgstr ""
+msgstr "До %d гости"
 
 #. translators: %d: rooms left
 #: includes/class-frontend.php:62
 #, php-format
 msgid "Only %d left!"
-msgstr ""
+msgstr "Остават само %d!"
 
 #: includes/class-frontend.php:63
 msgid "Sending…"
-msgstr ""
+msgstr "Изпращане…"
 
 #: includes/class-frontend.php:64
 msgid "Booking reference"
-msgstr ""
+msgstr "Номер на резервацията"
 
 #: includes/class-frontend.php:65
 msgid "Something went wrong. Please try again or contact us."
-msgstr ""
+msgstr "Нещо се обърка. Моля, опитайте отново или се свържете с нас."
 
 #. translators: %d: child number
 #: includes/class-frontend.php:68
 #, php-format
 msgid "Age of child %d"
-msgstr ""
+msgstr "Възраст на дете %d"
 
 #: includes/class-frontend.php:69
 msgid "Age"
-msgstr ""
+msgstr "Възраст"
 
 #: includes/class-frontend.php:70
 msgid "under 1"
-msgstr ""
+msgstr "под 1"
 
 #: includes/class-frontend.php:71
 msgid "Please select the age of each child."
-msgstr ""
+msgstr "Моля, изберете възрастта на всяко дете."
 
 #. translators: %s: price
 #: includes/class-frontend.php:73
 #, php-format
 msgid "from %s"
-msgstr ""
+msgstr "от %s"
 
 #: includes/class-frontend.php:74
 msgid "Choose your rate"
-msgstr ""
+msgstr "Изберете тарифа"
 
 #: includes/class-frontend.php:75
 msgid "Choose"
-msgstr ""
+msgstr "Избери"
 
 #. translators: %d: number of adults (2 or more)
 #: includes/class-frontend.php:81
 #, php-format
 msgid "%d adults"
-msgstr ""
+msgstr "%d възрастни"
 
 #. translators: %d: number of children (2 or more)
 #: includes/class-frontend.php:85
 #, php-format
 msgid "%d children"
-msgstr ""
+msgstr "%d деца"
 
 #: includes/class-frontend.php:91
 msgid "Final total"
-msgstr ""
+msgstr "Крайна сума"
 
 #: includes/class-frontend.php:94
 msgid "Have a promo code?"
-msgstr ""
+msgstr "Имате промо код?"
 
 #: includes/class-frontend.php:96
 msgid "Apply"
-msgstr ""
+msgstr "Приложи"
 
 #. translators: 1: promo code, 2: discount, e.g. "−10%"
 #: includes/class-frontend.php:99
 #, php-format
 msgid "Promo code %1$s applied (%2$s)."
-msgstr ""
+msgstr "Промо код %1$s е приложен (%2$s)."
 
 #: includes/class-frontend.php:134
 msgid "Search"
-msgstr ""
+msgstr "Търсене"
 
 #: includes/class-frontend.php:134
 #: includes/elementor/class-booking-widget.php:102
 msgid "Check availability"
-msgstr ""
+msgstr "Провери наличността"
 
 #: includes/class-ical.php:43
 msgid "Every 15 minutes"
-msgstr ""
+msgstr "На всеки 15 минути"
 
 #: includes/class-ical.php:44
 msgid "Every 30 minutes"
-msgstr ""
+msgstr "На всеки 30 минути"
 
 #: includes/class-ical.php:45
 msgid "Every hour"
-msgstr ""
+msgstr "На всеки час"
 
 #: includes/class-ical.php:98
 msgid "Unexpected error while reading the calendar."
-msgstr ""
+msgstr "Неочаквана грешка при четенето на календара."
 
 #: includes/class-ical.php:189
 msgid "Please paste the full calendar link, starting with https://"
-msgstr ""
+msgstr "Моля, поставете пълната връзка към календара, започваща с https://"
 
 #: includes/class-ical.php:193
 msgid "This calendar is already connected to this room."
-msgstr ""
+msgstr "Този календар вече е свързан с тази стая."
 
 #: includes/class-ical.php:270
 msgid "The calendar website did not answer in time. It may be temporarily down – we will try again automatically."
-msgstr ""
+msgstr "Сайтът на календара не отговори навреме. Възможно е временно да не работи – ще опитаме отново автоматично."
 
 #: includes/class-ical.php:273
 msgid "The calendar address could not be found. Check the link for typos."
-msgstr ""
+msgstr "Адресът на календара не може да бъде намерен. Проверете връзката за грешки."
 
 #: includes/class-ical.php:276
 msgid "This address cannot be used (it is not a public web address)."
-msgstr ""
+msgstr "Този адрес не може да се използва (не е публичен уеб адрес)."
 
 #: includes/class-ical.php:279
 msgid "A secure connection to the calendar website failed (certificate problem)."
-msgstr ""
+msgstr "Защитената връзка със сайта на календара не успя (проблем със сертификата)."
 
 #. translators: %s: technical error message
 #: includes/class-ical.php:282
 #, php-format
 msgid "Could not connect to the calendar website (%s)."
-msgstr ""
+msgstr "Не може да се установи връзка със сайта на календара (%s)."
 
 #. translators: %d: HTTP status code
 #: includes/class-ical.php:288
 #, php-format
 msgid "The calendar link no longer exists (HTTP %d). It may have been reset on the booking website – copy the export link again."
-msgstr ""
+msgstr "Връзката към календара вече не съществува (HTTP %d). Възможно е да е сменена в сайта за резервации – копирайте отново връзката за износ."
 
 #. translators: %d: HTTP status code
 #: includes/class-ical.php:292
 #, php-format
 msgid "Access to the calendar was refused (HTTP %d). Check that you copied the complete link."
-msgstr ""
+msgstr "Достъпът до календара беше отказан (HTTP %d). Проверете дали сте копирали цялата връзка."
 
 #. translators: %d: HTTP status code
 #: includes/class-ical.php:296
 #, php-format
 msgid "The calendar website had a problem (HTTP %d). We will try again automatically."
-msgstr ""
+msgstr "Сайтът на календара имаше проблем (HTTP %d). Ще опитаме отново автоматично."
 
 #. translators: %d: HTTP status code
 #: includes/class-ical.php:300
 #, php-format
 msgid "Unexpected answer from the calendar website (HTTP %d)."
-msgstr ""
+msgstr "Неочакван отговор от сайта на календара (HTTP %d)."
 
 #: includes/class-ical.php:305
 msgid "The link opened a web page, not a calendar. Copy the iCal / export link (it usually ends in .ics)."
-msgstr ""
+msgstr "Връзката отвори уеб страница, а не календар. Копирайте връзката за iCal / износ (обикновено завършва на .ics)."
 
 #: includes/class-ical.php:467
 msgid "Calendar connection not found."
-msgstr ""
+msgstr "Връзката с календара не е намерена."
 
 #: includes/class-ical.php:723
 msgid "Overlaps other bookings from external calendars."
-msgstr ""
+msgstr "Застъпва се с други резервации от външни календари."
 
 #. translators: %s: booking references
 #: includes/class-ical.php:726
 #, php-format
 msgid "Overlaps %s."
-msgstr ""
+msgstr "Застъпва се с %s."
 
 #. translators: %s: booking reference
 #: includes/class-ical.php:730
 #, php-format
 msgid "Same dates as %s – the other website may be repeating your own booking back."
-msgstr ""
+msgstr "Същите дати като %s – другият сайт може да връща обратно вашата собствена резервация."
 
 #: includes/class-ical.php:745
 msgid "A booking imported from an external calendar does not fit into your availability. Please check it as soon as possible."
-msgstr ""
+msgstr "Резервация, внесена от външен календар, не се вмества в наличността ви. Моля, проверете я възможно най-скоро."
 
 #. translators: 1: room name, 2: number of rooms of this type
 #: includes/class-ical.php:748
 #, php-format
 msgid "Room: %1$s (%2$d of this type)"
-msgstr ""
+msgstr "Стая: %1$s (%2$d от този тип)"
 
 #. translators: %s: calendar name
 #: includes/class-ical.php:754
 #, php-format
 msgid "Calendar: %s"
-msgstr ""
+msgstr "Календар: %s"
 
 #. translators: 1: arrival, 2: departure
 #: includes/class-ical.php:756
 #, php-format
 msgid "Dates: %1$s – %2$s"
-msgstr ""
+msgstr "Дати: %1$s – %2$s"
 
 #: includes/class-ical.php:760
 msgid "What to do: compare the bookings, then contact the guest or the booking website to resolve the double booking. When it is handled, click \"Mark as reviewed\" in Bookings → Calendar."
-msgstr ""
+msgstr "Какво да направите: сравнете резервациите, след това се свържете с госта или със сайта за резервации, за да разрешите двойната резервация. Когато е уредено, щракнете „Отбележи като прегледано“ в Резервации → Календар."
 
 #. translators: 1: room name, 2: arrival date
 #: includes/class-ical.php:764
 #, php-format
 msgid "Possible double booking: %1$s from %2$s"
-msgstr ""
+msgstr "Възможна двойна резервация: %1$s от %2$s"
 
 #: includes/class-inventory.php:113
 msgid "We are processing another booking for this room. Please try again in a moment."
-msgstr ""
+msgstr "В момента обработваме друга резервация за тази стая. Моля, опитайте отново след малко."
 
 #: includes/class-invoices.php:30
 #: templates/booking-form.php:87
 msgid "Full name"
-msgstr ""
+msgstr "Име и фамилия"
 
 #: includes/class-invoices.php:35
 msgid "Address"
-msgstr ""
+msgstr "Адрес"
 
 #: includes/class-invoices.php:40
 msgid "Company name"
-msgstr ""
+msgstr "Име на фирмата"
 
 #: includes/class-invoices.php:45
 msgid "Company ID (EIK/BULSTAT)"
-msgstr ""
+msgstr "ЕИК/БУЛСТАТ"
 
 #: includes/class-invoices.php:50
 msgid "VAT number"
-msgstr ""
+msgstr "ДДС номер"
 
 #: includes/class-invoices.php:55
 msgid "Registered address"
-msgstr ""
+msgstr "Адрес на регистрация"
 
 #: includes/class-invoices.php:60
 msgid "Contact person"
-msgstr ""
+msgstr "Лице за контакт (МОЛ)"
 
 #. translators: %s: field name, e.g. "Company name"
 #: includes/class-invoices.php:94
 #, php-format
 msgid "Please fill in \"%s\" for the invoice."
-msgstr ""
+msgstr "Моля, попълнете „%s“ за фактурата."
 
 #: includes/class-invoices.php:102
 msgid "The company ID (EIK/BULSTAT) should have 9 or 13 digits."
-msgstr ""
+msgstr "ЕИК/БУЛСТАТ трябва да има 9 или 13 цифри."
 
 #: includes/class-invoices.php:169
 #: includes/class-invoices.php:208
 msgid "Invoice for"
-msgstr ""
+msgstr "Фактура на"
 
 #: includes/class-invoices.php:169
 msgid "Company"
-msgstr ""
+msgstr "Фирма"
 
 #: includes/class-invoices.php:169
 msgid "Person"
-msgstr ""
+msgstr "Физическо лице"
 
 #: includes/class-invoices.php:187
 msgid "INVOICE REQUESTED"
-msgstr ""
+msgstr "ПОИСКАНА Е ФАКТУРА"
 
 #: includes/class-invoices.php:204
 msgid "I would like an invoice"
-msgstr ""
+msgstr "Желая фактура"
 
 #: includes/class-invoices.php:209
 msgid "A person"
-msgstr ""
+msgstr "Физическо лице"
 
 #: includes/class-invoices.php:210
 msgid "A company"
-msgstr ""
+msgstr "Фирма"
 
 #: includes/class-migrations.php:173
 msgid "Flexo Booking:"
-msgstr ""
+msgstr "Flexo Booking:"
 
 #: includes/class-migrations.php:174
 msgid "the booking database update did not finish and will be retried automatically. If this message stays, please contact FlexoHotels support."
-msgstr ""
+msgstr "обновяването на базата данни с резервации не завърши и ще бъде опитано отново автоматично. Ако това съобщение остане, свържете се с поддръжката на FlexoHotels."
 
 #: includes/class-money.php:19
 msgid "Automatic (site language)"
-msgstr ""
+msgstr "Автоматично (езика на сайта)"
 
 #: includes/class-money.php:31
 msgid "Before, no space (€120.00)"
-msgstr ""
+msgstr "Преди, без интервал (€120.00)"
 
 #: includes/class-money.php:32
 msgid "Before, with space (€ 120.00)"
-msgstr ""
+msgstr "Преди, с интервал (€ 120.00)"
 
 #: includes/class-money.php:33
 msgid "After, with space (120.00 €)"
-msgstr ""
+msgstr "След, с интервал (120.00 €)"
 
 #: includes/class-money.php:34
 msgid "After, no space (120.00€)"
-msgstr ""
+msgstr "След, без интервал (120.00€)"
 
 #: includes/class-portability.php:181
 msgid "This is not a Flexo Booking export file."
-msgstr ""
+msgstr "Това не е файл за износ от Flexo Booking."
 
 #: includes/class-portability.php:480
 msgid "You are not allowed to export booking data."
-msgstr ""
+msgstr "Нямате право да изнасяте данни за резервации."
 
 #: includes/class-portability.php:497
 msgid "You are not allowed to import booking data."
-msgstr ""
+msgstr "Нямате право да внасяте данни за резервации."
 
 #: includes/class-portability.php:505
 msgid "Please choose a valid export file (max 5 MB)."
-msgstr ""
+msgstr "Моля, изберете валиден файл за износ (до 5 MB)."
 
 #: includes/class-portability.php:511
 msgid "The file could not be read."
-msgstr ""
+msgstr "Файлът не можа да бъде прочетен."
 
 #: includes/class-portability.php:552
 msgid "Copy the booking setup (settings and rooms) from one site to another – for example from a template to a new client site built from it."
-msgstr ""
+msgstr "Копирайте настройката на резервациите (настройки и стаи) от един сайт на друг – например от шаблон към нов сайт на клиент, създаден от него."
 
 #. translators: 1: rooms created, 2: rooms updated, 3: images, 4: bookings
 #: includes/class-portability.php:562
 #, php-format
 msgid "Import complete: %1$d rooms created, %2$d rooms updated, %3$d images downloaded, %4$d bookings imported."
-msgstr ""
+msgstr "Внасянето завърши: създадени стаи: %1$d, обновени стаи: %2$d, изтеглени изображения: %3$d, внесени резервации: %4$d."
 
 #. translators: 1: seasons, 2: closed periods
 #: includes/class-portability.php:572
 #, php-format
 msgid "%1$d seasons and %2$d closed periods imported."
-msgstr ""
+msgstr "Внесени сезони: %1$d и затворени периоди: %2$d."
 
 #. translators: 1: rate plans, 2: promo codes
 #: includes/class-portability.php:582
 #, php-format
 msgid "%1$d rate plans and %2$d promo codes imported."
-msgstr ""
+msgstr "Внесени тарифи: %1$d и промо кодове: %2$d."
 
 #: includes/class-portability.php:589
 msgid "Settings were updated."
-msgstr ""
+msgstr "Настройките са обновени."
 
 #: includes/class-portability.php:596
 msgid "Export"
-msgstr ""
+msgstr "Износ"
 
 #: includes/class-portability.php:597
 msgid "Download a JSON file with all booking settings and rooms."
-msgstr ""
+msgstr "Изтеглете JSON файл с всички настройки на резервациите и стаите."
 
 #: includes/class-portability.php:601
 msgid "Also include bookings (only when moving a live hotel site – never for templates)"
-msgstr ""
+msgstr "Включи и резервациите (само при преместване на работещ сайт на хотел – никога за шаблони)"
 
 #: includes/class-portability.php:602
 msgid "Download export file"
-msgstr ""
+msgstr "Изтегли файла за износ"
 
 #: includes/class-portability.php:607
 #: includes/class-portability.php:630
 msgid "Import"
-msgstr ""
+msgstr "Внос"
 
 #: includes/class-portability.php:608
 msgid "Rooms with the same slug are updated; new rooms are created. Nothing is deleted."
-msgstr ""
+msgstr "Стаите със същия кратък адрес (slug) се обновяват; новите стаи се създават. Нищо не се изтрива."
 
 #: includes/class-portability.php:613
 msgid "Import settings"
-msgstr ""
+msgstr "Внеси настройките"
 
 #: includes/class-portability.php:614
 msgid "Import rooms"
-msgstr ""
+msgstr "Внеси стаите"
 
 #: includes/class-portability.php:615
 msgid "Download room images from the source site (it must be online)"
-msgstr ""
+msgstr "Изтегли снимките на стаите от изходния сайт (той трябва да е онлайн)"
 
 #: includes/class-portability.php:617
 msgid "Import seasonal prices (replaces the seasons of the imported rooms)"
-msgstr ""
+msgstr "Внеси сезонните цени (заменя сезоните на внесените стаи)"
 
 #: includes/class-portability.php:619
 msgid "Import closed dates"
-msgstr ""
+msgstr "Внеси затворените дати"
 
 #: includes/class-portability.php:621
 msgid "Import rate plans (plans with the same name are updated; the file decides which plans the imported rooms offer)"
-msgstr ""
+msgstr "Внеси тарифите (тарифите със същото име се обновяват; файлът определя кои тарифи предлагат внесените стаи)"
 
 #: includes/class-portability.php:624
 msgid "Import promo codes (codes that already exist are updated; usage is not copied)"
-msgstr ""
+msgstr "Внеси промо кодовете (съществуващите кодове се обновяват; използванията не се копират)"
 
 #: includes/class-portability.php:627
 msgid "Import calendar connections (Booking.com, Airbnb… links) – only when moving the same hotel, never from a template. Each room gets a new export link here."
-msgstr ""
+msgstr "Внеси връзките към календари (Booking.com, Airbnb…) – само при преместване на същия хотел, никога от шаблон. Всяка стая получава тук нова връзка за износ."
 
 #: includes/class-portability.php:629
 msgid "Import bookings contained in the file"
-msgstr ""
+msgstr "Внеси резервациите от файла"
 
 #: includes/class-portability.php:635
 msgid "Command line (WP-CLI)"
-msgstr ""
+msgstr "Команден ред (WP-CLI)"
 
 #: includes/class-portability.php:636
 msgid "Useful when setting up many sites at once:"
-msgstr ""
+msgstr "Удобно при настройка на много сайтове наведнъж:"
 
 #: includes/class-pricing.php:145
 msgid "The selected rate is not available for this room. Please choose another one."
-msgstr ""
+msgstr "Избраната тарифа не се предлага за тази стая. Моля, изберете друга."
 
 #: includes/class-pricing.php:150
 msgid "Please choose a rate for this room."
-msgstr ""
+msgstr "Моля, изберете тарифа за тази стая."
 
 #: includes/class-pricing.php:196
 msgid "Standard rate"
-msgstr ""
+msgstr "Стандартна цена"
 
 #. translators: %s: season or rate name
 #: includes/class-pricing.php:209
 #, php-format
 msgid "%s – weekend"
-msgstr ""
+msgstr "%s – уикенд"
 
 #. translators: %d: number of nights
 #: includes/class-pricing.php:229
@@ -2833,524 +2833,524 @@ msgstr ""
 #, php-format
 msgid "Accommodation, %d night"
 msgid_plural "Accommodation, %d nights"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Настаняване, %d нощувка"
+msgstr[1] "Настаняване, %d нощувки"
 
 #: includes/class-pricing.php:241
 msgid "Price adjustment"
-msgstr ""
+msgstr "Корекция на цената"
 
 #. translators: 1: number of adults, 2: number of nights
 #: includes/class-pricing.php:287
 #, php-format
 msgid "%1$d adult × %2$s"
 msgid_plural "%1$d adults × %2$s"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%1$d възрастен × %2$s"
+msgstr[1] "%1$d възрастни × %2$s"
 
 #. translators: %d: child's age
 #: includes/class-pricing.php:300
 #, php-format
 msgid "Child, age %d"
-msgstr ""
+msgstr "Дете, %d г."
 
 #. translators: 1: child's age, 2: number of nights, 3: share of the adult price, e.g. " (50%)"
 #: includes/class-pricing.php:310
 #, php-format
 msgid "Child, age %1$d × %2$s%3$s"
-msgstr ""
+msgstr "Дете, %1$d г. × %2$s%3$s"
 
 #. translators: 1: number of children, 2: number of nights
 #: includes/class-pricing.php:324
 #, php-format
 msgid "%1$d child × %2$s"
 msgid_plural "%1$d children × %2$s"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%1$d дете × %2$s"
+msgstr[1] "%1$d деца × %2$s"
 
 #. translators: %s: promo code
 #: includes/class-pricing.php:386
 #, php-format
 msgid "Promo code %s"
-msgstr ""
+msgstr "Промо код %s"
 
 #. translators: 1: percentage, 2: amount it applies to
 #: includes/class-pricing.php:392
 #, php-format
 msgid "%1$s%% of %2$s"
-msgstr ""
+msgstr "%1$s%% от %2$s"
 
 #: includes/class-pricing.php:427
 msgid "Tourist tax (paid at the property)"
-msgstr ""
+msgstr "Туристически данък (плаща се в обекта)"
 
 #. translators: 1: season/rate name, 2: nights, 3: price per night, 4: amount
 #: includes/class-pricing.php:520
 #, php-format
 msgid "%1$s: %2$d night × %3$s = %4$s"
 msgid_plural "%1$s: %2$d nights × %3$s = %4$s"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%1$s: %2$d нощувка × %3$s = %4$s"
+msgstr[1] "%1$s: %2$d нощувки × %3$s = %4$s"
 
 #. translators: %s: e.g. "Child, age 2"
 #: includes/class-pricing.php:531
 #, php-format
 msgid "%s: free"
-msgstr ""
+msgstr "%s: безплатно"
 
 #: includes/class-privacy.php:69
 msgid "Privacy Policy"
-msgstr ""
+msgstr "Политиката за поверителност"
 
 #: includes/class-privacy.php:195
 #: includes/class-privacy.php:203
 #: includes/class-privacy.php:253
 msgid "Hotel bookings"
-msgstr ""
+msgstr "Резервации в хотела"
 
 #: includes/class-privacy.php:241
 msgid "Booked on"
-msgstr ""
+msgstr "Резервирано на"
 
 #: includes/class-privacy.php:266
 msgid "Invoice details for hotel bookings"
-msgstr ""
+msgstr "Данни за фактура към резервации в хотела"
 
 #: includes/class-privacy.php:277
 msgid "Emails sent about hotel bookings"
-msgstr ""
+msgstr "Изпратени имейли за резервации в хотела"
 
 #: includes/class-privacy.php:281
 #: includes/class-settings.php:614
 #: includes/class-settings.php:748
 msgid "Subject"
-msgstr ""
+msgstr "Тема"
 
 #. translators: %d: number of bookings
 #: includes/class-privacy.php:319
 #, php-format
 msgid "%d hotel booking was anonymised. Its dates, room and price are kept for the hotel's records, without personal data."
 msgid_plural "%d hotel bookings were anonymised. Their dates, rooms and prices are kept for the hotel's records, without personal data."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d резервация в хотела е анонимизирана. Датите, стаята и цената ѝ се пазят в архива на хотела, без лични данни."
+msgstr[1] "%d резервации в хотела са анонимизирани. Датите, стаите и цените им се пазят в архива на хотела, без лични данни."
 
 #: includes/class-privacy.php:336
 msgid "Room bookings"
-msgstr ""
+msgstr "Резервации на стаи"
 
 #: includes/class-privacy.php:337
 msgid "Suggested text – adapt it to your hotel, your retention period and the services you really use."
-msgstr ""
+msgstr "Предложен текст – адаптирайте го към вашия хотел, срока за съхранение и услугите, които реално използвате."
 
 #: includes/class-privacy.php:338
 msgid "Suggested text:"
-msgstr ""
+msgstr "Предложен текст:"
 
 #: includes/class-privacy.php:338
 msgid "When you book a room on this website, we collect your name, email address and phone number, the dates of your stay, the number of guests and the ages of children, and any special requests you send us. If you ask for an invoice, we also collect the details needed for it (name and address, or company name, company ID, VAT number, registered address and contact person). We use this information only to handle your booking, to contact you about your stay and, if you asked for one, to issue your invoice. The legal basis is the performance of the booking contract and our legal obligations."
-msgstr ""
+msgstr "Когато резервирате стая на този сайт, събираме вашето име, имейл адрес и телефонен номер, датите на престоя, броя на гостите и възрастта на децата, както и специалните желания, които ни изпращате. Ако поискате фактура, събираме и необходимите за нея данни (име и адрес или име на фирмата, ЕИК, ДДС номер, адрес на регистрация и лице за контакт). Използваме тази информация само за обработка на резервацията ви, за да се свържем с вас относно престоя и, ако сте поискали, за да издадем фактура. Правното основание е изпълнението на договора за резервация и законовите ни задължения."
 
 #: includes/class-privacy.php:339
 msgid "When you book, we record that you accepted this privacy policy, with the date and time and the text you agreed to. We send you emails about your booking (confirmation, cancellation and, if the hotel uses them, a reminder before arrival and a request for a review after your stay)."
-msgstr ""
+msgstr "При резервиране записваме, че сте приели тази политика за поверителност, заедно с датата, часа и текста, с който сте се съгласили. Изпращаме ви имейли за резервацията (потвърждение, отмяна и, ако хотелът ги използва, напомняне преди пристигане и молба за отзив след престоя)."
 
 #: includes/class-privacy.php:340
 msgid "We keep booking details for [X] months after your stay; after that the personal details are removed and only anonymous information (dates, room, price) is kept for statistics. Invoices we issue are kept as long as accounting law requires. You can ask us for a copy of your data or ask us to delete it at any time."
-msgstr ""
+msgstr "Пазим данните за резервацията [X] месеца след престоя ви; след това личните данни се премахват и за статистика остава само анонимна информация (дати, стая, цена). Издадените фактури се пазят толкова, колкото изисква счетоводното законодателство. Можете по всяко време да поискате копие на данните си или тяхното изтриване."
 
 #: includes/class-promo-codes.php:96
 msgid "Please enter a code using letters and numbers, e.g. SUMMER20."
-msgstr ""
+msgstr "Моля, въведете код с букви и цифри, напр. SUMMER20."
 
 #. translators: %s: promo code
 #: includes/class-promo-codes.php:101
 #, php-format
 msgid "The code %s already exists."
-msgstr ""
+msgstr "Кодът %s вече съществува."
 
 #: includes/class-promo-codes.php:107
 msgid "The discount must be between 0 and 100%."
-msgstr ""
+msgstr "Отстъпката трябва да е между 0 и 100%."
 
 #: includes/class-promo-codes.php:107
 msgid "The discount must be more than 0."
-msgstr ""
+msgstr "Отстъпката трябва да е повече от 0."
 
 #. translators: %s: the date as entered
 #: includes/class-promo-codes.php:120
 #, php-format
 msgid "\"%s\" is not a valid date. Use DD.MM.YYYY."
-msgstr ""
+msgstr "„%s“ не е валидна дата. Използвайте ДД.ММ.ГГГГ."
 
 #: includes/class-promo-codes.php:125
 msgid "The \"from\" date must be before the \"until\" date."
-msgstr ""
+msgstr "Датата „от“ трябва да е преди датата „до“."
 
 #: includes/class-promo-codes.php:163
 msgid "The promo code could not be saved."
-msgstr ""
+msgstr "Промо кодът не можа да бъде запазен."
 
 #: includes/class-promo-codes.php:242
 msgid "This promo code is not valid."
-msgstr ""
+msgstr "Този промо код не е валиден."
 
 #: includes/class-promo-codes.php:247
 msgid "This promo code has expired."
-msgstr ""
+msgstr "Валидността на този промо код е изтекла."
 
 #. translators: %s: date
 #: includes/class-promo-codes.php:251
 #, php-format
 msgid "This promo code can be used from %s."
-msgstr ""
+msgstr "Този промо код може да се използва от %s."
 
 #: includes/class-promo-codes.php:259
 msgid "This promo code is not valid for this room."
-msgstr ""
+msgstr "Този промо код не важи за тази стая."
 
 #: includes/class-promo-codes.php:264
 msgid "This promo code is not valid for the selected rate."
-msgstr ""
+msgstr "Този промо код не важи за избраната тарифа."
 
 #. translators: %d: number of nights
 #: includes/class-promo-codes.php:269
 #, php-format
 msgid "This promo code needs a stay of at least %d night."
 msgid_plural "This promo code needs a stay of at least %d nights."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Този промо код изисква престой от поне %d нощувка."
+msgstr[1] "Този промо код изисква престой от поне %d нощувки."
 
 #. translators: %s: minimum amount
 #: includes/class-promo-codes.php:273
 #, php-format
 msgid "This promo code applies to bookings of %s or more."
-msgstr ""
+msgstr "Този промо код важи за резервации от %s нагоре."
 
 #: includes/class-promo-codes.php:276
 msgid "This promo code has already been fully used."
-msgstr ""
+msgstr "Този промо код вече е изчерпан."
 
 #. translators: 1: first night, 2: last night
 #: includes/class-promo-codes.php:284
 #, php-format
 msgid "This promo code is valid for stays between %1$s and %2$s."
-msgstr ""
+msgstr "Този промо код важи за престои между %1$s и %2$s."
 
 #. translators: %s: date
 #: includes/class-promo-codes.php:288
 #, php-format
 msgid "This promo code is valid for stays from %s."
-msgstr ""
+msgstr "Този промо код важи за престои от %s."
 
 #. translators: %s: date
 #: includes/class-promo-codes.php:291
 #, php-format
 msgid "This promo code is valid for stays until %s."
-msgstr ""
+msgstr "Този промо код важи за престои до %s."
 
 #. translators: 1: promo code, 2: times used, 3: limit
 #: includes/class-promo-codes.php:329
 #, php-format
 msgid "Note: promo code %1$s is now used by %2$d confirmed bookings, above its limit of %3$d. The discount stays on this booking."
-msgstr ""
+msgstr "Внимание: промо код %1$s вече е използван в %2$d потвърдени резервации, над ограничението от %3$d. Отстъпката остава за тази резервация."
 
 #: includes/class-rate-plans.php:52
 msgid "Fixed amount per night"
-msgstr ""
+msgstr "Фиксирана сума на нощувка"
 
 #: includes/class-rate-plans.php:53
 msgid "Fixed amount per booking"
-msgstr ""
+msgstr "Фиксирана сума на резервация"
 
 #: includes/class-rate-plans.php:54
 msgid "Amount per guest per night"
-msgstr ""
+msgstr "Сума на гост на нощувка"
 
 #: includes/class-rate-plans.php:55
 msgid "Percentage of the room price"
-msgstr ""
+msgstr "Процент от цената на стаята"
 
 #: includes/class-rate-plans.php:63
 msgid "Free cancellation up to 7 days before arrival. Later cancellations or no-shows are charged the first night."
-msgstr ""
+msgstr "Безплатно анулиране до 7 дни преди пристигане. При по-късно анулиране или неявяване се заплаща първата нощувка."
 
 #: includes/class-rate-plans.php:66
 msgid "Room Only"
-msgstr ""
+msgstr "Само нощувка"
 
 #: includes/class-rate-plans.php:67
 msgid "Accommodation without meals."
-msgstr ""
+msgstr "Настаняване без храна."
 
 #: includes/class-rate-plans.php:74
 msgid "Breakfast Included"
-msgstr ""
+msgstr "Със закуска"
 
 #: includes/class-rate-plans.php:75
 msgid "Breakfast every morning."
-msgstr ""
+msgstr "Закуска всяка сутрин."
 
 #: includes/class-rate-plans.php:82
 msgid "Half Board"
-msgstr ""
+msgstr "Полупансион"
 
 #: includes/class-rate-plans.php:83
 msgid "Breakfast and dinner."
-msgstr ""
+msgstr "Закуска и вечеря."
 
 #: includes/class-rate-plans.php:90
 msgid "Full Board"
-msgstr ""
+msgstr "Пълен пансион"
 
 #: includes/class-rate-plans.php:91
 msgid "Breakfast, lunch and dinner."
-msgstr ""
+msgstr "Закуска, обяд и вечеря."
 
 #: includes/class-rate-plans.php:98
 msgid "All Inclusive"
-msgstr ""
+msgstr "All Inclusive"
 
 #: includes/class-rate-plans.php:99
 msgid "All meals, snacks and selected drinks."
-msgstr ""
+msgstr "Всички хранения, закуски между храненията и избрани напитки."
 
 #: includes/class-rate-plans.php:106
 #: includes/class-rate-plans.php:433
 msgid "Non-refundable"
-msgstr ""
+msgstr "Без възстановяване"
 
 #: includes/class-rate-plans.php:107
 msgid "Our best price. Cannot be changed or cancelled."
-msgstr ""
+msgstr "Най-добрата ни цена. Не може да бъде променяна или анулирана."
 
 #: includes/class-rate-plans.php:111
 msgid "This booking cannot be cancelled or changed, and the amount is not refunded."
-msgstr ""
+msgstr "Тази резервация не може да бъде анулирана или променена и сумата не се възстановява."
 
 #: includes/class-rate-plans.php:202
 msgid "Please give the rate plan a name, e.g. \"Breakfast Included\"."
-msgstr ""
+msgstr "Моля, дайте име на тарифата, напр. „Със закуска“."
 
 #. translators: %s: plan name
 #: includes/class-rate-plans.php:207
 #, php-format
 msgid "A rate plan called \"%s\" already exists."
-msgstr ""
+msgstr "Вече има тарифа с име „%s“."
 
 #: includes/class-rate-plans.php:215
 msgid "Please enter the price change as a number, e.g. 8 or -10."
-msgstr ""
+msgstr "Моля, въведете промяната на цената като число, напр. 8 или -10."
 
 #: includes/class-rate-plans.php:219
 msgid "The percentage must be between -100 and 500."
-msgstr ""
+msgstr "Процентът трябва да е между -100 и 500."
 
 #: includes/class-rate-plans.php:243
 msgid "The rate plan could not be saved."
-msgstr ""
+msgstr "Тарифата не можа да бъде запазена."
 
 #: includes/class-rate-plans.php:348
 msgid "No extra charge"
-msgstr ""
+msgstr "Без доплащане"
 
 #. translators: 1: + or −, 2: percentage
 #: includes/class-rate-plans.php:353
 #, php-format
 msgid "%1$s%2$s%% of the room price"
-msgstr ""
+msgstr "%1$s%2$s%% от цената на стаята"
 
 #. translators: %s: amount
 #: includes/class-rate-plans.php:359
 #, php-format
 msgid "%s per booking"
-msgstr ""
+msgstr "%s на резервация"
 
 #. translators: %s: amount
 #: includes/class-rate-plans.php:362
 #, php-format
 msgid "%s per guest per night"
-msgstr ""
+msgstr "%s на гост на нощувка"
 
 #. translators: %s: amount
 #: includes/class-rate-plans.php:365
 #, php-format
 msgid "%s per night"
-msgstr ""
+msgstr "%s на нощувка"
 
 #. translators: 1: percentage with sign, 2: room price
 #: includes/class-rate-plans.php:396
 #, php-format
 msgid "%1$s%% of the room price %2$s"
-msgstr ""
+msgstr "%1$s%% от цената на стаята %2$s"
 
 #: includes/class-rest.php:189
 msgid "Calendar sync is switched off on this website."
-msgstr ""
+msgstr "Синхронизацията на календари е изключена на този сайт."
 
 #: includes/class-rest.php:194
 msgid "Calendar not found."
-msgstr ""
+msgstr "Календарът не е намерен."
 
 #: includes/class-rest.php:197
 msgid "This calendar link is not valid. It may have been reset – copy the new link from Bookings → Calendar Sync."
-msgstr ""
+msgstr "Тази връзка към календара не е валидна. Възможно е да е сменена – копирайте новата връзка от Резервации → Синхронизация на календари."
 
 #: includes/class-rest.php:273
 msgid "Too many promo code attempts. Please try again later."
-msgstr ""
+msgstr "Твърде много опити с промо кодове. Моля, опитайте по-късно."
 
 #: includes/class-rest.php:315
 msgid "Your booking could not be submitted."
-msgstr ""
+msgstr "Резервацията ви не можа да бъде изпратена."
 
 #: includes/class-rest.php:319
 msgid "Please accept the terms and conditions."
-msgstr ""
+msgstr "Моля, приемете общите условия."
 
 #: includes/class-rest.php:376
 msgid "Your booking is confirmed! A confirmation has been sent to your email."
-msgstr ""
+msgstr "Резервацията ви е потвърдена! Изпратихме потвърждение на имейла ви."
 
 #: includes/class-rest.php:377
 msgid "Thank you! We received your booking request and will confirm it shortly by email."
-msgstr ""
+msgstr "Благодарим ви! Получихме заявката ви за резервация и скоро ще я потвърдим по имейл."
 
 #: includes/class-rest.php:400
 msgid "Too many booking attempts. Please try again later or contact us directly."
-msgstr ""
+msgstr "Твърде много опити за резервация. Моля, опитайте по-късно или се свържете директно с нас."
 
 #: includes/class-rooms.php:41
 msgid "Add room"
-msgstr ""
+msgstr "Добави стая"
 
 #: includes/class-rooms.php:42
 msgid "Add new room"
-msgstr ""
+msgstr "Добавяне на нова стая"
 
 #: includes/class-rooms.php:45
 msgid "Search rooms"
-msgstr ""
+msgstr "Търсене на стаи"
 
 #: includes/class-rooms.php:46
 msgid "No rooms yet."
-msgstr ""
+msgstr "Все още няма стаи."
 
 #: includes/class-rooms.php:79
 msgid "Optional. Applies to Friday and Saturday nights."
-msgstr ""
+msgstr "По избор. Важи за нощувките в петък и събота."
 
 #: includes/class-rooms.php:83
 #: includes/class-rooms.php:278
 msgid "Max guests"
-msgstr ""
+msgstr "Макс. гости"
 
 #: includes/class-rooms.php:87
 msgid "Adults and children together, babies included."
-msgstr ""
+msgstr "Възрастни и деца заедно, включително бебета."
 
 #: includes/class-rooms.php:93
 msgid "Max adults"
-msgstr ""
+msgstr "Макс. възрастни"
 
 #: includes/class-rooms.php:96
 msgid "Optional. E.g. a family room for 4 guests but at most 2 adults. Leave empty for no separate limit."
-msgstr ""
+msgstr "По избор. Напр. фамилна стая за 4 гости, но най-много 2 възрастни. Оставете празно, ако няма отделно ограничение."
 
 #: includes/class-rooms.php:102
 msgid "Child prices"
-msgstr ""
+msgstr "Цени за деца"
 
 #: includes/class-rooms.php:104
 msgid "Use different child prices for this room"
-msgstr ""
+msgstr "Различни цени за деца за тази стая"
 
 #: includes/class-rooms.php:106
 msgid "Free under age"
-msgstr ""
+msgstr "Безплатно под"
 
 #: includes/class-rooms.php:107
 msgid "then pay"
-msgstr ""
+msgstr "след това плащат"
 
 #: includes/class-rooms.php:108
 msgid "adult price from age"
-msgstr ""
+msgstr "цена за възрастен от"
 
 #. translators: %s: summary of the general child prices
 #: includes/class-rooms.php:113
 #, php-format
 msgid "Otherwise the general rules apply (Settings → Children): %s."
-msgstr ""
+msgstr "Иначе важат общите правила (Настройки → Деца): %s."
 
 #: includes/class-rooms.php:120
 msgid "Number of rooms of this type"
-msgstr ""
+msgstr "Брой стаи от този тип"
 
 #: includes/class-rooms.php:123
 msgid "How many identical rooms can be booked for the same night. Set to 0 to stop taking bookings for this room."
-msgstr ""
+msgstr "Колко еднакви стаи могат да се резервират за една и съща нощ. Задайте 0, за да спрете резервациите за тази стая."
 
 #: includes/class-rooms.php:130
 msgid "Optional. Leave empty to use the global setting."
-msgstr ""
+msgstr "По избор. Оставете празно, за да важи общата настройка."
 
 #: includes/class-rooms.php:130
 msgid "Seasons can set their own minimum."
-msgstr ""
+msgstr "Сезоните могат да имат собствен минимум."
 
 #: includes/class-rooms.php:143
 msgid "switched off"
-msgstr ""
+msgstr "изключена"
 
 #: includes/class-rooms.php:146
 msgid "No rate plans – guests book the room at its normal price."
-msgstr ""
+msgstr "Няма тарифи – гостите резервират стаята на обичайната ѝ цена."
 
 #: includes/class-rooms.php:148
 msgid "Choose rate plans for this room"
-msgstr ""
+msgstr "Изберете тарифи за тази стая"
 
 #: includes/class-rooms.php:153
 msgid "\"Book now\" link"
-msgstr ""
+msgstr "Връзка „Резервирай“"
 
 #: includes/class-rooms.php:156
 msgid "Point a button on your room page to your booking page with ?room=<slug> to preselect this room. Replace /booking/ with your booking page path."
-msgstr ""
+msgstr "Насочете бутон от страницата на стаята към страницата за резервации с ?room=<slug>, за да се избере предварително тази стая. Заменете /booking/ с адреса на вашата страница за резервации."
 
 #: includes/class-rooms.php:277
 msgid "Price / night"
-msgstr ""
+msgstr "Цена / нощувка"
 
 #: includes/class-rooms.php:280
 msgid "Slug (for links)"
-msgstr ""
+msgstr "Кратък адрес (за връзки)"
 
 #: includes/class-seasons.php:145
 msgid "Please give the season a name, for example \"High season\"."
-msgstr ""
+msgstr "Моля, дайте име на сезона, например „Висок сезон“."
 
 #: includes/class-seasons.php:154
 msgid "The season must end on or after its start date."
-msgstr ""
+msgstr "Сезонът трябва да завършва на или след началната си дата."
 
 #: includes/class-seasons.php:159
 msgid "Please enter the price per night."
-msgstr ""
+msgstr "Моля, въведете цената на нощувка."
 
 #. translators: 1: season name, 2: start date, 3: end date
 #: includes/class-seasons.php:172
 #, php-format
 msgid "These dates overlap with \"%1$s\" (%2$s – %3$s). Seasons of the same room cannot overlap – change the dates or edit that season."
-msgstr ""
+msgstr "Тези дати се застъпват с „%1$s“ (%2$s – %3$s). Сезоните на една и съща стая не могат да се застъпват – сменете датите или редактирайте онзи сезон."
 
 #: includes/class-seasons.php:226
 msgid "The season could not be saved."
-msgstr ""
+msgstr "Сезонът не можа да бъде запазен."
 
 #: includes/class-settings.php:39
 msgid "We received your booking request {reference}"
-msgstr ""
+msgstr "Получихме заявката ви за резервация {reference}"
 
 #: includes/class-settings.php:40
 msgid ""
@@ -3363,10 +3363,18 @@ msgid ""
 "Kind regards,\n"
 "{site_name}"
 msgstr ""
+"Здравейте, {guest_name},\n"
+"\n"
+"Благодарим ви за заявката за резервация в {site_name}. Скоро ще я потвърдим.\n"
+"\n"
+"{booking_details}\n"
+"\n"
+"Поздрави,\n"
+"{site_name}"
 
 #: includes/class-settings.php:41
 msgid "Your booking {reference} is confirmed"
-msgstr ""
+msgstr "Резервацията ви {reference} е потвърдена"
 
 #: includes/class-settings.php:42
 msgid ""
@@ -3381,10 +3389,20 @@ msgid ""
 "Kind regards,\n"
 "{site_name}"
 msgstr ""
+"Здравейте, {guest_name},\n"
+"\n"
+"Резервацията ви в {site_name} е потвърдена. Очакваме ви с нетърпение!\n"
+"\n"
+"{booking_details}\n"
+"\n"
+"Настаняване от {check_in_time}, напускане до {check_out_time}.\n"
+"\n"
+"Поздрави,\n"
+"{site_name}"
 
 #: includes/class-settings.php:43
 msgid "Your booking {reference} has been cancelled"
-msgstr ""
+msgstr "Резервацията ви {reference} е отменена"
 
 #: includes/class-settings.php:44
 msgid ""
@@ -3395,10 +3413,16 @@ msgid ""
 "Kind regards,\n"
 "{site_name}"
 msgstr ""
+"Здравейте, {guest_name},\n"
+"\n"
+"Резервацията ви {reference} в {site_name} е отменена. Ако имате въпроси, просто отговорете на този имейл.\n"
+"\n"
+"Поздрави,\n"
+"{site_name}"
 
 #: includes/class-settings.php:54
 msgid "See you soon at {hotel_name} – booking {booking_ref}"
-msgstr ""
+msgstr "До скоро в {hotel_name} – резервация {booking_ref}"
 
 #: includes/class-settings.php:55
 msgid ""
@@ -3413,10 +3437,20 @@ msgid ""
 "See you soon,\n"
 "{hotel_name}"
 msgstr ""
+"Здравейте, {guest_name},\n"
+"\n"
+"Очакваме ви в {hotel_name} на {check_in}.\n"
+"\n"
+"Настаняването е от {check_in_time}, а напускането – до {check_out_time}. Ако имате въпроси за пристигането, пътя или паркирането, просто отговорете на този имейл или ни се обадете на {hotel_phone}.\n"
+"\n"
+"{booking_details}\n"
+"\n"
+"До скоро,\n"
+"{hotel_name}"
 
 #: includes/class-settings.php:59
 msgid "How was your stay at {hotel_name}?"
-msgstr ""
+msgstr "Как премина престоят ви в {hotel_name}?"
 
 #: includes/class-settings.php:60
 msgid ""
@@ -3430,10 +3464,19 @@ msgid ""
 "Kind regards,\n"
 "{hotel_name}"
 msgstr ""
+"Здравейте, {guest_name},\n"
+"\n"
+"Благодарим ви, че бяхте наши гости. Надяваме се, че сте прекарали приятно в {hotel_name}.\n"
+"\n"
+"Ще сме ви много благодарни, ако споделите впечатленията си. Отнема минута и помага на други гости:\n"
+"{review_link}\n"
+"\n"
+"Поздрави,\n"
+"{hotel_name}"
 
 #: includes/class-settings.php:62
 msgid "Please pay the deposit for booking {booking_ref}"
-msgstr ""
+msgstr "Моля, платете депозита за резервация {booking_ref}"
 
 #: includes/class-settings.php:63
 msgid ""
@@ -3446,10 +3489,18 @@ msgid ""
 "Kind regards,\n"
 "{hotel_name}"
 msgstr ""
+"Здравейте, {guest_name},\n"
+"\n"
+"Благодарим ви за резервацията в {hotel_name}. За да я потвърдим, моля, платете депозита.\n"
+"\n"
+"{booking_details}\n"
+"\n"
+"Поздрави,\n"
+"{hotel_name}"
 
 #: includes/class-settings.php:64
 msgid "We received your payment for booking {booking_ref}"
-msgstr ""
+msgstr "Получихме плащането ви за резервация {booking_ref}"
 
 #: includes/class-settings.php:65
 msgid ""
@@ -3462,10 +3513,18 @@ msgid ""
 "Kind regards,\n"
 "{hotel_name}"
 msgstr ""
+"Здравейте, {guest_name},\n"
+"\n"
+"Благодарим ви, получихме плащането ви.\n"
+"\n"
+"{booking_details}\n"
+"\n"
+"Поздрави,\n"
+"{hotel_name}"
 
 #: includes/class-settings.php:66
 msgid "Payment for booking {booking_ref} did not go through"
-msgstr ""
+msgstr "Плащането за резервация {booking_ref} не беше успешно"
 
 #: includes/class-settings.php:67
 msgid ""
@@ -3478,654 +3537,662 @@ msgid ""
 "Kind regards,\n"
 "{hotel_name}"
 msgstr ""
+"Здравейте, {guest_name},\n"
+"\n"
+"За съжаление плащането ви не беше успешно. Моля, опитайте отново или се свържете с нас на {hotel_phone}.\n"
+"\n"
+"{booking_details}\n"
+"\n"
+"Поздрави,\n"
+"{hotel_name}"
 
 #: includes/class-settings.php:74
 msgid "I agree to the {privacy_policy} and consent to my information being processed for the purpose of my booking."
-msgstr ""
+msgstr "Приемам {privacy_policy} и давам съгласие данните ми да бъдат обработвани за целите на резервацията."
 
 #: includes/class-settings.php:316
 msgid "General"
-msgstr ""
+msgstr "Общи"
 
 #: includes/class-settings.php:317
 msgid "Features"
-msgstr ""
+msgstr "Функции"
 
 #: includes/class-settings.php:326
 msgid "Privacy"
-msgstr ""
+msgstr "Поверителност"
 
 #: includes/class-settings.php:329
 msgid "Invoices"
-msgstr ""
+msgstr "Фактури"
 
 #: includes/class-settings.php:333
 msgid "Tracking"
-msgstr ""
+msgstr "Проследяване"
 
 #: includes/class-settings.php:358
 msgid "Features saved."
-msgstr ""
+msgstr "Функциите са запазени."
 
 #: includes/class-settings.php:375
 msgid "Currency"
-msgstr ""
+msgstr "Валута"
 
 #: includes/class-settings.php:377
 msgid "Currency code"
-msgstr ""
+msgstr "Код на валутата"
 
 #: includes/class-settings.php:378
 msgid "Currency symbol"
-msgstr ""
+msgstr "Символ на валутата"
 
 #: includes/class-settings.php:379
 msgid "Symbol position"
-msgstr ""
+msgstr "Позиция на символа"
 
 #: includes/class-settings.php:385
 msgid "Number format"
-msgstr ""
+msgstr "Формат на числата"
 
 #: includes/class-settings.php:392
 msgid "Decimals"
-msgstr ""
+msgstr "Десетични знаци"
 
 #. translators: %s: example price
 #: includes/class-settings.php:399
 #, php-format
 msgid "Example: %s. Changing the currency does not convert your prices – update room prices yourself."
-msgstr ""
+msgstr "Пример: %s. Смяната на валутата не превалутира цените ви – обновете цените на стаите сами."
 
 #: includes/class-settings.php:405
 msgid "Stay length"
-msgstr ""
+msgstr "Продължителност на престоя"
 
 #: includes/class-settings.php:407
 msgid "Minimum"
-msgstr ""
+msgstr "Минимум"
 
 #: includes/class-settings.php:408
 msgid "Maximum"
-msgstr ""
+msgstr "Максимум"
 
 #: includes/class-settings.php:410
 msgid "Rooms and seasons can set their own minimum."
-msgstr ""
+msgstr "Стаите и сезоните могат да имат собствен минимум."
 
 #: includes/class-settings.php:414
 msgid "Book up to"
-msgstr ""
+msgstr "Резервации до"
 
 #: includes/class-settings.php:415
 msgid "days in advance"
-msgstr ""
+msgstr "дни напред"
 
 #: includes/class-settings.php:418
 msgid "Guest selector limits"
-msgstr ""
+msgstr "Ограничения при избора на гости"
 
 #: includes/class-settings.php:420
 msgid "Adults up to"
-msgstr ""
+msgstr "Възрастни до"
 
 #: includes/class-settings.php:421
 msgid "Children up to"
-msgstr ""
+msgstr "Деца до"
 
 #: includes/class-settings.php:422
 msgid "Set \"Children up to\" to 0 to hide the children field."
-msgstr ""
+msgstr "Задайте „Деца до“ на 0, за да скриете полето за деца."
 
 #: includes/class-settings.php:426
 msgid "Check-in / check-out"
-msgstr ""
+msgstr "Настаняване / напускане"
 
 #: includes/class-settings.php:428
 msgid "Check-in time"
-msgstr ""
+msgstr "Час на настаняване"
 
 #: includes/class-settings.php:430
 msgid "Check-out time"
-msgstr ""
+msgstr "Час на напускане"
 
 #: includes/class-settings.php:434
 msgid "Thank-you page"
-msgstr ""
+msgstr "Страница за благодарност"
 
 #: includes/class-settings.php:437
 msgid "Optional. Use a path such as /thank-you/ so it keeps working when the site moves to another domain. Leave empty to show the confirmation inside the form."
-msgstr ""
+msgstr "По избор. Използвайте път като /thank-you/, за да продължи да работи, когато сайтът се премести на друг домейн. Оставете празно, за да се показва потвърждението във формата."
 
 #: includes/class-settings.php:441
 msgid "Terms page"
-msgstr ""
+msgstr "Страница с общи условия"
 
 #: includes/class-settings.php:444
 msgid "Optional. When set, guests must accept the terms before booking."
-msgstr ""
+msgstr "По избор. Когато е зададена, гостите трябва да приемат общите условия преди резервиране."
 
 #: includes/class-settings.php:448
 msgid "Guest details form"
-msgstr ""
+msgstr "Форма с данни на госта"
 
 #: includes/class-settings.php:450
 msgid "Name and email are always required."
-msgstr ""
+msgstr "Името и имейлът винаги са задължителни."
 
 #: includes/class-settings.php:453
 #: includes/class-settings.php:678
 msgid "Required"
-msgstr ""
+msgstr "Задължително"
 
 #: includes/class-settings.php:454
 #: includes/class-settings.php:459
 #: includes/class-settings.php:679
 msgid "Optional"
-msgstr ""
+msgstr "По избор"
 
 #: includes/class-settings.php:455
 #: includes/class-settings.php:460
 msgid "Not asked"
-msgstr ""
+msgstr "Не се пита"
 
 #: includes/class-settings.php:462
 msgid "Ask only for what you need (data minimisation)."
-msgstr ""
+msgstr "Искайте само това, което ви е нужно (свеждане на данните до минимум)."
 
 #: includes/class-settings.php:466
 msgid "Data removal"
-msgstr ""
+msgstr "Изтриване на данни"
 
 #: includes/class-settings.php:469
 msgid "Delete all rooms, bookings, prices and settings when the plugin is deleted"
-msgstr ""
+msgstr "Изтрий всички стаи, резервации, цени и настройки при изтриване на разширението"
 
 #: includes/class-settings.php:476
 msgid "Guests enter the age of each child when they search. Children count towards each room's \"Max guests\". The room price stays the same; these rules set what children pay for per-person extras such as breakfast or half board (rate plans charged per guest per night)."
-msgstr ""
+msgstr "Гостите въвеждат възрастта на всяко дете при търсене. Децата се броят към „Макс. гости“ на всяка стая. Цената на стаята остава същата; тези правила определят колко плащат децата за допълненията на човек, като закуска или полупансион (тарифи, таксувани на гост на нощувка)."
 
 #: includes/class-settings.php:479
 msgid "Free for children under"
-msgstr ""
+msgstr "Безплатно за деца под"
 
 #: includes/class-settings.php:480
 msgid "years"
-msgstr ""
+msgstr "години"
 
 #: includes/class-settings.php:483
 msgid "Older children pay"
-msgstr ""
+msgstr "По-големите деца плащат"
 
 #: includes/class-settings.php:484
 msgid "% of the adult price"
-msgstr ""
+msgstr "% от цената за възрастен"
 
 #: includes/class-settings.php:487
 msgid "Adult price from age"
-msgstr ""
+msgstr "Цена за възрастен от"
 
 #. translators: %s: summary of the rules
 #: includes/class-settings.php:493
 #, php-format
 msgid "Now: %s."
-msgstr ""
+msgstr "В момента: %s."
 
 #: includes/class-settings.php:495
 msgid "A room can use its own rules (edit the room → Child prices)."
-msgstr ""
+msgstr "Стаята може да има собствени правила (редактиране на стаята → Цени за деца)."
 
 #: includes/class-settings.php:503
 msgid "The tourist tax is shown as a separate line in the price breakdown and is never discounted by promo codes."
-msgstr ""
+msgstr "Туристическият данък се показва на отделен ред в разбивката на цената и никога не се намалява с промо кодове."
 
 #: includes/class-settings.php:506
 msgid "Amount per adult per night"
-msgstr ""
+msgstr "Сума на възрастен на нощувка"
 
 #: includes/class-settings.php:509
 msgid "Set by your municipality. 0 = no tourist tax."
-msgstr ""
+msgstr "Определя се от общината ви. 0 = без туристически данък."
 
 #: includes/class-settings.php:516
 msgid "Children pay the same as adults"
-msgstr ""
+msgstr "Децата плащат като възрастните"
 
 #: includes/class-settings.php:518
 msgid "Children younger than"
-msgstr ""
+msgstr "Децата под"
 
 #: includes/class-settings.php:519
 msgid "Exemption age"
-msgstr ""
+msgstr "Възраст за освобождаване"
 
 #: includes/class-settings.php:520
 msgid "years don't pay; older children pay the full amount"
-msgstr ""
+msgstr "години не плащат; по-големите деца плащат цялата сума"
 
 #: includes/class-settings.php:523
 msgid "Use the child price rules (Settings → Children)"
-msgstr ""
+msgstr "Използвай правилата за цени за деца (Настройки → Деца)"
 
 #: includes/class-settings.php:527
 msgid "Children's ages are only asked when \"Children & ages\" is switched on under Features. Without ages, every child pays the adult amount."
-msgstr ""
+msgstr "Възрастта на децата се пита само когато „Деца и възраст“ е включено във Функции. Без възраст всяко дете плаща сумата за възрастен."
 
 #: includes/class-settings.php:532
 msgid "Payment"
-msgstr ""
+msgstr "Плащане"
 
 #: includes/class-settings.php:535
 msgid "Included in the booking total"
-msgstr ""
+msgstr "Включен в общата сума на резервацията"
 
 #: includes/class-settings.php:536
 msgid "Paid separately at the property (shown to the guest, not part of the total)"
-msgstr ""
+msgstr "Плаща се отделно в обекта (показва се на госта, но не е част от общата сума)"
 
 #: includes/class-settings.php:544
 msgid "Your hotel"
-msgstr ""
+msgstr "Вашият хотел"
 
 #: includes/class-settings.php:547
 msgid "Send hotel notifications to"
-msgstr ""
+msgstr "Изпращай известията за хотела до"
 
 #: includes/class-settings.php:550
 msgid "One or more addresses, separated by commas, e.g. reception@hotel.bg, owner@hotel.bg. Guests' replies go to the first one."
-msgstr ""
+msgstr "Един или повече адреса, разделени със запетая, напр. reception@hotel.bg, owner@hotel.bg. Отговорите на гостите отиват на първия."
 
 #: includes/class-settings.php:554
 msgid "Notify the hotel about"
-msgstr ""
+msgstr "Уведомявай хотела за"
 
 #: includes/class-settings.php:569
 msgid "Hotel phone"
-msgstr ""
+msgstr "Телефон на хотела"
 
 #: includes/class-settings.php:570
 msgid "Used by {hotel_phone} and in the email footer."
-msgstr ""
+msgstr "Използва се от {hotel_phone} и в долната част на имейлите."
 
 #: includes/class-settings.php:573
 msgid "Email design"
-msgstr ""
+msgstr "Дизайн на имейлите"
 
 #: includes/class-settings.php:575
 msgid "Colour"
-msgstr ""
+msgstr "Цвят"
 
 #: includes/class-settings.php:576
 msgid "Logo URL"
-msgstr ""
+msgstr "Адрес на логото"
 
 #: includes/class-settings.php:577
 msgid "Leave the logo empty to use the site logo (Appearance → Customize). Emails are simple HTML that works on phones, with a plain-text version for email programs that don't show HTML."
-msgstr ""
+msgstr "Оставете логото празно, за да се използва логото на сайта (Външен вид → Персонализиране). Имейлите са в опростен HTML, който работи и на телефони, с текстова версия за имейл програми, които не показват HTML."
 
 #: includes/class-settings.php:582
 msgid "Emails to guests"
-msgstr ""
+msgstr "Имейли до гостите"
 
 #: includes/class-settings.php:585
 msgid "Each email is sent in the language the guest booked in. Texts you haven't changed are translated automatically; to translate your own texts, use Polylang or WPML string translation (group \"Flexo Booking\")."
-msgstr ""
+msgstr "Всеки имейл се изпраща на езика, на който гостът е резервирал. Текстовете, които не сте променяли, се превеждат автоматично; за да преведете собствените си текстове, използвайте превода на низове в Polylang или WPML (група „Flexo Booking“)."
 
 #: includes/class-settings.php:586
 msgid "Placeholders:"
-msgstr ""
+msgstr "Заместители:"
 
 #: includes/class-settings.php:603
 #: includes/class-settings.php:608
 msgid "Send"
-msgstr ""
+msgstr "Изпращай"
 
 #: includes/class-settings.php:604
 msgid "Days before arrival"
-msgstr ""
+msgstr "Дни преди пристигане"
 
 #: includes/class-settings.php:605
 msgid "days before arrival, to confirmed bookings. Add check-in details, directions and parking to the text."
-msgstr ""
+msgstr "дни преди пристигане, за потвърдени резервации. Добавете в текста информация за настаняването, пътя и паркирането."
 
 #: includes/class-settings.php:609
 msgid "Days after check-out"
-msgstr ""
+msgstr "Дни след напускане"
 
 #: includes/class-settings.php:610
 msgid "days after check-out, to guests of confirmed bookings."
-msgstr ""
+msgstr "дни след напускане, до гостите с потвърдени резервации."
 
 #: includes/class-settings.php:611
 msgid "Review link"
-msgstr ""
+msgstr "Връзка за отзив"
 
 #: includes/class-settings.php:612
 msgid "E.g. your Google review link. Without a link, no review request is sent."
-msgstr ""
+msgstr "Напр. връзката ви за отзиви в Google. Без връзка не се изпраща молба за отзив."
 
 #: includes/class-settings.php:615
 msgid "Message"
-msgstr ""
+msgstr "Съобщение"
 
 #: includes/class-settings.php:620
 msgid "Reminders and review requests are sent by WordPress's scheduled tasks once an hour, between 8:00 and 21:00, only once per booking and never for cancelled bookings."
-msgstr ""
+msgstr "Напомнянията и молбите за отзив се изпращат от планираните задачи на WordPress веднъж на час, между 8:00 и 21:00, само по веднъж на резервация и никога за отменени резервации."
 
 #: includes/class-settings.php:622
 msgid "Guest emails are switched off under Settings → Features. Only the notifications to the hotel are sent."
-msgstr ""
+msgstr "Имейлите до гостите са изключени в Настройки → Функции. Изпращат се само известията до хотела."
 
 #: includes/class-settings.php:625
 msgid "Email log"
-msgstr ""
+msgstr "Дневник на имейлите"
 
 #: includes/class-settings.php:626
 msgid "Keep the log for"
-msgstr ""
+msgstr "Пази дневника"
 
 #: includes/class-settings.php:626
 msgid "days"
-msgstr ""
+msgstr "дни"
 
 #: includes/class-settings.php:632
 msgid "Consent checkbox"
-msgstr ""
+msgstr "Отметка за съгласие"
 
 #: includes/class-settings.php:635
 msgid "Guests must tick it to book"
-msgstr ""
+msgstr "Гостите трябва да я отметнат, за да резервират"
 
 #: includes/class-settings.php:636
 msgid "The box is never ticked in advance. When a guest ticks it, the booking keeps the date, time and the exact text they agreed to."
-msgstr ""
+msgstr "Отметката никога не е поставена предварително. Когато гостът я отметне, резервацията запазва датата, часа и точния текст, с който се е съгласил."
 
 #: includes/class-settings.php:640
 msgid "Text next to the checkbox"
-msgstr ""
+msgstr "Текст до отметката"
 
 #: includes/class-settings.php:643
 msgid "{privacy_policy} becomes a link to your privacy policy."
-msgstr ""
+msgstr "{privacy_policy} става връзка към политиката ви за поверителност."
 
 #: includes/class-settings.php:647
 msgid "Privacy policy page"
-msgstr ""
+msgstr "Страница с политика за поверителност"
 
 #: includes/class-settings.php:651
 msgid "Leave empty to use the page chosen under Settings → Privacy."
-msgstr ""
+msgstr "Оставете празно, за да се използва страницата, избрана в Настройки → Поверителност."
 
 #: includes/class-settings.php:653
 msgid "No privacy policy page is chosen there yet."
-msgstr ""
+msgstr "Там все още не е избрана страница с политика за поверителност."
 
 #: includes/class-settings.php:659
 msgid "Remove guest details"
-msgstr ""
+msgstr "Премахвай данните на гостите"
 
 #: includes/class-settings.php:662
 msgid "months after check-out (0 = never)"
-msgstr ""
+msgstr "месеца след напускане (0 = никога)"
 
 #: includes/class-settings.php:663
 msgid "Once a day, bookings whose check-out is older than this are anonymised: the guest's name, email, phone, special requests and invoice details are removed; dates, room, prices and status stay for your statistics. Personal data should not be kept longer than needed – many hotels choose 24 months, which still covers returning guests and complaints. Invoices you issued are kept in your accounting, not here. Ask your accountant or lawyer if unsure."
-msgstr ""
+msgstr "Веднъж дневно резервациите с по-стара дата на напускане се анонимизират: премахват се името, имейлът, телефонът, специалните желания и данните за фактура на госта; датите, стаята, цените и статусът остават за статистиката ви. Личните данни не бива да се пазят по-дълго от необходимото – много хотели избират 24 месеца, което покрива и завръщащите се гости, и рекламациите. Издадените от вас фактури се пазят в счетоводството ви, не тук. Ако не сте сигурни, попитайте счетоводителя или юриста си."
 
 #: includes/class-settings.php:667
 msgid "Guests can also ask for their data: use Tools → Export Personal Data and Tools → Erase Personal Data with the guest's email address. Bookings, invoice details and emails sent are included. A suggested text for your privacy policy is under Settings → Privacy → Policy Guide."
-msgstr ""
+msgstr "Гостите могат да поискат и данните си: използвайте Инструменти → Износ на лични данни и Инструменти → Изтриване на лични данни с имейл адреса на госта. Включени са резервациите, данните за фактура и изпратените имейли. Предложен текст за политиката ви за поверителност има в Настройки → Поверителност → Ръководство за политика."
 
 #: includes/class-settings.php:671
 msgid "Guests can tick \"I would like an invoice\" and enter the details for a person or a company. The plugin only collects the details for you; issue the invoice in your accounting software as usual."
-msgstr ""
+msgstr "Гостите могат да отметнат „Желая фактура“ и да въведат данни на физическо лице или фирма. Разширението само събира данните за вас; издайте фактурата в счетоводния си софтуер както обикновено."
 
 #: includes/class-settings.php:680
 msgid "Hidden"
-msgstr ""
+msgstr "Скрито"
 
 #: includes/class-settings.php:682
 msgid "Company invoice"
-msgstr ""
+msgstr "Фактура на фирма"
 
 #: includes/class-settings.php:682
 msgid "Invoice for a person"
-msgstr ""
+msgstr "Фактура на физическо лице"
 
 #: includes/class-settings.php:687
 msgid "The company ID (EIK/BULSTAT) is only checked lightly: when it is made of digits only, it must have 9 or 13 digits. Foreign company numbers and VAT numbers are not checked."
-msgstr ""
+msgstr "ЕИК/БУЛСТАТ се проверява само повърхностно: когато се състои само от цифри, трябва да има 9 или 13 цифри. Чуждестранните фирмени номера и ДДС номерата не се проверяват."
 
 #: includes/class-settings.php:691
 msgid "The booking form sends these events to the Google Tag Manager data layer (window.dataLayer). In Tag Manager, create a \"Custom Event\" trigger for each event name and connect it to your Google Analytics 4 or Meta Pixel tags. Events contain no names, emails or phone numbers."
-msgstr ""
+msgstr "Формата за резервации изпраща тези събития към слоя с данни на Google Tag Manager (window.dataLayer). В Tag Manager създайте тригер „Custom Event“ за всяко име на събитие и го свържете с таговете за Google Analytics 4 или Meta Pixel. Събитията не съдържат имена, имейли или телефонни номера."
 
 #: includes/class-settings.php:693
 msgid "Event"
-msgstr ""
+msgstr "Събитие"
 
 #: includes/class-settings.php:693
 msgid "When"
-msgstr ""
+msgstr "Кога"
 
 #: includes/class-settings.php:693
 msgid "Data"
-msgstr ""
+msgstr "Данни"
 
 #: includes/class-settings.php:695
 msgid "The guest searches for dates"
-msgstr ""
+msgstr "Гостът търси дати"
 
 #: includes/class-settings.php:696
 msgid "The guest chooses a room (and rate plan)"
-msgstr ""
+msgstr "Гостът избира стая (и тарифа)"
 
 #: includes/class-settings.php:697
 msgid "The guest details form is shown"
-msgstr ""
+msgstr "Показва се формата с данни на госта"
 
 #: includes/class-settings.php:698
 msgid "The booking or request was sent (once per booking)"
-msgstr ""
+msgstr "Резервацията или заявката е изпратена (веднъж на резервация)"
 
 #: includes/class-settings.php:701
 msgid "Cookie and consent plugins stay in control: the events only go into the data layer, and your Tag Manager setup (with Consent Mode) decides what is sent to Google or Meta."
-msgstr ""
+msgstr "Разширенията за бисквитки и съгласие запазват контрола: събитията отиват само в слоя с данни, а настройката ви на Tag Manager (с Consent Mode) решава какво да се изпрати към Google или Meta."
 
 #: includes/class-settings.php:704
 msgid "Meta Pixel without Tag Manager"
-msgstr ""
+msgstr "Meta Pixel без Tag Manager"
 
 #: includes/class-settings.php:707
 msgid "Also send Search, InitiateCheckout and Purchase to the Meta Pixel directly when it is on the page"
-msgstr ""
+msgstr "Изпращай Search, InitiateCheckout и Purchase директно към Meta Pixel, когато е на страницата"
 
 #: includes/class-settings.php:708
 msgid "Only for sites that add the Meta Pixel without Tag Manager. Leave it off if Tag Manager sends to Meta, or the events are counted twice. The pixel only receives events after your cookie plugin has loaded it."
-msgstr ""
+msgstr "Само за сайтове, които добавят Meta Pixel без Tag Manager. Оставете изключено, ако Tag Manager изпраща към Meta, иначе събитията ще се броят двойно. Пикселът получава събития едва след като разширението ви за бисквитки го зареди."
 
 #: includes/class-settings.php:732
 msgid "Send a test email"
-msgstr ""
+msgstr "Изпращане на тестов имейл"
 
 #: includes/class-settings.php:733
 msgid "Sends the \"Booking confirmed\" email with example details, so you can see how it looks and whether it arrives."
-msgstr ""
+msgstr "Изпраща имейла „Потвърдена резервация“ с примерни данни, за да видите как изглежда и дали пристига."
 
 #: includes/class-settings.php:737
 msgid "Send to"
-msgstr ""
+msgstr "Изпрати до"
 
 #: includes/class-settings.php:738
 msgid "Send test email"
-msgstr ""
+msgstr "Изпрати тестов имейл"
 
 #: includes/class-settings.php:742
 msgid "Recent emails"
-msgstr ""
+msgstr "Последни имейли"
 
 #: includes/class-settings.php:745
 msgid "Time"
-msgstr ""
+msgstr "Час"
 
 #: includes/class-settings.php:747
 msgid "To"
-msgstr ""
+msgstr "До"
 
 #: includes/class-settings.php:749
 msgid "Result"
-msgstr ""
+msgstr "Резултат"
 
 #: includes/class-settings.php:753
 msgid "No emails sent yet."
-msgstr ""
+msgstr "Все още няма изпратени имейли."
 
 #: includes/class-settings.php:773
 msgid "\"Sent\" means your website handed the email to the mail server. If guests still don't receive emails, set up an SMTP plugin."
-msgstr ""
+msgstr "„Изпратен“ означава, че сайтът е предал имейла на пощенския сървър. Ако гостите все пак не получават имейли, настройте разширение за SMTP."
 
 #: includes/elementor/class-booking-widget.php:21
 msgid "Flexo Booking Form"
-msgstr ""
+msgstr "Flexo Booking Form"
 
 #: includes/elementor/class-booking-widget.php:47
 msgid "Booking form"
-msgstr ""
+msgstr "Форма за резервации"
 
 #: includes/elementor/class-booking-widget.php:53
 msgid "Layout"
-msgstr ""
+msgstr "Изглед"
 
 #: includes/elementor/class-booking-widget.php:57
 msgid "Full booking form"
-msgstr ""
+msgstr "Пълна форма за резервации"
 
 #: includes/elementor/class-booking-widget.php:58
 msgid "Search bar (sends visitors to the booking page)"
-msgstr ""
+msgstr "Лента за търсене (води посетителите към страницата за резервации)"
 
 #: includes/elementor/class-booking-widget.php:60
 msgid "Use the search bar in hero sections and the full form on your booking page."
-msgstr ""
+msgstr "Използвайте лентата за търсене в началните секции, а пълната форма – на страницата за резервации."
 
 #: includes/elementor/class-booking-widget.php:67
 #: includes/elementor/class-room-link-tag.php:51
 msgid "Booking page path"
-msgstr ""
+msgstr "Адрес на страницата за резервации"
 
 #: includes/elementor/class-booking-widget.php:71
 msgid "The page that contains the full booking form. Use a path like /booking/ (not a full URL) so the template keeps working on other domains."
-msgstr ""
+msgstr "Страницата с пълната форма за резервации. Използвайте път като /booking/ (не пълен адрес), за да продължи шаблонът да работи и на други домейни."
 
 #: includes/elementor/class-booking-widget.php:82
 msgid "Let the guest choose"
-msgstr ""
+msgstr "Гостът избира"
 
 #: includes/elementor/class-booking-widget.php:83
 msgid "Preselect a room, e.g. on that room’s page. A ?room= link parameter takes priority."
-msgstr ""
+msgstr "Предварително избрана стая, напр. на страницата на стаята. Параметърът ?room= във връзката е с предимство."
 
 #: includes/elementor/class-booking-widget.php:90
 msgid "Heading"
-msgstr ""
+msgstr "Заглавие"
 
 #: includes/elementor/class-booking-widget.php:99
 #: includes/elementor/class-booking-widget.php:127
 msgid "Button text"
-msgstr ""
+msgstr "Текст на бутона"
 
 #: includes/elementor/class-booking-widget.php:111
 msgid "Colors"
-msgstr ""
+msgstr "Цветове"
 
 #: includes/elementor/class-booking-widget.php:120
 msgid "Leave empty to use the site’s Global Colors, so the form matches each template automatically."
-msgstr ""
+msgstr "Оставете празно, за да се използват глобалните цветове на сайта, така формата автоматично съответства на всеки шаблон."
 
 #: includes/elementor/class-booking-widget.php:126
 msgid "Accent / buttons"
-msgstr ""
+msgstr "Акцент / бутони"
 
 #: includes/elementor/class-booking-widget.php:128
 msgid "Text"
-msgstr ""
+msgstr "Текст"
 
 #: includes/elementor/class-booking-widget.php:129
 msgid "Background"
-msgstr ""
+msgstr "Фон"
 
 #: includes/elementor/class-booking-widget.php:130
 msgid "Field background"
-msgstr ""
+msgstr "Фон на полетата"
 
 #: includes/elementor/class-booking-widget.php:131
 msgid "Borders"
-msgstr ""
+msgstr "Рамки"
 
 #: includes/elementor/class-booking-widget.php:149
 msgid "Layout & typography"
-msgstr ""
+msgstr "Оформление и типография"
 
 #: includes/elementor/class-booking-widget.php:157
 msgid "Padding"
-msgstr ""
+msgstr "Вътрешно отстояние"
 
 #: includes/elementor/class-booking-widget.php:168
 msgid "Spacing"
-msgstr ""
+msgstr "Разстояние"
 
 #: includes/elementor/class-booking-widget.php:179
 msgid "Corner radius"
-msgstr ""
+msgstr "Заобляне на ъглите"
 
 #: includes/elementor/class-booking-widget.php:191
 msgid "Headings"
-msgstr ""
+msgstr "Заглавия"
 
 #: includes/elementor/class-booking-widget.php:200
 msgid "Text & fields"
-msgstr ""
+msgstr "Текст и полета"
 
 #: includes/elementor/class-booking-widget.php:209
 msgid "Buttons"
-msgstr ""
+msgstr "Бутони"
 
 #: includes/elementor/class-room-link-tag.php:26
 msgid "Room booking link"
-msgstr ""
+msgstr "Връзка за резервация на стая"
 
 #: includes/elementor/class-room-link-tag.php:44
 msgid "No room (guest chooses)"
-msgstr ""
+msgstr "Без стая (гостът избира)"
 
 #. translators: %s: room name
 #: templates/booking-form.php:36
 #, php-format
 msgid "Booking: %s"
-msgstr ""
+msgstr "Резервация: %s"
 
 #: templates/booking-form.php:82
 msgid "Your details"
-msgstr ""
+msgstr "Вашите данни"
 
 #. translators: %s: link to the terms page
 #: templates/booking-form.php:122
 #, php-format
 msgid "I agree to the %s"
-msgstr ""
+msgstr "Приемам %s"
 
 #: templates/booking-form.php:123
 msgid "terms and conditions"
-msgstr ""
+msgstr "общите условия"
 
 #: templates/booking-form.php:130
 msgid "Back"
-msgstr ""
+msgstr "Назад"
 
 #: templates/booking-form.php:132
 msgid "Confirm booking"
-msgstr ""
+msgstr "Потвърди резервацията"
 
 #: templates/booking-form.php:132
 msgid "Send booking request"
-msgstr ""
+msgstr "Изпрати заявка за резервация"

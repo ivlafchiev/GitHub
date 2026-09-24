@@ -49,13 +49,84 @@
 		return date.getFullYear() + '-' + m + '-' + d;
 	}
 
-	function humanDate( ymd ) {
-		var lang = document.documentElement.lang || undefined;
+	/**
+	 * Date for guests: DD.MM.YYYY where the language writes it so (e.g.
+	 * Bulgarian), otherwise the browser's format for the page language.
+	 */
+	function humanDate( ymd, format, locale ) {
+		if ( format === 'd.m.Y' ) {
+			var p = ymd.split( '-' );
+			return p[ 2 ] + '.' + p[ 1 ] + '.' + p[ 0 ];
+		}
+		var lang = locale ? locale.replace( '_', '-' ) : ( document.documentElement.lang || undefined );
 		try {
 			return parseDate( ymd ).toLocaleDateString( lang, { day: 'numeric', month: 'short', year: 'numeric' } );
 		} catch ( e ) {
 			return ymd;
 		}
+	}
+
+	/**
+	 * Conversion tracking: events go only into the Tag Manager data layer,
+	 * so consent plugins and Tag Manager decide what is sent. No personal data.
+	 */
+	function track( payload, ecommerce ) {
+		if ( ! cfg.tracking ) {
+			return;
+		}
+		window.dataLayer = window.dataLayer || [];
+		if ( ecommerce ) {
+			window.dataLayer.push( { ecommerce: null } ); // Clears the previous ecommerce object (GA4).
+		}
+		window.dataLayer.push( payload );
+	}
+
+	function pixel( name, data ) {
+		if ( cfg.tracking && cfg.tracking.metaPixel && typeof window.fbq === 'function' ) {
+			window.fbq( 'track', name, data );
+		}
+	}
+
+	function storageGet( key ) {
+		try {
+			return window.localStorage.getItem( key );
+		} catch ( e ) {
+			return null;
+		}
+	}
+
+	function storageSet( key, value ) {
+		try {
+			window.localStorage.setItem( key, value );
+		} catch ( e ) {}
+	}
+
+	/**
+	 * The invoice part of the details form: shown when "I would like an
+	 * invoice" is ticked, with the fields for a person or a company.
+	 */
+	function bindInvoice( form ) {
+		var box = form.querySelector( '[data-fb-invoice]' );
+		if ( ! box ) {
+			return;
+		}
+		var toggle = box.querySelector( '[data-fb-invoice-toggle]' );
+		var fields = box.querySelector( '.fb-invoice__fields' );
+		function sync() {
+			var on = toggle.checked;
+			var type = box.querySelector( '[name="invoice_type"]:checked' );
+			type = type ? type.value : 'individual';
+			fields.hidden = ! on;
+			box.querySelectorAll( '[data-fb-invoice-for]' ).forEach( function ( field ) {
+				var show = on && field.getAttribute( 'data-fb-invoice-for' ) === type;
+				var input = field.querySelector( 'input' );
+				field.hidden = ! show;
+				input.disabled = ! show;
+				input.required = show && input.getAttribute( 'data-required' ) === '1';
+			} );
+		}
+		box.addEventListener( 'change', sync );
+		sync();
 	}
 
 	function el( tag, className, text ) {
@@ -164,6 +235,8 @@
 		this.success = root.querySelector( '.fb-success' );
 		this.summary = root.querySelector( '.fb-summary' );
 		this.room = root.getAttribute( 'data-room' ) || '';
+		this.locale = root.getAttribute( 'data-locale' ) || '';
+		this.dateFormat = root.getAttribute( 'data-date-format' ) || '';
 		this.showAll = false;
 		this.stay = null;
 		this.selected = null;
@@ -172,6 +245,7 @@
 
 		bindDates( this.searchForm );
 		bindAges( this.searchForm );
+		bindInvoice( this.detailsForm );
 
 		this.searchForm.addEventListener( 'submit', this.onSearch.bind( this ) );
 		this.detailsForm.addEventListener( 'submit', this.onBook.bind( this ) );
@@ -232,6 +306,9 @@
 		if ( this.room && ! this.showAll ) {
 			params.room = this.room;
 		}
+		if ( this.locale ) {
+			params.locale = this.locale;
+		}
 
 		this.setNotice( t.checking );
 		this.results.hidden = true;
@@ -243,6 +320,16 @@
 				self.setNotice( '' );
 				self.closedNotice = data.notice || '';
 				self.renderRooms( data.rooms );
+				track( {
+					event: 'search',
+					search_term: data.check_in + ' – ' + data.check_out,
+					check_in: data.check_in,
+					check_out: data.check_out,
+					nights: data.nights,
+					adults: parseInt( v.adults, 10 ),
+					children: parseInt( v.children, 10 ) || 0,
+				} );
+				pixel( 'Search', { search_string: data.check_in + ' – ' + data.check_out } );
 			} )
 			.catch( function ( err ) {
 				self.setNotice( err.message, true );
@@ -382,6 +469,30 @@
 		return text;
 	};
 
+	BookingForm.prototype.date = function ( ymd ) {
+		return humanDate( ymd, this.dateFormat, this.locale );
+	};
+
+	/**
+	 * Tracking data for the chosen room and plan (no personal data).
+	 */
+	BookingForm.prototype.trackData = function ( total ) {
+		var room = this.selected;
+		var plan = this.view && this.view.rate_plan ? this.view.rate_plan.name : '';
+		var currency = cfg.tracking ? cfg.tracking.currency : '';
+		return {
+			room: room.title,
+			rate_plan: plan,
+			value: total,
+			currency: currency,
+			ecommerce: {
+				currency: currency,
+				value: total,
+				items: [ { item_id: room.slug || String( room.id ), item_name: room.title, item_variant: plan, price: total, quantity: 1 } ],
+			},
+		};
+	};
+
 	BookingForm.prototype.select = function ( room, view ) {
 		this.selected = room;
 		this.view = view || room.quote || null;
@@ -392,6 +503,40 @@
 		this.detailsForm.hidden = false;
 		this.setNotice( '' );
 		this.detailsForm.querySelector( 'input' ).focus();
+
+		var total = this.view && typeof this.view.total === 'number' ? this.view.total : room.total;
+		track( Object.assign( { event: 'room_select' }, this.trackData( total ) ), true );
+		track( Object.assign( { event: 'begin_checkout' }, this.trackData( total ) ), true );
+		pixel( 'InitiateCheckout', { value: total, currency: cfg.tracking ? cfg.tracking.currency : '' } );
+	};
+
+	/**
+	 * booking_complete, once per booking reference (a reload or a second
+	 * form never counts it twice). Calls done() when Tag Manager has
+	 * received it, or after 1.5 s without Tag Manager.
+	 */
+	BookingForm.prototype.trackComplete = function ( data, done ) {
+		var key = 'flexo_tracked_' + data.reference;
+		if ( ! cfg.tracking || storageGet( key ) ) {
+			done();
+			return;
+		}
+		storageSet( key, '1' );
+		var total = data.quote && typeof data.quote.total === 'number' ? data.quote.total : 0;
+		var payload = Object.assign( { event: 'booking_complete', booking_reference: data.reference, booking_status: data.status }, this.trackData( total ) );
+		payload.ecommerce.transaction_id = data.reference;
+		var finished = false;
+		function finish() {
+			if ( ! finished ) {
+				finished = true;
+				done();
+			}
+		}
+		payload.eventCallback = finish;
+		payload.eventTimeout = 1500;
+		track( payload, true );
+		pixel( 'Purchase', { value: total, currency: payload.currency } );
+		window.setTimeout( finish, 1600 );
 	};
 
 	/**
@@ -417,7 +562,7 @@
 		if ( view.rate_plan ) {
 			row( t.rate, view.rate_plan.name, 'fb-summary__rate' );
 		}
-		row( humanDate( s.check_in ) + ' → ' + humanDate( s.check_out ), s.nightsLabel );
+		row( this.date( s.check_in ) + ' → ' + this.date( s.check_out ), s.nightsLabel );
 		row( t.guests, this.guestsText() );
 
 		var lines = view.lines || room.breakdown || [];
@@ -554,6 +699,9 @@
 		if ( promo ) {
 			params.promo_code = promo;
 		}
+		if ( this.locale ) {
+			params.locale = this.locale;
+		}
 		return params;
 	};
 
@@ -597,6 +745,22 @@
 		}
 
 		var terms = f.querySelector( '[name="terms"]' );
+		var consent = f.querySelector( '[name="privacy_consent"]' );
+		function val( name ) {
+			var field = f.querySelector( '[name="' + name + '"]' );
+			return field && ! field.disabled ? field.value : '';
+		}
+		var invoice = null;
+		var invoiceToggle = f.querySelector( '[data-fb-invoice-toggle]' );
+		if ( invoiceToggle && invoiceToggle.checked ) {
+			var type = f.querySelector( '[name="invoice_type"]:checked' );
+			invoice = { requested: true, type: type ? type.value : 'individual' };
+			f.querySelectorAll( '[name^="invoice_"]' ).forEach( function ( field ) {
+				if ( field.type === 'text' && ! field.disabled ) {
+					invoice[ field.name.replace( 'invoice_', '' ) ] = field.value;
+				}
+			} );
+		}
 		var payload = {
 			room: this.selected.slug || String( this.selected.id ),
 			check_in: this.stay.check_in,
@@ -610,9 +774,12 @@
 			expected_total: this.view && typeof this.view.total === 'number' ? this.view.total : null,
 			guest_name: f.querySelector( '[name="guest_name"]' ).value,
 			guest_email: f.querySelector( '[name="guest_email"]' ).value,
-			guest_phone: f.querySelector( '[name="guest_phone"]' ).value,
-			notes: f.querySelector( '[name="notes"]' ).value,
+			guest_phone: val( 'guest_phone' ),
+			notes: val( 'notes' ),
 			terms: terms ? terms.checked : false,
+			privacy_consent: consent ? consent.checked : false,
+			invoice: invoice,
+			locale: this.locale,
 			fb_website: f.querySelector( '[name="fb_website"]' ).value,
 		};
 
@@ -629,10 +796,14 @@
 		} )
 			.then( function ( data ) {
 				if ( data.redirect ) {
-					window.location.href = data.redirect;
+					// Leave the page only after the conversion was recorded.
+					self.trackComplete( data, function () {
+						window.location.href = data.redirect;
+					} );
 					return;
 				}
 				self.showSuccess( data );
+				self.trackComplete( data, function () {} );
 			} )
 			.catch( function ( err ) {
 				self.setNotice( err.message, true );
@@ -654,7 +825,7 @@
 		ref.appendChild( document.createTextNode( t.reference + ': ' ) );
 		ref.appendChild( el( 'strong', '', data.reference ) );
 		this.success.appendChild( ref );
-		this.success.appendChild( el( 'p', 'fb-success__stay', data.room + ' · ' + humanDate( data.check_in ) + ' → ' + humanDate( data.check_out ) + ' · ' + data.total_formatted ) );
+		this.success.appendChild( el( 'p', 'fb-success__stay', data.room + ' · ' + this.date( data.check_in ) + ' → ' + this.date( data.check_out ) + ' · ' + data.total_formatted ) );
 
 		this.searchForm.hidden = true;
 		this.detailsForm.hidden = true;

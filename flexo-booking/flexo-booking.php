@@ -3,7 +3,7 @@
  * Plugin Name:       Flexo Booking
  * Plugin URI:        https://github.com/ivlafchiev/GitHub
  * Description:       Room & accommodation booking system for FlexoHotels websites. Works with any theme via the [flexo_booking] shortcode and ships a native Elementor widget. Settings and rooms can be exported/imported between sites.
- * Version:           1.3.0
+ * Version:           1.4.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            FlexoHotels
@@ -18,8 +18,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'FLEXO_BOOKING_VERSION', '1.3.0' );
-define( 'FLEXO_BOOKING_DB_VERSION', '4' ); // Kept for compatibility; see Flexo_Booking_Migrations::LATEST.
+define( 'FLEXO_BOOKING_VERSION', '1.4.0' );
+define( 'FLEXO_BOOKING_DB_VERSION', '5' ); // Kept for compatibility; see Flexo_Booking_Migrations::LATEST.
 define( 'FLEXO_BOOKING_FILE', __FILE__ );
 define( 'FLEXO_BOOKING_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FLEXO_BOOKING_URL', plugin_dir_url( __FILE__ ) );
@@ -40,6 +40,10 @@ require_once FLEXO_BOOKING_DIR . 'includes/class-ical.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-children.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-rate-plans.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-promo-codes.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-i18n.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-invoices.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-privacy.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-tracking.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-pricing.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-bookings.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-emails.php';
@@ -65,6 +69,9 @@ add_action(
 		Flexo_Booking_Install::maybe_upgrade();
 		Flexo_Booking_Rooms::init();
 		Flexo_Booking_Emails::init();
+		Flexo_Booking_Privacy::init();
+		Flexo_Booking_I18n::init();
+		Flexo_Booking_Tracking::init();
 		Flexo_Booking_Rest::init();
 		Flexo_Booking_ICal::init();
 		Flexo_Booking_Rate_Plans::init();

@@ -42,6 +42,48 @@ class Flexo_Booking_Settings {
 			'email_confirmed_body'     => __( "Hello {guest_name},\n\nYour booking at {site_name} is confirmed. We look forward to welcoming you!\n\n{booking_details}\n\nCheck-in from {check_in_time}, check-out until {check_out_time}.\n\nKind regards,\n{site_name}", 'flexo-booking' ),
 			'email_cancelled_subject'  => __( 'Your booking {reference} has been cancelled', 'flexo-booking' ),
 			'email_cancelled_body'     => __( "Hello {guest_name},\n\nYour booking {reference} at {site_name} has been cancelled. If you have any questions, simply reply to this email.\n\nKind regards,\n{site_name}", 'flexo-booking' ),
+			// Emails (Day 4).
+			'hotel_phone'                   => '',
+			'email_logo'                    => '',
+			'email_color'                   => '#1f6f5c',
+			'notify_new'                    => 1,
+			'notify_cancelled'              => 1,
+			'notify_conflict'               => 1,
+			'email_pre_arrival_enabled'     => 0,
+			'email_pre_arrival_days'        => 3,
+			'email_pre_arrival_subject'     => __( 'See you soon at {hotel_name} – booking {booking_ref}', 'flexo-booking' ),
+			'email_pre_arrival_body'        => __( "Hello {guest_name},\n\nWe look forward to welcoming you at {hotel_name} on {check_in}.\n\nCheck-in is from {check_in_time} and check-out until {check_out_time}. If you have any questions about your arrival, directions or parking, simply reply to this email or call us at {hotel_phone}.\n\n{booking_details}\n\nSee you soon,\n{hotel_name}", 'flexo-booking' ),
+			'email_review_enabled'          => 0,
+			'email_review_days'             => 1,
+			'review_link'                   => '',
+			'email_review_subject'          => __( 'How was your stay at {hotel_name}?', 'flexo-booking' ),
+			'email_review_body'             => __( "Hello {guest_name},\n\nThank you for staying with us. We hope you enjoyed your time at {hotel_name}.\n\nWe would be very grateful if you shared your experience. It takes a minute and helps other guests:\n{review_link}\n\nKind regards,\n{hotel_name}", 'flexo-booking' ),
+			// Reserved for online payments (Day 5); not sent yet.
+			'email_awaiting_deposit_subject' => __( 'Please pay the deposit for booking {booking_ref}', 'flexo-booking' ),
+			'email_awaiting_deposit_body'    => __( "Hello {guest_name},\n\nThank you for your booking at {hotel_name}. To confirm it, please pay the deposit.\n\n{booking_details}\n\nKind regards,\n{hotel_name}", 'flexo-booking' ),
+			'email_payment_received_subject' => __( 'We received your payment for booking {booking_ref}', 'flexo-booking' ),
+			'email_payment_received_body'    => __( "Hello {guest_name},\n\nThank you, we received your payment.\n\n{booking_details}\n\nKind regards,\n{hotel_name}", 'flexo-booking' ),
+			'email_payment_failed_subject'   => __( 'Payment for booking {booking_ref} did not go through', 'flexo-booking' ),
+			'email_payment_failed_body'      => __( "Hello {guest_name},\n\nUnfortunately your payment did not go through. Please try again or contact us at {hotel_phone}.\n\n{booking_details}\n\nKind regards,\n{hotel_name}", 'flexo-booking' ),
+			'email_log_days'                => 90,
+			// Guest details form (Day 4, data minimisation).
+			'field_phone'                   => 'required',
+			'field_notes'                   => 'optional',
+			// Privacy consent (Day 4).
+			'privacy_consent_required'      => 1,
+			'privacy_consent_text'          => __( 'I agree to the {privacy_policy} and consent to my information being processed for the purpose of my booking.', 'flexo-booking' ),
+			'privacy_page'                  => '',
+			'retention_months'              => 0,
+			// Invoice request fields (Day 4): required / optional / hidden.
+			'invoice_full_name'             => 'required',
+			'invoice_address'               => 'required',
+			'invoice_company_name'          => 'required',
+			'invoice_company_id'            => 'required',
+			'invoice_vat_number'            => 'optional',
+			'invoice_company_address'       => 'required',
+			'invoice_contact_person'        => 'optional',
+			// Tracking (Day 4).
+			'tracking_meta_pixel'           => 0,
 			'ical_interval'            => 30,
 			// Children & ages (Day 3): free under this age, then a share of
 			// the adult amount, then the adult amount.
@@ -67,9 +109,22 @@ class Flexo_Booking_Settings {
 		return isset( $all[ $key ] ) ? $all[ $key ] : null;
 	}
 
+	/**
+	 * First notification address (Reply-To for guest emails).
+	 */
 	public static function notification_email() {
-		$email = self::get( 'notification_email' );
-		return is_email( $email ) ? $email : get_option( 'admin_email' );
+		$emails = self::notification_emails();
+		return $emails[0];
+	}
+
+	/**
+	 * All addresses that receive hotel notifications ("a@x.com, b@x.com").
+	 *
+	 * @return string[] Never empty: falls back to the site admin email.
+	 */
+	public static function notification_emails() {
+		$emails = array_values( array_filter( array_map( 'trim', preg_split( '/[,;\s]+/', (string) self::get( 'notification_email' ) ) ), 'is_email' ) );
+		return $emails ? $emails : array( get_option( 'admin_email' ) );
 	}
 
 	/**
@@ -158,7 +213,53 @@ class Flexo_Booking_Settings {
 					$clean[ $key ] = strtoupper( substr( preg_replace( '/[^A-Za-z]/', '', (string) $value ), 0, 10 ) );
 					break;
 				case 'notification_email':
-					$clean[ $key ] = sanitize_email( $value );
+					$clean[ $key ] = implode( ', ', array_filter( array_map( 'sanitize_email', preg_split( '/[,;\s]+/', (string) $value ) ) ) );
+					break;
+				case 'notify_new':
+				case 'notify_cancelled':
+				case 'notify_conflict':
+				case 'email_pre_arrival_enabled':
+				case 'email_review_enabled':
+				case 'privacy_consent_required':
+				case 'tracking_meta_pixel':
+					$clean[ $key ] = empty( $value ) ? 0 : 1;
+					break;
+				case 'email_pre_arrival_days':
+					$clean[ $key ] = min( 30, max( 1, absint( $value ) ) );
+					break;
+				case 'email_review_days':
+					$clean[ $key ] = min( 30, absint( $value ) );
+					break;
+				case 'email_log_days':
+					$clean[ $key ] = min( 730, max( 7, absint( $value ) ) );
+					break;
+				case 'retention_months':
+					$clean[ $key ] = min( 240, absint( $value ) );
+					break;
+				case 'email_color':
+					$clean[ $key ] = sanitize_hex_color( $value ) ? sanitize_hex_color( $value ) : $default;
+					break;
+				case 'email_logo':
+				case 'review_link':
+					$clean[ $key ] = esc_url_raw( trim( (string) $value ) );
+					break;
+				case 'privacy_page':
+					$clean[ $key ] = self::sanitize_path_or_url( $value );
+					break;
+				case 'field_phone':
+					$clean[ $key ] = in_array( $value, array( 'required', 'optional', 'hidden' ), true ) ? $value : 'required';
+					break;
+				case 'field_notes':
+					$clean[ $key ] = in_array( $value, array( 'optional', 'hidden' ), true ) ? $value : 'optional';
+					break;
+				case 'invoice_full_name':
+				case 'invoice_address':
+				case 'invoice_company_name':
+				case 'invoice_company_id':
+				case 'invoice_vat_number':
+				case 'invoice_company_address':
+				case 'invoice_contact_person':
+					$clean[ $key ] = in_array( $value, array( 'required', 'optional', 'hidden' ), true ) ? $value : $default;
 					break;
 				case 'thank_you_url':
 				case 'terms_url':
@@ -221,7 +322,16 @@ class Flexo_Booking_Settings {
 		if ( Flexo_Booking_Features::is_enabled( 'tourist_tax' ) ) {
 			$tabs['tourist_tax'] = __( 'Tourist tax', 'flexo-booking' );
 		}
+		if ( Flexo_Booking_Features::is_enabled( 'privacy_consent' ) ) {
+			$tabs['privacy'] = __( 'Privacy', 'flexo-booking' );
+		}
+		if ( Flexo_Booking_Features::is_enabled( 'invoice_request' ) ) {
+			$tabs['invoices'] = __( 'Invoices', 'flexo-booking' );
+		}
 		$tabs['emails'] = __( 'Emails', 'flexo-booking' );
+		if ( Flexo_Booking_Features::is_enabled( 'tracking' ) ) {
+			$tabs['tracking'] = __( 'Tracking', 'flexo-booking' );
+		}
 		return $tabs;
 	}
 
@@ -243,6 +353,7 @@ class Flexo_Booking_Settings {
 				<?php endforeach; ?>
 			</nav>
 			<?php settings_errors(); ?>
+			<?php Flexo_Booking_Seasons_Admin::notices(); ?>
 			<?php if ( 'features' === $tab && isset( $_GET['settings-updated'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
 				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Features saved.', 'flexo-booking' ); ?></p></div>
 			<?php endif; ?>
@@ -334,6 +445,24 @@ class Flexo_Booking_Settings {
 						</td>
 					</tr>
 					<tr>
+						<th scope="row"><?php esc_html_e( 'Guest details form', 'flexo-booking' ); ?></th>
+						<td>
+							<p><?php esc_html_e( 'Name and email are always required.', 'flexo-booking' ); ?></p>
+							<p><label><?php esc_html_e( 'Phone', 'flexo-booking' ); ?>
+								<select name="<?php echo esc_attr( $name ); ?>[field_phone]">
+									<option value="required" <?php selected( $s['field_phone'], 'required' ); ?>><?php esc_html_e( 'Required', 'flexo-booking' ); ?></option>
+									<option value="optional" <?php selected( $s['field_phone'], 'optional' ); ?>><?php esc_html_e( 'Optional', 'flexo-booking' ); ?></option>
+									<option value="hidden" <?php selected( $s['field_phone'], 'hidden' ); ?>><?php esc_html_e( 'Not asked', 'flexo-booking' ); ?></option>
+								</select></label>
+								<label><?php esc_html_e( 'Special requests', 'flexo-booking' ); ?>
+								<select name="<?php echo esc_attr( $name ); ?>[field_notes]">
+									<option value="optional" <?php selected( $s['field_notes'], 'optional' ); ?>><?php esc_html_e( 'Optional', 'flexo-booking' ); ?></option>
+									<option value="hidden" <?php selected( $s['field_notes'], 'hidden' ); ?>><?php esc_html_e( 'Not asked', 'flexo-booking' ); ?></option>
+								</select></label></p>
+							<p class="description"><?php esc_html_e( 'Ask only for what you need (data minimisation).', 'flexo-booking' ); ?></p>
+						</td>
+					</tr>
+					<tr>
 						<th scope="row"><?php esc_html_e( 'Data removal', 'flexo-booking' ); ?></th>
 						<td>
 							<input type="hidden" name="<?php echo esc_attr( $name ); ?>[delete_data_on_uninstall]" value="0">
@@ -412,40 +541,236 @@ class Flexo_Booking_Settings {
 				<?php endif; ?>
 
 				<?php if ( 'emails' === $tab ) : ?>
-				<p class="description">
-					<?php esc_html_e( 'Placeholders:', 'flexo-booking' ); ?>
-					<code>{reference}</code> <code>{guest_name}</code> <code>{guest_email}</code> <code>{guest_phone}</code> <code>{room}</code> <code>{check_in}</code> <code>{check_out}</code> <code>{nights}</code> <code>{guests}</code> <code>{total}</code> <code>{price_breakdown}</code> <code>{rate_plan}</code> <code>{cancellation_policy}</code> <code>{promo_code}</code> <code>{status}</code> <code>{booking_details}</code> <code>{check_in_time}</code> <code>{check_out_time}</code> <code>{site_name}</code>
-				</p>
+				<h2><?php esc_html_e( 'Your hotel', 'flexo-booking' ); ?></h2>
 				<table class="form-table" role="presentation">
 					<tr>
-						<th scope="row"><label for="fb-notify"><?php esc_html_e( 'Send new booking alerts to', 'flexo-booking' ); ?></label></th>
-						<td><input id="fb-notify" type="email" class="regular-text" name="<?php echo esc_attr( $name ); ?>[notification_email]" value="<?php echo esc_attr( $s['notification_email'] ); ?>" placeholder="<?php echo esc_attr( get_option( 'admin_email' ) ); ?>"></td>
+						<th scope="row"><label for="fb-notify"><?php esc_html_e( 'Send hotel notifications to', 'flexo-booking' ); ?></label></th>
+						<td>
+							<input id="fb-notify" type="text" class="large-text" name="<?php echo esc_attr( $name ); ?>[notification_email]" value="<?php echo esc_attr( $s['notification_email'] ); ?>" placeholder="<?php echo esc_attr( get_option( 'admin_email' ) ); ?>">
+							<p class="description"><?php esc_html_e( 'One or more addresses, separated by commas, e.g. reception@hotel.bg, owner@hotel.bg. Guests\' replies go to the first one.', 'flexo-booking' ); ?></p>
+						</td>
 					</tr>
-					<?php if ( Flexo_Booking_Features::is_enabled( 'guest_emails' ) ) : ?>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Notify the hotel about', 'flexo-booking' ); ?></th>
+						<td>
+							<?php foreach ( Flexo_Booking_Emails::hotel_types() as $flexo_type => $flexo_def ) : ?>
+								<?php
+								if ( 'ical_conflict' === $flexo_type && ! Flexo_Booking_Features::is_enabled( 'calendar_sync' ) ) {
+									echo '<input type="hidden" name="' . esc_attr( $name . '[' . $flexo_def['setting'] . ']' ) . '" value="' . esc_attr( $s[ $flexo_def['setting'] ] ) . '">';
+									continue;
+								}
+								?>
+								<input type="hidden" name="<?php echo esc_attr( $name . '[' . $flexo_def['setting'] . ']' ); ?>" value="0">
+								<label class="flexo-feature-choice"><input type="checkbox" name="<?php echo esc_attr( $name . '[' . $flexo_def['setting'] . ']' ); ?>" value="1" <?php checked( $s[ $flexo_def['setting'] ], 1 ); ?>> <?php echo esc_html( $flexo_def['label'] ); ?></label>
+							<?php endforeach; ?>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="fb-phone"><?php esc_html_e( 'Hotel phone', 'flexo-booking' ); ?></label></th>
+						<td><input id="fb-phone" type="text" class="regular-text" name="<?php echo esc_attr( $name ); ?>[hotel_phone]" value="<?php echo esc_attr( $s['hotel_phone'] ); ?>" placeholder="+359 …"> <span class="description"><?php esc_html_e( 'Used by {hotel_phone} and in the email footer.', 'flexo-booking' ); ?></span></td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Email design', 'flexo-booking' ); ?></th>
+						<td>
+							<label><?php esc_html_e( 'Colour', 'flexo-booking' ); ?> <input type="color" name="<?php echo esc_attr( $name ); ?>[email_color]" value="<?php echo esc_attr( $s['email_color'] ); ?>"></label>
+							<p><label><?php esc_html_e( 'Logo URL', 'flexo-booking' ); ?> <input type="url" class="regular-text" name="<?php echo esc_attr( $name ); ?>[email_logo]" value="<?php echo esc_attr( $s['email_logo'] ); ?>" placeholder="<?php echo esc_attr( Flexo_Booking_Emails::logo_url() ); ?>"></label></p>
+							<p class="description"><?php esc_html_e( 'Leave the logo empty to use the site logo (Appearance → Customize). Emails are simple HTML that works on phones, with a plain-text version for email programs that don\'t show HTML.', 'flexo-booking' ); ?></p>
+						</td>
+					</tr>
+				</table>
+
+				<h2><?php esc_html_e( 'Emails to guests', 'flexo-booking' ); ?></h2>
+				<?php if ( Flexo_Booking_Features::is_enabled( 'guest_emails' ) ) : ?>
+				<p class="description">
+					<?php esc_html_e( 'Each email is sent in the language the guest booked in. Texts you haven\'t changed are translated automatically; to translate your own texts, use Polylang or WPML string translation (group "Flexo Booking").', 'flexo-booking' ); ?>
+					<br><?php esc_html_e( 'Placeholders:', 'flexo-booking' ); ?>
+					<?php foreach ( Flexo_Booking_Emails::placeholder_names() as $flexo_placeholder ) : ?>
+						<code><?php echo esc_html( $flexo_placeholder ); ?></code>
+					<?php endforeach; ?>
+				</p>
+				<table class="form-table" role="presentation">
+					<?php foreach ( Flexo_Booking_Emails::guest_types() as $type => $flexo_def ) : ?>
 						<?php
-						$templates = array(
-							'request'   => __( 'Booking request received (to guest)', 'flexo-booking' ),
-							'confirmed' => __( 'Booking confirmed (to guest)', 'flexo-booking' ),
-							'cancelled' => __( 'Booking cancelled (to guest)', 'flexo-booking' ),
-						);
-						foreach ( $templates as $type => $label ) :
-							?>
-							<tr>
-								<th scope="row"><?php echo esc_html( $label ); ?></th>
-								<td>
-									<input type="text" class="large-text" name="<?php echo esc_attr( $name . '[email_' . $type . '_subject]' ); ?>" value="<?php echo esc_attr( $s[ 'email_' . $type . '_subject' ] ); ?>" aria-label="<?php esc_attr_e( 'Subject', 'flexo-booking' ); ?>">
-									<textarea class="large-text" rows="7" name="<?php echo esc_attr( $name . '[email_' . $type . '_body]' ); ?>" aria-label="<?php esc_attr_e( 'Message', 'flexo-booking' ); ?>"><?php echo esc_textarea( $s[ 'email_' . $type . '_body' ] ); ?></textarea>
-								</td>
-							</tr>
-						<?php endforeach; ?>
-					<?php else : ?>
-						<tr><td colspan="2"><p class="description"><?php esc_html_e( 'Guest emails are switched off under Settings → Features. Only the new-booking alert above is sent.', 'flexo-booking' ); ?></p></td></tr>
-					<?php endif; ?>
+						if ( ! empty( $flexo_def['reserved'] ) ) {
+							continue; // Used by online payments (Day 5).
+						}
+						?>
+						<tr id="flexo-email-<?php echo esc_attr( $type ); ?>">
+							<th scope="row"><?php echo esc_html( $flexo_def['label'] ); ?></th>
+							<td>
+								<?php if ( 'pre_arrival' === $type ) : ?>
+									<input type="hidden" name="<?php echo esc_attr( $name ); ?>[email_pre_arrival_enabled]" value="0">
+									<p class="flexo-inline-form"><label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[email_pre_arrival_enabled]" value="1" <?php checked( $s['email_pre_arrival_enabled'], 1 ); ?>> <?php esc_html_e( 'Send', 'flexo-booking' ); ?></label>
+									<input type="number" min="1" max="30" class="small-text" name="<?php echo esc_attr( $name ); ?>[email_pre_arrival_days]" value="<?php echo esc_attr( $s['email_pre_arrival_days'] ); ?>" aria-label="<?php esc_attr_e( 'Days before arrival', 'flexo-booking' ); ?>">
+									<?php esc_html_e( 'days before arrival, to confirmed bookings. Add check-in details, directions and parking to the text.', 'flexo-booking' ); ?></p>
+								<?php elseif ( 'review' === $type ) : ?>
+									<input type="hidden" name="<?php echo esc_attr( $name ); ?>[email_review_enabled]" value="0">
+									<p class="flexo-inline-form"><label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[email_review_enabled]" value="1" <?php checked( $s['email_review_enabled'], 1 ); ?>> <?php esc_html_e( 'Send', 'flexo-booking' ); ?></label>
+									<input type="number" min="0" max="30" class="small-text" name="<?php echo esc_attr( $name ); ?>[email_review_days]" value="<?php echo esc_attr( $s['email_review_days'] ); ?>" aria-label="<?php esc_attr_e( 'Days after check-out', 'flexo-booking' ); ?>">
+									<?php esc_html_e( 'days after check-out, to guests of confirmed bookings.', 'flexo-booking' ); ?></p>
+									<p><label><?php esc_html_e( 'Review link', 'flexo-booking' ); ?> <input type="url" class="regular-text" name="<?php echo esc_attr( $name ); ?>[review_link]" value="<?php echo esc_attr( $s['review_link'] ); ?>" placeholder="https://g.page/r/…/review"></label></p>
+									<p class="description"><?php esc_html_e( 'E.g. your Google review link. Without a link, no review request is sent.', 'flexo-booking' ); ?></p>
+								<?php endif; ?>
+								<input type="text" class="large-text" name="<?php echo esc_attr( $name . '[email_' . $type . '_subject]' ); ?>" value="<?php echo esc_attr( $s[ 'email_' . $type . '_subject' ] ); ?>" aria-label="<?php esc_attr_e( 'Subject', 'flexo-booking' ); ?>">
+								<textarea class="large-text" rows="7" name="<?php echo esc_attr( $name . '[email_' . $type . '_body]' ); ?>" aria-label="<?php esc_attr_e( 'Message', 'flexo-booking' ); ?>"><?php echo esc_textarea( $s[ 'email_' . $type . '_body' ] ); ?></textarea>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+				</table>
+				<p class="description"><?php esc_html_e( 'Reminders and review requests are sent by WordPress\'s scheduled tasks once an hour, between 8:00 and 21:00, only once per booking and never for cancelled bookings.', 'flexo-booking' ); ?></p>
+				<?php else : ?>
+					<p class="description"><?php esc_html_e( 'Guest emails are switched off under Settings → Features. Only the notifications to the hotel are sent.', 'flexo-booking' ); ?></p>
+				<?php endif; ?>
+
+				<h2><?php esc_html_e( 'Email log', 'flexo-booking' ); ?></h2>
+				<p><label><?php esc_html_e( 'Keep the log for', 'flexo-booking' ); ?> <input type="number" min="7" max="730" class="small-text" name="<?php echo esc_attr( $name ); ?>[email_log_days]" value="<?php echo esc_attr( $s['email_log_days'] ); ?>"> <?php esc_html_e( 'days', 'flexo-booking' ); ?></label></p>
+				<?php endif; ?>
+
+				<?php if ( 'privacy' === $tab ) : ?>
+				<table class="form-table" role="presentation">
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Consent checkbox', 'flexo-booking' ); ?></th>
+						<td>
+							<input type="hidden" name="<?php echo esc_attr( $name ); ?>[privacy_consent_required]" value="0">
+							<label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[privacy_consent_required]" value="1" <?php checked( $s['privacy_consent_required'], 1 ); ?>> <?php esc_html_e( 'Guests must tick it to book', 'flexo-booking' ); ?></label>
+							<p class="description"><?php esc_html_e( 'The box is never ticked in advance. When a guest ticks it, the booking keeps the date, time and the exact text they agreed to.', 'flexo-booking' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="fb-consent-text"><?php esc_html_e( 'Text next to the checkbox', 'flexo-booking' ); ?></label></th>
+						<td>
+							<textarea id="fb-consent-text" class="large-text" rows="2" name="<?php echo esc_attr( $name ); ?>[privacy_consent_text]"><?php echo esc_textarea( $s['privacy_consent_text'] ); ?></textarea>
+							<p class="description"><?php esc_html_e( '{privacy_policy} becomes a link to your privacy policy.', 'flexo-booking' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="fb-privacy-page"><?php esc_html_e( 'Privacy policy page', 'flexo-booking' ); ?></label></th>
+						<td>
+							<input id="fb-privacy-page" type="text" class="regular-text" name="<?php echo esc_attr( $name ); ?>[privacy_page]" value="<?php echo esc_attr( $s['privacy_page'] ); ?>" placeholder="<?php echo esc_attr( get_privacy_policy_url() ? wp_make_link_relative( get_privacy_policy_url() ) : '/privacy-policy/' ); ?>">
+							<p class="description">
+								<?php esc_html_e( 'Leave empty to use the page chosen under Settings → Privacy.', 'flexo-booking' ); ?>
+								<?php if ( ! get_privacy_policy_url() ) : ?>
+									<strong><?php esc_html_e( 'No privacy policy page is chosen there yet.', 'flexo-booking' ); ?></strong>
+								<?php endif; ?>
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="fb-retention"><?php esc_html_e( 'Remove guest details', 'flexo-booking' ); ?></label></th>
+						<td>
+							<input id="fb-retention" type="number" min="0" max="240" class="small-text" name="<?php echo esc_attr( $name ); ?>[retention_months]" value="<?php echo esc_attr( $s['retention_months'] ); ?>">
+							<?php esc_html_e( 'months after check-out (0 = never)', 'flexo-booking' ); ?>
+							<p class="description"><?php esc_html_e( 'Once a day, bookings whose check-out is older than this are anonymised: the guest\'s name, email, phone, special requests and invoice details are removed; dates, room, prices and status stay for your statistics. Personal data should not be kept longer than needed – many hotels choose 24 months, which still covers returning guests and complaints. Invoices you issued are kept in your accounting, not here. Ask your accountant or lawyer if unsure.', 'flexo-booking' ); ?></p>
+						</td>
+					</tr>
+				</table>
+				<p><?php esc_html_e( 'Guests can also ask for their data: use Tools → Export Personal Data and Tools → Erase Personal Data with the guest\'s email address. Bookings, invoice details and emails sent are included. A suggested text for your privacy policy is under Settings → Privacy → Policy Guide.', 'flexo-booking' ); ?></p>
+				<?php endif; ?>
+
+				<?php if ( 'invoices' === $tab ) : ?>
+				<p><?php esc_html_e( 'Guests can tick "I would like an invoice" and enter the details for a person or a company. The plugin only collects the details for you; issue the invoice in your accounting software as usual.', 'flexo-booking' ); ?></p>
+				<table class="form-table" role="presentation">
+					<?php foreach ( Flexo_Booking_Invoices::fields() as $flexo_field => $flexo_def ) : ?>
+						<tr>
+							<th scope="row"><label for="fb-inv-<?php echo esc_attr( $flexo_field ); ?>"><?php echo esc_html( $flexo_def['label'] ); ?></label></th>
+							<td>
+								<select id="fb-inv-<?php echo esc_attr( $flexo_field ); ?>" name="<?php echo esc_attr( $name . '[invoice_' . $flexo_field . ']' ); ?>">
+									<option value="required" <?php selected( $s[ 'invoice_' . $flexo_field ], 'required' ); ?>><?php esc_html_e( 'Required', 'flexo-booking' ); ?></option>
+									<option value="optional" <?php selected( $s[ 'invoice_' . $flexo_field ], 'optional' ); ?>><?php esc_html_e( 'Optional', 'flexo-booking' ); ?></option>
+									<option value="hidden" <?php selected( $s[ 'invoice_' . $flexo_field ], 'hidden' ); ?>><?php esc_html_e( 'Hidden', 'flexo-booking' ); ?></option>
+								</select>
+								<span class="description"><?php echo esc_html( 'company' === $flexo_def['for'] ? __( 'Company invoice', 'flexo-booking' ) : __( 'Invoice for a person', 'flexo-booking' ) ); ?></span>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+				</table>
+				<p class="description"><?php esc_html_e( 'The company ID (EIK/BULSTAT) is only checked lightly: when it is made of digits only, it must have 9 or 13 digits. Foreign company numbers and VAT numbers are not checked.', 'flexo-booking' ); ?></p>
+				<?php endif; ?>
+
+				<?php if ( 'tracking' === $tab ) : ?>
+				<p><?php esc_html_e( 'The booking form sends these events to the Google Tag Manager data layer (window.dataLayer). In Tag Manager, create a "Custom Event" trigger for each event name and connect it to your Google Analytics 4 or Meta Pixel tags. Events contain no names, emails or phone numbers.', 'flexo-booking' ); ?></p>
+				<table class="widefat striped flexo-tracking-events">
+					<thead><tr><th><?php esc_html_e( 'Event', 'flexo-booking' ); ?></th><th><?php esc_html_e( 'When', 'flexo-booking' ); ?></th><th><?php esc_html_e( 'Data', 'flexo-booking' ); ?></th></tr></thead>
+					<tbody>
+						<tr><td><code>search</code></td><td><?php esc_html_e( 'The guest searches for dates', 'flexo-booking' ); ?></td><td><code>search_term</code>, <code>check_in</code>, <code>check_out</code>, <code>nights</code>, <code>adults</code>, <code>children</code></td></tr>
+						<tr><td><code>room_select</code></td><td><?php esc_html_e( 'The guest chooses a room (and rate plan)', 'flexo-booking' ); ?></td><td><code>room</code>, <code>rate_plan</code>, <code>value</code>, <code>currency</code>, <code>ecommerce.items</code></td></tr>
+						<tr><td><code>begin_checkout</code></td><td><?php esc_html_e( 'The guest details form is shown', 'flexo-booking' ); ?></td><td><code>value</code>, <code>currency</code>, <code>ecommerce</code></td></tr>
+						<tr><td><code>booking_complete</code></td><td><?php esc_html_e( 'The booking or request was sent (once per booking)', 'flexo-booking' ); ?></td><td><code>booking_reference</code>, <code>booking_status</code>, <code>room</code>, <code>rate_plan</code>, <code>value</code>, <code>currency</code>, <code>ecommerce.transaction_id</code></td></tr>
+					</tbody>
+				</table>
+				<p class="description"><?php esc_html_e( 'Cookie and consent plugins stay in control: the events only go into the data layer, and your Tag Manager setup (with Consent Mode) decides what is sent to Google or Meta.', 'flexo-booking' ); ?></p>
+				<table class="form-table" role="presentation">
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Meta Pixel without Tag Manager', 'flexo-booking' ); ?></th>
+						<td>
+							<input type="hidden" name="<?php echo esc_attr( $name ); ?>[tracking_meta_pixel]" value="0">
+							<label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[tracking_meta_pixel]" value="1" <?php checked( $s['tracking_meta_pixel'], 1 ); ?>> <?php esc_html_e( 'Also send Search, InitiateCheckout and Purchase to the Meta Pixel directly when it is on the page', 'flexo-booking' ); ?></label>
+							<p class="description"><?php esc_html_e( 'Only for sites that add the Meta Pixel without Tag Manager. Leave it off if Tag Manager sends to Meta, or the events are counted twice. The pixel only receives events after your cookie plugin has loaded it.', 'flexo-booking' ); ?></p>
+						</td>
+					</tr>
 				</table>
 				<?php endif; ?>
 
 				<?php submit_button(); ?>
 			</form>
+			<?php
+			if ( 'emails' === $tab ) {
+				self::render_email_tools();
+			}
+			?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Test email and the email log (outside the settings form).
+	 */
+	private static function render_email_tools() {
+		$log = Flexo_Booking_Emails::log_entries( array( 'limit' => 50 ) );
+		?>
+		<div class="flexo-tools-card" id="flexo-test-email">
+			<h2><?php esc_html_e( 'Send a test email', 'flexo-booking' ); ?></h2>
+			<p><?php esc_html_e( 'Sends the "Booking confirmed" email with example details, so you can see how it looks and whether it arrives.', 'flexo-booking' ); ?></p>
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="flexo-inline-form">
+				<input type="hidden" name="action" value="flexo_booking_test_email">
+				<?php wp_nonce_field( 'flexo_booking_test_email' ); ?>
+				<input type="email" name="test_email" class="regular-text" required value="<?php echo esc_attr( wp_get_current_user()->user_email ); ?>" aria-label="<?php esc_attr_e( 'Send to', 'flexo-booking' ); ?>">
+				<?php submit_button( __( 'Send test email', 'flexo-booking' ), 'secondary', 'submit', false ); ?>
+			</form>
+		</div>
+		<div class="flexo-tools-card" id="flexo-email-log">
+			<h2><?php esc_html_e( 'Recent emails', 'flexo-booking' ); ?></h2>
+			<table class="widefat striped flexo-email-log">
+				<thead><tr>
+					<th><?php esc_html_e( 'Time', 'flexo-booking' ); ?></th>
+					<th><?php esc_html_e( 'Email', 'flexo-booking' ); ?></th>
+					<th><?php esc_html_e( 'To', 'flexo-booking' ); ?></th>
+					<th><?php esc_html_e( 'Subject', 'flexo-booking' ); ?></th>
+					<th><?php esc_html_e( 'Result', 'flexo-booking' ); ?></th>
+				</tr></thead>
+				<tbody>
+				<?php if ( ! $log ) : ?>
+					<tr><td colspan="5"><?php esc_html_e( 'No emails sent yet.', 'flexo-booking' ); ?></td></tr>
+				<?php endif; ?>
+				<?php foreach ( $log as $entry ) : ?>
+					<tr>
+						<td><?php echo esc_html( mysql2date( 'd.m.Y H:i', $entry['created_at'] ) ); ?></td>
+						<td><?php echo esc_html( Flexo_Booking_Emails::type_label( $entry['email_type'] ) ); ?></td>
+						<td><?php echo esc_html( $entry['recipient'] ); ?></td>
+						<td><?php echo esc_html( $entry['subject'] ); ?></td>
+						<td>
+							<?php if ( 'sent' === $entry['status'] ) : ?>
+								<span class="flexo-status flexo-status--confirmed">✓ <?php esc_html_e( 'Sent', 'flexo-booking' ); ?></span>
+							<?php else : ?>
+								<span class="flexo-status flexo-status--error">✕ <?php esc_html_e( 'Failed', 'flexo-booking' ); ?></span>
+								<div class="flexo-sync-error"><?php echo esc_html( (string) $entry['error'] ); ?></div>
+							<?php endif; ?>
+						</td>
+					</tr>
+				<?php endforeach; ?>
+				</tbody>
+			</table>
+			<p class="description"><?php esc_html_e( '"Sent" means your website handed the email to the mail server. If guests still don\'t receive emails, set up an SMTP plugin.', 'flexo-booking' ); ?></p>
 		</div>
 		<?php
 	}

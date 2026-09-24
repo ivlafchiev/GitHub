@@ -19,7 +19,7 @@ class Flexo_Booking_Migrations {
 
 	const OPTION       = 'flexo_booking_db_version';
 	const ERROR_OPTION = 'flexo_booking_migration_error';
-	const LATEST       = 4;
+	const LATEST       = 5;
 
 	/**
 	 * @return array Version => method name.
@@ -30,6 +30,7 @@ class Flexo_Booking_Migrations {
 			2 => 'migrate_2_day1',
 			3 => 'migrate_3_day2',
 			4 => 'migrate_4_day3',
+			5 => 'migrate_5_day4',
 		);
 	}
 
@@ -142,6 +143,22 @@ class Flexo_Booking_Migrations {
 		// plans get names in the site's language.
 		if ( ! Flexo_Booking_Rate_Plans::all() ) {
 			update_option( Flexo_Booking_Rate_Plans::PRESETS_OPTION, 1 );
+		}
+		return true;
+	}
+
+	/**
+	 * Day 4 (1.4.0): consents, invoice details, email log, guest language.
+	 * Bookings made before keep an empty language and use the site's.
+	 */
+	private static function migrate_5_day4() {
+		foreach ( array( 'consents', 'invoices', 'email_log' ) as $table ) {
+			if ( ! Flexo_Booking_Schema::table_exists( $table ) ) {
+				return new WP_Error( 'flexo_migration', $table . ' table missing' );
+			}
+		}
+		if ( ! Flexo_Booking_Schema::column_exists( 'bookings', 'anonymized_at' ) ) {
+			return new WP_Error( 'flexo_migration', 'bookings.anonymized_at column missing' );
 		}
 		return true;
 	}

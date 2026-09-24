@@ -57,13 +57,17 @@ class Flexo_Booking_Schema {
 			promo_code varchar(50) NOT NULL DEFAULT '',
 			discount_total decimal(10,2) NOT NULL DEFAULT 0,
 			tax_total decimal(10,2) NOT NULL DEFAULT 0,
+			locale varchar(20) NOT NULL DEFAULT '',
+			emails_sent varchar(190) NOT NULL DEFAULT '',
+			anonymized_at datetime NULL,
 			created_at datetime NOT NULL,
 			updated_at datetime NOT NULL,
 			PRIMARY KEY  (id),
 			UNIQUE KEY reference (reference),
 			KEY room_dates (room_id,check_in,check_out),
 			KEY status (status),
-			KEY promo (promo_id)
+			KEY promo (promo_id),
+			KEY guest_email (guest_email)
 		) {$charset};";
 
 		$tables['seasons'] = 'CREATE TABLE ' . self::table( 'seasons' ) . " (
@@ -171,6 +175,54 @@ class Flexo_Booking_Schema {
 			updated_at datetime NOT NULL,
 			PRIMARY KEY  (id),
 			UNIQUE KEY code (code)
+		) {$charset};";
+
+		// Day 4. Evidence of the privacy consent: what was shown and when.
+		// No personal data here beyond the link to the booking.
+		$tables['consents'] = 'CREATE TABLE ' . self::table( 'consents' ) . " (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			booking_id bigint(20) unsigned NOT NULL DEFAULT 0,
+			consent_type varchar(30) NOT NULL DEFAULT 'privacy',
+			granted tinyint(1) NOT NULL DEFAULT 1,
+			text_hash char(40) NOT NULL DEFAULT '',
+			consent_text text NULL,
+			locale varchar(20) NOT NULL DEFAULT '',
+			created_at datetime NOT NULL,
+			PRIMARY KEY  (id),
+			KEY booking (booking_id)
+		) {$charset};";
+
+		// Day 4. Invoice details, kept apart from the guest details.
+		$tables['invoices'] = 'CREATE TABLE ' . self::table( 'invoices' ) . " (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			booking_id bigint(20) unsigned NOT NULL,
+			invoice_type varchar(10) NOT NULL DEFAULT 'individual',
+			full_name varchar(190) NOT NULL DEFAULT '',
+			address varchar(255) NOT NULL DEFAULT '',
+			company_name varchar(190) NOT NULL DEFAULT '',
+			company_id varchar(50) NOT NULL DEFAULT '',
+			vat_number varchar(50) NOT NULL DEFAULT '',
+			company_address varchar(255) NOT NULL DEFAULT '',
+			contact_person varchar(190) NOT NULL DEFAULT '',
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			PRIMARY KEY  (id),
+			UNIQUE KEY booking (booking_id)
+		) {$charset};";
+
+		// Day 4. Every email the plugin sends; old entries are removed daily.
+		$tables['email_log'] = 'CREATE TABLE ' . self::table( 'email_log' ) . " (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			booking_id bigint(20) unsigned NOT NULL DEFAULT 0,
+			email_type varchar(40) NOT NULL DEFAULT '',
+			recipient varchar(255) NOT NULL DEFAULT '',
+			subject varchar(255) NOT NULL DEFAULT '',
+			status varchar(10) NOT NULL DEFAULT 'sent',
+			error text NULL,
+			created_at datetime NOT NULL,
+			PRIMARY KEY  (id),
+			KEY booking (booking_id),
+			KEY created (created_at)
 		) {$charset};";
 
 		return $tables;

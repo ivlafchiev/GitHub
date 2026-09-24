@@ -347,3 +347,19 @@ input.flexo-code {
 .flexo-price-line--discount .flexo-num {
 	color: #1e4620;
 }
+
+/* Day 4: invoices, emails */
+.flexo-badge--invoice { background: #fff4e0; color: #6b3e00; }
+
+.flexo-booking-emails {
+	max-width: 1200px;
+}
+
+.flexo-email-log td {
+	vertical-align: top;
+}
+
+.flexo-tracking-events {
+	max-width: 1000px;
+	margin: 12px 0;
+}

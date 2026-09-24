@@ -89,6 +89,7 @@ class Flexo_Booking_Admin {
 			'updated' => array( 'success', __( 'Booking updated.', 'flexo-booking' ) ),
 			'deleted' => array( 'success', __( 'Booking deleted.', 'flexo-booking' ) ),
 			'added'   => array( 'success', __( 'Booking added.', 'flexo-booking' ) ),
+			'anonymised' => array( 'success', __( 'The guest\'s personal data was removed from this booking.', 'flexo-booking' ) ),
 		);
 		if ( isset( $messages[ $code ] ) ) {
 			printf( '<div class="notice notice-%s is-dismissible"><p>%s</p></div>', esc_attr( $messages[ $code ][0] ), esc_html( $messages[ $code ][1] ) );
@@ -197,6 +198,7 @@ class Flexo_Booking_Admin {
 				return;
 			}
 			$conflicted = self::conflicted_bookings( $conflicts );
+			$invoices   = Flexo_Booking_Invoices::for_bookings( wp_list_pluck( $result['items'], 'id' ) );
 			?>
 
 			<form method="get" class="flexo-filters">
@@ -241,6 +243,12 @@ class Flexo_Booking_Admin {
 							<strong><a href="<?php echo esc_url( self::page_url( array( 'booking' => $b['id'] ) ) ); ?>"><?php echo esc_html( $b['reference'] ); ?></a></strong>
 							<div>
 								<?php echo self::source_badge( $b ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in source_badge(). ?>
+								<?php if ( isset( $invoices[ $b['id'] ] ) ) : ?>
+									<span class="flexo-badge flexo-badge--invoice">🧾 <?php esc_html_e( 'Invoice', 'flexo-booking' ); ?></span>
+								<?php endif; ?>
+								<?php if ( $b['anonymized_at'] ) : ?>
+									<span class="flexo-badge"><?php esc_html_e( 'Anonymised', 'flexo-booking' ); ?></span>
+								<?php endif; ?>
 								<?php if ( isset( $conflicted[ $b['id'] ] ) ) : ?>
 									<a class="flexo-badge flexo-badge--conflict" href="#flexo-conflicts">⚠ <?php esc_html_e( 'Conflict', 'flexo-booking' ); ?></a>
 								<?php endif; ?>
@@ -248,7 +256,7 @@ class Flexo_Booking_Admin {
 							<div class="flexo-muted"><?php echo esc_html( mysql2date( $format . ' H:i', $b['created_at'] ) ); ?></div>
 						</td>
 						<td>
-							<?php echo esc_html( $b['guest_name'] ? $b['guest_name'] : '—' ); ?>
+							<?php echo esc_html( $b['guest_name'] ? $b['guest_name'] : ( $b['anonymized_at'] ? __( 'Anonymised guest', 'flexo-booking' ) : '—' ) ); ?>
 							<?php if ( $b['guest_email'] ) : ?>
 								<div><a href="mailto:<?php echo esc_attr( $b['guest_email'] ); ?>"><?php echo esc_html( $b['guest_email'] ); ?></a></div>
 							<?php endif; ?>
@@ -407,12 +415,49 @@ class Flexo_Booking_Admin {
 				<div class="flexo-tools-card">
 					<h2><?php esc_html_e( 'Guest', 'flexo-booking' ); ?></h2>
 					<table class="form-table flexo-detail-table" role="presentation">
-						<tr><th><?php esc_html_e( 'Name', 'flexo-booking' ); ?></th><td><?php echo esc_html( $b['guest_name'] ? $b['guest_name'] : '—' ); ?></td></tr>
+						<tr><th><?php esc_html_e( 'Name', 'flexo-booking' ); ?></th><td><?php echo esc_html( $b['guest_name'] ? $b['guest_name'] : ( $b['anonymized_at'] ? __( 'Anonymised guest', 'flexo-booking' ) : '—' ) ); ?></td></tr>
 						<tr><th><?php esc_html_e( 'Email', 'flexo-booking' ); ?></th><td><?php echo $b['guest_email'] ? '<a href="mailto:' . esc_attr( $b['guest_email'] ) . '">' . esc_html( $b['guest_email'] ) . '</a>' : '—'; ?></td></tr>
 						<tr><th><?php esc_html_e( 'Phone', 'flexo-booking' ); ?></th><td><?php echo $b['guest_phone'] ? '<a href="tel:' . esc_attr( preg_replace( '/[^0-9+]/', '', $b['guest_phone'] ) ) . '">' . esc_html( $b['guest_phone'] ) . '</a>' : '—'; ?></td></tr>
 						<tr><th><?php esc_html_e( 'Special requests', 'flexo-booking' ); ?></th><td><?php echo esc_html( $b['notes'] ? $b['notes'] : '—' ); ?></td></tr>
+						<?php if ( $b['locale'] ) : ?>
+							<tr><th><?php esc_html_e( 'Language', 'flexo-booking' ); ?></th><td><?php echo esc_html( Flexo_Booking_I18n::language_name( $b['locale'] ) ); ?></td></tr>
+						<?php endif; ?>
+						<?php $consent = Flexo_Booking_Privacy::consent_for( $b['id'] ); ?>
+						<?php if ( $consent ) : ?>
+							<tr><th><?php esc_html_e( 'Privacy consent', 'flexo-booking' ); ?></th><td>
+								<?php
+								/* translators: %s: date and time */
+								echo esc_html( sprintf( __( 'Given on %s', 'flexo-booking' ), mysql2date( 'd.m.Y H:i', $consent['created_at'] ) ) );
+								?>
+								<div class="flexo-muted"><?php echo esc_html( '"' . $consent['consent_text'] . '"' ); ?></div>
+								<div class="flexo-muted"><?php echo esc_html( sprintf( /* translators: %s: short fingerprint of the text */ __( 'Text version %s', 'flexo-booking' ), substr( $consent['text_hash'], 0, 10 ) ) ); ?></div>
+							</td></tr>
+						<?php endif; ?>
 					</table>
+					<?php if ( $b['anonymized_at'] ) : ?>
+						<p class="flexo-muted">
+							<?php
+							/* translators: %s: date */
+							echo esc_html( sprintf( __( 'Personal data removed on %s.', 'flexo-booking' ), mysql2date( 'd.m.Y', $b['anonymized_at'] ) ) );
+							?>
+						</p>
+					<?php elseif ( Flexo_Booking_Privacy::enabled() && 'blocked' !== $b['status'] ) : ?>
+						<p><a class="button button-link-delete" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=flexo_booking_anonymise&id=' . $b['id'] ), 'flexo_booking_anonymise_' . $b['id'] ) ); ?>" onclick="return confirm('<?php echo esc_js( __( 'Remove this guest\'s name, email, phone, special requests and invoice details from the booking? Dates, room and price stay. This cannot be undone.', 'flexo-booking' ) ); ?>');"><?php esc_html_e( 'Anonymise', 'flexo-booking' ); ?></a></p>
+					<?php endif; ?>
 				</div>
+
+				<?php $invoice = Flexo_Booking_Invoices::get( $b['id'] ); ?>
+				<?php if ( $invoice ) : ?>
+				<div class="flexo-tools-card flexo-invoice-card">
+					<h2>🧾 <?php esc_html_e( 'Invoice requested', 'flexo-booking' ); ?></h2>
+					<table class="form-table flexo-detail-table" role="presentation">
+						<?php foreach ( Flexo_Booking_Invoices::rows( $invoice ) as $label => $value ) : ?>
+							<tr><th><?php echo esc_html( $label ); ?></th><td><?php echo esc_html( $value ); ?></td></tr>
+						<?php endforeach; ?>
+					</table>
+					<p class="description"><?php esc_html_e( 'Issue the invoice in your accounting software.', 'flexo-booking' ); ?></p>
+				</div>
+				<?php endif; ?>
 
 				<?php if ( 'blocked' !== $b['status'] ) : ?>
 				<div class="flexo-tools-card">
@@ -446,6 +491,24 @@ class Flexo_Booking_Admin {
 				</div>
 				<?php endif; ?>
 			</div>
+
+			<?php $emails = Flexo_Booking_Emails::log_entries( array( 'booking_id' => $b['id'], 'limit' => 20 ) ); ?>
+			<?php if ( $emails ) : ?>
+				<div class="flexo-tools-card flexo-booking-emails">
+					<h2><?php esc_html_e( 'Emails', 'flexo-booking' ); ?></h2>
+					<table class="widefat striped">
+						<tbody>
+						<?php foreach ( $emails as $entry ) : ?>
+							<tr>
+								<td><?php echo esc_html( mysql2date( 'd.m.Y H:i', $entry['created_at'] ) ); ?></td>
+								<td><?php echo esc_html( Flexo_Booking_Emails::type_label( $entry['email_type'] ) ); ?></td>
+								<td><?php echo 'sent' === $entry['status'] ? '✓ ' . esc_html__( 'Sent', 'flexo-booking' ) : '✕ ' . esc_html__( 'Failed', 'flexo-booking' ) . ' – ' . esc_html( (string) $entry['error'] ); ?></td>
+							</tr>
+						<?php endforeach; ?>
+						</tbody>
+					</table>
+				</div>
+			<?php endif; ?>
 
 			<p class="flexo-actions">
 				<?php if ( 'pending' === $b['status'] ) : ?>
@@ -735,12 +798,30 @@ class Flexo_Booking_Admin {
 		$out = fopen( 'php://output', 'w' );
 		fwrite( $out, "\xEF\xBB\xBF" ); // UTF-8 BOM so Excel shows accents and Cyrillic correctly.
 		// New columns are added at the end, so existing spreadsheets keep working.
-		fputcsv( $out, array( 'Reference', 'Status', 'Room', 'Check-in', 'Check-out', 'Nights', 'Adults', 'Children', 'Guest', 'Email', 'Phone', 'Notes', 'Total', 'Currency', 'Source', 'Created', 'Price details', 'Children ages', 'Rate plan', 'Refundable', 'Promo code', 'Discount', 'Tourist tax', 'Payable at property' ), ',', '"', '\\' );
+		fputcsv( $out, array( 'Reference', 'Status', 'Room', 'Check-in', 'Check-out', 'Nights', 'Adults', 'Children', 'Guest', 'Email', 'Phone', 'Notes', 'Total', 'Currency', 'Source', 'Created', 'Price details', 'Children ages', 'Rate plan', 'Refundable', 'Promo code', 'Discount', 'Tourist tax', 'Payable at property', 'Language', 'Privacy consent', 'Invoice', 'Invoice name / company', 'Company ID', 'VAT number', 'Invoice address', 'Contact person', 'Anonymised' ), ',', '"', '\\' );
+		$invoices = Flexo_Booking_Invoices::for_bookings( wp_list_pluck( $result['items'], 'id' ) );
 		foreach ( $result['items'] as $b ) {
 			$snapshot = Flexo_Booking_Pricing::snapshot( $b );
 			$details  = 'blocked' === $b['status'] ? '' : Flexo_Booking_Pricing::summary_text( $snapshot );
 			$plan     = empty( $snapshot['rate_plan'] ) ? null : $snapshot['rate_plan'];
 			$row      = array( $b['reference'], $b['status'], $b['room_title'], $b['check_in'], $b['check_out'], $b['nights'], $b['adults'], $b['children'], $b['guest_name'], $b['guest_email'], $b['guest_phone'], $b['notes'], $b['total'], $b['currency'], $b['source'], $b['created_at'], $details, str_replace( ',', ', ', $b['children_ages'] ), $plan ? $plan['name'] : '', $plan ? ( $plan['refundable'] ? 'yes' : 'no' ) : '', $b['promo_code'], $b['discount_total'] ? $b['discount_total'] : '', $b['tax_total'] ? $b['tax_total'] : '', empty( $snapshot['due_at_property'] ) ? '' : $snapshot['due_at_property'] );
+			$inv      = isset( $invoices[ $b['id'] ] ) ? $invoices[ $b['id'] ] : null;
+			$consent  = Flexo_Booking_Privacy::consent_for( $b['id'] );
+			$company  = $inv && 'company' === $inv['invoice_type'];
+			$row      = array_merge(
+				$row,
+				array(
+					$b['locale'],
+					$consent ? $consent['created_at'] : '',
+					$inv ? ( $company ? 'company' : 'person' ) : '',
+					$inv ? ( $company ? $inv['company_name'] : $inv['full_name'] ) : '',
+					$inv ? $inv['company_id'] : '',
+					$inv ? $inv['vat_number'] : '',
+					$inv ? ( $company ? $inv['company_address'] : $inv['address'] ) : '',
+					$inv ? $inv['contact_person'] : '',
+					$b['anonymized_at'] ? $b['anonymized_at'] : '',
+				)
+			);
 			// Prevent spreadsheet formula injection from guest-entered values.
 			$row = array_map(
 				static function ( $value ) {

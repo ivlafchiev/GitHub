@@ -537,3 +537,42 @@
 .flexo-booking .fb-summary__row > span:last-child {
 	text-align: right;
 }
+
+/* Invoice request and privacy consent (Day 4) */
+.flexo-booking .fb-extra {
+	margin-top: var(--fb-gap);
+}
+
+.flexo-booking .fb-check {
+	display: inline-flex;
+	gap: 8px;
+	align-items: center;
+	margin-right: 16px;
+	font-weight: 400;
+}
+
+.flexo-booking .fb-invoice__fields {
+	margin-top: 10px;
+	padding: 12px 14px;
+	border: 1px solid var(--fb-border);
+	border-radius: calc(var(--fb-radius) * 0.75);
+}
+
+.flexo-booking .fb-invoice__type {
+	margin: 0 0 12px;
+	padding: 0;
+	border: 0;
+}
+
+.flexo-booking .fb-consent a {
+	color: var(--fb-primary);
+}
+
+.flexo-booking .screen-reader-text {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(1px, 1px, 1px, 1px);
+	white-space: nowrap;
+}
