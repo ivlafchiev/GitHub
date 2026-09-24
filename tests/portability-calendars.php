@@ -11,7 +11,7 @@ $wpdb->query( 'DELETE FROM ' . Flexo_Booking_Schema::table( 'calendars' ) );
 Flexo_Booking_Features::set_enabled( array( 'guest_emails', 'calendar_sync' ) );
 
 t_section( 'Calendar connections in Import/Export' );
-t_eq( 3, (int) $file['schema'], 'export schema 3' );
+t_ok( (int) $file['schema'] >= 3, 'export schema 3 or later' );
 $in_file = 0;
 foreach ( $file['rooms'] as $room ) {
 	$in_file += count( $room['calendars'] );

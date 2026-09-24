@@ -50,8 +50,8 @@ t_eq( 'default', Flexo_Booking_Features::available_source(), 'nothing restricted
 t_eq( count( Flexo_Booking_Features::definitions() ), count( Flexo_Booking_Features::available_list() ), 'all ' . count( Flexo_Booking_Features::definitions() ) . ' features available' );
 t_ok( Flexo_Booking_Features::is_enabled( 'instant_booking' ) && ! Flexo_Booking_Features::is_enabled( 'booking_request' ), 'booking mode is a single choice (instant)' );
 t_ok( ! Flexo_Booking_Features::is_enabled( 'seasonal_pricing' ), 'seasonal prices off by default' );
-Flexo_Booking_Features::set_enabled( array( 'promo_codes', 'online_payment', 'deposit' ) );
-t_ok( ! Flexo_Booking_Features::is_enabled( 'promo_codes' ) && ! Flexo_Booking_Features::is_enabled( 'deposit' ), 'features not built yet cannot be switched on' );
+Flexo_Booking_Features::set_enabled( array( 'online_payment', 'bank_transfer', 'deposit' ) );
+t_ok( ! Flexo_Booking_Features::is_enabled( 'online_payment' ) && ! Flexo_Booking_Features::is_enabled( 'deposit' ), 'features not built yet cannot be switched on' );
 Flexo_Booking_Features::set_enabled( Flexo_Booking_Features::default_enabled() );
 
 $room_id = t_room( 'feature-room', 'Feature Room', array( 'price' => 100, 'capacity' => 2, 'units' => 3 ) );

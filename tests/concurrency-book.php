@@ -1,6 +1,7 @@
 <?php
 /**
- * One of two simultaneous booking attempts for the last unit (see concurrency.sh).
+ * One of two simultaneous booking attempts for the last unit (see concurrency.sh),
+ * or for the last use of a promo code in two different rooms (concurrency-promo.sh).
  * A 2-second pause inside the room lock makes the race window wide open.
  */
 add_action( 'flexo_booking_inside_lock', function () {
@@ -9,7 +10,8 @@ add_action( 'flexo_booking_inside_lock', function () {
 $start  = microtime( true );
 $result = Flexo_Booking_Bookings::create(
 	array(
-		'room'        => 'race-room',
+		'room'        => getenv( 'RACE_ROOM' ) ? getenv( 'RACE_ROOM' ) : 'race-room',
+		'promo_code'  => (string) getenv( 'RACE_PROMO' ),
 		'check_in'    => getenv( 'RACE_IN' ),
 		'check_out'   => getenv( 'RACE_OUT' ),
 		'adults'      => 1,
