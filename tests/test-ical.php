@@ -170,7 +170,7 @@ Flexo_Booking_ICal::sync_calendar( $bcal );
 $conflicts = Flexo_Booking_ICal::open_conflicts();
 t_ok( 1 === count( $conflicts ) && false !== strpos( $conflicts[0]['conflict_note'], $flexo['reference'] ), 'overlap with a Flexo booking in a full room flagged: ' . ( $conflicts ? $conflicts[0]['conflict_note'] : '' ) );
 $alerts = array_values( array_filter( $GLOBALS['flexo_mails'], function ( $m ) { return false !== strpos( $m['subject'], 'double booking' ); } ) );
-t_ok( 1 === count( $alerts ) && 'desk@hotel.test' === $alerts[0]['to'], 'alert emailed to the notification address' );
+t_ok( 1 === count( $alerts ) && array( 'desk@hotel.test' ) === (array) $alerts[0]['to'], 'alert emailed to the notification address' );
 if ( $alerts ) {
 	echo '    subject: ' . $alerts[0]['subject'] . "\n";
 	t_ok( false !== strpos( $alerts[0]['message'], 'Calendar: Booking.com' ) && false !== strpos( $alerts[0]['message'], $flexo['reference'] ) && false !== strpos( $alerts[0]['message'], Flexo_Booking_Dates::display( t_day( 61 ) ) ), 'alert names the calendar, the dates and the overlapping booking' );

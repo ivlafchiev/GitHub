@@ -13,11 +13,15 @@ not part of the plugin zip.
 | `portability-calendars.php` | Calendar connections in Import/Export (off by default, no tokens) |
 | `test-day3.php` | Children & ages, rate plans, tourist tax, promo codes, manipulated totals, REST quote, price snapshots |
 | `portability-day3.php` | Rate plans, promo codes, child prices and tax settings through Import/Export (`FLEXO_PHASE=source` on the template site, then `FLEXO_PHASE=target` on a fresh site, same `FLEXO_EXPORT` file) |
+| `test-day4.php` | Privacy consent, guest form fields, invoice requests, retention and anonymising, WordPress personal data export/erase, emails (templates, HTML/text, notifications, scheduled reminders and review requests, log, test email, SMTP check), Import/Export of the new settings |
+| `test-i18n.php` | Site in Bulgarian: Bulgarian texts and plurals, emails in the guest's language, hotel emails in the site language, dates per language. `run.sh` switches the site to `bg_BG` for it and installs `fixtures/empty.mo` as a stand-in for the Bulgarian WordPress language pack. |
+| `polylang-test.php` | Needs Polylang active (`FLEXO_PHASE=setup` once, then `wp rewrite flush`, then run with `BASE=<site url>`): pages, texts, consent/thank-you pages and emails per language, Polylang string translation |
 | `concurrency-promo.sh` | Two instant bookings in different rooms race for a promo code's last use; exactly one gets it |
 | `concurrency.sh` + `concurrency-book.php` | Two processes book the last unit at the same moment; exactly one succeeds |
 | `upgrade-fixture.php` / `upgrade-verify.php` | Data created on 1.0.0 survives the upgrade |
 | `portability-*.php` | Export from a template site and import into a fresh site (including seasons, closed dates and features) |
 | `e2e/day1.js` + `e2e/seed-day1.php` | Browser flow (Playwright): guest booking with seasons, admin screens, Agency, CSV, Elementor |
+| `e2e/day4.js` + `e2e/seed-day4.php` | Consent, invoice request, dataLayer events (values, no personal data, once, redirect), Meta Pixel option, admin booking page, CSV, anonymise, emails screen, phone width, features off. Needs `WP` (the wp-cli command for the site) and `MAIL_LOG` (`wp-content/mail.log`). |
 | `e2e/day3.js` + `e2e/seed-day3.php` | Guest flow with children's ages, rate plan choice, promo code and tourist tax (desktop and phone), price-changed recovery, admin screens, features off. The seed prints `D0`. |
 | `e2e/day2.js` + `e2e/seed-day2.php` | Admin calendar, Calendar Sync screen, conflicts, phone width. The seed writes real `.ics` files to `<site>/feeds/` and adds a test-only mu-plugin allowing localhost fetches. |
 
@@ -40,6 +44,6 @@ with the same `FLEXO_FIXTURE`.
 
 Browser tests: serve the site (`php -S localhost:8092 -t /tmp/site router.php`),
 run the seed (`wp eval-file tests/e2e/seed-day1.php`, or `seed-day2.php` /
-`seed-day3.php`, which print `D0`), then
-`BASE=http://localhost:8092 D0=<D0> node tests/e2e/day1.js` (or `day2.js`, `day3.js`).
+`seed-day3.php` / `seed-day4.php`, which print `D0`), then
+`BASE=http://localhost:8092 D0=<D0> node tests/e2e/day1.js` (or `day2.js`, `day3.js`, `day4.js`).
 Re-seed before every run.

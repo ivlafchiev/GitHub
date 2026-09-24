@@ -99,7 +99,8 @@ t_ok( ! in_array( 'noemail@example.com', $to, true ) && 1 === count( $to ), 'gue
 Flexo_Booking_Features::set_enabled( array( 'guest_emails', 'seasonal_pricing' ) );
 $GLOBALS['flexo_mails'] = array();
 Flexo_Booking_Bookings::update_status( $b['id'], 'cancelled' );
-t_eq( 1, count( $GLOBALS['flexo_mails'] ), 'guest emails on again: cancellation email sent' );
+$to = wp_list_pluck( $GLOBALS['flexo_mails'], 'to' );
+t_ok( in_array( 'noemail@example.com', $to, true ) || in_array( array( 'noemail@example.com' ), $to, true ), 'guest emails on again: cancellation email sent to the guest' );
 $settings_before = get_option( Flexo_Booking_Settings::OPTION );
 Flexo_Booking_Features::set_enabled( array() );
 t_eq( $settings_before, get_option( Flexo_Booking_Settings::OPTION ), 'switching features off leaves settings untouched' );

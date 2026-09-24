@@ -65,13 +65,12 @@ $r = Flexo_Booking_Bookings::search( $in, $out, 3, 0, 'family-room' );
 t_ok( $r['rooms'][0]['available'], '"max adults" is not applied while the feature is off' );
 $b = Flexo_Booking_Bookings::create( array_merge( $g, array( 'room' => 'family-room', 'check_in' => $in, 'check_out' => $out, 'adults' => 2, 'children' => 1, 'children_ages' => '5' ) ) );
 t_ok( is_array( $b ) && 1 === $b['children'] && '' === $b['children_ages'], 'booking keeps the children count, ages ignored' );
-$config = null;
 Flexo_Booking_Frontend::register_assets();
-$config = wp_scripts()->get_data( 'flexo-booking', 'data' );
-t_ok( false !== strpos( $config, '"children":""' ), 'booking form is told not to ask ages' );
 ob_start();
 echo Flexo_Booking_Frontend::render( array() ); // phpcs:ignore
-$html = ob_get_clean();
+$html   = ob_get_clean();
+$config = wp_scripts()->get_data( 'flexo-booking', 'data' );
+t_ok( false !== strpos( $config, '"children":""' ), 'booking form is told not to ask ages' );
 t_ok( false === strpos( $html, 'data-fb-ages' ) && false !== strpos( $html, 'name="children"' ), 'form shows the adults/children counts as before, no age fields' );
 t_reset_inventory();
 
