@@ -5,6 +5,8 @@
  * avoid the other tests' bookings.
  */
 require __DIR__ . '/lib.php';
+// Many REST bookings in a row from the same (CLI) address: no rate limit here.
+add_filter( 'flexo_booking_rate_limit', '__return_zero' );
 
 global $wpdb;
 t_reset_inventory();

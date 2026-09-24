@@ -106,7 +106,8 @@ const menu = ( p ) => p.$$eval( '#toplevel_page_flexo-booking .wp-submenu a', ( 
 
 	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-settings&tab=features' );
 	await admin.screenshot( { path: SHOTS + '/d1-features.png', fullPage: true } );
-	ok( ( await admin.content() ).includes( 'Coming soon' ), 'later features shown as Coming soon' );
+	// Since 1.5.0 every feature is built: none is shown as "Coming soon".
+	ok( ! ( await admin.content() ).includes( 'Coming soon' ) && ( await admin.content() ).includes( 'value="online_payment"' ), 'all features can be switched on (payments included)' );
 	await admin.uncheck( 'input[name="features[]"][value=seasonal_pricing]' );
 	await Promise.all( [ admin.waitForNavigation(), admin.click( '#submit' ) ] );
 	items = await menu( admin );

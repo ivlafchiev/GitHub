@@ -39,6 +39,9 @@ add_filter( 'pre_wp_mail', function ( $null, $atts ) {
 }, 10, 2 );
 PHP
 
+# Stripe calls can be pointed at the local mock (tests/stripe-mock/server.php).
+cp "$(dirname "$0")/fixtures/stripe-mock-mu.php" "$SITE/wp-content/mu-plugins/stripe-mock.php"
+
 WP="php $WPCLI --allow-root --path=$SITE"
 $WP core install --url="$URL" --title="Flexo Test" --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email >/dev/null
 $WP option update siteurl "$URL" >/dev/null

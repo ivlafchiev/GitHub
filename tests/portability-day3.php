@@ -36,7 +36,7 @@ if ( 'source' === getenv( 'FLEXO_PHASE' ) ) {
 	$data = Flexo_Booking_Portability::export();
 	file_put_contents( $file, wp_json_encode( $data ) );
 	t_section( 'Export' );
-	t_eq( 4, $data['schema'], 'schema 4' );
+	t_ok( $data['schema'] >= 4, 'schema 4 or later' );
 	t_eq( 3, count( $data['rate_plans'] ), 'three rate plans' );
 	t_eq( 2, count( $data['promo_codes'] ), 'two promo codes' );
 	t_ok( false === strpos( wp_json_encode( $data['promo_codes'] ), 'uses"' ) || ! isset( $data['promo_codes'][0]['uses'] ), 'no usage counts in the file' );

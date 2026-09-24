@@ -17,7 +17,11 @@ not part of the plugin zip.
 | `test-i18n.php` | Site in Bulgarian: Bulgarian texts and plurals, emails in the guest's language, hotel emails in the site language, dates per language. `run.sh` switches the site to `bg_BG` for it and installs `fixtures/empty.mo` as a stand-in for the Bulgarian WordPress language pack. |
 | `polylang-test.php` | Needs Polylang active (`FLEXO_PHASE=setup` once, then `wp rewrite flush`, then run with `BASE=<site url>`): pages, texts, consent/thank-you pages and emails per language, Polylang string translation |
 | `concurrency-promo.sh` | Two instant bookings in different rooms race for a promo code's last use; exactly one gets it |
-| `concurrency.sh` + `concurrency-book.php` | Two processes book the last unit at the same moment; exactly one succeeds |
+| `concurrency.sh` + `concurrency-book.php` | Two processes book the last unit at the same moment; exactly one succeeds. With `RACE_PAY=1` both start a card payment: only one gets the hold (`run.sh` runs both) |
+| `test-day5.php` | Payments: modes and amounts (deposit % / fixed, tourist tax), card payment full and deposit (Stripe's API faked with `pre_http_request`), webhook signatures (tampered, wrong secret, replay, forged, missing, other mode), idempotency, too-small payments, declined + expired, abandoned hold released, late payment (room free / taken → conflict, alert, no overbooking), room lock busy, refunds (Stripe partial/full, manual), retry, Stripe unreachable, bank transfer (instant, deposit, reminder, auto-cancel), requests (accept → payment details), card blocked with requests, pay at the property, no payments, manipulated amounts, admin card/badges, emails, settings screen, Import/Export without secrets |
+| `portability-full.php` | Every feature configured on a template, imported into a fresh site: same totals, tax, discount and deposit; no Stripe keys, webhook secrets, bank account or notification email copied (`FLEXO_PHASE=source` / `target`, same `FLEXO_EXPORT`) |
+| `stripe-mock/server.php` | Local stand-in for Stripe (`php -S localhost:12111 tests/stripe-mock/server.php`): Checkout Session API, a hosted payment page (Pay / declined card / Back), signed webhooks to the site, `/_control/expire/{session}` and `/_control/refund/{session}`. State in `STRIPE_MOCK_DIR`. Test sites point Stripe at it with the `stripe-mock.php` mu-plugin and the option `flexo_test_stripe_api`. |
+| `e2e/day5.js` + `e2e/seed-day5.php` | Card deposit through the mock Stripe page and webhook, cancel + pay again, declined card then expiry, bank transfer on a phone (details, copy buttons, sticky total), layout at 360/390/414/768/1024/1280 px (centring, no horizontal scroll, 44 px tap targets, desktop unchanged), request mode, minimal package (only booking requests), admin payments (list, booking page, *Payment received*, *Confirm & ask for payment*, calendar, settings, CSV). Needs `WP`, `MOCK` and the seed run with `STRIPE_MOCK` and `STRIPE_MOCK_DIR`. |
 | `upgrade-fixture.php` / `upgrade-verify.php` | Data created on 1.0.0 survives the upgrade |
 | `portability-*.php` | Export from a template site and import into a fresh site (including seasons, closed dates and features) |
 | `e2e/day1.js` + `e2e/seed-day1.php` | Browser flow (Playwright): guest booking with seasons, admin screens, Agency, CSV, Elementor |
@@ -44,6 +48,7 @@ with the same `FLEXO_FIXTURE`.
 
 Browser tests: serve the site (`php -S localhost:8092 -t /tmp/site router.php`),
 run the seed (`wp eval-file tests/e2e/seed-day1.php`, or `seed-day2.php` /
-`seed-day3.php` / `seed-day4.php`, which print `D0`), then
-`BASE=http://localhost:8092 D0=<D0> node tests/e2e/day1.js` (or `day2.js`, `day3.js`, `day4.js`).
+`seed-day3.php` / `seed-day4.php` / `seed-day5.php`, which print `D0`), then
+`BASE=http://localhost:8092 D0=<D0> node tests/e2e/day1.js` (or `day2.js` … `day5.js`).
+For Day 5, start the Stripe stand-in first and pass its address: `STRIPE_MOCK=http://localhost:12111 STRIPE_MOCK_DIR=/tmp/stripe-mock wp eval-file tests/e2e/seed-day5.php`, then `MOCK=http://localhost:12111 WP="wp --path=<site>" … node tests/e2e/day5.js`.
 Re-seed before every run.

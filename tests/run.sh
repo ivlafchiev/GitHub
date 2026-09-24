@@ -25,7 +25,7 @@ LANGDIR="$SITE/wp-content/languages"
 mkdir -p "$LANGDIR"
 [ -f "$LANGDIR/bg_BG.mo" ] || cp "$DIR/fixtures/empty.mo" "$LANGDIR/bg_BG.mo"
 
-for t in test-pricing-parity test-seasons test-features test-regression test-ical test-day3 test-day4; do
+for t in test-pricing-parity test-seasons test-features test-regression test-ical test-day3 test-day4 test-day5; do
 	run "$t" $WP eval-file "$DIR/$t.php"
 done
 $WP option update WPLANG bg_BG >/dev/null 2>&1
@@ -33,6 +33,7 @@ run "test-i18n (site in Bulgarian)" $WP eval-file "$DIR/test-i18n.php"
 $WP option update WPLANG '' >/dev/null 2>&1
 run "test-features (wp-config constants)" env FLEXO_CONST_TEST=1 $WP --exec="define('FLEXO_BOOKING_FEATURES','booking_request,seasonal_pricing,guest_emails'); define('FLEXO_BOOKING_AGENCY_USERS','support, agency-test@flexohotels.test');" eval-file "$DIR/test-features.php"
 run "concurrency" "$DIR/concurrency.sh" "$SITE"
+run "concurrency (payment hold)" env RACE_PAY=1 "$DIR/concurrency.sh" "$SITE"
 run "concurrency (promo code limit)" "$DIR/concurrency-promo.sh" "$SITE"
 
 [ "$FAILED" = "0" ] && echo "ALL PASSED" || { echo "SOME TESTS FAILED"; exit 1; }

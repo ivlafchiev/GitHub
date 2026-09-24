@@ -18,6 +18,8 @@ $result = Flexo_Booking_Bookings::create(
 		'guest_name'  => 'Racer ' . getenv( 'RACER' ),
 		'guest_email' => 'racer@example.com',
 		'guest_phone' => '1',
+		// RACE_PAY: both guests start a card payment (a hold on the room).
+		'payment_method' => getenv( 'RACE_PAY' ) ? 'stripe' : '',
 	)
 );
 printf( "\nracer %s: %s after %.1fs\n", getenv( 'RACER' ), is_wp_error( $result ) ? 'REJECTED (' . $result->get_error_code() . ')' : 'BOOKED ' . $result['reference'], microtime( true ) - $start );
