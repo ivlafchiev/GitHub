@@ -3,7 +3,7 @@
  * Plugin Name:       Flexo Booking
  * Plugin URI:        https://github.com/ivlafchiev/GitHub
  * Description:       Room & accommodation booking system for FlexoHotels websites. Works with any theme via the [flexo_booking] shortcode and ships a native Elementor widget. Settings and rooms can be exported/imported between sites.
- * Version:           1.4.0
+ * Version:           1.5.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            FlexoHotels
@@ -18,8 +18,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'FLEXO_BOOKING_VERSION', '1.4.0' );
-define( 'FLEXO_BOOKING_DB_VERSION', '5' ); // Kept for compatibility; see Flexo_Booking_Migrations::LATEST.
+define( 'FLEXO_BOOKING_VERSION', '1.5.0' );
+define( 'FLEXO_BOOKING_DB_VERSION', '6' ); // Kept for compatibility; see Flexo_Booking_Migrations::LATEST.
 define( 'FLEXO_BOOKING_FILE', __FILE__ );
 define( 'FLEXO_BOOKING_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FLEXO_BOOKING_URL', plugin_dir_url( __FILE__ ) );
@@ -44,6 +44,10 @@ require_once FLEXO_BOOKING_DIR . 'includes/class-i18n.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-invoices.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-privacy.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-tracking.php';
+require_once FLEXO_BOOKING_DIR . 'includes/payments/interface-gateway.php';
+require_once FLEXO_BOOKING_DIR . 'includes/payments/class-gateway-stripe.php';
+require_once FLEXO_BOOKING_DIR . 'includes/payments/class-gateway-bank-transfer.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-payments.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-pricing.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-bookings.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-emails.php';
@@ -56,6 +60,7 @@ require_once FLEXO_BOOKING_DIR . 'includes/admin/class-calendar-admin.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-sync-admin.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-rate-plans-admin.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-promo-codes-admin.php';
+require_once FLEXO_BOOKING_DIR . 'includes/admin/class-payments-admin.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-portability.php';
 require_once FLEXO_BOOKING_DIR . 'includes/elementor/class-elementor.php';
 
@@ -69,6 +74,7 @@ add_action(
 		Flexo_Booking_Install::maybe_upgrade();
 		Flexo_Booking_Rooms::init();
 		Flexo_Booking_Emails::init();
+		Flexo_Booking_Payments::init();
 		Flexo_Booking_Privacy::init();
 		Flexo_Booking_I18n::init();
 		Flexo_Booking_Tracking::init();
@@ -89,6 +95,7 @@ add_action(
 			Flexo_Booking_Sync_Admin::init();
 			Flexo_Booking_Rate_Plans_Admin::init();
 			Flexo_Booking_Promo_Codes_Admin::init();
+			Flexo_Booking_Payments_Admin::init();
 			Flexo_Booking_Portability::init();
 		}
 	}

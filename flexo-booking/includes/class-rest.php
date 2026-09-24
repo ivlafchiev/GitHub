@@ -175,10 +175,134 @@ class Flexo_Booking_Rest {
 							'type'    => array( 'number', 'null' ),
 							'default' => null,
 						),
+						// "stripe" or "bank_transfer" when payments are on. Amounts are never read from the request.
+						'payment_method' => array(
+							'type'    => 'string',
+							'default' => '',
+						),
+						// Page to come back to after paying by card (same website only).
+						'return_url'     => array(
+							'type'    => 'string',
+							'default' => '',
+						),
 					)
 				),
 			)
 		);
+
+		$payment_args = array(
+			'reference' => array(
+				'type'     => 'string',
+				'required' => true,
+			),
+			'key'       => array(
+				'type'     => 'string',
+				'required' => true,
+			),
+			'locale'    => array(
+				'type'    => 'string',
+				'default' => '',
+			),
+		);
+
+		// Payment state of a booking, for the page the guest returns to.
+		register_rest_route(
+			self::NAMESPACE_V1,
+			'/payment',
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( __CLASS__, 'payment_status' ),
+				'permission_callback' => '__return_true',
+				'args'                => $payment_args,
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE_V1,
+			'/payment/retry',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( __CLASS__, 'payment_retry' ),
+				'permission_callback' => '__return_true',
+				'args'                => array_merge(
+					$payment_args,
+					array(
+						'return_url' => array(
+							'type'    => 'string',
+							'default' => '',
+						),
+					)
+				),
+			)
+		);
+
+		// Stripe webhooks: authenticated by their signature.
+		register_rest_route(
+			self::NAMESPACE_V1,
+			'/stripe-webhook',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( __CLASS__, 'stripe_webhook' ),
+				'permission_callback' => '__return_true',
+			)
+		);
+	}
+
+	public static function stripe_webhook( WP_REST_Request $request ) {
+		$gateway = Flexo_Booking_Payments::gateway( 'stripe' );
+		if ( ! $gateway instanceof Flexo_Booking_Gateway_Stripe ) {
+			return new WP_REST_Response( array( 'error' => 'Not available' ), 404 );
+		}
+		return $gateway->handle_webhook( $request );
+	}
+
+	/**
+	 * The booking a guest may see: reference plus the access key they got.
+	 *
+	 * @return array|WP_Error
+	 */
+	private static function guest_booking( WP_REST_Request $request ) {
+		$booking = Flexo_Booking_Bookings::get_by_reference( sanitize_text_field( $request['reference'] ) );
+		if ( ! Flexo_Booking_Payments::check_key( $booking, $request['key'] ) ) {
+			return new WP_Error( 'flexo_not_found', __( 'Booking not found.', 'flexo-booking' ), array( 'status' => 404 ) );
+		}
+		return $booking;
+	}
+
+	public static function payment_status( WP_REST_Request $request ) {
+		self::use_locale( $request );
+		$booking = self::guest_booking( $request );
+		if ( is_wp_error( $booking ) ) {
+			return $booking;
+		}
+		// A hold whose time is up is released now, not only by WP-Cron.
+		if ( Flexo_Booking_Bookings::HOLD_STATUS === $booking['status'] && ! Flexo_Booking_Inventory::is_occupying( $booking ) ) {
+			Flexo_Booking_Payments::expire_hold( $booking['id'] );
+			$booking = Flexo_Booking_Bookings::get( $booking['id'] );
+		}
+		$view = Flexo_Booking_Payments::guest_view( $booking );
+		if ( 'confirmed' === $view['state'] ) {
+			$redirect = Flexo_Booking_I18n::page_url( Flexo_Booking_Settings::site_url_setting( 'thank_you_url' ), $booking['locale'] );
+			$view['redirect'] = $redirect ? add_query_arg( 'booking', rawurlencode( $booking['reference'] ), $redirect ) : '';
+			$view['quote']    = Flexo_Booking_Pricing::public_view( Flexo_Booking_Pricing::snapshot( $booking ) );
+		}
+		$response = rest_ensure_response( $view );
+		$response->header( 'Cache-Control', 'no-store' );
+		return $response;
+	}
+
+	public static function payment_retry( WP_REST_Request $request ) {
+		self::use_locale( $request );
+		$booking = self::guest_booking( $request );
+		if ( is_wp_error( $booking ) ) {
+			return $booking;
+		}
+		$result = Flexo_Booking_Payments::retry( $booking, $request['return_url'] );
+		if ( is_wp_error( $result ) ) {
+			$result->add_data( array( 'status' => 'flexo_unavailable' === $result->get_error_code() ? 409 : 400 ) );
+			return $result;
+		}
+		return rest_ensure_response( $result );
 	}
 
 	/**
@@ -335,6 +459,7 @@ class Flexo_Booking_Rest {
 				'rate_plan'      => $request['rate_plan'],
 				'promo_code'     => $request['promo_code'],
 				'expected_total' => $request['expected_total'],
+				'payment_method' => $request['payment_method'],
 				'privacy_consent' => $request['privacy_consent'],
 				'invoice'        => $request['invoice'],
 				'locale'         => $locale,
@@ -355,10 +480,20 @@ class Flexo_Booking_Rest {
 			return $booking;
 		}
 
+		// Card: open Stripe's payment page. Bank transfer: the payment details.
+		$payment = Flexo_Booking_Payments::start( $booking, $booking['access_token'], $request['return_url'] );
+		if ( is_wp_error( $payment ) ) {
+			$payment->add_data( array( 'status' => 502 ) );
+			return $payment;
+		}
+
 		$confirmed = 'confirmed' === $booking['status'];
 		$redirect  = Flexo_Booking_I18n::page_url( Flexo_Booking_Settings::site_url_setting( 'thank_you_url' ), $booking['locale'] );
-		if ( $redirect ) {
+		// Bank details are shown in the form, so the guest stays on the page.
+		if ( $redirect && ! $payment ) {
 			$redirect = add_query_arg( 'booking', rawurlencode( $booking['reference'] ), $redirect );
+		} else {
+			$redirect = '';
 		}
 
 		$response = new WP_REST_Response(
@@ -372,10 +507,12 @@ class Flexo_Booking_Rest {
 				'total_formatted' => Flexo_Booking_Money::format( $booking['total'], $booking['currency'] ),
 				'breakdown'       => Flexo_Booking_Pricing::format_lines( Flexo_Booking_Pricing::snapshot( $booking ) ),
 				'quote'           => Flexo_Booking_Pricing::public_view( Flexo_Booking_Pricing::snapshot( $booking ) ),
-				'message'         => $confirmed
+				'message'         => $payment ? $payment['message'] : ( $confirmed
 					? __( 'Your booking is confirmed! A confirmation has been sent to your email.', 'flexo-booking' )
-					: __( 'Thank you! We received your booking request and will confirm it shortly by email.', 'flexo-booking' ),
+					: __( 'Thank you! We received your booking request and will confirm it shortly by email.', 'flexo-booking' ) ),
 				'redirect'        => $redirect,
+				// Payment details (bank transfer) or the payment page to go to (card).
+				'payment'         => $payment ? array_merge( $payment, array( 'key' => $booking['access_token'] ) ) : null,
 			),
 			201
 		);

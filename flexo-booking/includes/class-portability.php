@@ -28,10 +28,15 @@ class Flexo_Booking_Portability {
 		$settings = Flexo_Booking_Settings::all();
 		// Site-specific: the importing site falls back to its own admin email.
 		$settings['notification_email'] = '';
+		// The hotel's bank account is never copied to another website. Stripe
+		// keys live in their own option and are never exported either.
+		foreach ( self::site_specific_payment_settings() as $key ) {
+			$settings[ $key ] = '';
+		}
 
 		$data = array(
 			'format'      => self::FORMAT,
-			'schema'      => 4,
+			'schema'      => 5,
 			'version'     => FLEXO_BOOKING_VERSION,
 			'exported_at' => gmdate( 'c' ),
 			'source'      => home_url(),
@@ -156,14 +161,29 @@ class Flexo_Booking_Portability {
 				if ( ! isset( $slugs[ $booking['room_id'] ] ) ) {
 					continue;
 				}
+				$booking_id      = $booking['id'];
 				$booking['room'] = $slugs[ $booking['room_id'] ];
 				// Plan and code IDs are site-specific; the import maps them by name and code.
 				unset( $booking['id'], $booking['room_id'], $booking['room_title'], $booking['rate_plan_id'], $booking['promo_id'] );
+				// Guest links and open payment pages don't move to another site.
+				unset( $booking['access_key'], $booking['payment_session'], $booking['hold_expires_at'], $booking['access_token'] );
+				$booking['payments'] = array();
+				foreach ( Flexo_Booking_Payments::history( $booking_id ) as $payment ) {
+					unset( $payment['id'], $payment['booking_id'], $payment['created_by'] );
+					$booking['payments'][] = $payment;
+				}
 				$data['bookings'][] = $booking;
 			}
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Payment settings that belong to one website: the bank account.
+	 */
+	private static function site_specific_payment_settings() {
+		return array( 'bank_beneficiary', 'bank_iban', 'bank_bic', 'bank_name' );
 	}
 
 	/**
@@ -228,6 +248,11 @@ class Flexo_Booking_Portability {
 			$incoming = $data['settings'];
 			if ( empty( $incoming['notification_email'] ) ) {
 				$incoming['notification_email'] = $current['notification_email'];
+			}
+			foreach ( self::site_specific_payment_settings() as $key ) {
+				if ( empty( $incoming[ $key ] ) ) {
+					$incoming[ $key ] = $current[ $key ];
+				}
 			}
 			update_option( Flexo_Booking_Settings::OPTION, Flexo_Booking_Settings::sanitize( array_merge( $current, $incoming ) ) );
 			$stats['settings'] = 1;
@@ -411,7 +436,7 @@ class Flexo_Booking_Portability {
 
 		$count    = 0;
 		$room_ids = array();
-		$allowed  = array( 'reference', 'check_in', 'check_out', 'nights', 'adults', 'children', 'children_ages', 'promo_code', 'discount_total', 'tax_total', 'guest_name', 'guest_email', 'guest_phone', 'notes', 'total', 'currency', 'status', 'source', 'created_at', 'updated_at' );
+		$allowed  = array( 'reference', 'check_in', 'check_out', 'nights', 'adults', 'children', 'children_ages', 'promo_code', 'discount_total', 'tax_total', 'guest_name', 'guest_email', 'guest_phone', 'notes', 'total', 'currency', 'status', 'source', 'created_at', 'updated_at', 'locale', 'payment_method', 'payment_status', 'amount_due', 'amount_paid', 'amount_refunded', 'payment_due_at', 'payment_conflict' );
 
 		foreach ( $bookings as $booking ) {
 			if ( empty( $booking['reference'] ) || empty( $booking['room'] ) || Flexo_Booking_Bookings::get_by_reference( $booking['reference'] ) ) {
@@ -453,9 +478,36 @@ class Flexo_Booking_Portability {
 			if ( ! array_key_exists( $row['status'] ?? '', Flexo_Booking_Bookings::statuses() ) ) {
 				$row['status'] = 'pending';
 			}
+			// A card payment still in progress can't continue on the new site.
+			if ( Flexo_Booking_Bookings::HOLD_STATUS === $row['status'] ) {
+				$row['status'] = 'expired';
+			}
+			if ( empty( $row['payment_due_at'] ) ) {
+				unset( $row['payment_due_at'] );
+			}
 
 			if ( $wpdb->insert( Flexo_Booking_Install::table(), $row ) ) {
 				++$count;
+				$booking_id = (int) $wpdb->insert_id;
+				foreach ( isset( $booking['payments'] ) && is_array( $booking['payments'] ) ? $booking['payments'] : array() as $payment ) {
+					if ( ! is_array( $payment ) ) {
+						continue;
+					}
+					$wpdb->insert(
+						Flexo_Booking_Payments::table(),
+						array(
+							'booking_id'     => $booking_id,
+							'gateway'        => sanitize_key( $payment['gateway'] ?? '' ),
+							'type'           => in_array( $payment['type'] ?? '', array( 'payment', 'refund', 'attempt' ), true ) ? $payment['type'] : 'payment',
+							'status'         => sanitize_key( $payment['status'] ?? 'succeeded' ),
+							'amount'         => round( (float) ( $payment['amount'] ?? 0 ), 2 ),
+							'currency'       => sanitize_text_field( $payment['currency'] ?? '' ),
+							'transaction_id' => sanitize_text_field( $payment['transaction_id'] ?? '' ),
+							'note'           => sanitize_text_field( $payment['note'] ?? '' ),
+							'created_at'     => sanitize_text_field( $payment['created_at'] ?? current_time( 'mysql' ) ),
+						)
+					);
+				}
 			}
 		}
 
@@ -595,6 +647,7 @@ class Flexo_Booking_Portability {
 			<div class="flexo-tools-card">
 				<h2><?php esc_html_e( 'Export', 'flexo-booking' ); ?></h2>
 				<p><?php esc_html_e( 'Download a JSON file with all booking settings and rooms.', 'flexo-booking' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Not included: the notification email address, Stripe keys and secrets, and your bank account details. Enter these on each website.', 'flexo-booking' ); ?></p>
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<input type="hidden" name="action" value="flexo_booking_export">
 					<?php wp_nonce_field( 'flexo_booking_export' ); ?>

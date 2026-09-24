@@ -576,3 +576,397 @@
 	clip: rect(1px, 1px, 1px, 1px);
 	white-space: nowrap;
 }
+
+/* Payments (Day 5) */
+.flexo-booking .fb-payment {
+	margin: 0 0 var(--fb-gap);
+	padding: 0;
+	border: 0;
+	min-width: 0;
+}
+
+.flexo-booking .fb-payment__title {
+	margin: 0 0 8px;
+	padding: 0;
+	font-weight: 600;
+}
+
+.flexo-booking .fb-choice {
+	display: flex;
+	gap: 10px;
+	align-items: flex-start;
+	min-height: 48px;
+	margin: 0 0 8px;
+	padding: 12px 14px;
+	font-weight: 400;
+	border: 1px solid var(--fb-border);
+	border-radius: calc(var(--fb-radius) * 0.75);
+	cursor: pointer;
+}
+
+.flexo-booking .fb-choice:has(input:checked) {
+	border-color: var(--fb-primary);
+	background: color-mix(in srgb, var(--fb-primary) 6%, transparent);
+}
+
+.flexo-booking .fb-choice input {
+	width: 20px;
+	height: 20px;
+	margin: 1px 0 0;
+	flex: 0 0 auto;
+	accent-color: var(--fb-primary);
+}
+
+.flexo-booking .fb-choice__text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.flexo-booking .fb-choice__text small {
+	color: var(--fb-muted);
+	font-size: 0.875em;
+}
+
+.flexo-booking .fb-summary__paynow {
+	font-weight: 700;
+}
+
+.flexo-booking .fb-summary__paynow > span:last-child {
+	white-space: nowrap;
+}
+
+/* The total next to the buttons is only shown on phones (see below). */
+.flexo-booking .fb-actions__total {
+	display: none;
+}
+
+.flexo-booking .fb-success__message.is-error {
+	color: var(--fb-error);
+}
+
+.flexo-booking .fb-success__message--pending::before {
+	content: "";
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	margin-right: 8px;
+	vertical-align: -2px;
+	border: 2px solid currentColor;
+	border-right-color: transparent;
+	border-radius: 50%;
+	animation: fb-spin 0.8s linear infinite;
+}
+
+@keyframes fb-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.flexo-booking .fb-success__message--pending::before {
+		animation: none;
+	}
+}
+
+.flexo-booking .fb-success__amounts {
+	margin: 8px 0;
+}
+
+.flexo-booking .fb-bank {
+	margin-top: var(--fb-gap);
+	padding: 14px 16px;
+	background: var(--fb-field-bg);
+	border: 1px solid var(--fb-border);
+	border-radius: calc(var(--fb-radius) * 0.75);
+}
+
+.flexo-booking .fb-bank__title {
+	margin: 0 0 10px;
+	font-family: var(--fb-heading-font);
+}
+
+.flexo-booking .fb-bank__list {
+	margin: 0;
+}
+
+.flexo-booking .fb-bank__row {
+	display: grid;
+	grid-template-columns: minmax(110px, 38%) 1fr;
+	gap: 4px 12px;
+	padding: 6px 0;
+	border-top: 1px solid var(--fb-border);
+}
+
+.flexo-booking .fb-bank__row:first-child {
+	border-top: 0;
+}
+
+.flexo-booking .fb-bank__row dt {
+	color: var(--fb-muted);
+}
+
+.flexo-booking .fb-bank__row dd {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px 12px;
+	margin: 0;
+	font-weight: 600;
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.flexo-booking .fb-bank__copy {
+	font-weight: 400;
+}
+
+.flexo-booking .fb-bank__note {
+	margin: 10px 0 0;
+	font-size: 0.875em;
+	color: var(--fb-muted);
+}
+
+.flexo-booking .fb-actions--result {
+	justify-content: flex-start;
+}
+
+/*
+ * Tablets and phones (up to 1024px): the guest flow is centred – container,
+ * headings, room cards, prices, rate plans, the summary box, promo code,
+ * buttons, results, confirmation and payment details. Text in fields and
+ * longer texts stay left-aligned, labels stay above their fields. Desktop
+ * keeps its layout.
+ */
+@media (max-width: 1024px) {
+	.flexo-booking {
+		margin-left: auto;
+		margin-right: auto;
+		overflow-wrap: break-word;
+	}
+
+	.flexo-booking--full {
+		max-width: 760px;
+	}
+
+	.flexo-booking .fb-title,
+	.flexo-booking .fb-step-title,
+	.flexo-booking .fb-selected-room,
+	.flexo-booking .fb-plans__title,
+	.flexo-booking .fb-bank__title,
+	.flexo-booking .fb-payment__title,
+	.flexo-booking .fb-notice {
+		text-align: center;
+	}
+
+	.flexo-booking .fb-search {
+		justify-content: center;
+	}
+
+	/* Room cards: one centred column. */
+	.flexo-booking .fb-room,
+	.flexo-booking .fb-room:not(:has(.fb-room__image)) {
+		grid-template-columns: 1fr;
+		justify-items: center;
+		text-align: center;
+	}
+
+	.flexo-booking .fb-room__image {
+		height: 220px;
+	}
+
+	.flexo-booking .fb-room__body {
+		width: 100%;
+	}
+
+	.flexo-booking .fb-room__side {
+		width: 100%;
+		align-items: center;
+		text-align: center;
+	}
+
+	.flexo-booking .fb-room__side .fb-button {
+		min-width: 220px;
+	}
+
+	.flexo-booking .fb-results > .fb-button {
+		display: flex;
+		margin: 0 auto;
+	}
+
+	/* Rate plans: name and conditions above a centred price and button. */
+	.flexo-booking .fb-plans {
+		justify-items: stretch;
+		width: 100%;
+		max-width: 520px;
+	}
+
+	.flexo-booking .fb-plan {
+		flex-direction: column;
+		text-align: center;
+	}
+
+	.flexo-booking .fb-plan__info {
+		flex-basis: auto;
+		align-items: center;
+		width: 100%;
+	}
+
+	.flexo-booking .fb-plan__price {
+		justify-content: center;
+		flex-wrap: wrap;
+	}
+
+	/* Summary: a centred box; each line keeps its label left and amount right. */
+	.flexo-booking .fb-summary {
+		max-width: 560px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.flexo-booking .fb-summary__room {
+		justify-content: center;
+		flex-wrap: wrap;
+		text-align: center;
+		gap: 4px 12px;
+	}
+
+	.flexo-booking .fb-summary__room > span:last-child {
+		text-align: center;
+	}
+
+	.flexo-booking .fb-promo {
+		text-align: center;
+	}
+
+	.flexo-booking .fb-promo__fields,
+	.flexo-booking .fb-promo__label {
+		text-align: left;
+	}
+
+	.flexo-booking .fb-grid,
+	.flexo-booking .fb-extra,
+	.flexo-booking .fb-terms,
+	.flexo-booking .fb-payment {
+		max-width: 560px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.flexo-booking .fb-actions {
+		max-width: 560px;
+		margin-left: auto;
+		margin-right: auto;
+		justify-content: center;
+	}
+
+	.flexo-booking .fb-actions--result {
+		justify-content: center;
+	}
+
+	/* Confirmation, payment result and bank details. */
+	.flexo-booking .fb-success {
+		text-align: center;
+	}
+
+	.flexo-booking .fb-bank {
+		max-width: 520px;
+		margin-left: auto;
+		margin-right: auto;
+		text-align: left;
+	}
+
+	.flexo-booking .fb-bank__title {
+		text-align: center;
+	}
+}
+
+@media (max-width: 767px) {
+	.flexo-booking {
+		--fb-padding: 16px;
+	}
+
+	.flexo-booking .fb-room__image {
+		height: 180px;
+	}
+
+	.flexo-booking .fb-room__side .fb-button,
+	.flexo-booking .fb-plan__price .fb-button {
+		width: 100%;
+		min-width: 0;
+	}
+
+	.flexo-booking .fb-plan__price {
+		width: 100%;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	/* Tap targets of at least 44px. */
+	.flexo-booking .fb-link {
+		min-height: 44px;
+		padding: 10px 4px;
+	}
+
+	.flexo-booking .fb-terms,
+	.flexo-booking .fb-check {
+		min-height: 44px;
+		align-items: center;
+	}
+
+	.flexo-booking .fb-terms input[type="checkbox"],
+	.flexo-booking .fb-check input {
+		width: 22px;
+		height: 22px;
+		flex: 0 0 auto;
+	}
+
+	.flexo-booking .fb-promo__row {
+		flex-wrap: wrap;
+	}
+
+	.flexo-booking .fb-promo__row .fb-button {
+		width: 100%;
+	}
+
+	/* Total and the continue button stay in view while filling in the form. */
+	.flexo-booking .fb-details .fb-actions {
+		position: sticky;
+		bottom: 0;
+		z-index: 5;
+		margin-left: calc(-1 * var(--fb-padding, 16px));
+		margin-right: calc(-1 * var(--fb-padding, 16px));
+		max-width: none;
+		padding: 10px var(--fb-padding, 16px) calc(10px + env(safe-area-inset-bottom, 0px));
+		background: var(--fb-bg);
+		box-shadow: 0 -6px 16px -8px color-mix(in srgb, var(--fb-text) 35%, transparent);
+	}
+
+	.flexo-booking .fb-actions__total {
+		display: flex;
+		flex: 1 1 100%;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 12px;
+	}
+
+	.flexo-booking .fb-actions__total strong {
+		font-size: 1.125em;
+		white-space: nowrap;
+	}
+
+	.flexo-booking .fb-details .fb-actions .fb-button--ghost {
+		flex: 0 1 auto;
+	}
+
+	.flexo-booking .fb-details .fb-actions [type="submit"] {
+		flex: 1 1 60%;
+		white-space: normal;
+	}
+
+	.flexo-booking .fb-bank__row {
+		grid-template-columns: 1fr;
+	}
+}

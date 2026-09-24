@@ -4,8 +4,8 @@
  * per-room lock that serialises every change to occupancy.
  *
  * Everything that occupies a room is a row in the bookings table (guest
- * bookings, staff blocks – and later iCal imports and payment holds), so
- * availability is always one query.
+ * bookings, staff blocks and payment holds), so availability is always one
+ * query (plus bookings imported from external calendars).
  *
  * @package FlexoBooking
  */
@@ -15,23 +15,35 @@ defined( 'ABSPATH' ) || exit;
 class Flexo_Booking_Inventory {
 
 	/**
-	 * Statuses that take a unit. Day 5 extends this with payment holds.
+	 * Statuses that take a unit. Online payment holds ("pending_payment")
+	 * take one too, but only until the hold expires – see occupying_sql().
 	 */
 	public static function occupying_statuses() {
 		return apply_filters( 'flexo_booking_occupying_statuses', Flexo_Booking_Bookings::OCCUPYING );
 	}
 
 	/**
-	 * SQL condition (with its parameters) selecting occupying bookings.
+	 * SQL condition (with its parameters) selecting occupying bookings:
+	 * the occupying statuses, plus payment holds that haven't expired.
 	 *
 	 * @return array { @type string $sql, @type array $params }
 	 */
 	public static function occupying_sql() {
 		$statuses = self::occupying_statuses();
 		return array(
-			'sql'    => 'status IN (' . implode( ',', array_fill( 0, count( $statuses ), '%s' ) ) . ')',
-			'params' => $statuses,
+			'sql'    => '(status IN (' . implode( ',', array_fill( 0, count( $statuses ), '%s' ) ) . ') OR (status = %s AND hold_expires_at > %s))',
+			'params' => array_merge( $statuses, array( Flexo_Booking_Bookings::HOLD_STATUS, current_time( 'mysql' ) ) ),
 		);
+	}
+
+	/**
+	 * Whether a booking takes a unit right now.
+	 */
+	public static function is_occupying( array $booking ) {
+		if ( Flexo_Booking_Bookings::HOLD_STATUS === $booking['status'] ) {
+			return ! empty( $booking['hold_expires_at'] ) && $booking['hold_expires_at'] > current_time( 'mysql' );
+		}
+		return in_array( $booking['status'], self::occupying_statuses(), true );
 	}
 
 	/**

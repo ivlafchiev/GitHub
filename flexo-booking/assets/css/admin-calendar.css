@@ -397,3 +397,16 @@
 		margin: 0 4px;
 	}
 }
+
+/* Payments (Day 5) */
+.fbc-item--pending_payment {
+	background: repeating-linear-gradient(135deg, var(--fbc-pending) 0 6px, #fff7da 6px 12px);
+	color: var(--fbc-pending-ink);
+	border: 1px dotted #c9a227;
+}
+
+.fbc-item--awaiting_payment {
+	background: #fff1d6;
+	color: #6b3e00;
+	border: 1px dashed #d59b3a;
+}

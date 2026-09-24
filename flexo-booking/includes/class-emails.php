@@ -6,7 +6,10 @@
  *   cancelled, pre-arrival reminder and review request, each an editable
  *   template, sent in the language the guest booked in.
  * - Hotel notifications (always on, each can be switched off): new booking,
- *   cancellation, possible double booking from an external calendar.
+ *   cancellation, possible double booking from an external calendar,
+ *   payments (refunds) and payment conflicts.
+ * - Payment emails (payments features): payment details for a bank
+ *   transfer, reminder, payment received, payment failed, cancelled unpaid.
  * - Every email is simple responsive HTML with a plain-text part, and is
  *   written to the email log.
  * - Scheduled emails run on WP-Cron (hourly), never twice for the same
@@ -34,7 +37,7 @@ class Flexo_Booking_Emails {
 
 	public static function init() {
 		add_action( 'flexo_booking_created', array( __CLASS__, 'on_created' ) );
-		add_action( 'flexo_booking_status_changed', array( __CLASS__, 'on_status_changed' ), 10, 3 );
+		add_action( 'flexo_booking_status_changed', array( __CLASS__, 'on_status_changed' ), 10, 4 );
 		add_action( 'init', array( __CLASS__, 'maybe_schedule' ) );
 		add_action( self::HOURLY, array( __CLASS__, 'send_scheduled' ) );
 		add_action( self::DAILY, array( __CLASS__, 'cleanup_log' ) );
@@ -54,7 +57,8 @@ class Flexo_Booking_Emails {
 	}
 
 	/**
-	 * Guest email types. "reserved" ones are used by online payments (Day 5).
+	 * Guest email types. "payment" ones are used when payments are on
+	 * ("bank" ones only with bank transfer, "card" ones only with card payments).
 	 */
 	public static function guest_types() {
 		return array(
@@ -69,17 +73,25 @@ class Flexo_Booking_Emails {
 				'label'     => __( 'After the stay (review request)', 'flexo-booking' ),
 				'scheduled' => true,
 			),
-			'awaiting_deposit' => array(
-				'label'    => __( 'Waiting for deposit', 'flexo-booking' ),
-				'reserved' => true,
+			'awaiting_deposit'  => array(
+				'label'   => __( 'Waiting for payment (bank details)', 'flexo-booking' ),
+				'payment' => 'bank',
 			),
-			'payment_received' => array(
-				'label'    => __( 'Payment received', 'flexo-booking' ),
-				'reserved' => true,
+			'payment_reminder'  => array(
+				'label'   => __( 'Payment reminder', 'flexo-booking' ),
+				'payment' => 'bank',
 			),
-			'payment_failed'   => array(
-				'label'    => __( 'Payment failed', 'flexo-booking' ),
-				'reserved' => true,
+			'payment_received'  => array(
+				'label'   => __( 'Payment received', 'flexo-booking' ),
+				'payment' => 'any',
+			),
+			'payment_failed'    => array(
+				'label'   => __( 'Payment failed', 'flexo-booking' ),
+				'payment' => 'card',
+			),
+			'payment_cancelled' => array(
+				'label'   => __( 'Cancelled – payment not received', 'flexo-booking' ),
+				'payment' => 'bank',
 			),
 		);
 	}
@@ -100,6 +112,16 @@ class Flexo_Booking_Emails {
 			'ical_conflict' => array(
 				'label'   => __( 'Possible double booking from an external calendar', 'flexo-booking' ),
 				'setting' => 'notify_conflict',
+			),
+			'payment'          => array(
+				'label'   => __( 'Refunds made in Stripe', 'flexo-booking' ),
+				'setting' => 'notify_payment',
+				'payment' => 'card',
+			),
+			'payment_conflict' => array(
+				'label'   => __( 'Payment received but the room is no longer free', 'flexo-booking' ),
+				'setting' => 'notify_payment_conflict',
+				'payment' => 'card',
 			),
 		);
 	}
@@ -125,20 +147,31 @@ class Flexo_Booking_Emails {
 	 * ------------------------------------------------------------------- */
 
 	public static function on_created( $booking ) {
-		if ( 'website' !== $booking['source'] ) {
+		// A card payment in progress: the emails go out once it is paid.
+		if ( 'website' !== $booking['source'] || Flexo_Booking_Bookings::HOLD_STATUS === $booking['status'] ) {
 			return;
 		}
 		if ( Flexo_Booking_Features::is_enabled( 'guest_emails' ) ) {
-			self::send_guest( $booking, 'confirmed' === $booking['status'] ? 'confirmed' : 'request' );
+			$types = array(
+				'confirmed'        => 'confirmed',
+				'awaiting_payment' => 'awaiting_deposit',
+			);
+			self::send_guest( $booking, isset( $types[ $booking['status'] ] ) ? $types[ $booking['status'] ] : 'request' );
 		}
 		self::send_admin( $booking );
 	}
 
-	public static function on_status_changed( $booking, $old_status, $new_status ) {
-		if ( Flexo_Booking_Features::is_enabled( 'guest_emails' ) && in_array( $new_status, array( 'confirmed', 'cancelled' ), true ) ) {
+	/**
+	 * @param array $context See Flexo_Booking_Bookings::update_status(); "notify" false = the caller sends its own emails.
+	 */
+	public static function on_status_changed( $booking, $old_status, $new_status, $context = array() ) {
+		if ( isset( $context['notify'] ) && false === $context['notify'] ) {
+			return;
+		}
+		if ( Flexo_Booking_Features::is_enabled( 'guest_emails' ) && in_array( $new_status, array( 'confirmed', 'cancelled' ), true ) && Flexo_Booking_Bookings::HOLD_STATUS !== $old_status ) {
 			self::send_guest( $booking, $new_status );
 		}
-		if ( 'cancelled' === $new_status && 'blocked' !== $old_status ) {
+		if ( 'cancelled' === $new_status && ! in_array( $old_status, array( 'blocked', 'expired', Flexo_Booking_Bookings::HOLD_STATUS ), true ) ) {
 			self::send_hotel_cancelled( $booking );
 		}
 	}
@@ -289,7 +322,7 @@ class Flexo_Booking_Emails {
 		return in_array( $type, array_filter( explode( ',', (string) $booking['emails_sent'] ) ), true );
 	}
 
-	private static function mark_sent( array $booking, $type ) {
+	public static function mark_sent( array $booking, $type ) {
 		global $wpdb;
 		$list   = array_filter( explode( ',', (string) $booking['emails_sent'] ) );
 		$list[] = $type;
@@ -318,7 +351,17 @@ class Flexo_Booking_Emails {
 				$vars = self::placeholders( $booking );
 				/* translators: 1: booking reference, 2: room name */
 				$subject = sprintf( 'pending' === $booking['status'] ? __( 'New booking request %1$s – %2$s', 'flexo-booking' ) : __( 'New booking %1$s – %2$s', 'flexo-booking' ), $booking['reference'], $booking['room_title'] );
-				$body    = ( 'pending' === $booking['status'] ? __( 'A new booking request was made on your website. Please confirm or decline it.', 'flexo-booking' ) : __( 'A new booking was made on your website.', 'flexo-booking' ) ) . "\n\n" . $vars['{booking_details}'] . "\n\n";
+				if ( 'pending' === $booking['status'] ) {
+					$intro = 'bank_transfer' === $booking['payment_method']
+						? __( 'A new booking request was made on your website. Please confirm or decline it. When you confirm it, the guest receives your bank details and the booking waits for the payment.', 'flexo-booking' )
+						: __( 'A new booking request was made on your website. Please confirm or decline it.', 'flexo-booking' );
+				} elseif ( 'awaiting_payment' === $booking['status'] ) {
+					/* translators: %s: date */
+					$intro = sprintf( __( 'A new booking was made on your website. It waits for payment by bank transfer until %s. When the money arrives, open the booking and click "Payment received".', 'flexo-booking' ), $vars['{payment_deadline}'] );
+				} else {
+					$intro = __( 'A new booking was made on your website.', 'flexo-booking' );
+				}
+				$body = $intro . "\n\n" . $vars['{booking_details}'] . "\n\n";
 				$body   .= self::guest_contact_text( $booking );
 				$invoice = Flexo_Booking_Invoices::text( (int) $booking['id'] );
 				if ( '' !== $invoice ) {
@@ -706,7 +749,8 @@ class Flexo_Booking_Emails {
 				$prices[] = ( count( $rows ) > 1 ? '    ' : '  ' ) . $detail;
 			}
 		}
-		if ( ! empty( $snapshot['due_at_property'] ) ) {
+		$payment_lines = self::payment_lines( $booking );
+		if ( ! empty( $snapshot['due_at_property'] ) && ! $payment_lines ) {
 			$prices[] = '  ' . __( 'Payable at the property', 'flexo-booking' ) . ': ' . Flexo_Booking_Money::format( $snapshot['due_at_property'], $booking['currency'] );
 		}
 
@@ -730,8 +774,10 @@ class Flexo_Booking_Emails {
 		if ( $plan && '' !== $policy ) {
 			$details[] = __( 'Cancellation', 'flexo-booking' ) . ': ' . $policy;
 		}
+		$details   = array_merge( $details, $payment_lines );
 		$details[] = __( 'Status', 'flexo-booking' ) . ': ' . Flexo_Booking_Bookings::status_label( $booking['status'] );
 		$details   = implode( "\n", $details );
+		$pay       = self::payment_values( $booking );
 
 		$settings = Flexo_Booking_Settings::all();
 		return apply_filters(
@@ -761,15 +807,82 @@ class Flexo_Booking_Emails {
 				'{hotel_phone}'         => $settings['hotel_phone'],
 				'{hotel_email}'         => Flexo_Booking_Settings::notification_email(),
 				'{review_link}'         => $settings['review_link'],
+				'{payment_method}'      => $pay['method'],
+				'{amount_due}'          => $pay['amount_due'],
+				'{amount_paid}'         => $pay['amount_paid'],
+				'{balance_due}'         => $pay['balance_due'],
+				'{payment_deadline}'    => $pay['deadline'],
+				'{payment_instructions}' => $pay['instructions'],
 			),
 			$booking
 		);
 	}
 
 	/**
+	 * Payment values for the placeholders ('' when not applicable).
+	 */
+	private static function payment_values( $booking ) {
+		$values = array(
+			'method'       => '',
+			'amount_due'   => '',
+			'amount_paid'  => '',
+			'balance_due'  => '',
+			'deadline'     => '',
+			'instructions' => '',
+		);
+		if ( empty( $booking['payment_method'] ) || ! isset( $booking['amount_paid'] ) ) {
+			return $values;
+		}
+		$balance              = Flexo_Booking_Payments::balance( $booking );
+		$currency             = $booking['currency'];
+		$values['method']     = Flexo_Booking_Payments::method_label( $booking['payment_method'], false );
+		$values['amount_due'] = Flexo_Booking_Money::format( $balance['due_now'] > 0 ? $balance['due_now'] : $booking['amount_due'], $currency );
+		$values['amount_paid'] = Flexo_Booking_Money::format( $balance['net'], $currency );
+		$values['balance_due'] = Flexo_Booking_Money::format( $balance['outstanding'], $currency );
+		if ( ! empty( $booking['payment_due_at'] ) ) {
+			$values['deadline'] = Flexo_Booking_I18n::format_date( substr( $booking['payment_due_at'], 0, 10 ) );
+		}
+		if ( 'bank_transfer' === $booking['payment_method'] && Flexo_Booking_Payments::gateway( 'bank_transfer' ) ) {
+			$values['instructions'] = Flexo_Booking_Payments::gateway( 'bank_transfer' )->instructions_text( $booking );
+		}
+		return $values;
+	}
+
+	/**
+	 * Payment lines of {booking_details}: how the booking is paid, what was
+	 * paid and what is left to pay at the property.
+	 *
+	 * @return string[]
+	 */
+	private static function payment_lines( $booking ) {
+		if ( empty( $booking['payment_method'] ) || ! isset( $booking['amount_paid'] ) || 'blocked' === $booking['status'] ) {
+			return array();
+		}
+		$balance  = Flexo_Booking_Payments::balance( $booking );
+		$currency = $booking['currency'];
+		$lines    = array( __( 'Payment', 'flexo-booking' ) . ': ' . Flexo_Booking_Payments::method_label( $booking['payment_method'], false ) );
+		if ( $balance['net'] > 0 ) {
+			$lines[] = __( 'Paid', 'flexo-booking' ) . ': ' . Flexo_Booking_Money::format( $balance['net'], $currency );
+		} elseif ( $balance['due_now'] > 0 && in_array( $booking['status'], array( 'pending', 'awaiting_payment', Flexo_Booking_Bookings::HOLD_STATUS ), true ) ) {
+			$label   = $booking['amount_due'] + 0.005 < $booking['total'] ? __( 'Deposit to pay', 'flexo-booking' ) : __( 'To pay', 'flexo-booking' );
+			$lines[] = $label . ': ' . Flexo_Booking_Money::format( $balance['due_now'], $currency );
+		}
+		if ( $balance['refunded'] > 0 ) {
+			$lines[] = __( 'Refunded', 'flexo-booking' ) . ': ' . Flexo_Booking_Money::format( $balance['refunded'], $currency );
+		}
+		if ( $balance['outstanding'] > 0 && $balance['refunded'] <= 0 ) {
+			$outstanding = $balance['net'] > 0 || 'property' === $booking['payment_method'] ? $balance['outstanding'] : $balance['outstanding'] - $balance['due_now'];
+			if ( $outstanding > 0.004 ) {
+				$lines[] = __( 'To pay at the property', 'flexo-booking' ) . ': ' . Flexo_Booking_Money::format( $outstanding, $currency );
+			}
+		}
+		return $lines;
+	}
+
+	/**
 	 * Placeholders for the Emails settings screen.
 	 */
 	public static function placeholder_names() {
-		return array( '{guest_name}', '{booking_ref}', '{room}', '{check_in}', '{check_out}', '{nights}', '{guests}', '{rate_plan}', '{total}', '{price_breakdown}', '{cancellation_policy}', '{promo_code}', '{status}', '{booking_details}', '{check_in_time}', '{check_out_time}', '{hotel_name}', '{hotel_phone}', '{hotel_email}', '{review_link}', '{guest_email}', '{guest_phone}' );
+		return array( '{guest_name}', '{booking_ref}', '{room}', '{check_in}', '{check_out}', '{nights}', '{guests}', '{rate_plan}', '{total}', '{price_breakdown}', '{cancellation_policy}', '{promo_code}', '{status}', '{booking_details}', '{check_in_time}', '{check_out_time}', '{hotel_name}', '{hotel_phone}', '{hotel_email}', '{review_link}', '{guest_email}', '{guest_phone}', '{payment_method}', '{amount_due}', '{amount_paid}', '{balance_due}', '{payment_deadline}', '{payment_instructions}' );
 	}
 }

@@ -47,6 +47,7 @@ class Flexo_Booking_Frontend {
 				'maxAge'    => Flexo_Booking_Children::MAX_AGE,
 				'promo'     => Flexo_Booking_Promo_Codes::enabled(),
 				'tracking'  => Flexo_Booking_Tracking::config(),
+				'payments'  => self::payments_config(),
 				'i18n'      => array(
 					'checking'     => __( 'Checking availability…', 'flexo-booking' ),
 					'noRooms'      => __( 'No rooms are available for these dates. Please try different dates.', 'flexo-booking' ),
@@ -98,6 +99,24 @@ class Flexo_Booking_Frontend {
 					/* translators: 1: promo code, 2: discount, e.g. "−10%" */
 					'promoApplied' => __( 'Promo code %1$s applied (%2$s).', 'flexo-booking' ),
 					'consent'      => __( 'Please accept the privacy policy to send your booking.', 'flexo-booking' ),
+					'payAtProperty' => __( 'Payment', 'flexo-booking' ),
+					'payAtPropertyText' => __( 'at the property', 'flexo-booking' ),
+					'payNow'       => __( 'Pay now', 'flexo-booking' ),
+					'atPropertyRest' => __( 'At the property', 'flexo-booking' ),
+					'toPayNow'     => __( 'To pay now', 'flexo-booking' ),
+					'continuePay'  => __( 'Continue to payment', 'flexo-booking' ),
+					'confirmBooking' => __( 'Confirm booking', 'flexo-booking' ),
+					'sendRequest'  => __( 'Send booking request', 'flexo-booking' ),
+					'redirecting'  => __( 'Taking you to the secure payment page…', 'flexo-booking' ),
+					'checkingPayment' => __( 'Confirming your payment…', 'flexo-booking' ),
+					'stillChecking' => __( 'This is taking longer than usual. You will receive an email as soon as your payment is confirmed – you can safely close this page.', 'flexo-booking' ),
+					'payAgain'     => __( 'Pay now', 'flexo-booking' ),
+					'searchAgain'  => __( 'Search again', 'flexo-booking' ),
+					'bankDetails'  => __( 'Bank transfer details', 'flexo-booking' ),
+					'copy'         => __( 'Copy', 'flexo-booking' ),
+					'copied'       => __( 'Copied', 'flexo-booking' ),
+					'paid'         => __( 'Paid', 'flexo-booking' ),
+					'total'        => __( 'Total', 'flexo-booking' ),
 				),
 			)
 		);
@@ -206,11 +225,59 @@ class Flexo_Booking_Frontend {
 	}
 
 	/**
+	 * Payments for booking.js: whether the summary shows what is paid now
+	 * and at the property, and which way of paying submits to which label.
+	 *
+	 * @return array|false
+	 */
+	private static function payments_config() {
+		if ( ! Flexo_Booking_Payments::enabled() ) {
+			return false;
+		}
+		$methods = array();
+		foreach ( Flexo_Booking_Payments::collects_now() ? Flexo_Booking_Payments::methods() : array() as $id ) {
+			$methods[ $id ] = array( 'hosted' => Flexo_Booking_Payments::gateway( $id )->is_hosted() );
+		}
+		return array(
+			'methods' => $methods,
+			'instant' => 'instant' === Flexo_Booking_Features::booking_mode(),
+		);
+	}
+
+	/**
+	 * "How would you like to pay?" in the guest details form, when guests
+	 * pay something when booking.
+	 */
+	public static function payment_fields( $uid ) {
+		if ( ! Flexo_Booking_Payments::collects_now() ) {
+			return '';
+		}
+		$methods = Flexo_Booking_Payments::methods();
+		$texts   = array(
+			'stripe'        => __( 'Visa, Mastercard and other cards. You pay on Stripe\'s secure payment page; your card details never reach us.', 'flexo-booking' ),
+			'bank_transfer' => 'instant' === Flexo_Booking_Features::booking_mode()
+				/* translators: %d: number of days */
+				? sprintf( _n( 'You receive our bank details right away. Please pay within %d day.', 'You receive our bank details right away. Please pay within %d days.', (int) Flexo_Booking_Settings::get( 'bank_transfer_days' ), 'flexo-booking' ), (int) Flexo_Booking_Settings::get( 'bank_transfer_days' ) )
+				: __( 'Once we confirm your request, we email you our bank details.', 'flexo-booking' ),
+		);
+		$html  = '<fieldset class="fb-payment" data-fb-payment>';
+		$html .= '<legend class="fb-payment__title">' . esc_html__( 'How would you like to pay?', 'flexo-booking' ) . '</legend>';
+		foreach ( $methods as $i => $id ) {
+			$gateway = Flexo_Booking_Payments::gateway( $id );
+			$html   .= '<label class="fb-choice"><input type="radio" name="payment_method" value="' . esc_attr( $id ) . '"' . ( 0 === $i ? ' checked' : '' ) . ( 1 === count( $methods ) ? ' hidden' : '' ) . '>'
+				. '<span class="fb-choice__text"><strong>' . esc_html( $gateway->label() ) . '</strong>'
+				. ( isset( $texts[ $id ] ) ? '<small>' . esc_html( $texts[ $id ] ) . '</small>' : '' ) . '</span></label>';
+		}
+		$html .= '</fieldset>';
+		return $html;
+	}
+
+	/**
 	 * Privacy consent and invoice request fields of the guest details form
 	 * (only for features that are on).
 	 */
 	public static function extra_fields( $uid ) {
-		$html = '';
+		$html = self::payment_fields( $uid );
 		if ( Flexo_Booking_Invoices::enabled() ) {
 			$html .= Flexo_Booking_Invoices::render_fields( $uid );
 		}

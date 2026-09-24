@@ -88,14 +88,23 @@ class Flexo_Booking_Calendar_Admin {
 		$rooms = Flexo_Booking_Rooms::all( array( 'publish', 'draft', 'private' ) );
 		$sync  = Flexo_Booking_ICal::enabled();
 
-		$statuses = Flexo_Booking_Inventory::occupying_statuses();
-		if ( $show_cancelled ) {
-			$statuses[] = 'cancelled';
-		}
+		$statuses     = Flexo_Booking_Inventory::occupying_statuses();
+		$statuses[]   = Flexo_Booking_Bookings::HOLD_STATUS; // Shown while the hold lasts, see below.
 		$table        = Flexo_Booking_Install::table();
 		$placeholders = implode( ',', array_fill( 0, count( $statuses ), '%s' ) );
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$bookings = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table} WHERE check_in < %s AND check_out > %s AND status IN ({$placeholders}) ORDER BY check_in ASC", array_merge( array( $to, $first ), $statuses ) ), ARRAY_A );
+		// Payment holds only while they last.
+		$bookings = array_values( array_filter( (array) $bookings, array( 'Flexo_Booking_Inventory', 'is_occupying' ) ) );
+		if ( $show_cancelled ) {
+			$bookings = array_merge( $bookings, (array) $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table} WHERE check_in < %s AND check_out > %s AND status = 'cancelled' ORDER BY check_in ASC", $to, $first ), ARRAY_A ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			usort(
+				$bookings,
+				static function ( $a, $b ) {
+					return strcmp( $a['check_in'], $b['check_in'] ) ?: (int) $a['id'] - (int) $b['id'];
+				}
+			);
+		}
 		$events   = $sync ? Flexo_Booking_ICal::events_between( $first, $to ) : array();
 		$closures = array_filter(
 			Flexo_Booking_Closures::all(),
@@ -232,9 +241,11 @@ class Flexo_Booking_Calendar_Admin {
 		} else {
 			$kind  = $b['status'];
 			$icons = array(
-				'confirmed' => '✓',
-				'pending'   => '⏳',
-				'cancelled' => '⊘',
+				'confirmed'        => '✓',
+				'pending'          => '⏳',
+				'cancelled'        => '⊘',
+				'pending_payment'  => '💳',
+				'awaiting_payment' => '🏦',
 			);
 			$icon  = isset( $icons[ $b['status'] ] ) ? $icons[ $b['status'] ] : '•';
 			$label = ( $staff ? '✎ ' : '' ) . $name;
@@ -271,6 +282,7 @@ class Flexo_Booking_Calendar_Admin {
 				$lines[] = array( __( 'Promo code', 'flexo-booking' ), $b['promo_code'] );
 			}
 			$lines[] = array( __( 'Total', 'flexo-booking' ), Flexo_Booking_Money::format( $b['total'], $b['currency'] ) );
+			$lines   = array_merge( $lines, Flexo_Booking_Payments_Admin::calendar_lines( $b ) );
 		}
 		if ( $b['notes'] ) {
 			$lines[] = array( __( 'Notes', 'flexo-booking' ), $b['notes'] );
@@ -287,7 +299,14 @@ class Flexo_Booking_Calendar_Admin {
 				'primary' => true,
 			);
 		}
-		if ( in_array( $b['status'], array( 'pending', 'confirmed' ), true ) ) {
+		if ( 'awaiting_payment' === $b['status'] ) {
+			$actions[] = array(
+				'label'   => __( 'Payment received', 'flexo-booking' ),
+				'url'     => admin_url( 'admin.php?page=' . Flexo_Booking_Admin::MENU_SLUG . '&booking=' . (int) $b['id'] ) . '#flexo-payments',
+				'primary' => true,
+			);
+		}
+		if ( in_array( $b['status'], array( 'pending', 'confirmed', 'awaiting_payment', Flexo_Booking_Bookings::HOLD_STATUS ), true ) ) {
 			$actions[] = array(
 				'label'   => __( 'Cancel booking', 'flexo-booking' ),
 				'url'     => self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'cancelled' ) ),
@@ -585,6 +604,12 @@ class Flexo_Booking_Calendar_Admin {
 			<ul class="fbc-legend" aria-label="<?php esc_attr_e( 'Legend', 'flexo-booking' ); ?>">
 				<li><span class="fbc-swatch fbc-item--confirmed">✓</span> <?php esc_html_e( 'Confirmed', 'flexo-booking' ); ?></li>
 				<li><span class="fbc-swatch fbc-item--pending">⏳</span> <?php esc_html_e( 'Pending (waiting for you)', 'flexo-booking' ); ?></li>
+				<?php if ( Flexo_Booking_Features::is_enabled( 'online_payment' ) ) : ?>
+					<li><span class="fbc-swatch fbc-item--pending_payment">💳</span> <?php esc_html_e( 'Held while the guest pays by card', 'flexo-booking' ); ?></li>
+				<?php endif; ?>
+				<?php if ( Flexo_Booking_Features::is_enabled( 'bank_transfer' ) ) : ?>
+					<li><span class="fbc-swatch fbc-item--awaiting_payment">🏦</span> <?php esc_html_e( 'Awaiting bank transfer', 'flexo-booking' ); ?></li>
+				<?php endif; ?>
 				<li><span class="fbc-swatch fbc-item--confirmed">✎</span> <?php esc_html_e( 'Added by staff', 'flexo-booking' ); ?></li>
 				<li><span class="fbc-swatch fbc-item--blocked">⛔</span> <?php esc_html_e( 'Blocked by staff', 'flexo-booking' ); ?></li>
 				<?php if ( $data['sync'] ) : ?>

@@ -116,22 +116,22 @@ class Flexo_Booking_Features {
 			),
 			'online_payment'   => array(
 				'label'       => __( 'Online card payment', 'flexo-booking' ),
-				'description' => __( 'Guests pay by card when booking (Stripe).', 'flexo-booking' ),
+				'description' => __( 'Guests pay by card when booking, on Stripe\'s secure payment page. Works with Instant booking only: guests are never charged before a booking is confirmed.', 'flexo-booking' ),
 				'group'       => 'payments',
-				'ready'       => false,
+				'ready'       => true,
 			),
 			'deposit'          => array(
 				'label'        => __( 'Deposits', 'flexo-booking' ),
-				'description'  => __( 'Take part of the price when booking and the rest at the property.', 'flexo-booking' ),
+				'description'  => __( 'Take part of the price when booking (a fixed amount or a percentage) and the rest at the property. Needs card payment or bank transfer.', 'flexo-booking' ),
 				'group'        => 'payments',
-				'ready'        => false,
+				'ready'        => true,
 				'requires_any' => array( 'online_payment', 'bank_transfer' ),
 			),
 			'bank_transfer'    => array(
 				'label'       => __( 'Bank transfer', 'flexo-booking' ),
-				'description' => __( 'Guests pay a deposit or the full amount by bank transfer.', 'flexo-booking' ),
+				'description' => __( 'Guests pay a deposit or the full amount by bank transfer; you mark the payment as received. Unpaid bookings can be cancelled automatically.', 'flexo-booking' ),
 				'group'       => 'payments',
-				'ready'       => false,
+				'ready'       => true,
 			),
 		);
 	}

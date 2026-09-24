@@ -60,6 +60,16 @@ class Flexo_Booking_Schema {
 			locale varchar(20) NOT NULL DEFAULT '',
 			emails_sent varchar(190) NOT NULL DEFAULT '',
 			anonymized_at datetime NULL,
+			payment_method varchar(20) NOT NULL DEFAULT '',
+			payment_status varchar(20) NOT NULL DEFAULT '',
+			amount_due decimal(10,2) NOT NULL DEFAULT 0,
+			amount_paid decimal(10,2) NOT NULL DEFAULT 0,
+			amount_refunded decimal(10,2) NOT NULL DEFAULT 0,
+			hold_expires_at datetime NULL,
+			payment_due_at datetime NULL,
+			payment_session varchar(255) NOT NULL DEFAULT '',
+			payment_conflict tinyint(1) NOT NULL DEFAULT 0,
+			access_key char(64) NOT NULL DEFAULT '',
 			created_at datetime NOT NULL,
 			updated_at datetime NOT NULL,
 			PRIMARY KEY  (id),
@@ -67,7 +77,8 @@ class Flexo_Booking_Schema {
 			KEY room_dates (room_id,check_in,check_out),
 			KEY status (status),
 			KEY promo (promo_id),
-			KEY guest_email (guest_email)
+			KEY guest_email (guest_email),
+			KEY payment_status (payment_status)
 		) {$charset};";
 
 		$tables['seasons'] = 'CREATE TABLE ' . self::table( 'seasons' ) . " (
@@ -223,6 +234,40 @@ class Flexo_Booking_Schema {
 			PRIMARY KEY  (id),
 			KEY booking (booking_id),
 			KEY created (created_at)
+		) {$charset};";
+
+		// Day 5. Payment history: payments, refunds and failed attempts.
+		// Only non-sensitive data – never card numbers; transaction_id is the
+		// gateway's ID (e.g. a Stripe PaymentIntent or refund ID).
+		$tables['payments'] = 'CREATE TABLE ' . self::table( 'payments' ) . " (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			booking_id bigint(20) unsigned NOT NULL,
+			gateway varchar(20) NOT NULL DEFAULT '',
+			type varchar(10) NOT NULL DEFAULT 'payment',
+			status varchar(20) NOT NULL DEFAULT 'succeeded',
+			amount decimal(10,2) NOT NULL DEFAULT 0,
+			currency varchar(10) NOT NULL DEFAULT '',
+			transaction_id varchar(255) NOT NULL DEFAULT '',
+			note varchar(255) NOT NULL DEFAULT '',
+			meta text NULL,
+			created_by bigint(20) unsigned NOT NULL DEFAULT 0,
+			created_at datetime NOT NULL,
+			PRIMARY KEY  (id),
+			KEY booking (booking_id),
+			KEY transaction_id (transaction_id(100))
+		) {$charset};";
+
+		// Day 5. Webhook events already processed, so a repeated delivery
+		// never confirms a booking or sends an email twice.
+		$tables['webhook_events'] = 'CREATE TABLE ' . self::table( 'webhook_events' ) . " (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			gateway varchar(20) NOT NULL DEFAULT '',
+			event_id varchar(255) NOT NULL,
+			event_type varchar(100) NOT NULL DEFAULT '',
+			booking_id bigint(20) unsigned NOT NULL DEFAULT 0,
+			created_at datetime NOT NULL,
+			PRIMARY KEY  (id),
+			UNIQUE KEY event (event_id(190))
 		) {$charset};";
 
 		return $tables;

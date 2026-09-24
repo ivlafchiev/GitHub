@@ -19,7 +19,7 @@ class Flexo_Booking_Migrations {
 
 	const OPTION       = 'flexo_booking_db_version';
 	const ERROR_OPTION = 'flexo_booking_migration_error';
-	const LATEST       = 5;
+	const LATEST       = 6;
 
 	/**
 	 * @return array Version => method name.
@@ -31,6 +31,7 @@ class Flexo_Booking_Migrations {
 			3 => 'migrate_3_day2',
 			4 => 'migrate_4_day3',
 			5 => 'migrate_5_day4',
+			6 => 'migrate_6_day5',
 		);
 	}
 
@@ -159,6 +160,32 @@ class Flexo_Booking_Migrations {
 		}
 		if ( ! Flexo_Booking_Schema::column_exists( 'bookings', 'anonymized_at' ) ) {
 			return new WP_Error( 'flexo_migration', 'bookings.anonymized_at column missing' );
+		}
+		return true;
+	}
+
+	/**
+	 * Day 5 (1.5.0): payments, payment history, webhook log, payment columns.
+	 * Existing bookings keep an empty payment method: nothing was paid online.
+	 */
+	private static function migrate_6_day5() {
+		foreach ( array( 'payments', 'webhook_events' ) as $table ) {
+			if ( ! Flexo_Booking_Schema::table_exists( $table ) ) {
+				return new WP_Error( 'flexo_migration', $table . ' table missing' );
+			}
+		}
+		if ( ! Flexo_Booking_Schema::column_exists( 'bookings', 'payment_status' ) ) {
+			return new WP_Error( 'flexo_migration', 'bookings.payment_status column missing' );
+		}
+		// The payment email texts were placeholders before 1.5.0 and not
+		// editable: drop stored copies so the new texts (with the payment
+		// instructions) and their translations are used.
+		$settings = get_option( Flexo_Booking_Settings::OPTION );
+		if ( is_array( $settings ) ) {
+			foreach ( array( 'awaiting_deposit', 'payment_received', 'payment_failed' ) as $type ) {
+				unset( $settings[ 'email_' . $type . '_subject' ], $settings[ 'email_' . $type . '_body' ] );
+			}
+			update_option( Flexo_Booking_Settings::OPTION, $settings );
 		}
 		return true;
 	}

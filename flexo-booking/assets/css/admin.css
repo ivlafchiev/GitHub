@@ -363,3 +363,45 @@ input.flexo-code {
 	max-width: 1000px;
 	margin: 12px 0;
 }
+
+/* Payments (Day 5) */
+.flexo-status--pending_payment,
+.flexo-status--awaiting_payment {
+	background: #fff1d6;
+	color: #6b3e00;
+}
+
+.flexo-status--expired {
+	background: #ececec;
+	color: #50575e;
+}
+
+.flexo-badge--pay { background: #fff4e0; color: #6b3e00; }
+.flexo-badge--paid { background: #d1f0d8; color: #0a5c1f; }
+.flexo-badge--unpaid { background: #f7d7d7; color: #8a1f1f; }
+
+.flexo-payments-card .flexo-payment-history {
+	margin: 12px 0;
+}
+
+.flexo-payments-card .flexo-payment-row--refund td,
+.flexo-payments-card .flexo-payment-row--attempt td {
+	color: #8a1f1f;
+}
+
+.flexo-payments-card .flexo-payment-form {
+	margin: 12px 0 4px;
+}
+
+.flexo-payments-card .flexo-payment-more {
+	margin-top: 12px;
+}
+
+.flexo-payments-card .flexo-payment-more summary {
+	cursor: pointer;
+	color: #2271b1;
+}
+
+.flexo-payment-conflicts {
+	border-left-color: #d63638;
+}

@@ -565,7 +565,13 @@ class Flexo_Booking_Pricing {
 			}
 		}
 		$lines[] = __( 'Total', 'flexo-booking' ) . ': ' . Flexo_Booking_Money::format( $quote['total'], $currency );
-		if ( ! empty( $quote['due_at_property'] ) ) {
+		if ( ! empty( $quote['payable']['mode'] ) && $quote['payable']['now'] > 0 ) {
+			$label   = '' !== $quote['payable']['label'] ? $quote['payable']['label'] : __( 'Pay when booking', 'flexo-booking' );
+			$lines[] = $label . ': ' . Flexo_Booking_Money::format( $quote['payable']['now'], $currency );
+			if ( $quote['payable']['at_property'] > 0 ) {
+				$lines[] = __( 'Payable at the property', 'flexo-booking' ) . ': ' . Flexo_Booking_Money::format( $quote['payable']['at_property'], $currency );
+			}
+		} elseif ( ! empty( $quote['due_at_property'] ) ) {
 			$lines[] = __( 'Payable at the property', 'flexo-booking' ) . ': ' . Flexo_Booking_Money::format( $quote['due_at_property'], $currency );
 		}
 		return implode( "\n", $lines );
@@ -604,6 +610,8 @@ class Flexo_Booking_Pricing {
 				'label' => Flexo_Booking_Promo_Codes::describe( $quote['promo'] ),
 			),
 			'promo_error'               => empty( $quote['promo_error'] ) ? null : $quote['promo_error']['message'],
+			// What is paid when booking and at the property (payments features).
+			'payment'                   => Flexo_Booking_Payments::public_view( $quote ),
 		);
 	}
 

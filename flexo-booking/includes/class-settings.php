@@ -58,13 +58,32 @@ class Flexo_Booking_Settings {
 			'review_link'                   => '',
 			'email_review_subject'          => __( 'How was your stay at {hotel_name}?', 'flexo-booking' ),
 			'email_review_body'             => __( "Hello {guest_name},\n\nThank you for staying with us. We hope you enjoyed your time at {hotel_name}.\n\nWe would be very grateful if you shared your experience. It takes a minute and helps other guests:\n{review_link}\n\nKind regards,\n{hotel_name}", 'flexo-booking' ),
-			// Reserved for online payments (Day 5); not sent yet.
-			'email_awaiting_deposit_subject' => __( 'Please pay the deposit for booking {booking_ref}', 'flexo-booking' ),
-			'email_awaiting_deposit_body'    => __( "Hello {guest_name},\n\nThank you for your booking at {hotel_name}. To confirm it, please pay the deposit.\n\n{booking_details}\n\nKind regards,\n{hotel_name}", 'flexo-booking' ),
-			'email_payment_received_subject' => __( 'We received your payment for booking {booking_ref}', 'flexo-booking' ),
-			'email_payment_received_body'    => __( "Hello {guest_name},\n\nThank you, we received your payment.\n\n{booking_details}\n\nKind regards,\n{hotel_name}", 'flexo-booking' ),
-			'email_payment_failed_subject'   => __( 'Payment for booking {booking_ref} did not go through', 'flexo-booking' ),
-			'email_payment_failed_body'      => __( "Hello {guest_name},\n\nUnfortunately your payment did not go through. Please try again or contact us at {hotel_phone}.\n\n{booking_details}\n\nKind regards,\n{hotel_name}", 'flexo-booking' ),
+			// Payments (Day 5).
+			'email_awaiting_deposit_subject'  => __( 'Payment details for your booking {booking_ref}', 'flexo-booking' ),
+			'email_awaiting_deposit_body'     => __( "Hello {guest_name},\n\nThank you for your booking at {hotel_name}. To confirm it, please pay {amount_due} by bank transfer by {payment_deadline}.\n\n{payment_instructions}\n\n{booking_details}\n\nKind regards,\n{hotel_name}", 'flexo-booking' ),
+			'email_payment_reminder_subject'  => __( 'Reminder: payment for booking {booking_ref}', 'flexo-booking' ),
+			'email_payment_reminder_body'     => __( "Hello {guest_name},\n\nA friendly reminder: we have not received your payment of {amount_due} for booking {booking_ref} yet. Please pay by {payment_deadline} to keep your booking.\n\n{payment_instructions}\n\nIf you have already paid, thank you – please ignore this message.\n\nKind regards,\n{hotel_name}", 'flexo-booking' ),
+			'email_payment_received_subject'  => __( 'Payment received – your booking {booking_ref} is confirmed', 'flexo-booking' ),
+			'email_payment_received_body'     => __( "Hello {guest_name},\n\nThank you, we received your payment of {amount_paid}. Your booking at {hotel_name} is confirmed.\n\n{booking_details}\n\nCheck-in from {check_in_time}, check-out until {check_out_time}.\n\nWe look forward to welcoming you!\n{hotel_name}", 'flexo-booking' ),
+			'email_payment_failed_subject'    => __( 'Payment for booking {booking_ref} did not go through', 'flexo-booking' ),
+			'email_payment_failed_body'       => __( "Hello {guest_name},\n\nUnfortunately your payment for booking {booking_ref} did not go through, so the room is no longer reserved for you.\n\nYou are welcome to book again on our website, or contact us at {hotel_phone} and we will be glad to help.\n\nKind regards,\n{hotel_name}", 'flexo-booking' ),
+			'email_payment_cancelled_subject' => __( 'Booking {booking_ref} cancelled – payment not received', 'flexo-booking' ),
+			'email_payment_cancelled_body'    => __( "Hello {guest_name},\n\nWe did not receive your payment for booking {booking_ref} by {payment_deadline}, so the booking has been cancelled and the room is available again.\n\nIf you have paid in the meantime or would still like to stay with us, please reply to this email or call us at {hotel_phone}.\n\nKind regards,\n{hotel_name}", 'flexo-booking' ),
+			'notify_payment'                  => 1,
+			'notify_payment_conflict'         => 1,
+			'payment_mode'                    => 'full',
+			'deposit_type'                    => 'percent',
+			'deposit_value'                   => 30,
+			'stripe_mode'                     => 'test',
+			'hold_minutes'                    => 30,
+			'bank_beneficiary'                => '',
+			'bank_iban'                       => '',
+			'bank_bic'                        => '',
+			'bank_name'                       => '',
+			'bank_reference'                  => '{booking_ref}',
+			'bank_transfer_days'              => 3,
+			'bank_transfer_reminder_days'     => 1,
+			'bank_transfer_auto_cancel'       => 1,
 			'email_log_days'                => 90,
 			// Guest details form (Day 4, data minimisation).
 			'field_phone'                   => 'required',
@@ -215,6 +234,36 @@ class Flexo_Booking_Settings {
 				case 'notification_email':
 					$clean[ $key ] = implode( ', ', array_filter( array_map( 'sanitize_email', preg_split( '/[,;\s]+/', (string) $value ) ) ) );
 					break;
+				case 'payment_mode':
+					$clean[ $key ] = in_array( $value, array( 'property', 'deposit', 'full' ), true ) ? $value : 'full';
+					break;
+				case 'deposit_type':
+					$clean[ $key ] = in_array( $value, array( 'percent', 'fixed' ), true ) ? $value : 'percent';
+					break;
+				case 'deposit_value':
+					$clean[ $key ] = max( 0, round( (float) str_replace( ',', '.', (string) $value ), 2 ) );
+					break;
+				case 'stripe_mode':
+					$clean[ $key ] = 'live' === $value ? 'live' : 'test';
+					break;
+				case 'hold_minutes':
+					$clean[ $key ] = min( 30, max( 20, absint( $value ) ) );
+					break;
+				case 'bank_iban':
+					$clean[ $key ] = strtoupper( preg_replace( '/[^A-Za-z0-9]/', '', (string) $value ) );
+					break;
+				case 'bank_bic':
+					$clean[ $key ] = strtoupper( preg_replace( '/[^A-Za-z0-9]/', '', (string) $value ) );
+					break;
+				case 'bank_transfer_days':
+					$clean[ $key ] = min( 60, max( 1, absint( $value ) ) );
+					break;
+				case 'bank_transfer_reminder_days':
+					$clean[ $key ] = min( 30, absint( $value ) );
+					break;
+				case 'notify_payment':
+				case 'notify_payment_conflict':
+				case 'bank_transfer_auto_cancel':
 				case 'notify_new':
 				case 'notify_cancelled':
 				case 'notify_conflict':
@@ -274,6 +323,9 @@ class Flexo_Booking_Settings {
 			}
 		}
 
+		if ( 'percent' === $clean['deposit_type'] ) {
+			$clean['deposit_value'] = min( 100, $clean['deposit_value'] );
+		}
 		$clean['max_nights']       = max( $clean['min_nights'], $clean['max_nights'] );
 		$clean['child_adult_from'] = max( $clean['child_free_under'], $clean['child_adult_from'] );
 
@@ -309,6 +361,15 @@ class Flexo_Booking_Settings {
 				'sanitize_callback' => array( __CLASS__, 'sanitize' ),
 			)
 		);
+		// API keys live in their own option (never exported).
+		register_setting(
+			'flexo_booking',
+			Flexo_Booking_Payments::SECRETS_OPTION,
+			array(
+				'type'              => 'array',
+				'sanitize_callback' => array( 'Flexo_Booking_Payments', 'sanitize_secrets' ),
+			)
+		);
 	}
 
 	public static function tabs() {
@@ -321,6 +382,9 @@ class Flexo_Booking_Settings {
 		}
 		if ( Flexo_Booking_Features::is_enabled( 'tourist_tax' ) ) {
 			$tabs['tourist_tax'] = __( 'Tourist tax', 'flexo-booking' );
+		}
+		if ( Flexo_Booking_Payments::enabled() ) {
+			$tabs['payments'] = __( 'Payments', 'flexo-booking' );
 		}
 		if ( Flexo_Booking_Features::is_enabled( 'privacy_consent' ) ) {
 			$tabs['privacy'] = __( 'Privacy', 'flexo-booking' );
@@ -555,7 +619,7 @@ class Flexo_Booking_Settings {
 						<td>
 							<?php foreach ( Flexo_Booking_Emails::hotel_types() as $flexo_type => $flexo_def ) : ?>
 								<?php
-								if ( 'ical_conflict' === $flexo_type && ! Flexo_Booking_Features::is_enabled( 'calendar_sync' ) ) {
+								if ( ( 'ical_conflict' === $flexo_type && ! Flexo_Booking_Features::is_enabled( 'calendar_sync' ) ) || ( ! empty( $flexo_def['payment'] ) && ! Flexo_Booking_Features::is_enabled( 'online_payment' ) ) ) {
 									echo '<input type="hidden" name="' . esc_attr( $name . '[' . $flexo_def['setting'] . ']' ) . '" value="' . esc_attr( $s[ $flexo_def['setting'] ] ) . '">';
 									continue;
 								}
@@ -591,8 +655,8 @@ class Flexo_Booking_Settings {
 				<table class="form-table" role="presentation">
 					<?php foreach ( Flexo_Booking_Emails::guest_types() as $type => $flexo_def ) : ?>
 						<?php
-						if ( ! empty( $flexo_def['reserved'] ) ) {
-							continue; // Used by online payments (Day 5).
+						if ( ! empty( $flexo_def['payment'] ) && ! self::payment_email_used( $flexo_def['payment'] ) ) {
+							continue; // Only for the ways of paying that are on.
 						}
 						?>
 						<tr id="flexo-email-<?php echo esc_attr( $type ); ?>">
@@ -624,6 +688,10 @@ class Flexo_Booking_Settings {
 
 				<h2><?php esc_html_e( 'Email log', 'flexo-booking' ); ?></h2>
 				<p><label><?php esc_html_e( 'Keep the log for', 'flexo-booking' ); ?> <input type="number" min="7" max="730" class="small-text" name="<?php echo esc_attr( $name ); ?>[email_log_days]" value="<?php echo esc_attr( $s['email_log_days'] ); ?>"> <?php esc_html_e( 'days', 'flexo-booking' ); ?></label></p>
+				<?php endif; ?>
+
+				<?php if ( 'payments' === $tab ) : ?>
+					<?php Flexo_Booking_Payments_Admin::render_settings( $s, $name ); ?>
 				<?php endif; ?>
 
 				<?php if ( 'privacy' === $tab ) : ?>
@@ -720,6 +788,21 @@ class Flexo_Booking_Settings {
 			?>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Whether a payment email is used with the ways of paying that are on.
+	 *
+	 * @param string $kind bank | card | any.
+	 */
+	private static function payment_email_used( $kind ) {
+		if ( 'bank' === $kind ) {
+			return Flexo_Booking_Features::is_enabled( 'bank_transfer' );
+		}
+		if ( 'card' === $kind ) {
+			return Flexo_Booking_Features::is_enabled( 'online_payment' );
+		}
+		return Flexo_Booking_Payments::enabled();
 	}
 
 	/**

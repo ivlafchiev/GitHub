@@ -246,15 +246,64 @@
 		bindDates( this.searchForm );
 		bindAges( this.searchForm );
 		bindInvoice( this.detailsForm );
+		this.bindPayment();
 
 		this.searchForm.addEventListener( 'submit', this.onSearch.bind( this ) );
 		this.detailsForm.addEventListener( 'submit', this.onBook.bind( this ) );
 		this.detailsForm.querySelector( '[data-fb-back]' ).addEventListener( 'click', this.back.bind( this ) );
 
+		// Back from the payment page: show the payment result instead of the search.
+		var query = new URLSearchParams( window.location.search );
+		if ( query.get( 'fb_payment' ) && query.get( 'fb_ref' ) && query.get( 'fb_key' ) ) {
+			this.resumePayment( query.get( 'fb_payment' ), query.get( 'fb_ref' ), query.get( 'fb_key' ) );
+			return;
+		}
+
 		if ( root.getAttribute( 'data-autosearch' ) === '1' ) {
 			this.search();
 		}
 	}
+
+	/**
+	 * Payment method choice and the submit button text that goes with it,
+	 * plus the total shown next to the button (kept visible on phones).
+	 */
+	BookingForm.prototype.bindPayment = function () {
+		var self = this;
+		var actions = this.detailsForm.querySelector( '.fb-actions' );
+		var submit = this.detailsForm.querySelector( '[type="submit"]' );
+		this.submitLabel = submit ? submit.textContent.trim() : '';
+		if ( actions ) {
+			this.actionsTotal = el( 'div', 'fb-actions__total' );
+			this.actionsTotal.setAttribute( 'aria-hidden', 'true' );
+			actions.insertBefore( this.actionsTotal, actions.firstChild );
+		}
+		this.detailsForm.addEventListener( 'change', function ( e ) {
+			if ( e.target && e.target.name === 'payment_method' ) {
+				self.updateSubmit();
+			}
+		} );
+		this.updateSubmit();
+	};
+
+	BookingForm.prototype.paymentMethod = function () {
+		var checked = this.detailsForm.querySelector( '[name="payment_method"]:checked' );
+		return checked ? checked.value : '';
+	};
+
+	BookingForm.prototype.updateSubmit = function () {
+		var submit = this.detailsForm.querySelector( '[type="submit"]' );
+		var pay = cfg.payments;
+		var method = this.paymentMethod();
+		if ( ! submit || ! pay || ! method || ! pay.methods[ method ] ) {
+			return;
+		}
+		if ( pay.methods[ method ].hosted ) {
+			submit.textContent = t.continuePay;
+		} else {
+			submit.textContent = pay.instant ? t.confirmBooking : t.sendRequest;
+		}
+	};
 
 	BookingForm.prototype.setNotice = function ( message, isError ) {
 		this.notice.textContent = message || '';
@@ -590,8 +639,22 @@
 		if ( itemised || view.discount_total > 0 ) {
 			row( view.discount_total > 0 ? t.finalTotal : t.total, view.total_formatted, 'fb-summary__total' );
 		}
-		if ( view.due_at_property > 0 ) {
+		var pay = view.payment || null;
+		if ( pay && pay.now > 0 ) {
+			row( pay.now_label + ' – ' + t.toPayNow.toLowerCase(), pay.now_formatted, 'fb-summary__paynow' );
+			if ( pay.at_property > 0 ) {
+				row( t.atPropertyRest, pay.at_property_formatted, 'fb-summary__property' );
+			}
+		} else if ( pay && pay.mode === 'property' ) {
+			row( t.payAtProperty, t.payAtPropertyText + ( pay.at_property > 0 ? ' · ' + pay.at_property_formatted : '' ), 'fb-summary__property' );
+		} else if ( view.due_at_property > 0 ) {
 			row( t.atProperty, view.due_at_property_formatted, 'fb-summary__property' );
+		}
+		if ( this.actionsTotal ) {
+			this.actionsTotal.innerHTML = '';
+			var payNow = pay && pay.now > 0;
+			this.actionsTotal.appendChild( el( 'span', '', payNow ? t.toPayNow : t.total ) );
+			this.actionsTotal.appendChild( el( 'strong', '', payNow ? pay.now_formatted : ( view.total_formatted || room.total_formatted ) ) );
 		}
 		if ( view.rate_plan && view.rate_plan.cancellation_policy ) {
 			var policy = el( 'p', 'fb-summary__policy' );
@@ -781,6 +844,9 @@
 			invoice: invoice,
 			locale: this.locale,
 			fb_website: f.querySelector( '[name="fb_website"]' ).value,
+			// Only the method: amounts are always calculated by the server.
+			payment_method: this.paymentMethod(),
+			return_url: window.location.href.split( '#' )[ 0 ],
 		};
 
 		var submit = f.querySelector( '[type="submit"]' );
@@ -795,6 +861,13 @@
 			body: JSON.stringify( payload ),
 		} )
 			.then( function ( data ) {
+				if ( data.payment && data.payment.redirect ) {
+					// Card: continue on the secure payment page.
+					self.leaving = true;
+					self.setNotice( t.redirecting );
+					window.location.href = data.payment.redirect;
+					return;
+				}
 				if ( data.redirect ) {
 					// Leave the page only after the conversion was recorded.
 					self.trackComplete( data, function () {
@@ -813,6 +886,9 @@
 				}
 			} )
 			.finally( function () {
+				if ( self.leaving ) {
+					return;
+				}
 				submit.disabled = false;
 				submit.textContent = label;
 			} );
@@ -826,12 +902,195 @@
 		ref.appendChild( el( 'strong', '', data.reference ) );
 		this.success.appendChild( ref );
 		this.success.appendChild( el( 'p', 'fb-success__stay', data.room + ' · ' + this.date( data.check_in ) + ' → ' + this.date( data.check_out ) + ' · ' + data.total_formatted ) );
+		if ( data.payment ) {
+			this.renderPayment( data.payment );
+		}
 
 		this.searchForm.hidden = true;
 		this.detailsForm.hidden = true;
 		this.results.hidden = true;
 		this.success.hidden = false;
 		this.success.focus();
+	};
+
+	/**
+	 * Paid / still to pay, and the bank details with copy buttons.
+	 */
+	BookingForm.prototype.renderPayment = function ( pay ) {
+		var box = this.success;
+		if ( pay.paid_formatted || pay.at_property_formatted ) {
+			var sums = el( 'div', 'fb-success__amounts' );
+			if ( pay.paid_formatted ) {
+				sums.appendChild( el( 'p', '', t.paid + ': ' + pay.paid_formatted ) );
+			}
+			if ( pay.at_property_formatted && pay.state !== 'awaiting_transfer' && pay.state !== 'request' ) {
+				sums.appendChild( el( 'p', '', t.atPropertyRest + ': ' + pay.at_property_formatted ) );
+			}
+			box.appendChild( sums );
+		}
+		if ( pay.instructions && pay.instructions.rows ) {
+			var bank = el( 'div', 'fb-bank' );
+			bank.appendChild( el( 'h4', 'fb-bank__title', t.bankDetails ) );
+			var list = el( 'dl', 'fb-bank__list' );
+			pay.instructions.rows.forEach( function ( item ) {
+				var row = el( 'div', 'fb-bank__row fb-bank__row--' + item.key );
+				row.appendChild( el( 'dt', '', item.label ) );
+				var dd = el( 'dd' );
+				dd.appendChild( el( 'span', 'fb-bank__value', item.value ) );
+				if ( [ 'iban', 'reference', 'amount' ].indexOf( item.key ) !== -1 && navigator.clipboard ) {
+					var copy = el( 'button', 'fb-link fb-bank__copy', t.copy );
+					copy.type = 'button';
+					copy.setAttribute( 'aria-label', t.copy + ': ' + item.label );
+					copy.addEventListener( 'click', function () {
+						navigator.clipboard.writeText( item.key === 'iban' ? item.value.replace( /\s+/g, '' ) : item.value ).then( function () {
+							copy.textContent = t.copied;
+							window.setTimeout( function () {
+								copy.textContent = t.copy;
+							}, 2000 );
+						} );
+					} );
+					dd.appendChild( copy );
+				}
+				row.appendChild( dd );
+				list.appendChild( row );
+			} );
+			bank.appendChild( list );
+			if ( pay.instructions.note ) {
+				bank.appendChild( el( 'p', 'fb-bank__note', pay.instructions.note ) );
+			}
+			box.appendChild( bank );
+		}
+	};
+
+	/**
+	 * The guest came back from the payment page. The booking is confirmed by
+	 * the payment provider's notification to the website, so the page asks
+	 * the website until it knows the result.
+	 */
+	BookingForm.prototype.resumePayment = function ( kind, reference, key ) {
+		var self = this;
+		this.paymentRef = reference;
+		this.paymentKey = key;
+		this.searchForm.hidden = true;
+		this.detailsForm.hidden = true;
+		this.results.hidden = true;
+		this.success.hidden = false;
+		this.success.innerHTML = '';
+		this.success.appendChild( el( 'p', 'fb-success__message fb-success__message--pending', t.checkingPayment ) );
+		this.root.classList.add( 'is-loading' );
+
+		var started = Date.now();
+		var params = { reference: reference, key: key };
+		if ( this.locale ) {
+			params.locale = this.locale;
+		}
+		function poll() {
+			request( apiUrl( 'payment', params ) )
+				.then( function ( view ) {
+					var waiting = view.state === 'processing' || ( kind === 'return' && view.state === 'held' );
+					if ( waiting && Date.now() - started < 45000 ) {
+						window.setTimeout( poll, Date.now() - started < 10000 ? 1500 : 3000 );
+						return;
+					}
+					self.root.classList.remove( 'is-loading' );
+					if ( waiting && view.state === 'held' ) {
+						// Still no word from the payment provider.
+						view.message = t.stillChecking;
+						view.can_retry = false;
+					}
+					self.showPaymentResult( view );
+				} )
+				.catch( function ( err ) {
+					self.root.classList.remove( 'is-loading' );
+					self.success.innerHTML = '';
+					self.success.appendChild( el( 'p', 'fb-success__message is-error', err.message ) );
+					self.addRestart();
+				} );
+		}
+		poll();
+	};
+
+	BookingForm.prototype.showPaymentResult = function ( view ) {
+		var self = this;
+		var box = this.success;
+		box.innerHTML = '';
+		box.setAttribute( 'data-state', view.state );
+		box.appendChild( el( 'p', 'fb-success__message' + ( [ 'expired', 'failed', 'conflict', 'cancelled' ].indexOf( view.state ) !== -1 ? ' is-error' : '' ), view.message ) );
+		var ref = el( 'p', 'fb-success__reference' );
+		ref.appendChild( document.createTextNode( t.reference + ': ' ) );
+		ref.appendChild( el( 'strong', '', view.reference ) );
+		box.appendChild( ref );
+		box.appendChild( el( 'p', 'fb-success__stay', view.room + ' · ' + this.date( view.check_in ) + ' → ' + this.date( view.check_out ) + ' · ' + view.total_formatted ) );
+		this.renderPayment( view );
+
+		if ( view.state === 'confirmed' ) {
+			this.selected = { title: view.room, slug: '', id: view.reference };
+			this.view = view.quote || null;
+			this.trackComplete( { reference: view.reference, status: 'confirmed', quote: view.quote }, function () {
+				if ( view.redirect ) {
+					window.location.href = view.redirect;
+				}
+			} );
+		}
+		var actions = el( 'div', 'fb-actions fb-actions--result' );
+		if ( view.can_retry ) {
+			var retry = el( 'button', 'fb-button', t.payAgain );
+			retry.type = 'button';
+			retry.addEventListener( 'click', function () {
+				self.retryPayment( retry );
+			} );
+			actions.appendChild( retry );
+		}
+		if ( [ 'expired', 'failed', 'held', 'cancelled' ].indexOf( view.state ) !== -1 ) {
+			actions.appendChild( this.restartButton() );
+		}
+		if ( actions.childNodes.length ) {
+			box.appendChild( actions );
+		}
+		box.focus();
+	};
+
+	BookingForm.prototype.restartButton = function () {
+		var self = this;
+		var again = el( 'button', 'fb-button fb-button--ghost', t.searchAgain );
+		again.type = 'button';
+		again.addEventListener( 'click', function () {
+			var url = new URL( window.location.href );
+			[ 'fb_payment', 'fb_ref', 'fb_key' ].forEach( function ( k ) {
+				url.searchParams.delete( k );
+			} );
+			window.history.replaceState( null, '', url.toString() );
+			self.success.hidden = true;
+			self.searchForm.hidden = false;
+			self.searchForm.querySelector( 'input' ).focus();
+		} );
+		return again;
+	};
+
+	BookingForm.prototype.addRestart = function () {
+		var actions = el( 'div', 'fb-actions fb-actions--result' );
+		actions.appendChild( this.restartButton() );
+		this.success.appendChild( actions );
+	};
+
+	BookingForm.prototype.retryPayment = function ( button ) {
+		var self = this;
+		button.disabled = true;
+		request( apiUrl( 'payment/retry' ), {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+			body: JSON.stringify( { reference: this.paymentRef, key: this.paymentKey, locale: this.locale, return_url: window.location.href.split( '#' )[ 0 ] } ),
+		} )
+			.then( function ( data ) {
+				if ( data.redirect ) {
+					button.textContent = t.redirecting;
+					window.location.href = data.redirect;
+				}
+			} )
+			.catch( function ( err ) {
+				button.disabled = false;
+				self.setNotice( err.message, true );
+			} );
 	};
 
 	function init( scope ) {

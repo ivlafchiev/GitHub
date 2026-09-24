@@ -90,6 +90,7 @@ class Flexo_Booking_Admin {
 			'deleted' => array( 'success', __( 'Booking deleted.', 'flexo-booking' ) ),
 			'added'   => array( 'success', __( 'Booking added.', 'flexo-booking' ) ),
 			'anonymised' => array( 'success', __( 'The guest\'s personal data was removed from this booking.', 'flexo-booking' ) ),
+			'payment'    => array( 'success', __( 'Payment recorded.', 'flexo-booking' ) ),
 		);
 		if ( isset( $messages[ $code ] ) ) {
 			printf( '<div class="notice notice-%s is-dismissible"><p>%s</p></div>', esc_attr( $messages[ $code ][0] ), esc_html( $messages[ $code ][1] ) );
@@ -113,6 +114,10 @@ class Flexo_Booking_Admin {
 			return;
 		}
 
+		// Holds whose time is up are released before the list is shown.
+		if ( Flexo_Booking_Schema::column_exists( 'bookings', 'hold_expires_at' ) ) {
+			Flexo_Booking_Payments::release_expired_holds();
+		}
 		$filters  = self::current_filters();
 		$per_page = 20;
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -178,6 +183,8 @@ class Flexo_Booking_Admin {
 					</table>
 				</div>
 			<?php endif; ?>
+
+			<?php Flexo_Booking_Payments_Admin::render_conflicts(); ?>
 
 			<?php
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -315,12 +322,21 @@ class Flexo_Booking_Admin {
 							}
 							?>
 						</td>
-						<td><span class="flexo-status flexo-status--<?php echo esc_attr( $b['status'] ); ?>"><?php echo esc_html( Flexo_Booking_Bookings::status_label( $b['status'] ) ); ?></span></td>
+						<td>
+							<span class="flexo-status flexo-status--<?php echo esc_attr( $b['status'] ); ?>"><?php echo esc_html( Flexo_Booking_Bookings::status_label( $b['status'] ) ); ?></span>
+							<?php $flexo_badge = Flexo_Booking_Payments_Admin::badge( $b ); ?>
+							<?php if ( $flexo_badge ) : ?>
+								<div><?php echo $flexo_badge; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in badge(). ?></div>
+							<?php endif; ?>
+						</td>
 						<td class="flexo-actions">
 							<?php if ( 'pending' === $b['status'] ) : ?>
-								<a class="button button-primary button-small" href="<?php echo esc_url( self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'confirmed' ) ) ); ?>"><?php esc_html_e( 'Confirm', 'flexo-booking' ); ?></a>
+								<a class="button button-primary button-small" href="<?php echo esc_url( self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'confirmed' ) ) ); ?>"><?php echo esc_html( self::confirm_label( $b ) ); ?></a>
 							<?php endif; ?>
-							<?php if ( 'cancelled' === $b['status'] ) : ?>
+							<?php if ( 'awaiting_payment' === $b['status'] ) : ?>
+								<a class="button button-primary button-small" href="<?php echo esc_url( self::page_url( array( 'booking' => $b['id'] ) ) . '#flexo-payments' ); ?>"><?php esc_html_e( 'Payment received', 'flexo-booking' ); ?></a>
+							<?php endif; ?>
+							<?php if ( in_array( $b['status'], array( 'cancelled', 'expired' ), true ) ) : ?>
 								<a class="button button-small" href="<?php echo esc_url( self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'confirmed' ) ) ); ?>"><?php esc_html_e( 'Reinstate', 'flexo-booking' ); ?></a>
 							<?php elseif ( 'blocked' !== $b['status'] ) : ?>
 								<a class="button button-small" href="<?php echo esc_url( self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'cancelled' ) ) ); ?>" onclick="return confirm('<?php echo esc_js( __( 'Cancel this booking? The guest will be notified by email.', 'flexo-booking' ) ); ?>');"><?php esc_html_e( 'Cancel', 'flexo-booking' ); ?></a>
@@ -384,6 +400,7 @@ class Flexo_Booking_Admin {
 				echo esc_html( sprintf( __( 'Booking %s', 'flexo-booking' ), $b['reference'] ) );
 				?>
 				<span class="flexo-status flexo-status--<?php echo esc_attr( $b['status'] ); ?>"><?php echo esc_html( Flexo_Booking_Bookings::status_label( $b['status'] ) ); ?></span>
+				<?php echo Flexo_Booking_Payments_Admin::badge( $b ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in badge(). ?>
 			</h1>
 			<?php self::notice(); ?>
 			<p><?php echo self::source_badge( $b ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in source_badge(). ?></p>
@@ -490,6 +507,8 @@ class Flexo_Booking_Admin {
 					<p class="description"><?php esc_html_e( 'This is the price calculated when the booking was made. Later price changes don\'t affect it.', 'flexo-booking' ); ?></p>
 				</div>
 				<?php endif; ?>
+
+				<?php Flexo_Booking_Payments_Admin::render_booking_card( $b ); ?>
 			</div>
 
 			<?php $emails = Flexo_Booking_Emails::log_entries( array( 'booking_id' => $b['id'], 'limit' => 20 ) ); ?>
@@ -512,9 +531,12 @@ class Flexo_Booking_Admin {
 
 			<p class="flexo-actions">
 				<?php if ( 'pending' === $b['status'] ) : ?>
-					<a class="button button-primary" href="<?php echo esc_url( self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'confirmed' ) ) ); ?>"><?php esc_html_e( 'Confirm', 'flexo-booking' ); ?></a>
+					<a class="button button-primary" href="<?php echo esc_url( self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'confirmed' ) ) ); ?>"><?php echo esc_html( self::confirm_label( $b ) ); ?></a>
 				<?php endif; ?>
-				<?php if ( 'cancelled' === $b['status'] ) : ?>
+				<?php if ( 'awaiting_payment' === $b['status'] || ( 'pending' === $b['status'] && 'bank_transfer' === $b['payment_method'] ) ) : ?>
+					<a class="button" href="<?php echo esc_url( self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'confirmed', 'force' => 1 ) ) ); ?>" onclick="return confirm('<?php echo esc_js( __( 'Confirm this booking without waiting for the payment?', 'flexo-booking' ) ); ?>');"><?php esc_html_e( 'Confirm without payment', 'flexo-booking' ); ?></a>
+				<?php endif; ?>
+				<?php if ( in_array( $b['status'], array( 'cancelled', 'expired' ), true ) ) : ?>
 					<a class="button" href="<?php echo esc_url( self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'confirmed' ) ) ); ?>"><?php esc_html_e( 'Reinstate', 'flexo-booking' ); ?></a>
 				<?php elseif ( 'blocked' !== $b['status'] ) : ?>
 					<a class="button" href="<?php echo esc_url( self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'cancelled' ) ) ); ?>" onclick="return confirm('<?php echo esc_js( __( 'Cancel this booking? The guest will be notified by email.', 'flexo-booking' ) ); ?>');"><?php esc_html_e( 'Cancel booking', 'flexo-booking' ); ?></a>
@@ -523,6 +545,16 @@ class Flexo_Booking_Admin {
 			</p>
 		</div>
 		<?php
+	}
+
+	/**
+	 * "Confirm", or for a request paid by bank transfer "Confirm & ask for payment".
+	 */
+	public static function confirm_label( array $b ) {
+		if ( 'bank_transfer' === $b['payment_method'] && $b['amount_due'] > $b['amount_paid'] && Flexo_Booking_Payments::gateway( 'bank_transfer' ) && Flexo_Booking_Payments::gateway( 'bank_transfer' )->is_available() ) {
+			return __( 'Confirm & ask for payment', 'flexo-booking' );
+		}
+		return __( 'Confirm', 'flexo-booking' );
 	}
 
 	/**
@@ -729,7 +761,7 @@ class Flexo_Booking_Admin {
 			wp_die( esc_html__( 'You are not allowed to manage bookings.', 'flexo-booking' ) );
 		}
 
-		$result = Flexo_Booking_Bookings::update_status( $id, $status );
+		$result = Flexo_Booking_Bookings::update_status( $id, $status, array( 'force' => ! empty( $_GET['force'] ) ) );
 		$back   = wp_get_referer() ? wp_get_referer() : self::page_url();
 		$back   = remove_query_arg( array( 'flexo_msg', 'flexo_error' ), $back );
 
@@ -798,7 +830,7 @@ class Flexo_Booking_Admin {
 		$out = fopen( 'php://output', 'w' );
 		fwrite( $out, "\xEF\xBB\xBF" ); // UTF-8 BOM so Excel shows accents and Cyrillic correctly.
 		// New columns are added at the end, so existing spreadsheets keep working.
-		fputcsv( $out, array( 'Reference', 'Status', 'Room', 'Check-in', 'Check-out', 'Nights', 'Adults', 'Children', 'Guest', 'Email', 'Phone', 'Notes', 'Total', 'Currency', 'Source', 'Created', 'Price details', 'Children ages', 'Rate plan', 'Refundable', 'Promo code', 'Discount', 'Tourist tax', 'Payable at property', 'Language', 'Privacy consent', 'Invoice', 'Invoice name / company', 'Company ID', 'VAT number', 'Invoice address', 'Contact person', 'Anonymised' ), ',', '"', '\\' );
+		fputcsv( $out, array( 'Reference', 'Status', 'Room', 'Check-in', 'Check-out', 'Nights', 'Adults', 'Children', 'Guest', 'Email', 'Phone', 'Notes', 'Total', 'Currency', 'Source', 'Created', 'Price details', 'Children ages', 'Rate plan', 'Refundable', 'Promo code', 'Discount', 'Tourist tax', 'Payable at property', 'Language', 'Privacy consent', 'Invoice', 'Invoice name / company', 'Company ID', 'VAT number', 'Invoice address', 'Contact person', 'Anonymised', 'Payment method', 'Payment status', 'Due when booking', 'Paid', 'Refunded', 'Balance', 'Payment deadline', 'Transaction IDs' ), ',', '"', '\\' );
 		$invoices = Flexo_Booking_Invoices::for_bookings( wp_list_pluck( $result['items'], 'id' ) );
 		foreach ( $result['items'] as $b ) {
 			$snapshot = Flexo_Booking_Pricing::snapshot( $b );
@@ -820,6 +852,26 @@ class Flexo_Booking_Admin {
 					$inv ? ( $company ? $inv['company_address'] : $inv['address'] ) : '',
 					$inv ? $inv['contact_person'] : '',
 					$b['anonymized_at'] ? $b['anonymized_at'] : '',
+				)
+			);
+			$pay  = Flexo_Booking_Payments::balance( $b );
+			$txns = array();
+			foreach ( Flexo_Booking_Payments::history( $b['id'] ) as $flexo_payment ) {
+				if ( 'attempt' !== $flexo_payment['type'] && '' !== $flexo_payment['transaction_id'] ) {
+					$txns[] = $flexo_payment['transaction_id'];
+				}
+			}
+			$row = array_merge(
+				$row,
+				array(
+					$b['payment_method'],
+					$b['payment_status'],
+					$b['amount_due'] ? $b['amount_due'] : '',
+					$pay['paid'] ? $pay['paid'] : '',
+					$pay['refunded'] ? $pay['refunded'] : '',
+					'' !== $b['payment_method'] && 'blocked' !== $b['status'] ? $pay['outstanding'] : '',
+					$b['payment_due_at'] ? $b['payment_due_at'] : '',
+					implode( ' ', $txns ),
 				)
 			);
 			// Prevent spreadsheet formula injection from guest-entered values.

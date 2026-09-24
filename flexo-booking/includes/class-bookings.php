@@ -11,16 +11,26 @@ class Flexo_Booking_Bookings {
 
 	/**
 	 * Statuses that occupy a room. "blocked" is used by staff to close dates
-	 * (maintenance, bookings taken on other channels, ...).
+	 * (maintenance, bookings taken on other channels, ...). "awaiting_payment"
+	 * waits for a bank transfer. Payment holds (HOLD_STATUS) occupy a room
+	 * only until they expire, see Flexo_Booking_Inventory::occupying_sql().
 	 */
-	const OCCUPYING = array( 'pending', 'confirmed', 'blocked' );
+	const OCCUPYING = array( 'pending', 'confirmed', 'blocked', 'awaiting_payment' );
+
+	/**
+	 * A card payment is in progress; the room is held until hold_expires_at.
+	 */
+	const HOLD_STATUS = 'pending_payment';
 
 	public static function statuses() {
 		return array(
-			'pending'   => __( 'Pending', 'flexo-booking' ),
-			'confirmed' => __( 'Confirmed', 'flexo-booking' ),
-			'cancelled' => __( 'Cancelled', 'flexo-booking' ),
-			'blocked'   => __( 'Blocked (closed)', 'flexo-booking' ),
+			'pending'          => __( 'Pending', 'flexo-booking' ),
+			'confirmed'        => __( 'Confirmed', 'flexo-booking' ),
+			'cancelled'        => __( 'Cancelled', 'flexo-booking' ),
+			'blocked'          => __( 'Blocked (closed)', 'flexo-booking' ),
+			'pending_payment'  => __( 'Pending payment', 'flexo-booking' ),
+			'awaiting_payment' => __( 'Awaiting payment', 'flexo-booking' ),
+			'expired'          => __( 'Not paid (expired)', 'flexo-booking' ),
 		);
 	}
 
@@ -289,6 +299,7 @@ class Flexo_Booking_Bookings {
 	 *     @type bool       $privacy_consent The guest ticked the privacy consent (feature "privacy_consent").
 	 *     @type array      $invoice         Invoice request (feature "invoice_request"), see Flexo_Booking_Invoices::validate().
 	 *     @type string     $locale          Language the guest booked in (default: the current language).
+	 *     @type string     $payment_method  Gateway ID the guest chose ("stripe", "bank_transfer") when payments are on.
 	 *     @type string     $guest_name
 	 *     @type string     $guest_email
 	 *     @type string     $guest_phone
@@ -390,6 +401,13 @@ class Flexo_Booking_Bookings {
 		} elseif ( 'blocked' !== $status && '' === $name ) {
 			return new WP_Error( 'flexo_missing_name', __( 'Please enter the guest name.', 'flexo-booking' ) );
 		}
+		// How the booking is paid (payments features); decided before the lock,
+		// the amount inside it with the final price.
+		$payment = Flexo_Booking_Payments::prepare( $data, $is_admin );
+		if ( is_wp_error( $payment ) ) {
+			return $payment;
+		}
+		$token = '';
 		if ( 'blocked' === $status ) {
 			$promo = '';
 		}
@@ -397,7 +415,7 @@ class Flexo_Booking_Bookings {
 		// Everything below runs under the room lock: closures, availability and
 		// the price are re-checked there, so two guests can never take the
 		// last unit and the stored price is the one calculated at that moment.
-		$insert = static function () use ( $wpdb, $room, $stay, $status, $is_admin, $adults, $children, $ages, $plan_id, $promo, $expected, $name, $email, $phone, $notes, $locale ) {
+		$insert = static function () use ( $wpdb, $room, $stay, $status, $is_admin, $adults, $children, $ages, $plan_id, $promo, $expected, $name, $email, $phone, $notes, $locale, $payment, &$token ) {
 			if ( ! $is_admin ) {
 				$closed = Flexo_Booking_Inventory::closed_reason( $room['id'], $stay['check_in'], $stay['check_out'] );
 				if ( $closed ) {
@@ -470,6 +488,7 @@ class Flexo_Booking_Bookings {
 				'updated_at'      => $now,
 			);
 
+			$booking = Flexo_Booking_Payments::apply( $booking, $quote, $payment, $token );
 			$booking = apply_filters( 'flexo_booking_before_insert', $booking, $room );
 
 			if ( ! $wpdb->insert( Flexo_Booking_Install::table(), $booking ) ) {
@@ -512,6 +531,8 @@ class Flexo_Booking_Bookings {
 		}
 
 		$booking = self::get( $booking['id'] );
+		// Returned once, never stored: lets the guest open the payment page again.
+		$booking['access_token'] = $token;
 
 		/**
 		 * Fires after a booking is stored. Emails hook in here; so can payment,
@@ -550,6 +571,15 @@ class Flexo_Booking_Bookings {
 			$row[ $key ] = isset( $row[ $key ] ) ? (string) $row[ $key ] : '';
 		}
 		$row['anonymized_at'] = isset( $row['anonymized_at'] ) ? $row['anonymized_at'] : null;
+		foreach ( array( 'amount_due', 'amount_paid', 'amount_refunded' ) as $key ) {
+			$row[ $key ] = isset( $row[ $key ] ) ? (float) $row[ $key ] : 0.0;
+		}
+		foreach ( array( 'payment_method', 'payment_status', 'payment_session', 'access_key' ) as $key ) {
+			$row[ $key ] = isset( $row[ $key ] ) ? (string) $row[ $key ] : '';
+		}
+		$row['hold_expires_at']  = isset( $row['hold_expires_at'] ) ? $row['hold_expires_at'] : null;
+		$row['payment_due_at']   = isset( $row['payment_due_at'] ) ? $row['payment_due_at'] : null;
+		$row['payment_conflict'] = ! empty( $row['payment_conflict'] ) ? 1 : 0;
 		$row['promo_code']    = isset( $row['promo_code'] ) ? (string) $row['promo_code'] : '';
 		$room              = get_post( $row['room_id'] );
 		$row['room_title'] = $room ? get_the_title( $room ) : __( '(deleted room)', 'flexo-booking' );
@@ -558,17 +588,27 @@ class Flexo_Booking_Bookings {
 
 	/**
 	 * Changes the status of a booking. Re-checks availability when a
-	 * cancelled booking is brought back.
+	 * cancelled (or expired) booking is brought back.
 	 *
+	 * @param array $context {
+	 *     @type bool   $notify False when the caller sends its own emails (payments).
+	 *     @type bool   $force  Confirm without asking for a bank transfer first.
+	 *     @type string $reason Why the status changes, e.g. "payment", "payment_deadline".
+	 * }
 	 * @return true|WP_Error
 	 */
-	public static function update_status( $id, $status ) {
+	public static function update_status( $id, $status, array $context = array() ) {
 		global $wpdb;
 
 		$booking = self::get( $id );
 		if ( ! $booking ) {
 			return new WP_Error( 'flexo_not_found', __( 'Booking not found.', 'flexo-booking' ) );
 		}
+		/**
+		 * The status a change actually leads to (e.g. accepting a request
+		 * paid by bank transfer first waits for the payment).
+		 */
+		$status = apply_filters( 'flexo_booking_update_status_target', $status, $booking, $context );
 		if ( ! array_key_exists( $status, self::statuses() ) ) {
 			return new WP_Error( 'flexo_invalid_status', __( 'Invalid status.', 'flexo-booking' ) );
 		}
@@ -580,7 +620,7 @@ class Flexo_Booking_Bookings {
 			$booking['room_id'],
 			static function () use ( $wpdb, $booking, $id, $status ) {
 				$occupying = Flexo_Booking_Inventory::occupying_statuses();
-				if ( ! in_array( $booking['status'], $occupying, true ) && in_array( $status, $occupying, true ) ) {
+				if ( ! Flexo_Booking_Inventory::is_occupying( self::get( $id ) ) && in_array( $status, $occupying, true ) ) {
 					$post = get_post( $booking['room_id'] );
 					if ( $post ) {
 						$room = Flexo_Booking_Rooms::to_array( $post );
@@ -605,7 +645,7 @@ class Flexo_Booking_Bookings {
 			return $result;
 		}
 
-		do_action( 'flexo_booking_status_changed', self::get( $id ), $booking['status'], $status );
+		do_action( 'flexo_booking_status_changed', self::get( $id ), $booking['status'], $status, $context );
 
 		return true;
 	}
