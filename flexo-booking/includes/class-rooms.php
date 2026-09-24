@@ -20,6 +20,7 @@ class Flexo_Booking_Rooms {
 		'_flexo_capacity'      => 'int',
 		'_flexo_units'         => 'int',
 		'_flexo_min_nights'    => 'int',
+		'_flexo_max_adults'    => 'int',
 	);
 
 	public static function init() {
@@ -80,8 +81,41 @@ class Flexo_Booking_Rooms {
 			</tr>
 			<tr>
 				<th scope="row"><label for="flexo-capacity"><?php esc_html_e( 'Max guests', 'flexo-booking' ); ?></label></th>
-				<td><input id="flexo-capacity" type="number" min="1" name="_flexo_capacity" value="<?php echo esc_attr( $room['capacity'] ); ?>"></td>
+				<td>
+					<input id="flexo-capacity" type="number" min="1" name="_flexo_capacity" value="<?php echo esc_attr( $room['capacity'] ); ?>">
+					<?php if ( Flexo_Booking_Children::enabled() ) : ?>
+						<p class="description"><?php esc_html_e( 'Adults and children together, babies included.', 'flexo-booking' ); ?></p>
+					<?php endif; ?>
+				</td>
 			</tr>
+			<?php if ( Flexo_Booking_Children::enabled() ) : ?>
+				<tr>
+					<th scope="row"><label for="flexo-max-adults"><?php esc_html_e( 'Max adults', 'flexo-booking' ); ?></label></th>
+					<td>
+						<input id="flexo-max-adults" type="number" min="0" name="_flexo_max_adults" value="<?php echo esc_attr( $room['max_adults'] ? $room['max_adults'] : '' ); ?>">
+						<p class="description"><?php esc_html_e( 'Optional. E.g. a family room for 4 guests but at most 2 adults. Leave empty for no separate limit.', 'flexo-booking' ); ?></p>
+					</td>
+				</tr>
+				<?php $flexo_own_rules = Flexo_Booking_Children::room_rules( $post->ID ); ?>
+				<?php $flexo_rules = $flexo_own_rules ? $flexo_own_rules : Flexo_Booking_Children::global_rules(); ?>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Child prices', 'flexo-booking' ); ?></th>
+					<td>
+						<label><input type="checkbox" name="_flexo_child_rules_custom" value="1" <?php checked( (bool) $flexo_own_rules ); ?>> <?php esc_html_e( 'Use different child prices for this room', 'flexo-booking' ); ?></label>
+						<p class="flexo-inline-form">
+							<label><?php esc_html_e( 'Free under age', 'flexo-booking' ); ?> <input type="number" min="0" max="18" class="small-text" name="_flexo_child_free_under" value="<?php echo esc_attr( $flexo_rules['free_under'] ); ?>"></label>
+							<label><?php esc_html_e( 'then pay', 'flexo-booking' ); ?> <input type="number" min="0" max="100" step="0.01" class="small-text" name="_flexo_child_percent" value="<?php echo esc_attr( Flexo_Booking_Children::percent_text( $flexo_rules['percent'] ) ); ?>"> %</label>
+							<label><?php esc_html_e( 'adult price from age', 'flexo-booking' ); ?> <input type="number" min="0" max="18" class="small-text" name="_flexo_child_adult_from" value="<?php echo esc_attr( $flexo_rules['adult_from'] ); ?>"></label>
+						</p>
+						<p class="description">
+							<?php
+							/* translators: %s: summary of the general child prices */
+							printf( esc_html__( 'Otherwise the general rules apply (Settings → Children): %s.', 'flexo-booking' ), esc_html( Flexo_Booking_Children::describe( Flexo_Booking_Children::global_rules() ) ) );
+							?>
+						</p>
+					</td>
+				</tr>
+			<?php endif; ?>
 			<tr>
 				<th scope="row"><label for="flexo-units"><?php esc_html_e( 'Number of rooms of this type', 'flexo-booking' ); ?></label></th>
 				<td>
@@ -96,6 +130,25 @@ class Flexo_Booking_Rooms {
 					<p class="description"><?php esc_html_e( 'Optional. Leave empty to use the global setting.', 'flexo-booking' ); ?><?php echo Flexo_Booking_Seasons::enabled() ? ' ' . esc_html__( 'Seasons can set their own minimum.', 'flexo-booking' ) : ''; ?></p>
 				</td>
 			</tr>
+			<?php if ( Flexo_Booking_Rate_Plans::enabled() ) : ?>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Rate plans', 'flexo-booking' ); ?></th>
+					<td>
+						<?php
+						$flexo_offers = Flexo_Booking_Rate_Plans::room_assignments( $post->ID );
+						$flexo_names  = array();
+						foreach ( Flexo_Booking_Rate_Plans::all() as $flexo_plan ) {
+							if ( array_key_exists( $flexo_plan['id'], $flexo_offers ) ) {
+								$flexo_value   = null === $flexo_offers[ $flexo_plan['id'] ] ? $flexo_plan['adjustment_value'] : $flexo_offers[ $flexo_plan['id'] ];
+								$flexo_names[] = $flexo_plan['name'] . ' (' . Flexo_Booking_Rate_Plans::describe_adjustment( $flexo_plan['adjustment_type'], $flexo_value ) . ( $flexo_plan['active'] ? '' : ', ' . __( 'switched off', 'flexo-booking' ) ) . ')';
+							}
+						}
+						echo $flexo_names ? esc_html( implode( ', ', $flexo_names ) ) : esc_html__( 'No rate plans – guests book the room at its normal price.', 'flexo-booking' );
+						?>
+						<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=' . Flexo_Booking_Rate_Plans_Admin::SLUG ) ); ?>"><?php esc_html_e( 'Choose rate plans for this room', 'flexo-booking' ); ?></a></p>
+					</td>
+				</tr>
+			<?php endif; ?>
 			<tr>
 				<th scope="row"><?php esc_html_e( '"Book now" link', 'flexo-booking' ); ?></th>
 				<td>
@@ -116,9 +169,23 @@ class Flexo_Booking_Rooms {
 		}
 		$values = array();
 		foreach ( array_keys( self::META ) as $key ) {
+			if ( '_flexo_max_adults' === $key && ! isset( $_POST[ $key ] ) ) {
+				continue; // Field hidden while "Children & ages" is off: keep the saved value.
+			}
 			$values[ $key ] = isset( $_POST[ $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) : '';
 		}
 		self::save_meta_values( $post_id, $values );
+
+		if ( isset( $_POST['_flexo_child_free_under'] ) ) {
+			Flexo_Booking_Children::save_room_rules(
+				$post_id,
+				empty( $_POST['_flexo_child_rules_custom'] ) ? null : array(
+					'free_under' => absint( $_POST['_flexo_child_free_under'] ),
+					'percent'    => isset( $_POST['_flexo_child_percent'] ) ? (float) sanitize_text_field( wp_unslash( $_POST['_flexo_child_percent'] ) ) : 100,
+					'adult_from' => isset( $_POST['_flexo_child_adult_from'] ) ? absint( $_POST['_flexo_child_adult_from'] ) : 18,
+				)
+			);
+		}
 	}
 
 	/**
@@ -200,6 +267,7 @@ class Flexo_Booking_Rooms {
 			'units'               => '' === get_post_meta( $post->ID, '_flexo_units', true ) ? 1 : (int) get_post_meta( $post->ID, '_flexo_units', true ),
 			'min_nights_override' => $min,
 			'min_nights'          => $min > 0 ? $min : (int) Flexo_Booking_Settings::get( 'min_nights' ),
+			'max_adults'          => (int) get_post_meta( $post->ID, '_flexo_max_adults', true ),
 		);
 	}
 

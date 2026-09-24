@@ -362,3 +362,178 @@
 	font-size: 0.875em;
 	color: var(--fb-muted);
 }
+
+/* Children's ages (Day 3) */
+.flexo-booking .fb-ages {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--fb-gap);
+	flex: 1 1 100%;
+}
+
+.flexo-booking .fb-field--age {
+	flex: 0 1 auto;
+	min-width: 110px;
+}
+
+.flexo-booking .fb-field--age label {
+	white-space: nowrap;
+}
+
+/* Rate plans inside a room card */
+.flexo-booking .fb-plans {
+	grid-column: 1 / -1;
+	display: grid;
+	gap: 8px;
+	padding-top: 12px;
+	border-top: 1px solid var(--fb-border);
+}
+
+.flexo-booking .fb-plans__title {
+	margin: 0;
+	font-family: var(--fb-heading-font);
+	font-size: 1em;
+}
+
+.flexo-booking .fb-plan {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px 16px;
+	padding: 10px 12px;
+	border: 1px solid var(--fb-border);
+	border-radius: calc(var(--fb-radius) * 0.75);
+}
+
+.flexo-booking .fb-plan__info {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	flex: 1 1 220px;
+	min-width: 0;
+}
+
+.flexo-booking .fb-plan__desc {
+	color: var(--fb-muted);
+	font-size: 0.9375em;
+}
+
+.flexo-booking .fb-plan__policy {
+	font-size: 0.875em;
+	color: var(--fb-primary);
+}
+
+.flexo-booking .fb-plan__policy.is-strict {
+	color: var(--fb-muted);
+}
+
+.flexo-booking .fb-plan__price {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+/* Price summary */
+.flexo-booking .fb-summary__lines {
+	margin: 8px 0;
+	padding: 8px 0;
+	border-top: 1px solid var(--fb-border);
+	border-bottom: 1px solid var(--fb-border);
+}
+
+.flexo-booking .fb-summary__total {
+	font-weight: 600;
+}
+
+.flexo-booking .fb-summary__lines .fb-summary__row:first-child {
+	font-weight: 400;
+}
+
+.flexo-booking .fb-summary__discount,
+.flexo-booking .fb-summary__line--discount {
+	color: var(--fb-primary);
+}
+
+.flexo-booking .fb-summary__property {
+	color: var(--fb-muted);
+}
+
+.flexo-booking .fb-summary__policy {
+	margin: 8px 0 0;
+	font-size: 0.875em;
+}
+
+.flexo-booking .fb-link {
+	padding: 0;
+	font: inherit;
+	font-size: 0.875em;
+	color: var(--fb-primary);
+	background: none;
+	border: 0;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.flexo-booking .fb-promo {
+	margin-top: 10px;
+}
+
+.flexo-booking .fb-promo__fields {
+	margin-top: 8px;
+}
+
+.flexo-booking .fb-promo__row {
+	display: flex;
+	gap: 8px;
+	margin-top: 4px;
+}
+
+.flexo-booking .fb-promo__row input {
+	flex: 1 1 auto;
+	min-width: 0;
+	text-transform: uppercase;
+}
+
+.flexo-booking .fb-promo__row .fb-button {
+	width: auto;
+}
+
+.flexo-booking .fb-promo__message {
+	margin: 6px 0 0;
+	font-size: 0.875em;
+}
+
+.flexo-booking .fb-promo__message.is-error {
+	color: var(--fb-error);
+}
+
+@media (max-width: 767px) {
+	.flexo-booking .fb-field--age {
+		flex-basis: calc(50% - var(--fb-gap) / 2);
+	}
+
+	.flexo-booking .fb-plan__price {
+		width: 100%;
+		justify-content: space-between;
+	}
+
+	.flexo-booking .fb-plan__price .fb-button {
+		width: auto;
+	}
+}
+
+/* Keep amounts on one line ("300.00 €"), let the labels wrap instead. */
+.flexo-booking .fb-summary__room > span:last-child,
+.flexo-booking .fb-summary__line > span:last-child,
+.flexo-booking .fb-summary__subtotal > span:last-child,
+.flexo-booking .fb-summary__discount > span:last-child,
+.flexo-booking .fb-summary__total > span:last-child,
+.flexo-booking .fb-summary__property > span:last-child,
+.flexo-booking .fb-plan__price strong {
+	white-space: nowrap;
+}
+
+.flexo-booking .fb-summary__row > span:last-child {
+	text-align: right;
+}

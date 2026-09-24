@@ -273,3 +273,77 @@
 	list-style: disc;
 	margin-left: 20px;
 }
+
+/* Day 3: rate plans, promo codes, booking details */
+.flexo-badge--promo { background: #e6f4ea; color: #1e4620; }
+
+.flexo-code {
+	font-family: Consolas, Monaco, monospace;
+	letter-spacing: 0.03em;
+}
+
+input.flexo-code {
+	text-transform: uppercase;
+}
+
+.flexo-check {
+	display: inline-block;
+	margin: 0 16px 6px 0;
+}
+
+.flexo-plans .flexo-tools-card,
+.flexo-promos .flexo-tools-card {
+	max-width: 900px;
+}
+
+.flexo-plan-rooms {
+	max-width: 560px;
+}
+
+.flexo-booking-view h1 .flexo-status {
+	vertical-align: middle;
+	margin-left: 8px;
+	font-size: 13px;
+}
+
+.flexo-booking-view__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+	gap: 0 16px;
+	max-width: 1200px;
+}
+
+.flexo-booking-view__grid .flexo-tools-card {
+	margin: 8px 0;
+	max-width: none;
+}
+
+.flexo-detail-table th {
+	width: 130px;
+	padding: 8px 10px 8px 0;
+}
+
+.flexo-detail-table td {
+	padding: 8px 0;
+}
+
+.flexo-price-table td,
+.flexo-price-table th {
+	padding: 8px 10px;
+	vertical-align: top;
+	text-align: left;
+}
+
+.flexo-price-table .flexo-num {
+	text-align: right;
+	white-space: nowrap;
+}
+
+.flexo-price-table tfoot th,
+.flexo-price-table tfoot td {
+	border-top: 1px solid #dcdcde;
+}
+
+.flexo-price-line--discount .flexo-num {
+	color: #1e4620;
+}

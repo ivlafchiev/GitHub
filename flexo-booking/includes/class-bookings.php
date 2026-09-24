@@ -108,14 +108,26 @@ class Flexo_Booking_Bookings {
 	 * Availability and price for all rooms (or one room) for a stay.
 	 *
 	 * Minimum stay is checked per room (arrival season → room → global), so
-	 * it can differ between rooms and seasons.
+	 * it can differ between rooms and seasons. Rooms offering rate plans
+	 * list each plan with its price; the room's price is the lowest one.
 	 *
+	 * @param int[]|string|null $children_ages Ages of the children (feature "children").
 	 * @return array|WP_Error
 	 */
-	public static function search( $check_in, $check_out, $adults, $children, $room_id_or_slug = '' ) {
+	public static function search( $check_in, $check_out, $adults, $children, $room_id_or_slug = '', $children_ages = null ) {
 		$stay = self::validate_dates( $check_in, $check_out, true, 1 );
 		if ( is_wp_error( $stay ) ) {
 			return $stay;
+		}
+
+		$adults   = max( 1, (int) $adults );
+		$children = max( 0, (int) $children );
+		$ages     = array();
+		if ( Flexo_Booking_Children::enabled() ) {
+			$ages = Flexo_Booking_Children::validate( $children, $children_ages );
+			if ( is_wp_error( $ages ) ) {
+				return $ages;
+			}
 		}
 
 		if ( $room_id_or_slug ) {
@@ -129,7 +141,7 @@ class Flexo_Booking_Bookings {
 			Flexo_Booking_Seasons::preload( wp_list_pluck( $posts, 'ID' ), $stay['check_in'], $stay['check_out'] );
 		}
 
-		$guests  = (int) $adults + (int) $children;
+		$guests  = $adults + $children;
 		$results = array();
 
 		foreach ( $posts as $post ) {
@@ -138,24 +150,39 @@ class Flexo_Booking_Bookings {
 				continue;
 			}
 
-			$quote = Flexo_Booking_Pricing::quote(
-				array(
-					'room'      => $room,
-					'check_in'  => $stay['check_in'],
-					'check_out' => $stay['check_out'],
-					'adults'    => $adults,
-					'children'  => $children,
-					'context'   => 'search',
-				)
+			$request = array(
+				'room'          => $room,
+				'check_in'      => $stay['check_in'],
+				'check_out'     => $stay['check_out'],
+				'adults'        => $adults,
+				'children'      => $children,
+				'children_ages' => $ages,
+				'context'       => 'search',
 			);
-			if ( is_wp_error( $quote ) ) {
+
+			// One quote per rate plan the room offers (or one without a plan).
+			$plans  = array();
+			$quote  = null;
+			$offers = Flexo_Booking_Rate_Plans::for_room( $room['id'] );
+			foreach ( $offers ? $offers : array( null ) as $plan ) {
+				$plan_quote = Flexo_Booking_Pricing::quote( array_merge( $request, array( 'rate_plan_id' => $plan ? $plan['id'] : 0 ) ) );
+				if ( is_wp_error( $plan_quote ) ) {
+					continue;
+				}
+				if ( $plan ) {
+					$plans[] = Flexo_Booking_Pricing::public_view( $plan_quote );
+				}
+				if ( ! $quote || $plan_quote['total'] < $quote['total'] ) {
+					$quote = $plan_quote;
+				}
+			}
+			if ( ! $quote ) {
 				continue;
 			}
 
 			$reason = Flexo_Booking_Inventory::closed_reason( $room['id'], $stay['check_in'], $stay['check_out'] );
-			if ( ! $reason && $guests > $room['capacity'] ) {
-				/* translators: %d: number of guests */
-				$reason = sprintf( _n( 'Fits up to %d guest.', 'Fits up to %d guests.', $room['capacity'], 'flexo-booking' ), $room['capacity'] );
+			if ( ! $reason ) {
+				$reason = self::capacity_error( $room, $adults, $children, 'short' );
 			}
 			if ( ! $reason && $stay['nights'] < $quote['min_nights'] ) {
 				$reason = self::min_nights_message( $quote );
@@ -174,6 +201,7 @@ class Flexo_Booking_Bookings {
 				'excerpt'                 => $room['excerpt'],
 				'image'                   => $room['image'],
 				'capacity'                => $room['capacity'],
+				'max_adults'              => Flexo_Booking_Children::enabled() ? $room['max_adults'] : 0,
 				'available'               => '' === $reason,
 				'reason'                  => $reason,
 				'units_left'              => $left,
@@ -185,21 +213,52 @@ class Flexo_Booking_Bookings {
 				'min_nights'              => $quote['min_nights'],
 				'total'                   => $quote['total'],
 				'total_formatted'         => Flexo_Booking_Money::format( $quote['total'] ),
+				'price_from'              => count( $plans ) > 1,
 				'breakdown'               => Flexo_Booking_Pricing::format_lines( $quote ),
+				'quote'                   => Flexo_Booking_Pricing::public_view( $quote ),
+				'plans'                   => $plans,
 			);
 		}
 
 		$closure = Flexo_Booking_Closures::property_closure( $stay['check_in'], $stay['check_out'] );
 
 		return array(
-			'check_in'     => $stay['check_in'],
-			'check_out'    => $stay['check_out'],
-			'nights'       => $stay['nights'],
+			'check_in'      => $stay['check_in'],
+			'check_out'     => $stay['check_out'],
+			'nights'        => $stay['nights'],
+			'adults'        => $adults,
+			'children'      => $children,
+			'children_ages' => $ages,
 			/* translators: %d: number of nights */
-			'nights_label' => sprintf( _n( 'Total for %d night', 'Total for %d nights', $stay['nights'], 'flexo-booking' ), $stay['nights'] ),
-			'notice'       => $closure ? Flexo_Booking_Closures::guest_message( $closure ) : '',
-			'rooms'        => $results,
+			'nights_label'  => sprintf( _n( 'Total for %d night', 'Total for %d nights', $stay['nights'], 'flexo-booking' ), $stay['nights'] ),
+			'notice'        => $closure ? Flexo_Booking_Closures::guest_message( $closure ) : '',
+			'rooms'         => $results,
 		);
+	}
+
+	/**
+	 * Whether the guests fit the room: "max guests" counts adults and
+	 * children; "max adults" applies when children's ages are asked.
+	 *
+	 * @param string $style "short" for room cards, "long" for booking errors.
+	 * @return string Message, or '' when they fit.
+	 */
+	public static function capacity_error( array $room, $adults, $children, $style = 'long' ) {
+		if ( $adults + $children > $room['capacity'] ) {
+			return 'short' === $style
+				/* translators: %d: number of guests */
+				? sprintf( _n( 'Fits up to %d guest.', 'Fits up to %d guests.', $room['capacity'], 'flexo-booking' ), $room['capacity'] )
+				/* translators: %d: number of guests */
+				: sprintf( _n( 'This room fits up to %d guest.', 'This room fits up to %d guests.', $room['capacity'], 'flexo-booking' ), $room['capacity'] );
+		}
+		if ( Flexo_Booking_Children::enabled() && $room['max_adults'] > 0 && $adults > $room['max_adults'] ) {
+			return 'short' === $style
+				/* translators: %d: number of adults */
+				? sprintf( _n( 'Fits up to %d adult.', 'Fits up to %d adults.', $room['max_adults'], 'flexo-booking' ), $room['max_adults'] )
+				/* translators: %d: number of adults */
+				: sprintf( _n( 'This room fits up to %d adult.', 'This room fits up to %d adults.', $room['max_adults'], 'flexo-booking' ), $room['max_adults'] );
+		}
+		return '';
 	}
 
 	private static function min_nights_message( array $quote ) {
@@ -222,6 +281,11 @@ class Flexo_Booking_Bookings {
 	 *     @type string     $check_out  Y-m-d.
 	 *     @type int        $adults
 	 *     @type int        $children
+	 *     @type int[]|string $children_ages Required per child when the "children" feature is on.
+	 *     @type int        $rate_plan      Rate plan ID (required when the room offers several).
+	 *     @type string     $promo_code
+	 *     @type float      $expected_total Optional: the total the guest was shown. The booking is
+	 *                                      refused when the server's price differs.
 	 *     @type string     $guest_name
 	 *     @type string     $guest_email
 	 *     @type string     $guest_phone
@@ -261,6 +325,21 @@ class Flexo_Booking_Bookings {
 
 		$adults   = max( 1, absint( isset( $data['adults'] ) ? $data['adults'] : 1 ) );
 		$children = absint( isset( $data['children'] ) ? $data['children'] : 0 );
+		$ages     = array();
+		if ( Flexo_Booking_Children::enabled() ) {
+			$raw_ages = isset( $data['children_ages'] ) ? $data['children_ages'] : array();
+			// Staff may type just the ages; the count follows from them.
+			$ages = $is_admin ? Flexo_Booking_Children::parse_ages( $raw_ages ) : Flexo_Booking_Children::validate( $children, $raw_ages );
+			if ( is_wp_error( $ages ) ) {
+				return $ages;
+			}
+			if ( $is_admin && $ages ) {
+				$children = count( $ages );
+			}
+		}
+		$plan_id  = absint( isset( $data['rate_plan'] ) ? $data['rate_plan'] : 0 );
+		$promo    = Flexo_Booking_Promo_Codes::enabled() ? Flexo_Booking_Promo_Codes::normalize_code( isset( $data['promo_code'] ) ? $data['promo_code'] : '' ) : '';
+		$expected = isset( $data['expected_total'] ) && '' !== $data['expected_total'] && null !== $data['expected_total'] ? (float) $data['expected_total'] : null;
 		$name     = sanitize_text_field( isset( $data['guest_name'] ) ? $data['guest_name'] : '' );
 		$email    = sanitize_email( isset( $data['guest_email'] ) ? $data['guest_email'] : '' );
 		$phone    = sanitize_text_field( isset( $data['guest_phone'] ) ? $data['guest_phone'] : '' );
@@ -268,9 +347,9 @@ class Flexo_Booking_Bookings {
 		$status   = isset( $data['status'] ) && array_key_exists( $data['status'], self::statuses() ) ? $data['status'] : ( 'instant' === Flexo_Booking_Features::booking_mode() ? 'confirmed' : 'pending' );
 
 		if ( ! $is_admin ) {
-			if ( $adults + $children > $room['capacity'] ) {
-				/* translators: %d: number of guests */
-				return new WP_Error( 'flexo_capacity', sprintf( _n( 'This room fits up to %d guest.', 'This room fits up to %d guests.', $room['capacity'], 'flexo-booking' ), $room['capacity'] ) );
+			$capacity = self::capacity_error( $room, $adults, $children );
+			if ( $capacity ) {
+				return new WP_Error( 'flexo_capacity', $capacity );
 			}
 			if ( '' === $name ) {
 				return new WP_Error( 'flexo_missing_name', __( 'Please enter your name.', 'flexo-booking' ) );
@@ -284,71 +363,113 @@ class Flexo_Booking_Bookings {
 		} elseif ( 'blocked' !== $status && '' === $name ) {
 			return new WP_Error( 'flexo_missing_name', __( 'Please enter the guest name.', 'flexo-booking' ) );
 		}
+		if ( 'blocked' === $status ) {
+			$promo = '';
+		}
 
 		// Everything below runs under the room lock: closures, availability and
 		// the price are re-checked there, so two guests can never take the
 		// last unit and the stored price is the one calculated at that moment.
-		$booking = Flexo_Booking_Inventory::with_lock(
-			$room['id'],
-			static function () use ( $wpdb, $room, $stay, $status, $is_admin, $adults, $children, $name, $email, $phone, $notes ) {
-				if ( ! $is_admin ) {
-					$closed = Flexo_Booking_Inventory::closed_reason( $room['id'], $stay['check_in'], $stay['check_out'] );
-					if ( $closed ) {
-						return new WP_Error( 'flexo_closed', $closed );
-					}
+		$insert = static function () use ( $wpdb, $room, $stay, $status, $is_admin, $adults, $children, $ages, $plan_id, $promo, $expected, $name, $email, $phone, $notes ) {
+			if ( ! $is_admin ) {
+				$closed = Flexo_Booking_Inventory::closed_reason( $room['id'], $stay['check_in'], $stay['check_out'] );
+				if ( $closed ) {
+					return new WP_Error( 'flexo_closed', $closed );
 				}
-				if ( 'cancelled' !== $status && Flexo_Booking_Inventory::units_available( $room, $stay['check_in'], $stay['check_out'] ) < 1 ) {
-					return new WP_Error( 'flexo_unavailable', __( 'Sorry, this room is no longer available for the selected dates.', 'flexo-booking' ) );
-				}
-
-				$quote = null;
-				if ( 'blocked' !== $status ) {
-					$quote = Flexo_Booking_Pricing::quote(
-						array(
-							'room'      => $room,
-							'check_in'  => $stay['check_in'],
-							'check_out' => $stay['check_out'],
-							'adults'    => $adults,
-							'children'  => $children,
-							'context'   => $is_admin ? 'admin' : 'booking',
-						)
-					);
-					if ( is_wp_error( $quote ) ) {
-						return $quote;
-					}
-				}
-
-				$now     = current_time( 'mysql' );
-				$booking = array(
-					'reference'       => self::generate_reference(),
-					'room_id'         => $room['id'],
-					'check_in'        => $stay['check_in'],
-					'check_out'       => $stay['check_out'],
-					'nights'          => $stay['nights'],
-					'adults'          => $adults,
-					'children'        => $children,
-					'guest_name'      => $name,
-					'guest_email'     => $email,
-					'guest_phone'     => $phone,
-					'notes'           => $notes,
-					'total'           => $quote ? $quote['total'] : 0,
-					'currency'        => Flexo_Booking_Money::currency(),
-					'status'          => $status,
-					'source'          => $is_admin ? 'admin' : 'website',
-					'price_breakdown' => $quote ? wp_json_encode( $quote ) : null,
-					'created_at'      => $now,
-					'updated_at'      => $now,
-				);
-
-				$booking = apply_filters( 'flexo_booking_before_insert', $booking, $room );
-
-				if ( ! $wpdb->insert( Flexo_Booking_Install::table(), $booking ) ) {
-					return new WP_Error( 'flexo_db_error', __( 'The booking could not be saved. Please try again.', 'flexo-booking' ) );
-				}
-				$booking['id'] = (int) $wpdb->insert_id;
-				return $booking;
 			}
-		);
+			if ( 'cancelled' !== $status && Flexo_Booking_Inventory::units_available( $room, $stay['check_in'], $stay['check_out'] ) < 1 ) {
+				return new WP_Error( 'flexo_unavailable', __( 'Sorry, this room is no longer available for the selected dates.', 'flexo-booking' ) );
+			}
+
+			$quote = null;
+			if ( 'blocked' !== $status ) {
+				$quote = Flexo_Booking_Pricing::quote(
+					array(
+						'room'          => $room,
+						'check_in'      => $stay['check_in'],
+						'check_out'     => $stay['check_out'],
+						'adults'        => $adults,
+						'children'      => $children,
+						'children_ages' => $ages,
+						'rate_plan_id'  => $plan_id,
+						'promo_code'    => $promo,
+						'context'       => $is_admin ? 'admin' : 'booking',
+					)
+				);
+				if ( is_wp_error( $quote ) ) {
+					return $quote;
+				}
+				if ( ! empty( $quote['promo_error'] ) ) {
+					return new WP_Error( $quote['promo_error']['code'], $quote['promo_error']['message'] );
+				}
+				// The guest confirms the price they were shown; if anything
+				// changed since (or the request was tampered with), refuse.
+				if ( null !== $expected && abs( $expected - (float) $quote['total'] ) >= 0.005 ) {
+					return new WP_Error(
+						'flexo_price_changed',
+						/* translators: %s: new total */
+						sprintf( __( 'The price for this stay is now %s. Please check it and send your booking again.', 'flexo-booking' ), Flexo_Booking_Money::format( $quote['total'] ) ),
+						array( 'total' => $quote['total'] )
+					);
+				}
+			}
+
+			$now     = current_time( 'mysql' );
+			$booking = array(
+				'reference'       => self::generate_reference(),
+				'room_id'         => $room['id'],
+				'check_in'        => $stay['check_in'],
+				'check_out'       => $stay['check_out'],
+				'nights'          => $stay['nights'],
+				'adults'          => $adults,
+				'children'        => $children,
+				'children_ages'   => implode( ',', $ages ),
+				'guest_name'      => $name,
+				'guest_email'     => $email,
+				'guest_phone'     => $phone,
+				'notes'           => $notes,
+				'total'           => $quote ? $quote['total'] : 0,
+				'currency'        => Flexo_Booking_Money::currency(),
+				'status'          => $status,
+				'source'          => $is_admin ? 'admin' : 'website',
+				'price_breakdown' => $quote ? wp_json_encode( $quote ) : null,
+				'rate_plan_id'    => $quote && $quote['rate_plan'] ? $quote['rate_plan']['id'] : 0,
+				'promo_id'        => $quote && $quote['promo'] ? $quote['promo']['id'] : 0,
+				'promo_code'      => $quote && $quote['promo'] ? $quote['promo']['code'] : '',
+				'discount_total'  => $quote ? $quote['discount_total'] : 0,
+				'tax_total'       => $quote ? $quote['tax_total'] : 0,
+				'created_at'      => $now,
+				'updated_at'      => $now,
+			);
+
+			$booking = apply_filters( 'flexo_booking_before_insert', $booking, $room );
+
+			if ( ! $wpdb->insert( Flexo_Booking_Install::table(), $booking ) ) {
+				return new WP_Error( 'flexo_db_error', __( 'The booking could not be saved. Please try again.', 'flexo-booking' ) );
+			}
+			$booking['id'] = (int) $wpdb->insert_id;
+			return $booking;
+		};
+
+		// A code with a usage limit is also locked, so two instant bookings
+		// in different rooms can't both take its last use.
+		$promo_lock = '';
+		if ( '' !== $promo && 'confirmed' === $status ) {
+			$promo_row = Flexo_Booking_Promo_Codes::get_by_code( $promo );
+			if ( $promo_row && $promo_row['max_uses'] ) {
+				$promo_lock = 'promo_' . $promo_row['id'];
+				if ( ! Flexo_Booking_Lock::acquire( $promo_lock, 10 ) ) {
+					return new WP_Error( 'flexo_busy', __( 'We are processing another booking. Please try again in a moment.', 'flexo-booking' ) );
+				}
+			}
+		}
+		try {
+			$booking = Flexo_Booking_Inventory::with_lock( $room['id'], $insert );
+		} finally {
+			if ( $promo_lock ) {
+				Flexo_Booking_Lock::release( $promo_lock );
+			}
+		}
 
 		if ( is_wp_error( $booking ) ) {
 			return $booking;
@@ -382,10 +503,14 @@ class Flexo_Booking_Bookings {
 	}
 
 	private static function hydrate( array $row ) {
-		foreach ( array( 'id', 'room_id', 'nights', 'adults', 'children' ) as $key ) {
-			$row[ $key ] = (int) $row[ $key ];
+		foreach ( array( 'id', 'room_id', 'nights', 'adults', 'children', 'rate_plan_id', 'promo_id' ) as $key ) {
+			$row[ $key ] = isset( $row[ $key ] ) ? (int) $row[ $key ] : 0;
 		}
-		$row['total']      = (float) $row['total'];
+		foreach ( array( 'total', 'discount_total', 'tax_total' ) as $key ) {
+			$row[ $key ] = isset( $row[ $key ] ) ? (float) $row[ $key ] : 0.0;
+		}
+		$row['children_ages'] = isset( $row['children_ages'] ) ? (string) $row['children_ages'] : '';
+		$row['promo_code']    = isset( $row['promo_code'] ) ? (string) $row['promo_code'] : '';
 		$room              = get_post( $row['room_id'] );
 		$row['room_title'] = $room ? get_the_title( $room ) : __( '(deleted room)', 'flexo-booking' );
 		return $row;

@@ -19,7 +19,7 @@ class Flexo_Booking_Migrations {
 
 	const OPTION       = 'flexo_booking_db_version';
 	const ERROR_OPTION = 'flexo_booking_migration_error';
-	const LATEST       = 3;
+	const LATEST       = 4;
 
 	/**
 	 * @return array Version => method name.
@@ -29,6 +29,7 @@ class Flexo_Booking_Migrations {
 			1 => 'migrate_1_initial',
 			2 => 'migrate_2_day1',
 			3 => 'migrate_3_day2',
+			4 => 'migrate_4_day3',
 		);
 	}
 
@@ -119,6 +120,28 @@ class Flexo_Booking_Migrations {
 			if ( ! Flexo_Booking_Schema::table_exists( $table ) ) {
 				return new WP_Error( 'flexo_migration', $table . ' table missing' );
 			}
+		}
+		return true;
+	}
+
+	/**
+	 * Day 3 (1.3.0): rate plans, promo codes and the new booking columns.
+	 * The ready-made rate plans are added switched off, for the hotel to
+	 * edit and switch on.
+	 */
+	private static function migrate_4_day3() {
+		foreach ( array( 'rate_plans', 'promo_codes' ) as $table ) {
+			if ( ! Flexo_Booking_Schema::table_exists( $table ) ) {
+				return new WP_Error( 'flexo_migration', $table . ' table missing' );
+			}
+		}
+		if ( ! Flexo_Booking_Schema::column_exists( 'bookings', 'promo_id' ) ) {
+			return new WP_Error( 'flexo_migration', 'bookings.promo_id column missing' );
+		}
+		// Added on "init", once translations are loaded, so the ready-made
+		// plans get names in the site's language.
+		if ( ! Flexo_Booking_Rate_Plans::all() ) {
+			update_option( Flexo_Booking_Rate_Plans::PRESETS_OPTION, 1 );
 		}
 		return true;
 	}

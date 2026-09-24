@@ -25,7 +25,9 @@
 					return {};
 				} ).then( function ( body ) {
 					if ( ! res.ok ) {
-						throw new Error( body && body.message ? body.message : t.genericError );
+						var err = new Error( body && body.message ? body.message : t.genericError );
+						err.code = body && body.code ? body.code : '';
+						throw err;
 					}
 					return body;
 				} );
@@ -93,6 +95,66 @@
 		sync();
 	}
 
+	/**
+	 * One age selector per child ("Children & ages" feature). Works in the
+	 * full form and in the search bar (the selects are submitted as
+	 * children_ages[]).
+	 */
+	function bindAges( form ) {
+		var children = form.querySelector( '[name="children"]' );
+		if ( ! cfg.children || ! children ) {
+			return;
+		}
+		var box = form.querySelector( '[data-fb-ages]' );
+		if ( ! box ) {
+			// Theme template overrides made before 1.3 have no container.
+			box = el( 'div', 'fb-ages' );
+			box.setAttribute( 'data-fb-ages', '' );
+			children.closest( '.fb-field' ).insertAdjacentElement( 'afterend', box );
+		}
+		var initial = ( box.getAttribute( 'data-fb-ages' ) || '' ).split( ',' ).filter( function ( v ) {
+			return v !== '';
+		} );
+		var uid = 'fb-age-' + Math.random().toString( 36 ).slice( 2, 8 );
+
+		function render() {
+			var count = parseInt( children.value, 10 ) || 0;
+			var current = Array.prototype.map.call( box.querySelectorAll( 'select' ), function ( sel ) {
+				return sel.value;
+			} );
+			if ( ! current.length ) {
+				current = initial;
+			}
+			box.innerHTML = '';
+			for ( var i = 0; i < count; i++ ) {
+				var field = el( 'div', 'fb-field fb-field--small fb-field--age' );
+				var label = el( 'label', '', fmt( t.childAge, i + 1 ) );
+				label.htmlFor = uid + '-' + i;
+				var select = el( 'select' );
+				select.id = uid + '-' + i;
+				select.name = 'children_ages[]';
+				select.required = true;
+				var pick = el( 'option', '', t.agePick );
+				pick.value = '';
+				select.appendChild( pick );
+				for ( var age = 0; age <= ( cfg.maxAge || 17 ); age++ ) {
+					var opt = el( 'option', '', age === 0 ? t.ageUnder1 : String( age ) );
+					opt.value = String( age );
+					select.appendChild( opt );
+				}
+				if ( current[ i ] !== undefined ) {
+					select.value = current[ i ];
+				}
+				field.appendChild( label );
+				field.appendChild( select );
+				box.appendChild( field );
+			}
+			box.hidden = count === 0;
+		}
+		children.addEventListener( 'change', render );
+		render();
+	}
+
 	function BookingForm( root ) {
 		this.root = root;
 		this.searchForm = root.querySelector( '.fb-search' );
@@ -105,8 +167,11 @@
 		this.showAll = false;
 		this.stay = null;
 		this.selected = null;
+		this.view = null;
+		this.promo = '';
 
 		bindDates( this.searchForm );
+		bindAges( this.searchForm );
 
 		this.searchForm.addEventListener( 'submit', this.onSearch.bind( this ) );
 		this.detailsForm.addEventListener( 'submit', this.onBook.bind( this ) );
@@ -126,12 +191,19 @@
 	BookingForm.prototype.values = function () {
 		var f = this.searchForm;
 		var children = f.querySelector( '[name="children"]' );
-		return {
+		var v = {
 			check_in: f.querySelector( '[name="check_in"]' ).value,
 			check_out: f.querySelector( '[name="check_out"]' ).value,
 			adults: f.querySelector( '[name="adults"]' ).value,
 			children: children ? children.value : 0,
 		};
+		var ages = f.querySelectorAll( '[name="children_ages[]"]' );
+		if ( cfg.children && ages.length ) {
+			v.children_ages = Array.prototype.map.call( ages, function ( sel ) {
+				return sel.value;
+			} ).join( ',' );
+		}
+		return v;
 	};
 
 	BookingForm.prototype.onSearch = function ( e ) {
@@ -167,7 +239,7 @@
 
 		request( apiUrl( 'availability', params ) )
 			.then( function ( data ) {
-				self.stay = { check_in: data.check_in, check_out: data.check_out, nights: data.nights, nightsLabel: data.nights_label, adults: v.adults, children: v.children };
+				self.stay = { check_in: data.check_in, check_out: data.check_out, nights: data.nights, nightsLabel: data.nights_label, adults: v.adults, children: v.children, ages: data.children_ages || [] };
 				self.setNotice( '' );
 				self.closedNotice = data.notice || '';
 				self.renderRooms( data.rooms );
@@ -219,12 +291,17 @@
 
 			var side = el( 'div', 'fb-room__side' );
 			side.appendChild( el( 'span', 'fb-room__total-label', self.stay.nightsLabel ) );
-			side.appendChild( el( 'strong', 'fb-room__total', room.total_formatted ) );
+			side.appendChild( el( 'strong', 'fb-room__total', room.price_from ? fmt( t.from, room.total_formatted ) : room.total_formatted ) );
 			var btn = el( 'button', 'fb-button', room.available ? t.select : t.unavailable );
 			btn.type = 'button';
 			btn.disabled = ! room.available;
+			var plans = room.plans || [];
 			btn.addEventListener( 'click', function () {
-				self.select( room );
+				if ( plans.length > 1 ) {
+					self.showPlans( card, room );
+				} else {
+					self.select( room, plans[ 0 ] || room.quote || null );
+				}
 			} );
 			side.appendChild( btn );
 			card.appendChild( side );
@@ -251,33 +328,256 @@
 		this.results.hidden = false;
 	};
 
-	BookingForm.prototype.select = function ( room ) {
-		this.selected = room;
-		this.summary.innerHTML = '';
+	/**
+	 * Rooms with several rate plans: the guest chooses one inside the card.
+	 */
+	BookingForm.prototype.showPlans = function ( card, room ) {
+		var self = this;
+		var open = card.querySelector( '.fb-plans' );
+		if ( open ) {
+			open.remove();
+			return;
+		}
+		var box = el( 'div', 'fb-plans' );
+		box.appendChild( el( 'h5', 'fb-plans__title', t.chooseRate ) );
+		room.plans.forEach( function ( plan ) {
+			var rate = plan.rate_plan || {};
+			var row = el( 'div', 'fb-plan' );
+			var info = el( 'div', 'fb-plan__info' );
+			info.appendChild( el( 'strong', 'fb-plan__name', rate.name ) );
+			if ( rate.description ) {
+				info.appendChild( el( 'span', 'fb-plan__desc', rate.description ) );
+			}
+			info.appendChild( el( 'span', 'fb-plan__policy' + ( rate.refundable ? '' : ' is-strict' ), ( rate.refundable ? '✓ ' : '✕ ' ) + rate.refundable_label ) );
+			row.appendChild( info );
+			var price = el( 'div', 'fb-plan__price' );
+			price.appendChild( el( 'strong', '', plan.total_formatted ) );
+			var choose = el( 'button', 'fb-button', t.choose );
+			choose.type = 'button';
+			choose.setAttribute( 'aria-label', t.choose + ': ' + rate.name + ', ' + plan.total_formatted );
+			choose.addEventListener( 'click', function () {
+				self.select( room, plan );
+			} );
+			price.appendChild( choose );
+			row.appendChild( price );
+			box.appendChild( row );
+		} );
+		card.appendChild( box );
+		box.querySelector( 'button' ).focus();
+	};
 
+	BookingForm.prototype.guestsText = function () {
 		var s = this.stay;
-		var rows = [
-			[ room.title, room.total_formatted ],
-			[ humanDate( s.check_in ) + ' → ' + humanDate( s.check_out ), s.nightsLabel ],
-		];
-		rows.forEach( function ( row ) {
-			var line = el( 'div', 'fb-summary__row' );
-			line.appendChild( el( 'span', '', row[ 0 ] ) );
-			line.appendChild( el( 'span', '', row[ 1 ] ) );
-			this.summary.appendChild( line );
-		}, this );
+		var adults = parseInt( s.adults, 10 ) || 1;
+		var children = parseInt( s.children, 10 ) || 0;
+		var text = fmt( adults === 1 ? t.adult : t.adults, adults );
+		if ( children ) {
+			text += ', ' + fmt( children === 1 ? t.child : t.childrenN, children );
+			if ( s.ages && s.ages.length ) {
+				text += ' ' + fmt( t.agesList, s.ages.map( function ( a ) {
+					return a === 0 ? t.ageUnder1 : a;
+				} ).join( ', ' ) );
+			}
+		}
+		return text;
+	};
 
-		// Itemised prices, e.g. "Low season: 2 nights × 100 €" when they vary.
-		( room.breakdown || [] ).forEach( function ( item ) {
-			( item.details || [] ).forEach( function ( detail ) {
-				this.summary.appendChild( el( 'div', 'fb-summary__detail', detail ) );
-			}, this );
-		}, this );
+	BookingForm.prototype.select = function ( room, view ) {
+		this.selected = room;
+		this.view = view || room.quote || null;
+		this.promo = '';
+		this.renderSummary();
 
 		this.results.hidden = true;
 		this.detailsForm.hidden = false;
 		this.setNotice( '' );
 		this.detailsForm.querySelector( 'input' ).focus();
+	};
+
+	/**
+	 * The itemised price the guest confirms: room, rate plan, nights, each
+	 * price line, discount, tourist tax and the total.
+	 */
+	BookingForm.prototype.renderSummary = function () {
+		var room = this.selected;
+		var view = this.view || {};
+		var s = this.stay;
+		var summary = this.summary;
+		summary.innerHTML = '';
+
+		function row( label, value, className ) {
+			var line = el( 'div', 'fb-summary__row' + ( className ? ' ' + className : '' ) );
+			line.appendChild( el( 'span', '', label ) );
+			line.appendChild( el( 'span', '', value || '' ) );
+			summary.appendChild( line );
+			return line;
+		}
+
+		row( room.title, view.total_formatted || room.total_formatted, 'fb-summary__room' );
+		if ( view.rate_plan ) {
+			row( t.rate, view.rate_plan.name, 'fb-summary__rate' );
+		}
+		row( humanDate( s.check_in ) + ' → ' + humanDate( s.check_out ), s.nightsLabel );
+		row( t.guests, this.guestsText() );
+
+		var lines = view.lines || room.breakdown || [];
+		var itemised = lines.length > 1 || lines.some( function ( l ) {
+			return l.details && l.details.length;
+		} );
+		if ( itemised ) {
+			var list = el( 'div', 'fb-summary__lines' );
+			lines.forEach( function ( item ) {
+				var line = el( 'div', 'fb-summary__row fb-summary__line fb-summary__line--' + item.type );
+				line.appendChild( el( 'span', '', item.label ) );
+				line.appendChild( el( 'span', '', item.formatted ) );
+				list.appendChild( line );
+				( item.details || [] ).forEach( function ( detail ) {
+					list.appendChild( el( 'div', 'fb-summary__detail', detail ) );
+				} );
+			} );
+			summary.appendChild( list );
+		}
+
+		if ( view.discount_total > 0 ) {
+			row( t.subtotal, view.subtotal_formatted, 'fb-summary__subtotal' );
+			row( t.discount, view.discount_formatted, 'fb-summary__discount' );
+		}
+		if ( itemised || view.discount_total > 0 ) {
+			row( view.discount_total > 0 ? t.finalTotal : t.total, view.total_formatted, 'fb-summary__total' );
+		}
+		if ( view.due_at_property > 0 ) {
+			row( t.atProperty, view.due_at_property_formatted, 'fb-summary__property' );
+		}
+		if ( view.rate_plan && view.rate_plan.cancellation_policy ) {
+			var policy = el( 'p', 'fb-summary__policy' );
+			policy.appendChild( el( 'strong', '', t.cancellation + ': ' ) );
+			policy.appendChild( document.createTextNode( view.rate_plan.cancellation_policy ) );
+			summary.appendChild( policy );
+		}
+
+		if ( cfg.promo ) {
+			this.renderPromo( summary, view );
+		}
+	};
+
+	/**
+	 * "Have a promo code?" – collapsed until the guest asks for it.
+	 */
+	BookingForm.prototype.renderPromo = function ( summary, view ) {
+		var self = this;
+		var box = el( 'div', 'fb-promo' );
+		var message = el( 'p', 'fb-promo__message' );
+		message.setAttribute( 'role', 'status' );
+
+		if ( view.promo ) {
+			message.textContent = String( t.promoApplied ).replace( '%1$s', view.promo.code ).replace( '%2$s', view.promo.label );
+			box.appendChild( message );
+			var remove = el( 'button', 'fb-link', t.remove );
+			remove.type = 'button';
+			remove.addEventListener( 'click', function () {
+				self.applyPromo( '' );
+			} );
+			box.appendChild( remove );
+			summary.appendChild( box );
+			return;
+		}
+
+		var toggle = el( 'button', 'fb-link fb-promo__toggle', t.havePromo );
+		toggle.type = 'button';
+		toggle.setAttribute( 'aria-expanded', 'false' );
+		var fields = el( 'div', 'fb-promo__fields' );
+		fields.hidden = true;
+		var id = 'fb-promo-' + Math.random().toString( 36 ).slice( 2, 8 );
+		var label = el( 'label', 'fb-promo__label', t.promoLabel );
+		label.htmlFor = id;
+		var input = el( 'input' );
+		input.type = 'text';
+		input.id = id;
+		input.autocomplete = 'off';
+		input.setAttribute( 'autocapitalize', 'characters' );
+		input.value = this.promoTried || '';
+		var apply = el( 'button', 'fb-button fb-button--ghost', t.apply );
+		apply.type = 'button';
+		var row = el( 'div', 'fb-promo__row' );
+		row.appendChild( input );
+		row.appendChild( apply );
+		fields.appendChild( label );
+		fields.appendChild( row );
+
+		toggle.addEventListener( 'click', function () {
+			fields.hidden = ! fields.hidden;
+			toggle.setAttribute( 'aria-expanded', fields.hidden ? 'false' : 'true' );
+			if ( ! fields.hidden ) {
+				input.focus();
+			}
+		} );
+		function submit() {
+			if ( input.value.trim() ) {
+				self.applyPromo( input.value.trim() );
+			}
+		}
+		apply.addEventListener( 'click', submit );
+		input.addEventListener( 'keydown', function ( e ) {
+			if ( e.key === 'Enter' ) {
+				e.preventDefault();
+				submit();
+			}
+		} );
+
+		box.appendChild( toggle );
+		box.appendChild( fields );
+		if ( this.promoError ) {
+			fields.hidden = false;
+			toggle.setAttribute( 'aria-expanded', 'true' );
+			message.textContent = this.promoError;
+			message.classList.add( 'is-error' );
+			fields.appendChild( message );
+		}
+		summary.appendChild( box );
+	};
+
+	BookingForm.prototype.quoteParams = function ( promo ) {
+		var s = this.stay;
+		var params = {
+			room: this.selected.slug || String( this.selected.id ),
+			check_in: s.check_in,
+			check_out: s.check_out,
+			adults: s.adults,
+			children: s.children || 0,
+		};
+		if ( s.ages && s.ages.length ) {
+			params.children_ages = s.ages.join( ',' );
+		}
+		if ( this.view && this.view.rate_plan ) {
+			params.rate_plan = this.view.rate_plan.id;
+		}
+		if ( promo ) {
+			params.promo_code = promo;
+		}
+		return params;
+	};
+
+	/**
+	 * Re-prices the stay on the server with (or without) a promo code.
+	 */
+	BookingForm.prototype.applyPromo = function ( code ) {
+		var self = this;
+		this.promoTried = code;
+		this.promoError = '';
+		return request( apiUrl( 'quote', this.quoteParams( code ) ) )
+			.then( function ( view ) {
+				if ( code && view.promo_error ) {
+					self.promoError = view.promo_error;
+				} else {
+					self.view = view;
+					self.promo = view.promo ? view.promo.code : '';
+				}
+				self.renderSummary();
+			} )
+			.catch( function ( err ) {
+				self.promoError = err.message;
+				self.renderSummary();
+			} );
 	};
 
 	BookingForm.prototype.back = function () {
@@ -303,6 +603,11 @@
 			check_out: this.stay.check_out,
 			adults: parseInt( this.stay.adults, 10 ),
 			children: parseInt( this.stay.children, 10 ) || 0,
+			children_ages: ( this.stay.ages || [] ).join( ',' ),
+			rate_plan: this.view && this.view.rate_plan ? this.view.rate_plan.id : 0,
+			promo_code: this.promo || '',
+			// The server refuses the booking if its price differs from this.
+			expected_total: this.view && typeof this.view.total === 'number' ? this.view.total : null,
 			guest_name: f.querySelector( '[name="guest_name"]' ).value,
 			guest_email: f.querySelector( '[name="guest_email"]' ).value,
 			guest_phone: f.querySelector( '[name="guest_phone"]' ).value,
@@ -331,6 +636,10 @@
 			} )
 			.catch( function ( err ) {
 				self.setNotice( err.message, true );
+				// Show the current price (or why the promo code no longer applies).
+				if ( err.code === 'flexo_price_changed' || ( err.code && err.code.indexOf( 'flexo_promo' ) === 0 ) ) {
+					self.applyPromo( err.code === 'flexo_price_changed' ? self.promo : '' );
+				}
 			} )
 			.finally( function () {
 				submit.disabled = false;
@@ -363,6 +672,7 @@
 		ctx.querySelectorAll( '[data-flexo-booking-search]:not([data-fb-ready])' ).forEach( function ( node ) {
 			node.setAttribute( 'data-fb-ready', '1' );
 			bindDates( node.querySelector( '.fb-search' ) );
+			bindAges( node.querySelector( '.fb-search' ) );
 		} );
 	}
 

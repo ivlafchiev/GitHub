@@ -28,6 +28,9 @@ class Flexo_Booking_Frontend {
 			array(
 				'restUrl'   => esc_url_raw( rest_url( Flexo_Booking_Rest::NAMESPACE_V1 . '/' ) ),
 				'minNights' => (int) $settings['min_nights'],
+				'children'  => Flexo_Booking_Children::enabled(),
+				'maxAge'    => Flexo_Booking_Children::MAX_AGE,
+				'promo'     => Flexo_Booking_Promo_Codes::enabled(),
 				'i18n'      => array(
 					'checking'     => __( 'Checking availability…', 'flexo-booking' ),
 					'noRooms'      => __( 'No rooms are available for these dates. Please try different dates.', 'flexo-booking' ),
@@ -45,6 +48,35 @@ class Flexo_Booking_Frontend {
 					'reference'    => __( 'Booking reference', 'flexo-booking' ),
 					'genericError' => __( 'Something went wrong. Please try again or contact us.', 'flexo-booking' ),
 					'datesInvalid' => __( 'Check-out must be after check-in.', 'flexo-booking' ),
+					/* translators: %d: child number */
+					'childAge'     => __( 'Age of child %d', 'flexo-booking' ),
+					'agePick'      => __( 'Age', 'flexo-booking' ),
+					'ageUnder1'    => __( 'under 1', 'flexo-booking' ),
+					'agesMissing'  => __( 'Please select the age of each child.', 'flexo-booking' ),
+					/* translators: %s: price */
+					'from'         => __( 'from %s', 'flexo-booking' ),
+					'chooseRate'   => __( 'Choose your rate', 'flexo-booking' ),
+					'choose'       => __( 'Choose', 'flexo-booking' ),
+					'rate'         => __( 'Rate', 'flexo-booking' ),
+					'guests'       => __( 'Guests', 'flexo-booking' ),
+					'adult'        => __( '%d adult', 'flexo-booking' ),
+					'adults'       => __( '%d adults', 'flexo-booking' ),
+					'child'        => __( '%d child', 'flexo-booking' ),
+					'childrenN'    => __( '%d children', 'flexo-booking' ),
+					/* translators: %s: ages */
+					'agesList'     => __( '(ages %s)', 'flexo-booking' ),
+					'subtotal'     => __( 'Subtotal', 'flexo-booking' ),
+					'discount'     => __( 'Discount', 'flexo-booking' ),
+					'total'        => __( 'Total', 'flexo-booking' ),
+					'finalTotal'   => __( 'Final total', 'flexo-booking' ),
+					'atProperty'   => __( 'Payable at the property', 'flexo-booking' ),
+					'cancellation' => __( 'Cancellation', 'flexo-booking' ),
+					'havePromo'    => __( 'Have a promo code?', 'flexo-booking' ),
+					'promoLabel'   => __( 'Promo code', 'flexo-booking' ),
+					'apply'        => __( 'Apply', 'flexo-booking' ),
+					'remove'       => __( 'Remove', 'flexo-booking' ),
+					/* translators: 1: promo code, 2: discount, e.g. "−10%" */
+					'promoApplied' => __( 'Promo code %1$s applied (%2$s).', 'flexo-booking' ),
 				),
 			)
 		);
@@ -88,9 +120,13 @@ class Flexo_Booking_Frontend {
 			'check_out' => isset( $_GET['check_out'] ) ? sanitize_text_field( wp_unslash( $_GET['check_out'] ) ) : '',
 			'adults'    => isset( $_GET['adults'] ) ? max( 1, absint( $_GET['adults'] ) ) : 2,
 			'children'  => isset( $_GET['children'] ) ? absint( $_GET['children'] ) : 0,
+			'ages'      => isset( $_GET['children_ages'] ) ? Flexo_Booking_Children::parse_ages( is_array( $_GET['children_ages'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_GET['children_ages'] ) ) : sanitize_text_field( wp_unslash( $_GET['children_ages'] ) ) ) : array(),
 			'room'      => isset( $_GET['room'] ) ? sanitize_title( wp_unslash( $_GET['room'] ) ) : '',
 		);
 		// phpcs:enable
+		if ( is_wp_error( $prefill['ages'] ) || ! Flexo_Booking_Children::enabled() ) {
+			$prefill['ages'] = array();
+		}
 
 		$room = null;
 		if ( $prefill['room'] ) {
@@ -117,6 +153,7 @@ class Flexo_Booking_Frontend {
 			'booking_url'  => self::resolve_url( $atts['booking_page'] ),
 			'terms_url'    => Flexo_Booking_Settings::site_url_setting( 'terms_url' ),
 			'autosearch'   => $prefill['check_in'] && $prefill['check_out'],
+			'ask_ages'     => Flexo_Booking_Children::enabled() && (int) $settings['max_children'] > 0,
 		);
 
 		wp_enqueue_style( 'flexo-booking' );

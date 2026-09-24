@@ -40,6 +40,11 @@ class Flexo_Booking_Rest {
 				'type'    => 'string',
 				'default' => '',
 			),
+			// "4,11" or ages[]=4&ages[]=11 (feature "children").
+			'children_ages' => array(
+				'type'    => array( 'string', 'array' ),
+				'default' => '',
+			),
 		);
 
 		register_rest_route(
@@ -81,6 +86,33 @@ class Flexo_Booking_Rest {
 
 		register_rest_route(
 			self::NAMESPACE_V1,
+			'/quote',
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( __CLASS__, 'quote' ),
+				'permission_callback' => '__return_true',
+				'args'                => array_merge(
+					$stay_args,
+					array(
+						'room'       => array(
+							'type'     => 'string',
+							'required' => true,
+						),
+						'rate_plan'  => array(
+							'type'    => 'integer',
+							'default' => 0,
+						),
+						'promo_code' => array(
+							'type'    => 'string',
+							'default' => '',
+						),
+					)
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE_V1,
 			'/bookings',
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
@@ -116,6 +148,19 @@ class Flexo_Booking_Rest {
 						'fb_website'  => array(
 							'type'    => 'string',
 							'default' => '',
+						),
+						'rate_plan'      => array(
+							'type'    => 'integer',
+							'default' => 0,
+						),
+						'promo_code'     => array(
+							'type'    => 'string',
+							'default' => '',
+						),
+						// The total the guest saw; the booking is refused if the price changed.
+						'expected_total' => array(
+							'type'    => array( 'number', 'null' ),
+							'default' => null,
 						),
 					)
 				),
@@ -180,7 +225,8 @@ class Flexo_Booking_Rest {
 			$request['check_out'],
 			$request['adults'],
 			$request['children'],
-			$request['room']
+			$request['room'],
+			$request['children_ages']
 		);
 
 		if ( is_wp_error( $result ) ) {
@@ -189,6 +235,51 @@ class Flexo_Booking_Rest {
 		}
 
 		return rest_ensure_response( $result );
+	}
+
+	/**
+	 * Price of one room, rate plan and promo code (the booking summary).
+	 * An invalid promo code still returns the price, with the reason.
+	 */
+	public static function quote( WP_REST_Request $request ) {
+		$promo = Flexo_Booking_Promo_Codes::enabled() ? Flexo_Booking_Promo_Codes::normalize_code( $request['promo_code'] ) : '';
+		if ( '' !== $promo && Flexo_Booking_Promo_Codes::too_many_attempts() ) {
+			return new WP_Error( 'flexo_rate_limited', __( 'Too many promo code attempts. Please try again later.', 'flexo-booking' ), array( 'status' => 429 ) );
+		}
+
+		$room = Flexo_Booking_Rooms::find( $request['room'] );
+		if ( ! $room ) {
+			return new WP_Error( 'flexo_invalid_room', __( 'Please choose a room.', 'flexo-booking' ), array( 'status' => 400 ) );
+		}
+		$room = Flexo_Booking_Rooms::to_array( $room );
+
+		$stay = Flexo_Booking_Bookings::validate_dates( $request['check_in'], $request['check_out'], true, 1 );
+		$ages = array();
+		if ( ! is_wp_error( $stay ) && Flexo_Booking_Children::enabled() ) {
+			$ages = Flexo_Booking_Children::validate( $request['children'], $request['children_ages'] );
+			$stay = is_wp_error( $ages ) ? $ages : $stay;
+		}
+		$quote = is_wp_error( $stay ) ? $stay : Flexo_Booking_Pricing::quote(
+			array(
+				'room'          => $room,
+				'check_in'      => $stay['check_in'],
+				'check_out'     => $stay['check_out'],
+				'adults'        => $request['adults'],
+				'children'      => $request['children'],
+				'children_ages' => $ages,
+				'rate_plan_id'  => $request['rate_plan'],
+				'promo_code'    => $promo,
+				'context'       => 'booking',
+			)
+		);
+		if ( is_wp_error( $quote ) ) {
+			$quote->add_data( array( 'status' => 400 ) );
+			return $quote;
+		}
+		if ( ! empty( $quote['promo_error'] ) ) {
+			Flexo_Booking_Promo_Codes::too_many_attempts( true );
+		}
+		return rest_ensure_response( Flexo_Booking_Pricing::public_view( $quote ) );
 	}
 
 	public static function create_booking( WP_REST_Request $request ) {
@@ -211,8 +302,12 @@ class Flexo_Booking_Rest {
 				'room'        => $request['room'],
 				'check_in'    => $request['check_in'],
 				'check_out'   => $request['check_out'],
-				'adults'      => $request['adults'],
-				'children'    => $request['children'],
+				'adults'         => $request['adults'],
+				'children'       => $request['children'],
+				'children_ages'  => $request['children_ages'],
+				'rate_plan'      => $request['rate_plan'],
+				'promo_code'     => $request['promo_code'],
+				'expected_total' => $request['expected_total'],
 				'guest_name'  => $request['guest_name'],
 				'guest_email' => $request['guest_email'],
 				'guest_phone' => $request['guest_phone'],
@@ -222,7 +317,7 @@ class Flexo_Booking_Rest {
 		);
 
 		if ( is_wp_error( $booking ) ) {
-			$booking->add_data( array( 'status' => in_array( $booking->get_error_code(), array( 'flexo_unavailable', 'flexo_closed', 'flexo_busy' ), true ) ? 409 : 400 ) );
+			$booking->add_data( array_merge( (array) $booking->get_error_data(), array( 'status' => in_array( $booking->get_error_code(), array( 'flexo_unavailable', 'flexo_closed', 'flexo_busy', 'flexo_price_changed' ), true ) ? 409 : 400 ) ) );
 			return $booking;
 		}
 
@@ -242,6 +337,7 @@ class Flexo_Booking_Rest {
 				'nights'          => $booking['nights'],
 				'total_formatted' => Flexo_Booking_Money::format( $booking['total'], $booking['currency'] ),
 				'breakdown'       => Flexo_Booking_Pricing::format_lines( Flexo_Booking_Pricing::snapshot( $booking ) ),
+				'quote'           => Flexo_Booking_Pricing::public_view( Flexo_Booking_Pricing::snapshot( $booking ) ),
 				'message'         => $confirmed
 					? __( 'Your booking is confirmed! A confirmation has been sent to your email.', 'flexo-booking' )
 					: __( 'Thank you! We received your booking request and will confirm it shortly by email.', 'flexo-booking' ),

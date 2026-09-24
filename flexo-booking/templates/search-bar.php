@@ -16,6 +16,7 @@
  * @var string     $min_date
  * @var string     $max_date
  * @var string     $booking_url
+ * @var bool       $ask_ages   Children's ages are asked ("Children & ages" feature).
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -54,6 +55,10 @@ defined( 'ABSPATH' ) || exit;
 					<?php endfor; ?>
 				</select>
 			</div>
+			<?php if ( ! empty( $ask_ages ) ) : ?>
+				<?php // Filled by booking.js with one age selector per child. ?>
+				<div class="fb-ages" data-fb-ages="<?php echo esc_attr( implode( ',', $prefill['ages'] ) ); ?>" hidden></div>
+			<?php endif; ?>
 		<?php endif; ?>
 		<div class="fb-field fb-field--action">
 			<button type="submit" class="fb-button"><?php echo esc_html( $atts['button_text'] ); ?></button>

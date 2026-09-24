@@ -105,6 +105,13 @@ class Flexo_Booking_Admin {
 			return;
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$booking_id = isset( $_GET['booking'] ) ? absint( $_GET['booking'] ) : 0;
+		if ( $booking_id ) {
+			self::render_booking( $booking_id );
+			return;
+		}
+
 		$filters  = self::current_filters();
 		$per_page = 20;
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -231,7 +238,7 @@ class Flexo_Booking_Admin {
 				<?php foreach ( $result['items'] as $b ) : ?>
 					<tr>
 						<td>
-							<strong><?php echo esc_html( $b['reference'] ); ?></strong>
+							<strong><a href="<?php echo esc_url( self::page_url( array( 'booking' => $b['id'] ) ) ); ?>"><?php echo esc_html( $b['reference'] ); ?></a></strong>
 							<div>
 								<?php echo self::source_badge( $b ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in source_badge(). ?>
 								<?php if ( isset( $conflicted[ $b['id'] ] ) ) : ?>
@@ -252,7 +259,16 @@ class Flexo_Booking_Admin {
 								<div class="flexo-muted flexo-notes"><?php echo esc_html( $b['notes'] ); ?></div>
 							<?php endif; ?>
 						</td>
-						<td><?php echo esc_html( $b['room_title'] ); ?></td>
+						<td>
+							<?php echo esc_html( $b['room_title'] ); ?>
+							<?php $flexo_plan = self::rate_plan_name( $b ); ?>
+							<?php if ( $flexo_plan ) : ?>
+								<div class="flexo-muted"><?php echo esc_html( $flexo_plan ); ?></div>
+							<?php endif; ?>
+							<?php if ( $b['promo_code'] ) : ?>
+								<div><span class="flexo-badge flexo-badge--promo">% <?php echo esc_html( $b['promo_code'] ); ?></span></div>
+							<?php endif; ?>
+						</td>
 						<td>
 							<?php echo esc_html( mysql2date( $format, $b['check_in'] ) . ' → ' . mysql2date( $format, $b['check_out'] ) ); ?>
 							<div class="flexo-muted">
@@ -262,13 +278,29 @@ class Flexo_Booking_Admin {
 								?>
 							</div>
 						</td>
-						<td><?php echo esc_html( $b['adults'] . ( $b['children'] ? ' + ' . $b['children'] : '' ) ); ?></td>
+						<td>
+							<?php echo esc_html( $b['adults'] . ( $b['children'] ? ' + ' . $b['children'] : '' ) ); ?>
+							<?php if ( '' !== $b['children_ages'] ) : ?>
+								<div class="flexo-muted">
+									<?php
+									/* translators: %s: children's ages */
+									echo esc_html( sprintf( __( 'ages %s', 'flexo-booking' ), str_replace( ',', ', ', $b['children_ages'] ) ) );
+									?>
+								</div>
+							<?php endif; ?>
+						</td>
 						<td>
 							<?php echo esc_html( Flexo_Booking_Money::format( $b['total'], $b['currency'] ) ); ?>
 							<?php
+							$flexo_rows    = Flexo_Booking_Pricing::format_lines( Flexo_Booking_Pricing::snapshot( $b ) );
 							$flexo_details = array();
-							foreach ( Flexo_Booking_Pricing::format_lines( Flexo_Booking_Pricing::snapshot( $b ) ) as $flexo_row ) {
-								$flexo_details = array_merge( $flexo_details, $flexo_row['details'] );
+							foreach ( $flexo_rows as $flexo_row ) {
+								if ( count( $flexo_rows ) > 1 ) {
+									$flexo_details[] = $flexo_row['label'] . ': ' . $flexo_row['formatted'];
+								}
+								if ( 'accommodation' === $flexo_row['type'] ) {
+									$flexo_details = array_merge( $flexo_details, $flexo_row['details'] );
+								}
 							}
 							if ( $flexo_details ) {
 								echo '<div class="flexo-breakdown">' . esc_html( implode( "\n", $flexo_details ) ) . '</div>';
@@ -309,6 +341,123 @@ class Flexo_Booking_Admin {
 				echo '</div></div>';
 			}
 			?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * The rate plan name stored with the booking, or ''.
+	 */
+	public static function rate_plan_name( array $b ) {
+		$snapshot = Flexo_Booking_Pricing::snapshot( $b );
+		return empty( $snapshot['rate_plan']['name'] ) ? '' : $snapshot['rate_plan']['name'];
+	}
+
+	/**
+	 * One booking with everything the guest chose and the full price breakdown.
+	 */
+	private static function render_booking( $id ) {
+		$b = Flexo_Booking_Bookings::get( $id );
+		?>
+		<div class="wrap flexo-admin flexo-booking-view">
+			<p><a href="<?php echo esc_url( self::page_url() ); ?>">← <?php esc_html_e( 'All bookings', 'flexo-booking' ); ?></a></p>
+			<?php if ( ! $b ) : ?>
+				<div class="notice notice-error"><p><?php esc_html_e( 'Booking not found.', 'flexo-booking' ); ?></p></div></div>
+				<?php
+				return;
+			endif;
+			$snapshot = Flexo_Booking_Pricing::snapshot( $b );
+			$view     = Flexo_Booking_Pricing::public_view( $snapshot );
+			$format   = get_option( 'date_format' );
+			?>
+			<h1>
+				<?php
+				/* translators: %s: booking reference */
+				echo esc_html( sprintf( __( 'Booking %s', 'flexo-booking' ), $b['reference'] ) );
+				?>
+				<span class="flexo-status flexo-status--<?php echo esc_attr( $b['status'] ); ?>"><?php echo esc_html( Flexo_Booking_Bookings::status_label( $b['status'] ) ); ?></span>
+			</h1>
+			<?php self::notice(); ?>
+			<p><?php echo self::source_badge( $b ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in source_badge(). ?></p>
+
+			<div class="flexo-booking-view__grid">
+				<div class="flexo-tools-card">
+					<h2><?php esc_html_e( 'Stay', 'flexo-booking' ); ?></h2>
+					<table class="form-table flexo-detail-table" role="presentation">
+						<tr><th><?php esc_html_e( 'Room', 'flexo-booking' ); ?></th><td><?php echo esc_html( $b['room_title'] ); ?></td></tr>
+						<?php if ( $view['rate_plan'] ) : ?>
+							<tr><th><?php esc_html_e( 'Rate plan', 'flexo-booking' ); ?></th><td>
+								<?php echo esc_html( $view['rate_plan']['name'] ); ?>
+								<span class="flexo-badge"><?php echo esc_html( $view['rate_plan']['refundable_label'] ); ?></span>
+								<?php if ( $view['rate_plan']['cancellation_policy'] ) : ?>
+									<div class="flexo-muted"><?php echo esc_html( $view['rate_plan']['cancellation_policy'] ); ?></div>
+								<?php endif; ?>
+							</td></tr>
+						<?php endif; ?>
+						<tr><th><?php esc_html_e( 'Arrival', 'flexo-booking' ); ?></th><td><?php echo esc_html( mysql2date( $format, $b['check_in'] ) ); ?></td></tr>
+						<tr><th><?php esc_html_e( 'Departure', 'flexo-booking' ); ?></th><td><?php echo esc_html( mysql2date( $format, $b['check_out'] ) ); ?> · <?php echo esc_html( sprintf( /* translators: %d: nights */ _n( '%d night', '%d nights', $b['nights'], 'flexo-booking' ), $b['nights'] ) ); ?></td></tr>
+						<tr><th><?php esc_html_e( 'Guests', 'flexo-booking' ); ?></th><td><?php echo esc_html( Flexo_Booking_Children::guests_text( $b['adults'], $b['children'], $b['children_ages'] ) ); ?></td></tr>
+						<?php if ( $b['promo_code'] ) : ?>
+							<tr><th><?php esc_html_e( 'Promo code', 'flexo-booking' ); ?></th><td><span class="flexo-badge flexo-badge--promo">% <?php echo esc_html( $b['promo_code'] ); ?></span></td></tr>
+						<?php endif; ?>
+						<tr><th><?php esc_html_e( 'Booked', 'flexo-booking' ); ?></th><td><?php echo esc_html( mysql2date( $format . ' H:i', $b['created_at'] ) ); ?></td></tr>
+					</table>
+				</div>
+
+				<div class="flexo-tools-card">
+					<h2><?php esc_html_e( 'Guest', 'flexo-booking' ); ?></h2>
+					<table class="form-table flexo-detail-table" role="presentation">
+						<tr><th><?php esc_html_e( 'Name', 'flexo-booking' ); ?></th><td><?php echo esc_html( $b['guest_name'] ? $b['guest_name'] : '—' ); ?></td></tr>
+						<tr><th><?php esc_html_e( 'Email', 'flexo-booking' ); ?></th><td><?php echo $b['guest_email'] ? '<a href="mailto:' . esc_attr( $b['guest_email'] ) . '">' . esc_html( $b['guest_email'] ) . '</a>' : '—'; ?></td></tr>
+						<tr><th><?php esc_html_e( 'Phone', 'flexo-booking' ); ?></th><td><?php echo $b['guest_phone'] ? '<a href="tel:' . esc_attr( preg_replace( '/[^0-9+]/', '', $b['guest_phone'] ) ) . '">' . esc_html( $b['guest_phone'] ) . '</a>' : '—'; ?></td></tr>
+						<tr><th><?php esc_html_e( 'Special requests', 'flexo-booking' ); ?></th><td><?php echo esc_html( $b['notes'] ? $b['notes'] : '—' ); ?></td></tr>
+					</table>
+				</div>
+
+				<?php if ( 'blocked' !== $b['status'] ) : ?>
+				<div class="flexo-tools-card">
+					<h2><?php esc_html_e( 'Price', 'flexo-booking' ); ?></h2>
+					<table class="widefat flexo-price-table">
+						<tbody>
+						<?php foreach ( $view['lines'] as $line ) : ?>
+							<tr class="flexo-price-line flexo-price-line--<?php echo esc_attr( $line['type'] ); ?>">
+								<td>
+									<?php echo esc_html( $line['label'] ); ?>
+									<?php if ( $line['details'] ) : ?>
+										<div class="flexo-breakdown"><?php echo esc_html( implode( "\n", $line['details'] ) ); ?></div>
+									<?php endif; ?>
+								</td>
+								<td class="flexo-num"><?php echo esc_html( $line['formatted'] ); ?></td>
+							</tr>
+						<?php endforeach; ?>
+						</tbody>
+						<tfoot>
+							<?php if ( $view['discount_total'] > 0 ) : ?>
+								<tr><th><?php esc_html_e( 'Subtotal', 'flexo-booking' ); ?></th><td class="flexo-num"><?php echo esc_html( $view['subtotal_formatted'] ); ?></td></tr>
+								<tr><th><?php esc_html_e( 'Discount', 'flexo-booking' ); ?></th><td class="flexo-num"><?php echo esc_html( $view['discount_formatted'] ); ?></td></tr>
+							<?php endif; ?>
+							<tr><th><?php esc_html_e( 'Total', 'flexo-booking' ); ?></th><td class="flexo-num"><strong><?php echo esc_html( Flexo_Booking_Money::format( $b['total'], $b['currency'] ) ); ?></strong></td></tr>
+							<?php if ( $view['due_at_property'] > 0 ) : ?>
+								<tr><th><?php esc_html_e( 'Also payable at the property', 'flexo-booking' ); ?></th><td class="flexo-num"><?php echo esc_html( $view['due_at_property_formatted'] ); ?></td></tr>
+							<?php endif; ?>
+						</tfoot>
+					</table>
+					<p class="description"><?php esc_html_e( 'This is the price calculated when the booking was made. Later price changes don\'t affect it.', 'flexo-booking' ); ?></p>
+				</div>
+				<?php endif; ?>
+			</div>
+
+			<p class="flexo-actions">
+				<?php if ( 'pending' === $b['status'] ) : ?>
+					<a class="button button-primary" href="<?php echo esc_url( self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'confirmed' ) ) ); ?>"><?php esc_html_e( 'Confirm', 'flexo-booking' ); ?></a>
+				<?php endif; ?>
+				<?php if ( 'cancelled' === $b['status'] ) : ?>
+					<a class="button" href="<?php echo esc_url( self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'confirmed' ) ) ); ?>"><?php esc_html_e( 'Reinstate', 'flexo-booking' ); ?></a>
+				<?php elseif ( 'blocked' !== $b['status'] ) : ?>
+					<a class="button" href="<?php echo esc_url( self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'cancelled' ) ) ); ?>" onclick="return confirm('<?php echo esc_js( __( 'Cancel this booking? The guest will be notified by email.', 'flexo-booking' ) ); ?>');"><?php esc_html_e( 'Cancel booking', 'flexo-booking' ); ?></a>
+				<?php endif; ?>
+				<a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=' . Flexo_Booking_Calendar_Admin::SLUG . '&month=' . substr( $b['check_in'], 0, 7 ) ) ); ?>"><?php esc_html_e( 'Show in calendar', 'flexo-booking' ); ?></a>
+			</p>
 		</div>
 		<?php
 	}
@@ -445,9 +594,35 @@ class Flexo_Booking_Admin {
 						<th scope="row"><?php esc_html_e( 'Guests', 'flexo-booking' ); ?></th>
 						<td>
 							<label><?php esc_html_e( 'Adults', 'flexo-booking' ); ?> <input type="number" name="adults" min="1" value="2" class="small-text"></label>
-							<label><?php esc_html_e( 'Children', 'flexo-booking' ); ?> <input type="number" name="children" min="0" value="0" class="small-text"></label>
+							<?php if ( Flexo_Booking_Children::enabled() ) : ?>
+								<label><?php esc_html_e( 'Children\'s ages', 'flexo-booking' ); ?> <input type="text" name="children_ages" class="regular-text" placeholder="<?php esc_attr_e( 'e.g. 4, 11 – empty if no children', 'flexo-booking' ); ?>"></label>
+							<?php else : ?>
+								<label><?php esc_html_e( 'Children', 'flexo-booking' ); ?> <input type="number" name="children" min="0" value="0" class="small-text"></label>
+							<?php endif; ?>
 						</td>
 					</tr>
+					<?php if ( Flexo_Booking_Rate_Plans::enabled() && Flexo_Booking_Rate_Plans::all() ) : ?>
+						<tr>
+							<th scope="row"><label for="fb-plan"><?php esc_html_e( 'Rate plan', 'flexo-booking' ); ?></label></th>
+							<td>
+								<select id="fb-plan" name="rate_plan">
+									<option value="0"><?php esc_html_e( 'The room\'s only plan / normal price', 'flexo-booking' ); ?></option>
+									<?php foreach ( Flexo_Booking_Rate_Plans::all() as $flexo_plan ) : ?>
+										<?php if ( $flexo_plan['active'] ) : ?>
+											<option value="<?php echo esc_attr( $flexo_plan['id'] ); ?>"><?php echo esc_html( $flexo_plan['name'] ); ?></option>
+										<?php endif; ?>
+									<?php endforeach; ?>
+								</select>
+								<p class="description"><?php esc_html_e( 'The plan must be offered for the chosen room. The price is calculated automatically.', 'flexo-booking' ); ?></p>
+							</td>
+						</tr>
+					<?php endif; ?>
+					<?php if ( Flexo_Booking_Promo_Codes::enabled() ) : ?>
+						<tr>
+							<th scope="row"><label for="fb-promo"><?php esc_html_e( 'Promo code', 'flexo-booking' ); ?></label></th>
+							<td><input id="fb-promo" type="text" name="promo_code" class="regular-text" autocomplete="off"></td>
+						</tr>
+					<?php endif; ?>
 					<tr>
 						<th scope="row"><label for="fb-name"><?php esc_html_e( 'Guest name', 'flexo-booking' ); ?></label></th>
 						<td><input id="fb-name" type="text" name="guest_name" class="regular-text"></td>
@@ -498,6 +673,10 @@ class Flexo_Booking_Admin {
 		if ( is_wp_error( $result ) ) {
 			self::redirect( add_query_arg( 'flexo_error', rawurlencode( $result->get_error_message() ), $back ) );
 		}
+		$warning = Flexo_Booking_Promo_Codes::over_limit_warning( (array) Flexo_Booking_Bookings::get( $id ) );
+		if ( $warning ) {
+			self::redirect( add_query_arg( array( 'flexo_msg' => 'updated', 'flexo_error' => rawurlencode( $warning ) ), $back ) );
+		}
 		self::redirect( add_query_arg( 'flexo_msg', 'updated', $back ) );
 	}
 
@@ -518,7 +697,7 @@ class Flexo_Booking_Admin {
 			wp_die( esc_html__( 'You are not allowed to manage bookings.', 'flexo-booking' ) );
 		}
 
-		$fields = array( 'room', 'check_in', 'check_out', 'adults', 'children', 'guest_name', 'guest_email', 'guest_phone', 'notes', 'status' );
+		$fields = array( 'room', 'check_in', 'check_out', 'adults', 'children', 'children_ages', 'rate_plan', 'promo_code', 'guest_name', 'guest_email', 'guest_phone', 'notes', 'status' );
 		$data   = array( 'source' => 'admin' );
 		foreach ( $fields as $field ) {
 			$data[ $field ] = isset( $_POST[ $field ] ) ? wp_unslash( $_POST[ $field ] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized in Flexo_Booking_Bookings::create().
@@ -538,7 +717,7 @@ class Flexo_Booking_Admin {
 			Flexo_Booking_Emails::send_guest( $booking, 'confirmed' === $booking['status'] ? 'confirmed' : 'request' );
 		}
 
-		self::redirect( self::page_url( array( 'flexo_msg' => 'added' ) ) );
+		self::redirect( self::page_url( array( 'flexo_msg' => 'added', 'booking' => $booking['id'] ) ) );
 	}
 
 	public static function handle_csv() {
@@ -555,10 +734,13 @@ class Flexo_Booking_Admin {
 
 		$out = fopen( 'php://output', 'w' );
 		fwrite( $out, "\xEF\xBB\xBF" ); // UTF-8 BOM so Excel shows accents and Cyrillic correctly.
-		fputcsv( $out, array( 'Reference', 'Status', 'Room', 'Check-in', 'Check-out', 'Nights', 'Adults', 'Children', 'Guest', 'Email', 'Phone', 'Notes', 'Total', 'Currency', 'Source', 'Created', 'Price details' ), ',', '"', '\\' );
+		// New columns are added at the end, so existing spreadsheets keep working.
+		fputcsv( $out, array( 'Reference', 'Status', 'Room', 'Check-in', 'Check-out', 'Nights', 'Adults', 'Children', 'Guest', 'Email', 'Phone', 'Notes', 'Total', 'Currency', 'Source', 'Created', 'Price details', 'Children ages', 'Rate plan', 'Refundable', 'Promo code', 'Discount', 'Tourist tax', 'Payable at property' ), ',', '"', '\\' );
 		foreach ( $result['items'] as $b ) {
-			$details = 'blocked' === $b['status'] ? '' : Flexo_Booking_Pricing::summary_text( Flexo_Booking_Pricing::snapshot( $b ) );
-			$row     = array( $b['reference'], $b['status'], $b['room_title'], $b['check_in'], $b['check_out'], $b['nights'], $b['adults'], $b['children'], $b['guest_name'], $b['guest_email'], $b['guest_phone'], $b['notes'], $b['total'], $b['currency'], $b['source'], $b['created_at'], $details );
+			$snapshot = Flexo_Booking_Pricing::snapshot( $b );
+			$details  = 'blocked' === $b['status'] ? '' : Flexo_Booking_Pricing::summary_text( $snapshot );
+			$plan     = empty( $snapshot['rate_plan'] ) ? null : $snapshot['rate_plan'];
+			$row      = array( $b['reference'], $b['status'], $b['room_title'], $b['check_in'], $b['check_out'], $b['nights'], $b['adults'], $b['children'], $b['guest_name'], $b['guest_email'], $b['guest_phone'], $b['notes'], $b['total'], $b['currency'], $b['source'], $b['created_at'], $details, str_replace( ',', ', ', $b['children_ages'] ), $plan ? $plan['name'] : '', $plan ? ( $plan['refundable'] ? 'yes' : 'no' ) : '', $b['promo_code'], $b['discount_total'] ? $b['discount_total'] : '', $b['tax_total'] ? $b['tax_total'] : '', empty( $snapshot['due_at_property'] ) ? '' : $snapshot['due_at_property'] );
 			// Prevent spreadsheet formula injection from guest-entered values.
 			$row = array_map(
 				static function ( $value ) {

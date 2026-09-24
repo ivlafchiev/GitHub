@@ -262,7 +262,14 @@ class Flexo_Booking_Calendar_Admin {
 		$lines[] = array( __( 'Arrival', 'flexo-booking' ), Flexo_Booking_Dates::display( $b['check_in'] ) );
 		$lines[] = array( __( 'Departure', 'flexo-booking' ), Flexo_Booking_Dates::display( $b['check_out'] ) . ' · ' . self::nights_text( $b['check_in'], $b['check_out'] ) );
 		if ( ! $blocked ) {
-			$lines[] = array( __( 'Guests', 'flexo-booking' ), $b['adults'] . ( $b['children'] ? ' + ' . $b['children'] : '' ) );
+			$lines[] = array( __( 'Guests', 'flexo-booking' ), Flexo_Booking_Children::guests_text( (int) $b['adults'], (int) $b['children'], isset( $b['children_ages'] ) ? $b['children_ages'] : '' ) );
+			$plan = Flexo_Booking_Admin::rate_plan_name( $b );
+			if ( $plan ) {
+				$lines[] = array( __( 'Rate plan', 'flexo-booking' ), $plan );
+			}
+			if ( ! empty( $b['promo_code'] ) ) {
+				$lines[] = array( __( 'Promo code', 'flexo-booking' ), $b['promo_code'] );
+			}
 			$lines[] = array( __( 'Total', 'flexo-booking' ), Flexo_Booking_Money::format( $b['total'], $b['currency'] ) );
 		}
 		if ( $b['notes'] ) {
@@ -292,6 +299,12 @@ class Flexo_Booking_Calendar_Admin {
 				'label'   => __( 'Remove block', 'flexo-booking' ),
 				'url'     => self::action_url( 'flexo_booking_delete', $b['id'] ),
 				'confirm' => __( 'Remove this block? The dates become available again.', 'flexo-booking' ),
+			);
+		}
+		if ( ! $blocked ) {
+			$actions[] = array(
+				'label' => __( 'Booking details', 'flexo-booking' ),
+				'url'   => admin_url( 'admin.php?page=' . Flexo_Booking_Admin::MENU_SLUG . '&booking=' . (int) $b['id'] ),
 			);
 		}
 		$actions[] = array(

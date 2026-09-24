@@ -5,10 +5,9 @@
  * quote() runs an ordered list of steps over a quote array:
  *
  *   10  nightly room price (season or room price, weekday/weekend)   Day 1
- *   20  rate-plan adjustment                                          Day 3
- *   30  extra guests and children                                     Day 3
- *   40  promo discount                                                Day 3
- *   50  tourist tax                                                   Day 3
+ *   20  rate-plan adjustment (children priced by age)                 Day 3
+ *   40  promo discount (room + rate plan, never taxes)                Day 3
+ *   50  tourist tax (per person per night)                            Day 3
  *   90  totals                                                        Day 1
  *   95  payment schedule (deposit / pay now / at property)            Day 5
  *
@@ -31,8 +30,12 @@ class Flexo_Booking_Pricing {
 	 *     @type string           $check_in  Y-m-d.
 	 *     @type string           $check_out Y-m-d.
 	 *     @type int              $adults
-	 *     @type int              $children
-	 *     @type string           $context   search | booking | admin.
+	 *     @type int              $children      Used when children's ages are not asked (feature off).
+	 *     @type int[]|string     $children_ages Ages, e.g. array( 4, 11 ) or "4,11" (feature "children").
+	 *     @type int              $rate_plan_id  0 = the room's only plan (or no plan).
+	 *     @type string           $promo_code
+	 *     @type string           $booking_date  Y-m-d the booking is made on, for promo validity (default today).
+	 *     @type string           $context       search | booking | admin.
 	 * }
 	 * @return array|WP_Error
 	 */
@@ -61,11 +64,29 @@ class Flexo_Booking_Pricing {
 		$request = wp_parse_args(
 			$request,
 			array(
-				'adults'   => 1,
-				'children' => 0,
-				'context'  => 'search',
+				'adults'        => 1,
+				'children'      => 0,
+				'children_ages' => array(),
+				'rate_plan_id'  => 0,
+				'promo_code'    => '',
+				'booking_date'  => '',
+				'context'       => 'search',
 			)
 		);
+
+		$ages = array();
+		if ( Flexo_Booking_Children::enabled() ) {
+			$ages = Flexo_Booking_Children::parse_ages( $request['children_ages'] );
+			if ( is_wp_error( $ages ) ) {
+				return $ages;
+			}
+		}
+		$children = max( count( $ages ), max( 0, (int) $request['children'] ) );
+
+		$plan = self::resolve_rate_plan( $room, (int) $request['rate_plan_id'], $request['context'] );
+		if ( is_wp_error( $plan ) ) {
+			return $plan;
+		}
 
 		$quote = array(
 			'version'        => self::VERSION,
@@ -75,13 +96,18 @@ class Flexo_Booking_Pricing {
 			'check_out'      => $stay['check_out'],
 			'nights'         => $stay['nights'],
 			'adults'         => max( 1, (int) $request['adults'] ),
-			'children'       => max( 0, (int) $request['children'] ),
+			'children'       => $children,
+			'children_ages'  => $ages,
+			'rate_plan'      => $plan ? Flexo_Booking_Rate_Plans::snapshot( $plan ) : null,
+			'promo'          => null,
+			'promo_error'    => null,
 			'nights_detail'  => array(),
 			'lines'          => array(),
 			'subtotal'       => 0.0,
 			'discount_total' => 0.0,
 			'tax_total'      => 0.0,
 			'total'          => 0.0,
+			'due_at_property' => 0.0,
 			'payable'        => array(
 				'now'         => 0.0,
 				'deposit'     => 0.0,
@@ -99,6 +125,32 @@ class Flexo_Booking_Pricing {
 	}
 
 	/**
+	 * The rate plan a quote uses. A room that offers no plan (or rate plans
+	 * switched off) has none. With several plans the guest must choose one;
+	 * a search quotes the first until then.
+	 *
+	 * @return array|null|WP_Error
+	 */
+	private static function resolve_rate_plan( array $room, $plan_id, $context ) {
+		$plans = Flexo_Booking_Rate_Plans::for_room( $room['id'] );
+		if ( ! $plans ) {
+			return null;
+		}
+		foreach ( $plans as $plan ) {
+			if ( $plan['id'] === $plan_id ) {
+				return $plan;
+			}
+		}
+		if ( $plan_id ) {
+			return new WP_Error( 'flexo_rate_plan', __( 'The selected rate is not available for this room. Please choose another one.', 'flexo-booking' ) );
+		}
+		if ( 1 === count( $plans ) || 'search' === $context ) {
+			return $plans[0];
+		}
+		return new WP_Error( 'flexo_rate_plan', __( 'Please choose a rate for this room.', 'flexo-booking' ) );
+	}
+
+	/**
 	 * @return callable[] Ordered by priority.
 	 */
 	private static function steps( array $request, array $room ) {
@@ -106,6 +158,15 @@ class Flexo_Booking_Pricing {
 			10 => array( __CLASS__, 'step_nightly' ),
 			90 => array( __CLASS__, 'step_totals' ),
 		);
+		if ( Flexo_Booking_Rate_Plans::enabled() ) {
+			$steps[20] = array( __CLASS__, 'step_rate_plan' );
+		}
+		if ( Flexo_Booking_Promo_Codes::enabled() && '' !== Flexo_Booking_Promo_Codes::normalize_code( $request['promo_code'] ) ) {
+			$steps[40] = array( __CLASS__, 'step_promo' );
+		}
+		if ( Flexo_Booking_Features::is_enabled( 'tourist_tax' ) && (float) Flexo_Booking_Settings::get( 'tourist_tax_amount' ) > 0 ) {
+			$steps[50] = array( __CLASS__, 'step_tourist_tax' );
+		}
 		$steps = apply_filters( 'flexo_booking_pricing_steps', $steps, $request, $room );
 		ksort( $steps );
 		return $steps;
@@ -193,12 +254,194 @@ class Flexo_Booking_Pricing {
 	}
 
 	/**
+	 * The room price of a quote: accommodation plus any legacy adjustment.
+	 * Rate-plan percentages apply to this amount only.
+	 */
+	public static function room_amount( array $quote ) {
+		$sum = 0.0;
+		foreach ( $quote['lines'] as $line ) {
+			if ( in_array( $line['type'], array( 'accommodation', 'adjustment' ), true ) ) {
+				$sum += (float) $line['amount'];
+			}
+		}
+		return $sum;
+	}
+
+	/**
+	 * An amount per person per night, with children priced by age.
+	 *
+	 * @param float      $unit     Adult amount per night.
+	 * @param int        $nights
+	 * @param int        $adults
+	 * @param int[]      $ages     Known children's ages.
+	 * @param int        $children Number of children (children without a known age pay the adult amount).
+	 * @param array|null $rules    Child rules, or null to charge children like adults.
+	 * @return array { amount: float, items: array[] }
+	 */
+	public static function per_person( $unit, $nights, $adults, array $ages, $children, $rules ) {
+		$unit   = (float) $unit;
+		$items  = array();
+		$amount = $adults * $nights * $unit;
+		$items[] = array(
+			/* translators: 1: number of adults, 2: number of nights */
+			'text'   => sprintf( _n( '%1$d adult × %2$s', '%1$d adults × %2$s', $adults, 'flexo-booking' ), $adults, sprintf( _n( '%d night', '%d nights', $nights, 'flexo-booking' ), $nights ) ),
+			'unit'   => $unit,
+			'amount' => Flexo_Booking_Money::round( $adults * $nights * $unit ),
+		);
+
+		$unknown = max( 0, (int) $children - count( $ages ) );
+		foreach ( $ages as $age ) {
+			$factor    = $rules ? Flexo_Booking_Children::factor( $rules, $age ) : 1.0;
+			$per_night = $unit * $factor;
+			$amount   += $per_night * $nights;
+			if ( $factor <= 0 ) {
+				$items[] = array(
+					/* translators: %d: child's age */
+					'text'   => sprintf( __( 'Child, age %d', 'flexo-booking' ), $age ),
+					'unit'   => null,
+					'amount' => 0.0,
+					'free'   => true,
+				);
+				continue;
+			}
+			$items[] = array(
+				'text'   => sprintf(
+					/* translators: 1: child's age, 2: number of nights, 3: share of the adult price, e.g. " (50%)" */
+					__( 'Child, age %1$d × %2$s%3$s', 'flexo-booking' ),
+					$age,
+					/* translators: %d: number of nights */
+					sprintf( _n( '%d night', '%d nights', $nights, 'flexo-booking' ), $nights ),
+					$factor < 1 ? ' (' . Flexo_Booking_Children::percent_text( $factor * 100 ) . '%)' : ''
+				),
+				'unit'   => Flexo_Booking_Money::round( $per_night ),
+				'amount' => Flexo_Booking_Money::round( $per_night * $nights ),
+			);
+		}
+		if ( $unknown ) {
+			$amount += $unknown * $nights * $unit;
+			$items[] = array(
+				/* translators: 1: number of children, 2: number of nights */
+				'text'   => sprintf( _n( '%1$d child × %2$s', '%1$d children × %2$s', $unknown, 'flexo-booking' ), $unknown, sprintf( _n( '%d night', '%d nights', $nights, 'flexo-booking' ), $nights ) ),
+				'unit'   => $unit,
+				'amount' => Flexo_Booking_Money::round( $unknown * $nights * $unit ),
+			);
+		}
+		return array(
+			'amount' => $amount,
+			'items'  => $items,
+		);
+	}
+
+	/**
+	 * Step 20: the chosen rate plan's price change (feature "rate_plans").
+	 */
+	public static function step_rate_plan( array $quote, array $request, array $room ) {
+		if ( empty( $quote['rate_plan'] ) ) {
+			return $quote;
+		}
+		$plan          = $quote['rate_plan'];
+		$plan['value'] = $plan['adjustment_value'];
+		$result        = Flexo_Booking_Rate_Plans::adjustment( $plan, $quote, $room );
+		if ( abs( $result['amount'] ) < 0.005 ) {
+			return $quote; // "Room Only": nothing to add, the plan name is shown on its own.
+		}
+		$quote['lines'][] = array(
+			'key'     => 'rate_plan',
+			'type'    => 'rate_plan',
+			'label'   => $plan['name'],
+			'amount'  => $result['amount'],
+			'collect' => 'booking',
+			'items'   => $result['items'],
+		);
+		return $quote;
+	}
+
+	/**
+	 * Step 40: promo discount on the room price and rate plan (feature
+	 * "promo_codes"). An invalid code adds no discount and records why.
+	 */
+	public static function step_promo( array $quote, array $request ) {
+		$code  = Flexo_Booking_Promo_Codes::normalize_code( $request['promo_code'] );
+		$promo = Flexo_Booking_Promo_Codes::validate( $code, $quote, $request['booking_date'] );
+		if ( is_wp_error( $promo ) ) {
+			$quote['promo_error'] = array(
+				'code'    => $promo->get_error_code(),
+				'message' => $promo->get_error_message(),
+			);
+			return $quote;
+		}
+		$base     = Flexo_Booking_Promo_Codes::discountable( $quote );
+		$discount = Flexo_Booking_Promo_Codes::discount( $promo, $base );
+
+		$quote['promo']   = array(
+			'id'             => $promo['id'],
+			'code'           => $promo['code'],
+			'discount_type'  => $promo['discount_type'],
+			'discount_value' => $promo['discount_value'],
+		);
+		$quote['lines'][] = array(
+			'key'     => 'discount',
+			'type'    => 'discount',
+			/* translators: %s: promo code */
+			'label'   => sprintf( __( 'Promo code %s', 'flexo-booking' ), $promo['code'] ),
+			'amount'  => -$discount,
+			'collect' => 'booking',
+			'items'   => 'percent' === $promo['discount_type'] ? array(
+				array(
+					/* translators: 1: percentage, 2: amount it applies to */
+					'text'   => sprintf( __( '%1$s%% of %2$s', 'flexo-booking' ), Flexo_Booking_Children::percent_text( $promo['discount_value'] ), Flexo_Booking_Money::format( $base ) ),
+					'unit'   => null,
+					'amount' => -$discount,
+				),
+			) : array(),
+		);
+		return $quote;
+	}
+
+	/**
+	 * Step 50: tourist tax per person per night (feature "tourist_tax").
+	 * Collected with the booking or paid at the property.
+	 */
+	public static function step_tourist_tax( array $quote, array $request, array $room ) {
+		$settings = Flexo_Booking_Settings::all();
+		switch ( $settings['tourist_tax_children'] ) {
+			case 'exempt':
+				$rules = array(
+					'free_under' => (int) $settings['tourist_tax_exempt_under'],
+					'percent'    => 100,
+					'adult_from' => (int) $settings['tourist_tax_exempt_under'],
+				);
+				break;
+			case 'rules':
+				$rules = Flexo_Booking_Children::rules( $room );
+				break;
+			default:
+				$rules = null;
+		}
+		$result  = self::per_person( (float) $settings['tourist_tax_amount'], $quote['nights'], $quote['adults'], $quote['children_ages'], $quote['children'], $rules );
+		$collect = 'property' === $settings['tourist_tax_collect'] ? 'property' : 'booking';
+
+		$quote['lines'][] = array(
+			'key'     => 'tourist_tax',
+			'type'    => 'tax',
+			'label'   => 'property' === $collect ? __( 'Tourist tax (paid at the property)', 'flexo-booking' ) : __( 'Tourist tax', 'flexo-booking' ),
+			'amount'  => $result['amount'],
+			'collect' => $collect,
+			'items'   => $result['items'],
+		);
+		return $quote;
+	}
+
+	/**
 	 * Step 90: round each line, then sum, so the breakdown always adds up.
+	 * Lines paid at the property are shown but not part of the total.
 	 */
 	public static function step_totals( array $quote ) {
 		$subtotal = 0.0;
 		$discount = 0.0;
 		$tax      = 0.0;
+		$property = 0.0;
+		$total    = 0.0;
 
 		foreach ( $quote['lines'] as $i => $line ) {
 			$amount                         = Flexo_Booking_Money::round( $line['amount'] );
@@ -210,16 +453,22 @@ class Flexo_Booking_Pricing {
 			} else {
 				$subtotal += $amount;
 			}
+			if ( isset( $line['collect'] ) && 'property' === $line['collect'] ) {
+				$property += $amount;
+			} else {
+				$total += $amount;
+			}
 		}
 
-		$quote['subtotal']       = Flexo_Booking_Money::round( $subtotal );
-		$quote['discount_total'] = Flexo_Booking_Money::round( $discount );
-		$quote['tax_total']      = Flexo_Booking_Money::round( $tax );
-		$quote['total']          = Flexo_Booking_Money::round( $subtotal - $discount + $tax );
-		$quote['payable']        = array(
+		$quote['subtotal']        = Flexo_Booking_Money::round( $subtotal );
+		$quote['discount_total']  = Flexo_Booking_Money::round( $discount );
+		$quote['tax_total']       = Flexo_Booking_Money::round( $tax );
+		$quote['total']           = max( 0.0, Flexo_Booking_Money::round( $total ) );
+		$quote['due_at_property'] = Flexo_Booking_Money::round( $property );
+		$quote['payable']         = array(
 			'now'         => 0.0,
 			'deposit'     => 0.0,
-			'at_property' => $quote['total'],
+			'at_property' => Flexo_Booking_Money::round( $quote['total'] + $property ),
 		);
 		return $quote;
 	}
@@ -257,7 +506,7 @@ class Flexo_Booking_Pricing {
 	/**
 	 * Display rows for the booking form, emails, admin and CSV.
 	 *
-	 * @return array[] Each: label, amount, formatted, type, details (string[]).
+	 * @return array[] Each: key, type, label, amount, formatted, collect, details (string[]).
 	 */
 	public static function format_lines( array $quote ) {
 		$currency = isset( $quote['currency'] ) ? $quote['currency'] : null;
@@ -276,11 +525,24 @@ class Flexo_Booking_Pricing {
 					);
 				}
 			}
+			foreach ( isset( $line['items'] ) ? $line['items'] : array() as $item ) {
+				if ( ! empty( $item['free'] ) ) {
+					/* translators: %s: e.g. "Child, age 2" */
+					$details[] = sprintf( __( '%s: free', 'flexo-booking' ), $item['text'] );
+				} elseif ( null !== $item['unit'] ) {
+					$details[] = $item['text'] . ' × ' . Flexo_Booking_Money::format( $item['unit'], $currency ) . ' = ' . Flexo_Booking_Money::format( $item['amount'], $currency );
+				} else {
+					$details[] = $item['text'];
+				}
+			}
+			$amount = (float) $line['amount'];
 			$rows[] = array(
+				'key'       => isset( $line['key'] ) ? $line['key'] : $line['type'],
 				'type'      => $line['type'],
 				'label'     => $line['label'],
-				'amount'    => (float) $line['amount'],
-				'formatted' => Flexo_Booking_Money::format( $line['amount'], $currency ),
+				'amount'    => $amount,
+				'formatted' => $amount < 0 ? '−' . Flexo_Booking_Money::format( -$amount, $currency ) : Flexo_Booking_Money::format( $amount, $currency ),
+				'collect'   => isset( $line['collect'] ) ? $line['collect'] : 'booking',
 				'details'   => $details,
 			);
 		}
@@ -291,15 +553,58 @@ class Flexo_Booking_Pricing {
 	 * Plain-text breakdown (emails, CSV).
 	 */
 	public static function summary_text( array $quote ) {
-		$lines = array();
+		$currency = isset( $quote['currency'] ) ? $quote['currency'] : null;
+		$lines    = array();
+		if ( ! empty( $quote['rate_plan']['name'] ) ) {
+			$lines[] = __( 'Rate', 'flexo-booking' ) . ': ' . $quote['rate_plan']['name'];
+		}
 		foreach ( self::format_lines( $quote ) as $row ) {
 			$lines[] = $row['label'] . ': ' . $row['formatted'];
 			foreach ( $row['details'] as $detail ) {
 				$lines[] = '  ' . $detail;
 			}
 		}
-		$lines[] = __( 'Total', 'flexo-booking' ) . ': ' . Flexo_Booking_Money::format( $quote['total'], isset( $quote['currency'] ) ? $quote['currency'] : null );
+		$lines[] = __( 'Total', 'flexo-booking' ) . ': ' . Flexo_Booking_Money::format( $quote['total'], $currency );
+		if ( ! empty( $quote['due_at_property'] ) ) {
+			$lines[] = __( 'Payable at the property', 'flexo-booking' ) . ': ' . Flexo_Booking_Money::format( $quote['due_at_property'], $currency );
+		}
 		return implode( "\n", $lines );
+	}
+
+	/**
+	 * What the booking form shows for a quote (search results, the quote
+	 * endpoint and the booking response use the same shape).
+	 */
+	public static function public_view( array $quote ) {
+		$currency = isset( $quote['currency'] ) ? $quote['currency'] : null;
+		$plan     = empty( $quote['rate_plan'] ) ? null : $quote['rate_plan'];
+		$discount = isset( $quote['discount_total'] ) ? (float) $quote['discount_total'] : 0.0;
+		$property = isset( $quote['due_at_property'] ) ? (float) $quote['due_at_property'] : 0.0;
+		return array(
+			'lines'                     => self::format_lines( $quote ),
+			'subtotal'                  => isset( $quote['subtotal'] ) ? (float) $quote['subtotal'] : (float) $quote['total'],
+			'subtotal_formatted'        => Flexo_Booking_Money::format( isset( $quote['subtotal'] ) ? $quote['subtotal'] : $quote['total'], $currency ),
+			'discount_total'            => $discount,
+			'discount_formatted'        => $discount > 0 ? '−' . Flexo_Booking_Money::format( $discount, $currency ) : '',
+			'tax_total'                 => isset( $quote['tax_total'] ) ? (float) $quote['tax_total'] : 0.0,
+			'total'                     => (float) $quote['total'],
+			'total_formatted'           => Flexo_Booking_Money::format( $quote['total'], $currency ),
+			'due_at_property'           => $property,
+			'due_at_property_formatted' => $property > 0 ? Flexo_Booking_Money::format( $property, $currency ) : '',
+			'rate_plan'                 => $plan ? array(
+				'id'                  => (int) $plan['id'],
+				'name'                => $plan['name'],
+				'description'         => $plan['description'],
+				'refundable'          => (bool) $plan['refundable'],
+				'refundable_label'    => Flexo_Booking_Rate_Plans::refundable_label( $plan['refundable'] ),
+				'cancellation_policy' => $plan['cancellation_policy'],
+			) : null,
+			'promo'                     => empty( $quote['promo'] ) ? null : array(
+				'code'  => $quote['promo']['code'],
+				'label' => Flexo_Booking_Promo_Codes::describe( $quote['promo'] ),
+			),
+			'promo_error'               => empty( $quote['promo_error'] ) ? null : $quote['promo_error']['message'],
+		);
 	}
 
 	/**

@@ -82,25 +82,23 @@ class Flexo_Booking_Emails {
 		$date_format = get_option( 'date_format' );
 		$check_in    = date_i18n( $date_format, strtotime( $booking['check_in'] ) );
 		$check_out   = date_i18n( $date_format, strtotime( $booking['check_out'] ) );
-		$guests      = sprintf(
-			/* translators: %d: number of adults */
-			_n( '%d adult', '%d adults', $booking['adults'], 'flexo-booking' ),
-			$booking['adults']
-		);
-		if ( $booking['children'] ) {
-			$guests .= ', ' . sprintf(
-				/* translators: %d: number of children */
-				_n( '%d child', '%d children', $booking['children'], 'flexo-booking' ),
-				$booking['children']
-			);
-		}
-		$total    = Flexo_Booking_Money::format( $booking['total'], $booking['currency'] );
-		$snapshot = Flexo_Booking_Pricing::snapshot( $booking );
-		$prices   = array();
-		foreach ( Flexo_Booking_Pricing::format_lines( $snapshot ) as $row ) {
-			foreach ( $row['details'] as $detail ) {
-				$prices[] = '  ' . $detail;
+		$guests      = Flexo_Booking_Children::guests_text( $booking['adults'], $booking['children'], isset( $booking['children_ages'] ) ? $booking['children_ages'] : '' );
+		$total       = Flexo_Booking_Money::format( $booking['total'], $booking['currency'] );
+		$snapshot    = Flexo_Booking_Pricing::snapshot( $booking );
+		$rows        = Flexo_Booking_Pricing::format_lines( $snapshot );
+		$plan        = empty( $snapshot['rate_plan'] ) ? null : $snapshot['rate_plan'];
+		$prices      = array();
+		foreach ( $rows as $row ) {
+			// Several price lines (rate plan, discount, tax): list each one.
+			if ( count( $rows ) > 1 ) {
+				$prices[] = '  ' . $row['label'] . ': ' . $row['formatted'];
 			}
+			foreach ( $row['details'] as $detail ) {
+				$prices[] = ( count( $rows ) > 1 ? '    ' : '  ' ) . $detail;
+			}
+		}
+		if ( ! empty( $snapshot['due_at_property'] ) ) {
+			$prices[] = '  ' . __( 'Payable at the property', 'flexo-booking' ) . ': ' . Flexo_Booking_Money::format( $snapshot['due_at_property'], $booking['currency'] );
 		}
 
 		$details = array(
@@ -110,10 +108,19 @@ class Flexo_Booking_Emails {
 			__( 'Check-out', 'flexo-booking' ) . ': ' . $check_out,
 			__( 'Nights', 'flexo-booking' ) . ': ' . $booking['nights'],
 			__( 'Guests', 'flexo-booking' ) . ': ' . $guests,
-			__( 'Total', 'flexo-booking' ) . ': ' . $total,
 		);
+		if ( $plan ) {
+			$details[] = __( 'Rate', 'flexo-booking' ) . ': ' . $plan['name'];
+		}
+		if ( ! empty( $booking['promo_code'] ) ) {
+			$details[] = __( 'Promo code', 'flexo-booking' ) . ': ' . $booking['promo_code'];
+		}
+		$details[] = __( 'Total', 'flexo-booking' ) . ': ' . $total;
 		// Nights priced differently (seasons, weekends) are listed under the total.
 		$details   = array_merge( $details, $prices );
+		if ( $plan && '' !== $plan['cancellation_policy'] ) {
+			$details[] = __( 'Cancellation', 'flexo-booking' ) . ': ' . $plan['cancellation_policy'];
+		}
 		$details[] = __( 'Status', 'flexo-booking' ) . ': ' . Flexo_Booking_Bookings::status_label( $booking['status'] );
 		$details   = implode( "\n", $details );
 
@@ -131,6 +138,9 @@ class Flexo_Booking_Emails {
 				'{guests}'          => $guests,
 				'{total}'           => $total,
 				'{price_breakdown}' => Flexo_Booking_Pricing::summary_text( $snapshot ),
+				'{rate_plan}'       => $plan ? $plan['name'] : '',
+				'{cancellation_policy}' => $plan ? $plan['cancellation_policy'] : '',
+				'{promo_code}'      => isset( $booking['promo_code'] ) ? $booking['promo_code'] : '',
 				'{status}'          => Flexo_Booking_Bookings::status_label( $booking['status'] ),
 				'{booking_details}' => $details,
 				'{check_in_time}'   => Flexo_Booking_Settings::get( 'check_in_time' ),

@@ -43,6 +43,16 @@ class Flexo_Booking_Settings {
 			'email_cancelled_subject'  => __( 'Your booking {reference} has been cancelled', 'flexo-booking' ),
 			'email_cancelled_body'     => __( "Hello {guest_name},\n\nYour booking {reference} at {site_name} has been cancelled. If you have any questions, simply reply to this email.\n\nKind regards,\n{site_name}", 'flexo-booking' ),
 			'ical_interval'            => 30,
+			// Children & ages (Day 3): free under this age, then a share of
+			// the adult amount, then the adult amount.
+			'child_free_under'         => 3,
+			'child_percent'            => 50,
+			'child_adult_from'         => 12,
+			// Tourist tax (Day 3).
+			'tourist_tax_amount'       => 0,
+			'tourist_tax_children'     => 'adult',
+			'tourist_tax_exempt_under' => 18,
+			'tourist_tax_collect'      => 'booking',
 			'delete_data_on_uninstall' => 0,
 		);
 	}
@@ -109,6 +119,23 @@ class Flexo_Booking_Settings {
 				case 'max_children':
 					$clean[ $key ] = absint( $value );
 					break;
+				case 'child_free_under':
+				case 'child_adult_from':
+				case 'tourist_tax_exempt_under':
+					$clean[ $key ] = min( 18, absint( $value ) );
+					break;
+				case 'child_percent':
+					$clean[ $key ] = min( 100, max( 0, round( (float) $value, 2 ) ) );
+					break;
+				case 'tourist_tax_amount':
+					$clean[ $key ] = max( 0, round( (float) str_replace( ',', '.', (string) $value ), 2 ) );
+					break;
+				case 'tourist_tax_children':
+					$clean[ $key ] = in_array( $value, array( 'adult', 'exempt', 'rules' ), true ) ? $value : 'adult';
+					break;
+				case 'tourist_tax_collect':
+					$clean[ $key ] = in_array( $value, array( 'booking', 'property' ), true ) ? $value : 'booking';
+					break;
 				case 'ical_interval':
 					$clean[ $key ] = in_array( (int) $value, array( 15, 30, 60 ), true ) ? (int) $value : 30;
 					break;
@@ -146,7 +173,8 @@ class Flexo_Booking_Settings {
 			}
 		}
 
-		$clean['max_nights'] = max( $clean['min_nights'], $clean['max_nights'] );
+		$clean['max_nights']       = max( $clean['min_nights'], $clean['max_nights'] );
+		$clean['child_adult_from'] = max( $clean['child_free_under'], $clean['child_adult_from'] );
 
 		return $clean;
 	}
@@ -183,11 +211,18 @@ class Flexo_Booking_Settings {
 	}
 
 	public static function tabs() {
-		return array(
+		$tabs = array(
 			'general'  => __( 'General', 'flexo-booking' ),
 			'features' => __( 'Features', 'flexo-booking' ),
-			'emails'   => __( 'Emails', 'flexo-booking' ),
 		);
+		if ( Flexo_Booking_Features::is_enabled( 'children' ) ) {
+			$tabs['children'] = __( 'Children', 'flexo-booking' );
+		}
+		if ( Flexo_Booking_Features::is_enabled( 'tourist_tax' ) ) {
+			$tabs['tourist_tax'] = __( 'Tourist tax', 'flexo-booking' );
+		}
+		$tabs['emails'] = __( 'Emails', 'flexo-booking' );
+		return $tabs;
 	}
 
 	public static function render_page() {
@@ -308,10 +343,78 @@ class Flexo_Booking_Settings {
 				</table>
 				<?php endif; ?>
 
+				<?php if ( 'children' === $tab ) : ?>
+				<p><?php esc_html_e( 'Guests enter the age of each child when they search. Children count towards each room\'s "Max guests". The room price stays the same; these rules set what children pay for per-person extras such as breakfast or half board (rate plans charged per guest per night).', 'flexo-booking' ); ?></p>
+				<table class="form-table" role="presentation">
+					<tr>
+						<th scope="row"><label for="fb-child-free"><?php esc_html_e( 'Free for children under', 'flexo-booking' ); ?></label></th>
+						<td><input id="fb-child-free" type="number" min="0" max="18" class="small-text" name="<?php echo esc_attr( $name ); ?>[child_free_under]" value="<?php echo esc_attr( $s['child_free_under'] ); ?>"> <?php esc_html_e( 'years', 'flexo-booking' ); ?></td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="fb-child-percent"><?php esc_html_e( 'Older children pay', 'flexo-booking' ); ?></label></th>
+						<td><input id="fb-child-percent" type="number" min="0" max="100" step="0.01" class="small-text" name="<?php echo esc_attr( $name ); ?>[child_percent]" value="<?php echo esc_attr( Flexo_Booking_Children::percent_text( $s['child_percent'] ) ); ?>"> <?php esc_html_e( '% of the adult price', 'flexo-booking' ); ?></td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="fb-child-adult"><?php esc_html_e( 'Adult price from age', 'flexo-booking' ); ?></label></th>
+						<td>
+							<input id="fb-child-adult" type="number" min="0" max="18" class="small-text" name="<?php echo esc_attr( $name ); ?>[child_adult_from]" value="<?php echo esc_attr( $s['child_adult_from'] ); ?>">
+							<p class="description">
+								<?php
+								/* translators: %s: summary of the rules */
+								printf( esc_html__( 'Now: %s.', 'flexo-booking' ), esc_html( Flexo_Booking_Children::describe( Flexo_Booking_Children::global_rules() ) ) );
+								?>
+								<?php esc_html_e( 'A room can use its own rules (edit the room → Child prices).', 'flexo-booking' ); ?>
+							</p>
+						</td>
+					</tr>
+				</table>
+				<?php endif; ?>
+
+				<?php if ( 'tourist_tax' === $tab ) : ?>
+				<p><?php esc_html_e( 'The tourist tax is shown as a separate line in the price breakdown and is never discounted by promo codes.', 'flexo-booking' ); ?></p>
+				<table class="form-table" role="presentation">
+					<tr>
+						<th scope="row"><label for="fb-tax"><?php esc_html_e( 'Amount per adult per night', 'flexo-booking' ); ?></label></th>
+						<td>
+							<input id="fb-tax" type="text" inputmode="decimal" class="small-text" name="<?php echo esc_attr( $name ); ?>[tourist_tax_amount]" value="<?php echo esc_attr( $s['tourist_tax_amount'] ); ?>"> <?php echo esc_html( $s['currency'] ); ?>
+							<p class="description"><?php esc_html_e( 'Set by your municipality. 0 = no tourist tax.', 'flexo-booking' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Children', 'flexo-booking' ); ?></th>
+						<td>
+							<fieldset>
+								<label class="flexo-feature-choice"><input type="radio" name="<?php echo esc_attr( $name ); ?>[tourist_tax_children]" value="adult" <?php checked( $s['tourist_tax_children'], 'adult' ); ?>> <?php esc_html_e( 'Children pay the same as adults', 'flexo-booking' ); ?></label>
+								<label class="flexo-feature-choice"><input type="radio" name="<?php echo esc_attr( $name ); ?>[tourist_tax_children]" value="exempt" <?php checked( $s['tourist_tax_children'], 'exempt' ); ?>>
+									<?php esc_html_e( 'Children younger than', 'flexo-booking' ); ?>
+									<input type="number" min="0" max="18" class="small-text" name="<?php echo esc_attr( $name ); ?>[tourist_tax_exempt_under]" value="<?php echo esc_attr( $s['tourist_tax_exempt_under'] ); ?>" aria-label="<?php esc_attr_e( 'Exemption age', 'flexo-booking' ); ?>">
+									<?php esc_html_e( 'years don\'t pay; older children pay the full amount', 'flexo-booking' ); ?>
+								</label>
+								<?php if ( Flexo_Booking_Features::is_enabled( 'children' ) ) : ?>
+									<label class="flexo-feature-choice"><input type="radio" name="<?php echo esc_attr( $name ); ?>[tourist_tax_children]" value="rules" <?php checked( $s['tourist_tax_children'], 'rules' ); ?>> <?php esc_html_e( 'Use the child price rules (Settings → Children)', 'flexo-booking' ); ?></label>
+								<?php endif; ?>
+							</fieldset>
+							<?php if ( ! Flexo_Booking_Features::is_enabled( 'children' ) ) : ?>
+								<p class="description"><?php esc_html_e( 'Children\'s ages are only asked when "Children & ages" is switched on under Features. Without ages, every child pays the adult amount.', 'flexo-booking' ); ?></p>
+							<?php endif; ?>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Payment', 'flexo-booking' ); ?></th>
+						<td>
+							<fieldset>
+								<label class="flexo-feature-choice"><input type="radio" name="<?php echo esc_attr( $name ); ?>[tourist_tax_collect]" value="booking" <?php checked( $s['tourist_tax_collect'], 'booking' ); ?>> <?php esc_html_e( 'Included in the booking total', 'flexo-booking' ); ?></label>
+								<label class="flexo-feature-choice"><input type="radio" name="<?php echo esc_attr( $name ); ?>[tourist_tax_collect]" value="property" <?php checked( $s['tourist_tax_collect'], 'property' ); ?>> <?php esc_html_e( 'Paid separately at the property (shown to the guest, not part of the total)', 'flexo-booking' ); ?></label>
+							</fieldset>
+						</td>
+					</tr>
+				</table>
+				<?php endif; ?>
+
 				<?php if ( 'emails' === $tab ) : ?>
 				<p class="description">
 					<?php esc_html_e( 'Placeholders:', 'flexo-booking' ); ?>
-					<code>{reference}</code> <code>{guest_name}</code> <code>{guest_email}</code> <code>{guest_phone}</code> <code>{room}</code> <code>{check_in}</code> <code>{check_out}</code> <code>{nights}</code> <code>{guests}</code> <code>{total}</code> <code>{price_breakdown}</code> <code>{status}</code> <code>{booking_details}</code> <code>{check_in_time}</code> <code>{check_out_time}</code> <code>{site_name}</code>
+					<code>{reference}</code> <code>{guest_name}</code> <code>{guest_email}</code> <code>{guest_phone}</code> <code>{room}</code> <code>{check_in}</code> <code>{check_out}</code> <code>{nights}</code> <code>{guests}</code> <code>{total}</code> <code>{price_breakdown}</code> <code>{rate_plan}</code> <code>{cancellation_policy}</code> <code>{promo_code}</code> <code>{status}</code> <code>{booking_details}</code> <code>{check_in_time}</code> <code>{check_out_time}</code> <code>{site_name}</code>
 				</p>
 				<table class="form-table" role="presentation">
 					<tr>

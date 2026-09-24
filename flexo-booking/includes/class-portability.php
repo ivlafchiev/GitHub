@@ -31,15 +31,33 @@ class Flexo_Booking_Portability {
 
 		$data = array(
 			'format'      => self::FORMAT,
-			'schema'      => 3,
+			'schema'      => 4,
 			'version'     => FLEXO_BOOKING_VERSION,
 			'exported_at' => gmdate( 'c' ),
 			'source'      => home_url(),
 			'settings'    => $settings,
 			'features'    => array( 'enabled' => Flexo_Booking_Features::stored_enabled() ),
+			'rate_plans'  => array(),
 			'rooms'       => array(),
 			'closures'    => array(),
+			'promo_codes' => array(),
 		);
+
+		$plan_names = array();
+		foreach ( Flexo_Booking_Rate_Plans::all() as $plan ) {
+			$plan_names[ $plan['id'] ] = $plan['name'];
+			$data['rate_plans'][]      = array(
+				'name'                => $plan['name'],
+				'description'         => $plan['description'],
+				'preset'              => $plan['preset'],
+				'adjustment_type'     => $plan['adjustment_type'],
+				'adjustment_value'    => $plan['adjustment_value'],
+				'refundable'          => $plan['refundable'],
+				'cancellation_policy' => $plan['cancellation_policy'],
+				'active'              => $plan['active'],
+				'sort_order'          => $plan['sort_order'],
+			);
+		}
 
 		$slugs = array();
 		foreach ( Flexo_Booking_Rooms::all( array( 'publish', 'draft', 'private' ) ) as $post ) {
@@ -57,6 +75,22 @@ class Flexo_Booking_Portability {
 				'image'      => get_the_post_thumbnail_url( $post, 'full' ),
 				'meta'       => $meta,
 				'seasons'    => array(),
+				// Rate plans this room offers, by name, with its own amount (or null).
+				'rate_plans'  => array_values(
+					array_filter(
+						array_map(
+							static function ( $plan_id, $override ) use ( $plan_names ) {
+								return isset( $plan_names[ $plan_id ] ) ? array(
+									'name'   => $plan_names[ $plan_id ],
+									'amount' => $override,
+								) : null;
+							},
+							array_keys( Flexo_Booking_Rate_Plans::room_assignments( $post->ID ) ),
+							Flexo_Booking_Rate_Plans::room_assignments( $post->ID )
+						)
+					)
+				),
+				'child_rules' => Flexo_Booking_Children::room_rules( $post->ID ),
 				// Connected Booking.com/Airbnb calendars. Export links (tokens)
 				// are never exported – each site creates its own.
 				'calendars'  => array_map(
@@ -95,6 +129,26 @@ class Flexo_Booking_Portability {
 			);
 		}
 
+		// Usage is not exported: it is counted from each site's own bookings.
+		foreach ( Flexo_Booking_Promo_Codes::all() as $promo ) {
+			$data['promo_codes'][] = array(
+				'code'           => $promo['code'],
+				'description'    => $promo['description'],
+				'active'         => $promo['active'],
+				'discount_type'  => $promo['discount_type'],
+				'discount_value' => $promo['discount_value'],
+				'book_from'      => $promo['book_from'],
+				'book_to'        => $promo['book_to'],
+				'stay_from'      => $promo['stay_from'],
+				'stay_to'        => $promo['stay_to'],
+				'min_amount'     => $promo['min_amount'],
+				'min_nights'     => $promo['min_nights'],
+				'max_uses'       => $promo['max_uses'],
+				'rooms'          => array_values( array_filter( array_map( static function ( $id ) use ( $slugs ) { return isset( $slugs[ $id ] ) ? $slugs[ $id ] : null; }, $promo['room_ids'] ) ) ),
+				'rate_plans'     => array_values( array_filter( array_map( static function ( $id ) use ( $plan_names ) { return isset( $plan_names[ $id ] ) ? $plan_names[ $id ] : null; }, $promo['rate_plan_ids'] ) ) ),
+			);
+		}
+
 		if ( $include_bookings ) {
 			$data['bookings'] = array();
 			$result           = Flexo_Booking_Bookings::query( array( 'per_page' => 0 ) );
@@ -103,7 +157,8 @@ class Flexo_Booking_Portability {
 					continue;
 				}
 				$booking['room'] = $slugs[ $booking['room_id'] ];
-				unset( $booking['id'], $booking['room_id'], $booking['room_title'] );
+				// Plan and code IDs are site-specific; the import maps them by name and code.
+				unset( $booking['id'], $booking['room_id'], $booking['room_title'], $booking['rate_plan_id'], $booking['promo_id'] );
 				$data['bookings'][] = $booking;
 			}
 		}
@@ -138,6 +193,8 @@ class Flexo_Booking_Portability {
 				// Off by default: a template's Booking.com/Airbnb links belong
 				// to the template, not to the client's hotel.
 				'calendars' => false,
+				'rate_plans'  => true,
+				'promo_codes' => true,
 			)
 		);
 		$stats   = array(
@@ -149,7 +206,22 @@ class Flexo_Booking_Portability {
 			'seasons'       => 0,
 			'closures'      => 0,
 			'calendars'     => 0,
+			'rate_plans'    => 0,
+			'promo_codes'   => 0,
 		);
+
+		// Rate plans first, so rooms can be linked to them by name.
+		if ( $options['rate_plans'] && ! empty( $data['rate_plans'] ) && is_array( $data['rate_plans'] ) ) {
+			foreach ( $data['rate_plans'] as $plan ) {
+				if ( ! is_array( $plan ) || empty( $plan['name'] ) ) {
+					continue;
+				}
+				$existing = Flexo_Booking_Rate_Plans::get_by_name( $plan['name'] );
+				if ( ! is_wp_error( Flexo_Booking_Rate_Plans::save( $plan, $existing ? $existing['id'] : 0 ) ) ) {
+					++$stats['rate_plans'];
+				}
+			}
+		}
 
 		if ( $options['settings'] && ! empty( $data['settings'] ) && is_array( $data['settings'] ) ) {
 			$current  = Flexo_Booking_Settings::all();
@@ -217,6 +289,21 @@ class Flexo_Booking_Portability {
 					}
 				}
 
+				// The file's list replaces the plans this room offers.
+				if ( $options['rate_plans'] && isset( $room['rate_plans'] ) && is_array( $room['rate_plans'] ) ) {
+					$assigned = array();
+					foreach ( $room['rate_plans'] as $offer ) {
+						$plan = is_array( $offer ) && isset( $offer['name'] ) ? Flexo_Booking_Rate_Plans::get_by_name( $offer['name'] ) : null;
+						if ( $plan ) {
+							$assigned[ $plan['id'] ] = isset( $offer['amount'] ) && is_numeric( $offer['amount'] ) ? (float) $offer['amount'] : null;
+						}
+					}
+					Flexo_Booking_Rate_Plans::set_room_assignments( $post_id, $assigned );
+				}
+				if ( array_key_exists( 'child_rules', $room ) ) {
+					Flexo_Booking_Children::save_room_rules( $post_id, is_array( $room['child_rules'] ) ? $room['child_rules'] : null );
+				}
+
 				if ( $options['calendars'] && ! empty( $room['calendars'] ) && is_array( $room['calendars'] ) ) {
 					foreach ( $room['calendars'] as $calendar ) {
 						if ( is_array( $calendar ) && ! empty( $calendar['url'] ) && ! is_wp_error( Flexo_Booking_ICal::add_calendar( $post_id, isset( $calendar['name'] ) ? $calendar['name'] : '', $calendar['url'], isset( $calendar['unit'] ) ? (int) $calendar['unit'] : 0 ) ) ) {
@@ -276,6 +363,42 @@ class Flexo_Booking_Portability {
 			}
 		}
 
+		if ( $options['promo_codes'] && ! empty( $data['promo_codes'] ) && is_array( $data['promo_codes'] ) ) {
+			foreach ( $data['promo_codes'] as $promo ) {
+				if ( ! is_array( $promo ) || empty( $promo['code'] ) ) {
+					continue;
+				}
+				$promo['room_ids']      = array();
+				$promo['rate_plan_ids'] = array();
+				foreach ( isset( $promo['rooms'] ) ? (array) $promo['rooms'] : array() as $slug ) {
+					$found = get_posts(
+						array(
+							'post_type'      => Flexo_Booking_Rooms::POST_TYPE,
+							'name'           => sanitize_title( $slug ),
+							'post_status'    => 'any',
+							'posts_per_page' => 1,
+						)
+					);
+					if ( $found ) {
+						$promo['room_ids'][] = $found[0]->ID;
+					}
+				}
+				foreach ( isset( $promo['rate_plans'] ) ? (array) $promo['rate_plans'] : array() as $name ) {
+					$plan = Flexo_Booking_Rate_Plans::get_by_name( $name );
+					if ( $plan ) {
+						$promo['rate_plan_ids'][] = $plan['id'];
+					}
+				}
+				foreach ( array( 'min_amount', 'min_nights', 'max_uses' ) as $key ) {
+					$promo[ $key ] = isset( $promo[ $key ] ) && null !== $promo[ $key ] ? (string) $promo[ $key ] : '';
+				}
+				$existing = Flexo_Booking_Promo_Codes::get_by_code( $promo['code'] );
+				if ( ! is_wp_error( Flexo_Booking_Promo_Codes::save( $promo, $existing ? $existing['id'] : 0 ) ) ) {
+					++$stats['promo_codes'];
+				}
+			}
+		}
+
 		if ( $options['bookings'] && ! empty( $data['bookings'] ) && is_array( $data['bookings'] ) ) {
 			$stats['bookings'] = self::import_bookings( $data['bookings'] );
 		}
@@ -288,7 +411,7 @@ class Flexo_Booking_Portability {
 
 		$count    = 0;
 		$room_ids = array();
-		$allowed  = array( 'reference', 'check_in', 'check_out', 'nights', 'adults', 'children', 'guest_name', 'guest_email', 'guest_phone', 'notes', 'total', 'currency', 'status', 'source', 'created_at', 'updated_at' );
+		$allowed  = array( 'reference', 'check_in', 'check_out', 'nights', 'adults', 'children', 'children_ages', 'promo_code', 'discount_total', 'tax_total', 'guest_name', 'guest_email', 'guest_phone', 'notes', 'total', 'currency', 'status', 'source', 'created_at', 'updated_at' );
 
 		foreach ( $bookings as $booking ) {
 			if ( empty( $booking['reference'] ) || empty( $booking['room'] ) || Flexo_Booking_Bookings::get_by_reference( $booking['reference'] ) ) {
@@ -315,7 +438,17 @@ class Flexo_Booking_Portability {
 			$row['room_id'] = $room_ids[ $booking['room'] ];
 			// Price snapshot: stored as-is when it is valid JSON.
 			if ( ! empty( $booking['price_breakdown'] ) && is_array( json_decode( $booking['price_breakdown'], true ) ) ) {
-				$row['price_breakdown'] = wp_json_encode( json_decode( $booking['price_breakdown'], true ) );
+				$snapshot               = json_decode( $booking['price_breakdown'], true );
+				$row['price_breakdown'] = wp_json_encode( $snapshot );
+				// Link to this site's plan and code with the same name, when they exist.
+				if ( ! empty( $snapshot['rate_plan']['name'] ) ) {
+					$plan                = Flexo_Booking_Rate_Plans::get_by_name( $snapshot['rate_plan']['name'] );
+					$row['rate_plan_id'] = $plan ? $plan['id'] : 0;
+				}
+			}
+			if ( ! empty( $row['promo_code'] ) ) {
+				$promo           = Flexo_Booking_Promo_Codes::get_by_code( $row['promo_code'] );
+				$row['promo_id'] = $promo ? $promo['id'] : 0;
 			}
 			if ( ! array_key_exists( $row['status'] ?? '', Flexo_Booking_Bookings::statuses() ) ) {
 				$row['status'] = 'pending';
@@ -389,6 +522,9 @@ class Flexo_Booking_Portability {
 				'seasons'  => Flexo_Booking_Features::is_available( 'seasonal_pricing' ) ? ! empty( $_POST['import_seasons'] ) : true,
 				'closures' => ! empty( $_POST['import_closures'] ),
 				'calendars' => ! empty( $_POST['import_calendars'] ),
+				// Like seasons: always imported when the feature is hidden, so no data is lost.
+				'rate_plans'  => Flexo_Booking_Features::is_available( 'rate_plans' ) ? ! empty( $_POST['import_rate_plans'] ) : true,
+				'promo_codes' => Flexo_Booking_Features::is_available( 'promo_codes' ) ? ! empty( $_POST['import_promo_codes'] ) : true,
 				'bookings' => ! empty( $_POST['import_bookings'] ),
 			)
 		);
@@ -439,6 +575,16 @@ class Flexo_Booking_Portability {
 							)
 						);
 					}
+					if ( ! empty( $imported['rate_plans'] ) || ! empty( $imported['promo_codes'] ) ) {
+						echo ' ' . esc_html(
+							sprintf(
+								/* translators: 1: rate plans, 2: promo codes */
+								__( '%1$d rate plans and %2$d promo codes imported.', 'flexo-booking' ),
+								(int) ( $imported['rate_plans'] ?? 0 ),
+								(int) ( $imported['promo_codes'] ?? 0 )
+							)
+						);
+					}
 					if ( ! empty( $imported['settings'] ) ) {
 						echo ' ' . esc_html__( 'Settings were updated.', 'flexo-booking' );
 					}
@@ -471,6 +617,12 @@ class Flexo_Booking_Portability {
 						<p><label><input type="checkbox" name="import_seasons" value="1" checked> <?php esc_html_e( 'Import seasonal prices (replaces the seasons of the imported rooms)', 'flexo-booking' ); ?></label></p>
 					<?php endif; ?>
 					<p><label><input type="checkbox" name="import_closures" value="1" checked> <?php esc_html_e( 'Import closed dates', 'flexo-booking' ); ?></label></p>
+					<?php if ( Flexo_Booking_Features::is_available( 'rate_plans' ) ) : ?>
+						<p><label><input type="checkbox" name="import_rate_plans" value="1" checked> <?php esc_html_e( 'Import rate plans (plans with the same name are updated; the file decides which plans the imported rooms offer)', 'flexo-booking' ); ?></label></p>
+					<?php endif; ?>
+					<?php if ( Flexo_Booking_Features::is_available( 'promo_codes' ) ) : ?>
+						<p><label><input type="checkbox" name="import_promo_codes" value="1" checked> <?php esc_html_e( 'Import promo codes (codes that already exist are updated; usage is not copied)', 'flexo-booking' ); ?></label></p>
+					<?php endif; ?>
 					<?php if ( Flexo_Booking_Features::is_available( 'calendar_sync' ) ) : ?>
 						<p><label><input type="checkbox" name="import_calendars" value="1"> <?php esc_html_e( 'Import calendar connections (Booking.com, Airbnb… links) – only when moving the same hotel, never from a template. Each room gets a new export link here.', 'flexo-booking' ); ?></label></p>
 					<?php endif; ?>
@@ -537,6 +689,12 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * [--calendars]
 		 * : Import calendar connections (only when moving the same hotel).
 		 *
+		 * [--skip-rate-plans]
+		 * : Don't import rate plans.
+		 *
+		 * [--skip-promo-codes]
+		 * : Don't import promo codes.
+		 *
 		 * [--bookings]
 		 * : Import bookings contained in the file.
 		 *
@@ -562,13 +720,15 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					'seasons'  => empty( $assoc_args['skip-seasons'] ),
 					'closures' => empty( $assoc_args['skip-closures'] ),
 					'calendars' => ! empty( $assoc_args['calendars'] ),
+					'rate_plans'  => empty( $assoc_args['skip-rate-plans'] ),
+					'promo_codes' => empty( $assoc_args['skip-promo-codes'] ),
 					'bookings' => ! empty( $assoc_args['bookings'] ),
 				)
 			);
 			if ( is_wp_error( $result ) ) {
 				WP_CLI::error( $result->get_error_message() );
 			}
-			WP_CLI::success( sprintf( 'Rooms created: %d, updated: %d, seasons: %d, closed periods: %d, calendars: %d, images: %d, bookings: %d, settings: %s', $result['rooms_created'], $result['rooms_updated'], $result['seasons'], $result['closures'], $result['calendars'], $result['images'], $result['bookings'], $result['settings'] ? 'yes' : 'no' ) );
+			WP_CLI::success( sprintf( 'Rooms created: %d, updated: %d, seasons: %d, closed periods: %d, calendars: %d, rate plans: %d, promo codes: %d, images: %d, bookings: %d, settings: %s', $result['rooms_created'], $result['rooms_updated'], $result['seasons'], $result['closures'], $result['calendars'], $result['rate_plans'], $result['promo_codes'], $result['images'], $result['bookings'], $result['settings'] ? 'yes' : 'no' ) );
 		}
 	}
 

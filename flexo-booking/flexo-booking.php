@@ -3,7 +3,7 @@
  * Plugin Name:       Flexo Booking
  * Plugin URI:        https://github.com/ivlafchiev/GitHub
  * Description:       Room & accommodation booking system for FlexoHotels websites. Works with any theme via the [flexo_booking] shortcode and ships a native Elementor widget. Settings and rooms can be exported/imported between sites.
- * Version:           1.2.0
+ * Version:           1.3.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            FlexoHotels
@@ -18,8 +18,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'FLEXO_BOOKING_VERSION', '1.2.0' );
-define( 'FLEXO_BOOKING_DB_VERSION', '3' ); // Kept for compatibility; see Flexo_Booking_Migrations::LATEST.
+define( 'FLEXO_BOOKING_VERSION', '1.3.0' );
+define( 'FLEXO_BOOKING_DB_VERSION', '4' ); // Kept for compatibility; see Flexo_Booking_Migrations::LATEST.
 define( 'FLEXO_BOOKING_FILE', __FILE__ );
 define( 'FLEXO_BOOKING_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FLEXO_BOOKING_URL', plugin_dir_url( __FILE__ ) );
@@ -37,6 +37,9 @@ require_once FLEXO_BOOKING_DIR . 'includes/class-seasons.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-closures.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-inventory.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-ical.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-children.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-rate-plans.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-promo-codes.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-pricing.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-bookings.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-emails.php';
@@ -47,6 +50,8 @@ require_once FLEXO_BOOKING_DIR . 'includes/admin/class-seasons-admin.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-closures-admin.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-calendar-admin.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-sync-admin.php';
+require_once FLEXO_BOOKING_DIR . 'includes/admin/class-rate-plans-admin.php';
+require_once FLEXO_BOOKING_DIR . 'includes/admin/class-promo-codes-admin.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-portability.php';
 require_once FLEXO_BOOKING_DIR . 'includes/elementor/class-elementor.php';
 
@@ -62,6 +67,7 @@ add_action(
 		Flexo_Booking_Emails::init();
 		Flexo_Booking_Rest::init();
 		Flexo_Booking_ICal::init();
+		Flexo_Booking_Rate_Plans::init();
 		Flexo_Booking_Frontend::init();
 		Flexo_Booking_Elementor::init();
 
@@ -74,6 +80,8 @@ add_action(
 			Flexo_Booking_Closures_Admin::init();
 			Flexo_Booking_Calendar_Admin::init();
 			Flexo_Booking_Sync_Admin::init();
+			Flexo_Booking_Rate_Plans_Admin::init();
+			Flexo_Booking_Promo_Codes_Admin::init();
 			Flexo_Booking_Portability::init();
 		}
 	}

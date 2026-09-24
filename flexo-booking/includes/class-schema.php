@@ -51,12 +51,19 @@ class Flexo_Booking_Schema {
 			status varchar(20) NOT NULL DEFAULT 'pending',
 			source varchar(20) NOT NULL DEFAULT 'website',
 			price_breakdown longtext NULL,
+			children_ages varchar(100) NOT NULL DEFAULT '',
+			rate_plan_id bigint(20) unsigned NOT NULL DEFAULT 0,
+			promo_id bigint(20) unsigned NOT NULL DEFAULT 0,
+			promo_code varchar(50) NOT NULL DEFAULT '',
+			discount_total decimal(10,2) NOT NULL DEFAULT 0,
+			tax_total decimal(10,2) NOT NULL DEFAULT 0,
 			created_at datetime NOT NULL,
 			updated_at datetime NOT NULL,
 			PRIMARY KEY  (id),
 			UNIQUE KEY reference (reference),
 			KEY room_dates (room_id,check_in,check_out),
-			KEY status (status)
+			KEY status (status),
+			KEY promo (promo_id)
 		) {$charset};";
 
 		$tables['seasons'] = 'CREATE TABLE ' . self::table( 'seasons' ) . " (
@@ -124,6 +131,48 @@ class Flexo_Booking_Schema {
 			KEY room_dates (room_id,date_from,date_to)
 		) {$charset};";
 
+		// Day 3. Which rooms offer a plan is stored on the room
+		// (meta _flexo_rate_plans), so it travels with the room.
+		$tables['rate_plans'] = 'CREATE TABLE ' . self::table( 'rate_plans' ) . " (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			name varchar(100) NOT NULL DEFAULT '',
+			description text NULL,
+			preset varchar(30) NOT NULL DEFAULT '',
+			adjustment_type varchar(20) NOT NULL DEFAULT 'per_night',
+			adjustment_value decimal(10,3) NOT NULL DEFAULT 0,
+			refundable tinyint(1) NOT NULL DEFAULT 1,
+			cancellation_policy text NULL,
+			active tinyint(1) NOT NULL DEFAULT 0,
+			sort_order int(11) NOT NULL DEFAULT 0,
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			PRIMARY KEY  (id)
+		) {$charset};";
+
+		// Day 3. Usage is counted from confirmed bookings (bookings.promo_id),
+		// so cancelling a booking gives the use back automatically.
+		$tables['promo_codes'] = 'CREATE TABLE ' . self::table( 'promo_codes' ) . " (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			code varchar(50) NOT NULL,
+			description varchar(190) NOT NULL DEFAULT '',
+			active tinyint(1) NOT NULL DEFAULT 1,
+			discount_type varchar(10) NOT NULL DEFAULT 'percent',
+			discount_value decimal(10,2) NOT NULL DEFAULT 0,
+			book_from date NULL,
+			book_to date NULL,
+			stay_from date NULL,
+			stay_to date NULL,
+			min_amount decimal(10,2) NULL,
+			min_nights smallint(5) unsigned NULL,
+			max_uses int(10) unsigned NULL,
+			room_ids text NULL,
+			rate_plan_ids text NULL,
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			PRIMARY KEY  (id),
+			UNIQUE KEY code (code)
+		) {$charset};";
+
 		return $tables;
 	}
 
@@ -136,5 +185,17 @@ class Flexo_Booking_Schema {
 		global $wpdb;
 		$table = self::table( $name );
 		return $table === $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) );
+	}
+
+	public static function column_exists( $name, $column ) {
+		global $wpdb;
+		$table = self::table( $name );
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name built above.
+		foreach ( (array) $wpdb->get_results( "SHOW COLUMNS FROM {$table}" ) as $row ) {
+			if ( isset( $row->Field ) && $column === $row->Field ) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
