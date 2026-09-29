@@ -36,6 +36,7 @@ before changing code.
 | **Day 3** | **Guests with children** (ages, child pricing rules), **rate plans** (e.g. breakfast, non-refundable), **tourist tax**, **promo codes** |
 | **Day 4** | **Privacy/GDPR consent** and data retention, **invoice request** (company details), improved **guest and hotel emails**, **translation** (BG/EN, Polylang/WPML), **tracking events** (dataLayer / GA4 / Meta) |
 | **Day 5** | **Payments**: Stripe Checkout, bank-transfer deposit, inventory hold while paying. Responsive mobile/tablet polish, full regression test, final README. |
+| **Day 6** | **Usability and appearance**: usability review first (guest on a phone, owner setting up, receptionist on a phone; `UX_REVIEW.md`, approved before coding). Guest flow (steps, always-visible summary, state kept on back/refresh, availability in the date picker, no dead ends, clearer room cards and rate plans, better checkout and confirmation, optional guest booking page, accessibility). Owner/staff (setup wizard, Today dashboard, better bookings list and details, history log, internal notes, resend emails, clearer settings structure, Hotel Staff / Hotel Manager roles, health check, help, mobile admin, BG/EN wording). **Appearance settings** (match website / custom colours, bundled self-hosted fonts, corners, text size, live preview, contrast warnings). No new business features. |
 
 ## Rules for every day
 
@@ -62,3 +63,4 @@ before changing code.
 | Day 3 | **Done** (1.3.0): children & ages, rate plans, tourist tax, promo codes, booking details view |
 | Day 4 | **Done** (1.4.0): privacy consent and data retention, invoice request, guest/hotel emails (HTML, log, reminders, review requests), Bulgarian translation and Polylang/WPML, conversion tracking |
 | Day 5 | **Done** (1.5.0): payments (Stripe Checkout with holds and signed idempotent webhooks, deposits, bank transfer with reminders and auto-cancel, refunds, conflicts), responsive centred mobile/tablet flow, final regression, final README |
+| Day 6 | **Usability review done** (`UX_REVIEW.md`) – implementation waits for approval |
