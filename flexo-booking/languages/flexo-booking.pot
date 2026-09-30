@@ -6303,7 +6303,7 @@ msgstr ""
 #. translators: %s: summary of the general child prices
 #: includes/class-rooms.php:173
 #, php-format
-msgid "Otherwise the general rules apply (Settings → Children): %s."
+msgid "Otherwise the general rules apply (Settings → Booking rules): %s."
 msgstr ""
 
 #: includes/class-rooms.php:180
@@ -6865,7 +6865,7 @@ msgid "years don't pay; older children pay the full amount"
 msgstr ""
 
 #: includes/class-settings.php:767
-msgid "Use the child price rules (Settings → Children)"
+msgid "Use the child price rules (Settings → Booking rules)"
 msgstr ""
 
 #: includes/class-settings.php:771

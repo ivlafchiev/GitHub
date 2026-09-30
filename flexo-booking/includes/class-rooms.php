@@ -170,7 +170,7 @@ class Flexo_Booking_Rooms {
 						<p class="description">
 							<?php
 							/* translators: %s: summary of the general child prices */
-							printf( esc_html__( 'Otherwise the general rules apply (Settings → Children): %s.', 'flexo-booking' ), esc_html( Flexo_Booking_Children::describe( Flexo_Booking_Children::global_rules() ) ) );
+							printf( esc_html__( 'Otherwise the general rules apply (Settings → Booking rules): %s.', 'flexo-booking' ), esc_html( Flexo_Booking_Children::describe( Flexo_Booking_Children::global_rules() ) ) );
 							?>
 						</p>
 					</td>

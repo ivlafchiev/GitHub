@@ -3538,8 +3538,8 @@ msgstr "цена за възрастен от"
 #. translators: %s: summary of the general child prices
 #: includes/class-rooms.php:173
 #, php-format
-msgid "Otherwise the general rules apply (Settings → Children): %s."
-msgstr "Иначе важат общите правила (Настройки → Деца): %s."
+msgid "Otherwise the general rules apply (Settings → Booking rules): %s."
+msgstr "Иначе важат общите правила (Настройки → Правила за резервации): %s."
 
 #: includes/class-rooms.php:180
 msgid "Number of rooms of this type"
@@ -3996,8 +3996,8 @@ msgid "years don't pay; older children pay the full amount"
 msgstr "години не плащат; по-големите деца плащат цялата сума"
 
 #: includes/class-settings.php:767
-msgid "Use the child price rules (Settings → Children)"
-msgstr "Използвай правилата за цени за деца (Настройки → Деца)"
+msgid "Use the child price rules (Settings → Booking rules)"
+msgstr "Използвай правилата за цени за деца (Настройки → Правила за резервации)"
 
 #: includes/class-settings.php:771
 msgid ""

@@ -827,13 +827,11 @@
 			this.status.textContent = message;
 			return;
 		}
-		if ( this.loading ) {
-			this.status.textContent = t.loadingDates;
-		} else if ( this.mode === 'out' && this.start ) {
+		if ( this.mode === 'out' && this.start ) {
 			var a = this.arrival( this.start );
 			this.status.textContent = fmt( t.pickDeparture, humanDate( this.start, this.options.dateFormat, this.locale ) ) + ( a.min > 1 ? ' ' + fmt( t.minStayHint, a.min ) : '' );
 		} else {
-			this.status.textContent = t.pickArrival;
+			this.status.textContent = this.loading ? t.loadingDates : t.pickArrival;
 		}
 	};
 

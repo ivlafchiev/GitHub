@@ -764,7 +764,7 @@ class Flexo_Booking_Settings {
 									<?php esc_html_e( 'years don\'t pay; older children pay the full amount', 'flexo-booking' ); ?>
 								</label>
 								<?php if ( Flexo_Booking_Features::is_enabled( 'children' ) ) : ?>
-									<label class="flexo-feature-choice"><input type="radio" name="<?php echo esc_attr( $name ); ?>[tourist_tax_children]" value="rules" <?php checked( $s['tourist_tax_children'], 'rules' ); ?>> <?php esc_html_e( 'Use the child price rules (Settings → Children)', 'flexo-booking' ); ?></label>
+									<label class="flexo-feature-choice"><input type="radio" name="<?php echo esc_attr( $name ); ?>[tourist_tax_children]" value="rules" <?php checked( $s['tourist_tax_children'], 'rules' ); ?>> <?php esc_html_e( 'Use the child price rules (Settings → Booking rules)', 'flexo-booking' ); ?></label>
 								<?php endif; ?>
 							</fieldset>
 							<?php if ( ! Flexo_Booking_Features::is_enabled( 'children' ) ) : ?>

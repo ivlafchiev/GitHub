@@ -9,7 +9,7 @@
  *   from "free_under" up to "adult_from" → "percent" % of the adult amount
  *   "adult_from" and older               → the adult amount
  *
- * The rules are global (Settings → Children); a room can use its own
+ * The rules are global (Settings → Booking rules); a room can use its own
  * (room meta _flexo_child_rules). The room price itself is per room, so
  * children never change it.
  *
