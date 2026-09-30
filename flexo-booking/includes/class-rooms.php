@@ -212,7 +212,7 @@ class Flexo_Booking_Rooms {
 			</tr>
 			<?php if ( Flexo_Booking_Rate_Plans::enabled() ) : ?>
 				<tr>
-					<th scope="row"><?php esc_html_e( 'Rate plans', 'flexo-booking' ); ?></th>
+					<th scope="row"><?php esc_html_e( 'Rates', 'flexo-booking' ); ?></th>
 					<td>
 						<?php
 						$flexo_offers = Flexo_Booking_Rate_Plans::room_assignments( $post->ID );

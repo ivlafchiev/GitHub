@@ -147,7 +147,7 @@ class Flexo_Booking_Payments_Admin {
 					</td>
 				</tr>
 			</table>
-			<p class="description"><?php esc_html_e( 'Keys and secrets are stored only on this website and are never included in Import / Export – enter them on each website. Refunds are made in your Stripe account; they appear on the booking automatically.', 'flexo-booking' ); ?></p>
+			<p class="description"><?php esc_html_e( 'Keys and secrets are stored only on this website and are never included in Import & export – enter them on each website. Refunds are made in your Stripe account; they appear on the booking automatically.', 'flexo-booking' ); ?></p>
 		<?php endif; ?>
 
 		<?php if ( $bank ) : ?>
@@ -194,7 +194,7 @@ class Flexo_Booking_Payments_Admin {
 					</td>
 				</tr>
 			</table>
-			<p class="description"><?php esc_html_e( 'Bank details are not included in Import / Export, so a copied website never shows another hotel\'s account.', 'flexo-booking' ); ?></p>
+			<p class="description"><?php esc_html_e( 'Bank details are not included in Import & export, so a copied website never shows another hotel\'s account.', 'flexo-booking' ); ?></p>
 		<?php endif; ?>
 		<?php
 	}

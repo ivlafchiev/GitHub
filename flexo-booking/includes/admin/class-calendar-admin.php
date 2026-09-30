@@ -276,7 +276,7 @@ class Flexo_Booking_Calendar_Admin {
 			$lines[] = array( __( 'Guests', 'flexo-booking' ), Flexo_Booking_Children::guests_text( (int) $b['adults'], (int) $b['children'], isset( $b['children_ages'] ) ? $b['children_ages'] : '' ) );
 			$plan = Flexo_Booking_Admin::rate_plan_name( $b );
 			if ( $plan ) {
-				$lines[] = array( __( 'Rate plan', 'flexo-booking' ), $plan );
+				$lines[] = array( __( 'Rate', 'flexo-booking' ), $plan );
 			}
 			if ( ! empty( $b['promo_code'] ) ) {
 				$lines[] = array( __( 'Promo code', 'flexo-booking' ), $b['promo_code'] );

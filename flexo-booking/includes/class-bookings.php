@@ -24,13 +24,13 @@ class Flexo_Booking_Bookings {
 
 	public static function statuses() {
 		return array(
-			'pending'          => __( 'Pending', 'flexo-booking' ),
+			'pending'          => __( 'Waiting for confirmation', 'flexo-booking' ),
 			'confirmed'        => __( 'Confirmed', 'flexo-booking' ),
 			'cancelled'        => __( 'Cancelled', 'flexo-booking' ),
-			'blocked'          => __( 'Blocked (closed)', 'flexo-booking' ),
-			'pending_payment'  => __( 'Pending payment', 'flexo-booking' ),
-			'awaiting_payment' => __( 'Awaiting payment', 'flexo-booking' ),
-			'expired'          => __( 'Not paid (expired)', 'flexo-booking' ),
+			'blocked'          => __( 'Dates blocked', 'flexo-booking' ),
+			'pending_payment'  => __( 'Card payment in progress', 'flexo-booking' ),
+			'awaiting_payment' => __( 'Waiting for bank transfer', 'flexo-booking' ),
+			'expired'          => __( 'Not paid in time', 'flexo-booking' ),
 		);
 	}
 

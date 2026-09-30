@@ -22,7 +22,7 @@ class Flexo_Booking_Rate_Plans_Admin {
 
 	public static function menu() {
 		if ( Flexo_Booking_Rate_Plans::enabled() ) {
-			add_submenu_page( Flexo_Booking_Admin::MENU_SLUG, __( 'Rate plans', 'flexo-booking' ), __( 'Rate plans', 'flexo-booking' ), Flexo_Booking_Admin::cap( 'prices' ), self::SLUG, array( __CLASS__, 'render' ) );
+			add_submenu_page( Flexo_Booking_Admin::MENU_SLUG, __( 'Rates', 'flexo-booking' ), __( 'Rates', 'flexo-booking' ), Flexo_Booking_Admin::cap( 'prices' ), self::SLUG, array( __CLASS__, 'render' ) );
 		}
 	}
 
@@ -98,7 +98,7 @@ class Flexo_Booking_Rate_Plans_Admin {
 		?>
 		<div class="wrap flexo-admin flexo-plans">
 			<?php Flexo_Booking_Admin::section_nav( 'rooms', 'flexo-booking-rate-plans' ); ?>
-			<h1 class="wp-heading-inline"><?php esc_html_e( 'Rate plans', 'flexo-booking' ); ?></h1>
+			<h1 class="wp-heading-inline"><?php esc_html_e( 'Rates', 'flexo-booking' ); ?></h1>
 			<a class="page-title-action" href="<?php echo esc_url( self::page_url( array( 'add' => 1 ) ) . '#flexo-plan-form' ); ?>"><?php esc_html_e( 'Add rate plan', 'flexo-booking' ); ?></a>
 			<hr class="wp-header-end">
 			<p class="description"><?php esc_html_e( 'Rate plans are the different ways you sell a room – for example with breakfast, half board, or a cheaper non-refundable price. Create only the combinations you really sell, then choose which rooms offer them. Rooms without a rate plan are booked at their normal price.', 'flexo-booking' ); ?></p>
@@ -108,7 +108,7 @@ class Flexo_Booking_Rate_Plans_Admin {
 			<table class="widefat striped flexo-plans-table">
 				<thead>
 					<tr>
-						<th><?php esc_html_e( 'Rate plan', 'flexo-booking' ); ?></th>
+						<th><?php esc_html_e( 'Rate', 'flexo-booking' ); ?></th>
 						<th><?php esc_html_e( 'Price change', 'flexo-booking' ); ?></th>
 						<th><?php esc_html_e( 'Cancellation', 'flexo-booking' ); ?></th>
 						<th><?php esc_html_e( 'Offered for', 'flexo-booking' ); ?></th>

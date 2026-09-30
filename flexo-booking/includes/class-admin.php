@@ -562,7 +562,7 @@ class Flexo_Booking_Admin {
 									<span class="flexo-badge flexo-badge--invoice">🧾 <?php esc_html_e( 'Invoice', 'flexo-booking' ); ?></span>
 								<?php endif; ?>
 								<?php if ( $b['anonymized_at'] ) : ?>
-									<span class="flexo-badge"><?php esc_html_e( 'Anonymised', 'flexo-booking' ); ?></span>
+									<span class="flexo-badge"><?php esc_html_e( 'Personal data removed', 'flexo-booking' ); ?></span>
 								<?php endif; ?>
 								<?php if ( isset( $conflicted[ $b['id'] ] ) ) : ?>
 									<a class="flexo-badge flexo-badge--conflict" href="#flexo-conflicts">⚠ <?php esc_html_e( 'Conflict', 'flexo-booking' ); ?></a>
@@ -571,7 +571,7 @@ class Flexo_Booking_Admin {
 							<div class="flexo-muted"><?php echo esc_html( mysql2date( $format . ' H:i', $b['created_at'] ) ); ?></div>
 						</td>
 						<td data-colname="<?php esc_attr_e( 'Guest', 'flexo-booking' ); ?>">
-							<?php echo esc_html( $b['guest_name'] ? $b['guest_name'] : ( $b['anonymized_at'] ? __( 'Anonymised guest', 'flexo-booking' ) : '—' ) ); ?>
+							<?php echo esc_html( $b['guest_name'] ? $b['guest_name'] : ( $b['anonymized_at'] ? __( 'Guest (personal data removed)', 'flexo-booking' ) : '—' ) ); ?>
 							<?php if ( $b['guest_email'] ) : ?>
 								<div><a href="mailto:<?php echo esc_attr( $b['guest_email'] ); ?>"><?php echo esc_html( $b['guest_email'] ); ?></a></div>
 							<?php endif; ?>
@@ -645,7 +645,7 @@ class Flexo_Booking_Admin {
 								<a class="button button-primary button-small" href="<?php echo esc_url( self::page_url( array( 'booking' => $b['id'] ) ) . '#flexo-payments' ); ?>"><?php esc_html_e( 'Payment received', 'flexo-booking' ); ?></a>
 							<?php endif; ?>
 							<?php if ( in_array( $b['status'], array( 'cancelled', 'expired' ), true ) ) : ?>
-								<a class="button button-small" href="<?php echo esc_url( self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'confirmed' ) ) ); ?>" data-flexo-confirm="<?php echo esc_attr( self::restore_message( $b ) ); ?>" data-flexo-confirm-button="<?php esc_attr_e( 'Restore booking', 'flexo-booking' ); ?>"><?php esc_html_e( 'Reinstate', 'flexo-booking' ); ?></a>
+								<a class="button button-small" href="<?php echo esc_url( self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'confirmed' ) ) ); ?>" data-flexo-confirm="<?php echo esc_attr( self::restore_message( $b ) ); ?>" data-flexo-confirm-button="<?php esc_attr_e( 'Restore booking', 'flexo-booking' ); ?>"><?php esc_html_e( 'Restore booking', 'flexo-booking' ); ?></a>
 							<?php elseif ( 'blocked' !== $b['status'] ) : ?>
 								<a class="button button-small" href="<?php echo esc_url( self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'cancelled' ) ) ); ?>" data-flexo-confirm="<?php echo esc_attr( self::cancel_message( $b ) ); ?>" data-flexo-confirm-button="<?php esc_attr_e( 'Cancel booking', 'flexo-booking' ); ?>"><?php esc_html_e( 'Cancel', 'flexo-booking' ); ?></a>
 							<?php endif; ?>
@@ -719,7 +719,7 @@ class Flexo_Booking_Admin {
 					<a class="button" href="<?php echo esc_url( self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'confirmed', 'force' => 1 ) ) ); ?>" data-flexo-confirm="<?php echo esc_attr( __( 'Confirm this booking without waiting for the payment? The guest receives a confirmation email; the amount due stays open.', 'flexo-booking' ) ); ?>"><?php esc_html_e( 'Confirm without payment', 'flexo-booking' ); ?></a>
 				<?php endif; ?>
 				<?php if ( in_array( $b['status'], array( 'cancelled', 'expired' ), true ) ) : ?>
-					<a class="button" href="<?php echo esc_url( self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'confirmed' ) ) ); ?>" data-flexo-confirm="<?php echo esc_attr( self::restore_message( $b ) ); ?>" data-flexo-confirm-button="<?php esc_attr_e( 'Restore booking', 'flexo-booking' ); ?>"><?php esc_html_e( 'Reinstate', 'flexo-booking' ); ?></a>
+					<a class="button" href="<?php echo esc_url( self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'confirmed' ) ) ); ?>" data-flexo-confirm="<?php echo esc_attr( self::restore_message( $b ) ); ?>" data-flexo-confirm-button="<?php esc_attr_e( 'Restore booking', 'flexo-booking' ); ?>"><?php esc_html_e( 'Restore booking', 'flexo-booking' ); ?></a>
 				<?php elseif ( 'blocked' !== $b['status'] ) : ?>
 					<a class="button" href="<?php echo esc_url( self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'cancelled' ) ) ); ?>" data-flexo-confirm="<?php echo esc_attr( self::cancel_message( $b ) ); ?>" data-flexo-confirm-button="<?php esc_attr_e( 'Cancel booking', 'flexo-booking' ); ?>"><?php esc_html_e( 'Cancel booking', 'flexo-booking' ); ?></a>
 				<?php endif; ?>
@@ -738,7 +738,7 @@ class Flexo_Booking_Admin {
 					<table class="form-table flexo-detail-table" role="presentation">
 						<tr><th><?php esc_html_e( 'Room', 'flexo-booking' ); ?></th><td><?php echo esc_html( $b['room_title'] ); ?></td></tr>
 						<?php if ( $view['rate_plan'] ) : ?>
-							<tr><th><?php esc_html_e( 'Rate plan', 'flexo-booking' ); ?></th><td>
+							<tr><th><?php esc_html_e( 'Rate', 'flexo-booking' ); ?></th><td>
 								<?php echo esc_html( $view['rate_plan']['name'] ); ?>
 								<span class="flexo-badge"><?php echo esc_html( $view['rate_plan']['refundable_label'] ); ?></span>
 								<?php if ( $view['rate_plan']['cancellation_policy'] ) : ?>
@@ -759,7 +759,7 @@ class Flexo_Booking_Admin {
 				<div class="flexo-tools-card">
 					<h2><?php esc_html_e( 'Guest', 'flexo-booking' ); ?></h2>
 					<table class="form-table flexo-detail-table" role="presentation">
-						<tr><th><?php esc_html_e( 'Name', 'flexo-booking' ); ?></th><td><?php echo esc_html( $b['guest_name'] ? $b['guest_name'] : ( $b['anonymized_at'] ? __( 'Anonymised guest', 'flexo-booking' ) : '—' ) ); ?></td></tr>
+						<tr><th><?php esc_html_e( 'Name', 'flexo-booking' ); ?></th><td><?php echo esc_html( $b['guest_name'] ? $b['guest_name'] : ( $b['anonymized_at'] ? __( 'Guest (personal data removed)', 'flexo-booking' ) : '—' ) ); ?></td></tr>
 						<tr><th><?php esc_html_e( 'Email', 'flexo-booking' ); ?></th><td><?php echo $b['guest_email'] ? '<a href="mailto:' . esc_attr( $b['guest_email'] ) . '">' . esc_html( $b['guest_email'] ) . '</a>' : '—'; ?></td></tr>
 						<tr><th><?php esc_html_e( 'Phone', 'flexo-booking' ); ?></th><td><?php echo $b['guest_phone'] ? '<a href="tel:' . esc_attr( preg_replace( '/[^0-9+]/', '', $b['guest_phone'] ) ) . '">' . esc_html( $b['guest_phone'] ) . '</a>' : '—'; ?></td></tr>
 						<tr><th><?php esc_html_e( 'Special requests', 'flexo-booking' ); ?></th><td><?php echo esc_html( $b['notes'] ? $b['notes'] : '—' ); ?></td></tr>
@@ -786,7 +786,7 @@ class Flexo_Booking_Admin {
 							?>
 						</p>
 					<?php elseif ( Flexo_Booking_Privacy::enabled() && 'blocked' !== $b['status'] ) : ?>
-						<p><a class="button button-link-delete" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=flexo_booking_anonymise&id=' . $b['id'] ), 'flexo_booking_anonymise_' . $b['id'] ) ); ?>" data-flexo-confirm="<?php echo esc_attr( __( 'Remove this guest\'s name, email, phone, special requests, messages and invoice details from the booking? Dates, room and price stay. This cannot be undone.', 'flexo-booking' ) ); ?>" data-flexo-confirm-button="<?php esc_attr_e( 'Remove personal data', 'flexo-booking' ); ?>"><?php esc_html_e( 'Anonymise', 'flexo-booking' ); ?></a></p>
+						<p><a class="button button-link-delete" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=flexo_booking_anonymise&id=' . $b['id'] ), 'flexo_booking_anonymise_' . $b['id'] ) ); ?>" data-flexo-confirm="<?php echo esc_attr( __( 'Remove this guest\'s name, email, phone, special requests, messages and invoice details from the booking? Dates, room and price stay. This cannot be undone.', 'flexo-booking' ) ); ?>" data-flexo-confirm-button="<?php esc_attr_e( 'Remove personal data', 'flexo-booking' ); ?>"><?php esc_html_e( 'Remove personal data', 'flexo-booking' ); ?></a></p>
 					<?php endif; ?>
 				</div>
 
@@ -1204,7 +1204,7 @@ class Flexo_Booking_Admin {
 					</tr>
 					<?php if ( Flexo_Booking_Rate_Plans::enabled() && Flexo_Booking_Rate_Plans::all() ) : ?>
 						<tr>
-							<th scope="row"><label for="fb-plan"><?php esc_html_e( 'Rate plan', 'flexo-booking' ); ?></label></th>
+							<th scope="row"><label for="fb-plan"><?php esc_html_e( 'Rate', 'flexo-booking' ); ?></label></th>
 							<td>
 								<?php
 								// Each room lists only its own rates (the first one is chosen).
