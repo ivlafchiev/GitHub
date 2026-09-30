@@ -87,6 +87,7 @@ class Flexo_Booking_Rate_Plans_Admin {
 				'adjustment_value'    => '',
 				'refundable'          => 1,
 				'cancellation_policy' => '',
+				'meals'               => '',
 				'active'              => 1,
 				'sort_order'          => count( $plans ) + 1,
 				'rooms'               => array(),
@@ -206,6 +207,18 @@ class Flexo_Booking_Rate_Plans_Admin {
 							</td>
 						</tr>
 						<tr>
+							<th scope="row"><label for="fb-plan-meals"><?php esc_html_e( 'Meals', 'flexo-booking' ); ?></label></th>
+							<td>
+								<select id="fb-plan-meals" name="meals">
+									<option value=""><?php esc_html_e( 'Not stated', 'flexo-booking' ); ?></option>
+									<?php foreach ( Flexo_Booking_Rate_Plans::meals() as $flexo_key => $flexo_label ) : ?>
+										<option value="<?php echo esc_attr( $flexo_key ); ?>" <?php selected( $form['meals'], $flexo_key ); ?>><?php echo esc_html( $flexo_label ); ?></option>
+									<?php endforeach; ?>
+								</select>
+								<p class="description"><?php esc_html_e( 'Shown to guests next to the rate, so they can compare rates at a glance.', 'flexo-booking' ); ?></p>
+							</td>
+						</tr>
+						<tr>
 							<th scope="row"><?php esc_html_e( 'Cancellation', 'flexo-booking' ); ?></th>
 							<td>
 								<label><input type="checkbox" name="refundable" value="1" <?php checked( ! empty( $form['refundable'] ) ); ?>> <?php esc_html_e( 'Refundable', 'flexo-booking' ); ?></label>
@@ -258,7 +271,7 @@ class Flexo_Booking_Rate_Plans_Admin {
 		self::check_access( 'flexo_booking_save_rate_plan' );
 		$id    = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
 		$input = array();
-		foreach ( array( 'name', 'adjustment_type', 'adjustment_value', 'sort_order' ) as $field ) {
+		foreach ( array( 'name', 'adjustment_type', 'adjustment_value', 'sort_order', 'meals' ) as $field ) {
 			$input[ $field ] = isset( $_POST[ $field ] ) ? sanitize_text_field( wp_unslash( $_POST[ $field ] ) ) : '';
 		}
 		foreach ( array( 'description', 'cancellation_policy' ) as $field ) {

@@ -48,7 +48,20 @@ class Flexo_Booking_Frontend {
 				'promo'     => Flexo_Booking_Promo_Codes::enabled(),
 				'tracking'  => Flexo_Booking_Tracking::config(),
 				'payments'  => self::payments_config(),
-				'i18n'      => array(
+				// Day 6: steps, date picker, contact details, enquiries, guest booking page.
+				'steps'     => self::step_list(),
+				'maxNights' => (int) $settings['max_nights'],
+				'instant'   => 'instant' === Flexo_Booking_Features::booking_mode(),
+				'contact'   => Flexo_Booking_Guest::contact(),
+				'replyTime' => Flexo_Booking_Guest::reply_time_text(),
+				'manage'    => Flexo_Booking_Guest::manage_enabled(),
+				'phoneMode' => $settings['field_phone'],
+				'phoneCountry' => $settings['phone_country'],
+				'consent'   => Flexo_Booking_Privacy::enabled() ? array(
+					'html'     => Flexo_Booking_Privacy::consent_text( true ),
+					'required' => Flexo_Booking_Privacy::consent_required(),
+				) : false,
+				'i18n'      => array_merge( self::texts(), array(
 					'checking'     => __( 'Checking availability…', 'flexo-booking' ),
 					'noRooms'      => __( 'No rooms are available for these dates. Please try different dates.', 'flexo-booking' ),
 					'showAll'      => __( 'Show other rooms', 'flexo-booking' ),
@@ -117,8 +130,179 @@ class Flexo_Booking_Frontend {
 					'copied'       => __( 'Copied', 'flexo-booking' ),
 					'paid'         => __( 'Paid', 'flexo-booking' ),
 					'total'        => __( 'Total', 'flexo-booking' ),
-				),
+				) ),
 			)
+		);
+	}
+
+	/**
+	 * The steps of the booking form. "Payment" only when guests pay online
+	 * on a payment page.
+	 *
+	 * @return array key => label
+	 */
+	public static function step_list() {
+		$steps = array(
+			'dates'   => __( 'Dates', 'flexo-booking' ),
+			'rooms'   => __( 'Room', 'flexo-booking' ),
+			'details' => __( 'Your details', 'flexo-booking' ),
+		);
+		if ( Flexo_Booking_Payments::collects_now() ) {
+			foreach ( Flexo_Booking_Payments::methods() as $id ) {
+				if ( Flexo_Booking_Payments::gateway( $id )->is_hosted() ) {
+					$steps['payment'] = __( 'Payment', 'flexo-booking' );
+					break;
+				}
+			}
+		}
+		$steps['done'] = __( 'Confirmation', 'flexo-booking' );
+		return $steps;
+	}
+
+	/**
+	 * The step bar (the script marks the current step).
+	 */
+	public static function steps() {
+		$html = '<ol class="fb-steps" data-fb-steps aria-label="' . esc_attr__( 'Booking steps', 'flexo-booking' ) . '">';
+		$i    = 0;
+		foreach ( self::step_list() as $key => $label ) {
+			++$i;
+			$html .= '<li class="fb-steps__item" data-step="' . esc_attr( $key ) . '"><span class="fb-steps__num" aria-hidden="true">' . $i . '</span><span class="fb-steps__label">' . esc_html( $label ) . '</span></li>';
+		}
+		return $html . '</ol>';
+	}
+
+	/**
+	 * Country code of the phone number: shows "+359", lists countries by name.
+	 */
+	public static function phone_country_select( $uid ) {
+		$default = Flexo_Booking_Settings::get( 'phone_country' );
+		$list    = Flexo_Booking_Phone::countries( Flexo_Booking_I18n::current() );
+		$code    = isset( $list[ $default ] ) ? $list[ $default ]['code'] : '';
+		$html    = '<span class="fb-phone__cc"><span class="fb-phone__code" aria-hidden="true">+' . esc_html( $code ) . '</span>';
+		$html   .= '<select id="' . esc_attr( $uid ) . '-phone-country" name="phone_country" autocomplete="off" aria-label="' . esc_attr__( 'Country code', 'flexo-booking' ) . '">';
+		foreach ( $list as $iso => $country ) {
+			$html .= '<option value="' . esc_attr( $iso ) . '" data-code="' . esc_attr( $country['code'] ) . '"' . selected( $iso, $default, false ) . '>' . esc_html( $country['name'] . ' (+' . $country['code'] . ')' ) . '</option>';
+		}
+		return $html . '</select></span>';
+	}
+
+	/**
+	 * Texts of the Day 6 guest flow (steps, picker, validation, no dead
+	 * ends, confirmation, guest booking page).
+	 */
+	private static function texts() {
+		return array(
+			/* translators: 1: step number, 2: number of steps, 3: step name */
+			'stepOf'          => __( 'Step %1$s of %2$s: %3$s', 'flexo-booking' ),
+			'change'          => __( 'Change', 'flexo-booking' ),
+			'changeSearch'    => __( 'Change dates or guests', 'flexo-booking' ),
+			'chooseDates'     => __( 'Choose dates', 'flexo-booking' ),
+			'datesDialog'     => __( 'Choose your dates', 'flexo-booking' ),
+			'prevMonth'       => __( 'Previous month', 'flexo-booking' ),
+			'nextMonth'       => __( 'Next month', 'flexo-booking' ),
+			'close'           => __( 'Close', 'flexo-booking' ),
+			'clear'           => __( 'Clear dates', 'flexo-booking' ),
+			'done'            => __( 'Done', 'flexo-booking' ),
+			'pickArrival'     => __( 'Choose your check-in date.', 'flexo-booking' ),
+			/* translators: %s: date */
+			'pickDeparture'   => __( 'Check-in %s. Now choose your check-out date.', 'flexo-booking' ),
+			/* translators: %d: number of nights */
+			'minStayHint'     => __( 'Minimum stay %d nights.', 'flexo-booking' ),
+			'loadingDates'    => __( 'Loading availability…', 'flexo-booking' ),
+			'dayFull'         => __( 'fully booked', 'flexo-booking' ),
+			'dayClosed'       => __( 'closed', 'flexo-booking' ),
+			/* translators: %d: number of nights */
+			'dayMinStay'      => __( 'minimum stay %d nights', 'flexo-booking' ),
+			'dayNoArrival'    => __( 'no check-in possible on this day', 'flexo-booking' ),
+			'dayUnavailable'  => __( 'not available', 'flexo-booking' ),
+			'dayAvailable'    => __( 'available', 'flexo-booking' ),
+			'dayCheckIn'      => __( 'check-in', 'flexo-booking' ),
+			'dayCheckOut'     => __( 'check-out', 'flexo-booking' ),
+			'datesMissing'    => __( 'Please choose your check-in and check-out dates.', 'flexo-booking' ),
+			/* translators: %d: number of rooms */
+			'roomsFound'      => __( '%d rooms available for your dates.', 'flexo-booking' ),
+			'roomFound'       => __( '1 room available for your dates.', 'flexo-booking' ),
+			'nothingTitle'    => __( 'Nothing is free for these dates', 'flexo-booking' ),
+			'nearbyDates'     => __( 'Free on nearby dates', 'flexo-booking' ),
+			/* translators: %d: number of rooms */
+			'nRooms'          => __( '%d rooms', 'flexo-booking' ),
+			'oneRoom'         => __( '1 room', 'flexo-booking' ),
+			/* translators: %d: number of rooms */
+			'otherRooms'      => __( 'See %d other rooms free on your dates', 'flexo-booking' ),
+			'otherRoom'       => __( 'See 1 other room free on your dates', 'flexo-booking' ),
+			'askUs'           => __( 'Can\'t find what you need? Send us a message and we will help.', 'flexo-booking' ),
+			'sendEnquiry'     => __( 'Send an enquiry', 'flexo-booking' ),
+			'enquiryTitle'    => __( 'Send us an enquiry', 'flexo-booking' ),
+			'enquiryNote'     => __( 'This is not a booking. We will reply by email.', 'flexo-booking' ),
+			'yourName'        => __( 'Your name', 'flexo-booking' ),
+			'email'           => __( 'Email', 'flexo-booking' ),
+			'phone'           => __( 'Phone', 'flexo-booking' ),
+			'message'         => __( 'Message', 'flexo-booking' ),
+			'optional'        => __( '(optional)', 'flexo-booking' ),
+			'enquiryPlaceholder' => __( 'e.g. flexible dates, number of rooms, questions', 'flexo-booking' ),
+			'sendMessage'     => __( 'Send message', 'flexo-booking' ),
+			/* translators: %s: room size in square metres */
+			'sqm'             => __( '%s m²', 'flexo-booking' ),
+			/* translators: %d: number of more amenities */
+			'moreAmenities'   => __( '+%d more', 'flexo-booking' ),
+			/* translators: %s: number of nights label, e.g. "3 nights" */
+			'forStay'         => __( 'for %s', 'flexo-booking' ),
+			/* translators: %d: number of nights */
+			'nightsN'         => __( '%d nights', 'flexo-booking' ),
+			'night1'          => __( '1 night', 'flexo-booking' ),
+			'chooseRoom'      => __( 'Choose a room', 'flexo-booking' ),
+			/* translators: %s: room name */
+			'roomPhoto'       => __( 'Photo of %s', 'flexo-booking' ),
+			'required'        => __( 'Please fill in this field.', 'flexo-booking' ),
+			'nameMissing'     => __( 'Please enter your full name.', 'flexo-booking' ),
+			'emailMissing'    => __( 'Please enter your email address.', 'flexo-booking' ),
+			'emailInvalid'    => __( 'Please enter an email address like name@example.com.', 'flexo-booking' ),
+			'phoneMissing'    => __( 'Please enter your phone number.', 'flexo-booking' ),
+			'phoneInvalid'    => __( 'Please enter a phone number we can reach you on, for example 888 123 456.', 'flexo-booking' ),
+			'termsMissing'    => __( 'Please accept the terms and conditions to continue.', 'flexo-booking' ),
+			'ageMissing'      => __( 'Please choose the child\'s age.', 'flexo-booking' ),
+			'consentMessage'  => __( 'Please accept the privacy policy to send your message.', 'flexo-booking' ),
+			'chooseRequest'   => __( 'Please choose what you would like to do.', 'flexo-booking' ),
+			'checkFields'     => __( 'Please check the highlighted fields.', 'flexo-booking' ),
+			'beforeYouBook'   => __( 'Before you book', 'flexo-booking' ),
+			'payNowText'      => __( 'You pay now', 'flexo-booking' ),
+			'payLaterText'    => __( 'You pay at the property', 'flexo-booking' ),
+			'nothingNow'      => __( 'Nothing to pay now – you pay at the property.', 'flexo-booking' ),
+			/* translators: %s: e.g. "within 24 hours" */
+			'requestNote'     => __( 'This is a booking request: we confirm it by email %s. Nothing is charged now.', 'flexo-booking' ),
+			'questions'       => __( 'Questions? Contact us', 'flexo-booking' ),
+			/* translators: %s: amount */
+			'payCard'         => __( 'Continue to secure payment – %s', 'flexo-booking' ),
+			/* translators: %s: amount */
+			'payBank'         => __( 'Confirm and pay %s by bank transfer', 'flexo-booking' ),
+			'doneConfirmed'   => __( 'Your booking is confirmed', 'flexo-booking' ),
+			'doneRequest'     => __( 'Your booking request has been sent', 'flexo-booking' ),
+			'doneTransfer'    => __( 'Your room is reserved – please pay to confirm', 'flexo-booking' ),
+			'doneOther'       => __( 'Your booking', 'flexo-booking' ),
+			'nextSteps'       => __( 'What happens next', 'flexo-booking' ),
+			'yourBooking'     => __( 'Your booking', 'flexo-booking' ),
+			'room'            => __( 'Room', 'flexo-booking' ),
+			'dates'           => __( 'Dates', 'flexo-booking' ),
+			'contactUs'       => __( 'Contact', 'flexo-booking' ),
+			'directions'      => __( 'Directions', 'flexo-booking' ),
+			'addCalendar'     => __( 'Add to calendar', 'flexo-booking' ),
+			'manageBooking'   => __( 'View or change your booking', 'flexo-booking' ),
+			'print'           => __( 'Print', 'flexo-booking' ),
+			'status'          => __( 'Status', 'flexo-booking' ),
+			'requests'        => __( 'Your requests', 'flexo-booking' ),
+			'requestHandled'  => __( 'answered', 'flexo-booking' ),
+			'requestOpen'     => __( 'waiting for our reply', 'flexo-booking' ),
+			'askChange'       => __( 'Need to change or cancel?', 'flexo-booking' ),
+			'askChangeNote'   => __( 'Send us a request. Nothing changes until we reply – we will confirm by email.', 'flexo-booking' ),
+			'requestType'     => __( 'What would you like to do?', 'flexo-booking' ),
+			'requestMessage'  => __( 'Message to the hotel', 'flexo-booking' ),
+			'changePlaceholder' => __( 'e.g. new dates, number of guests', 'flexo-booking' ),
+			'sendRequestBtn'  => __( 'Send request', 'flexo-booking' ),
+			'noRequests'      => __( 'To change this booking, please contact us by phone or email.', 'flexo-booking' ),
+			'loading'         => __( 'Loading…', 'flexo-booking' ),
+			'staySummary'     => __( 'Your stay', 'flexo-booking' ),
+			'showSummary'     => __( 'Show price details', 'flexo-booking' ),
 		);
 	}
 
@@ -297,7 +481,7 @@ class Flexo_Booking_Frontend {
 		if ( Flexo_Booking_Privacy::enabled() ) {
 			$required = Flexo_Booking_Privacy::consent_required();
 			// Never ticked in advance.
-			$html .= '<label class="fb-terms fb-consent"><input type="checkbox" name="privacy_consent" value="1"' . ( $required ? ' required' : '' ) . '> <span>' . Flexo_Booking_Privacy::consent_text( true ) . '</span></label>';
+			$html .= '<label class="fb-terms fb-consent"><input type="checkbox" name="privacy_consent" value="1"' . ( $required ? ' required' : '' ) . '> <span>' . Flexo_Booking_Privacy::consent_text( true ) . ( $required ? ' <span class="fb-req" aria-hidden="true">*</span>' : '' ) . '</span></label>';
 		}
 		return '' === $html ? '' : '<div class="fb-extra" data-fb-extra>' . $html . '</div>';
 	}

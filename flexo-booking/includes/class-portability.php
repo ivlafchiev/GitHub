@@ -59,6 +59,7 @@ class Flexo_Booking_Portability {
 				'adjustment_value'    => $plan['adjustment_value'],
 				'refundable'          => $plan['refundable'],
 				'cancellation_policy' => $plan['cancellation_policy'],
+				'meals'               => $plan['meals'],
 				'active'              => $plan['active'],
 				'sort_order'          => $plan['sort_order'],
 			);

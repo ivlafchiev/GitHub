@@ -211,6 +211,9 @@ class Flexo_Booking_Bookings {
 				'excerpt'                 => $room['excerpt'],
 				'image'                   => $room['image'],
 				'capacity'                => $room['capacity'],
+				'size'                    => $room['size'],
+				'beds'                    => $room['beds'],
+				'amenities'               => Flexo_Booking_Rooms::amenity_labels( $room['amenities'] ),
 				'max_adults'              => Flexo_Booking_Children::enabled() ? $room['max_adults'] : 0,
 				'available'               => '' === $reason,
 				'reason'                  => $reason,
@@ -382,6 +385,11 @@ class Flexo_Booking_Bookings {
 				$phone = '';
 			} elseif ( 'required' === $phone_mode && '' === $phone ) {
 				return new WP_Error( 'flexo_missing_phone', __( 'Please enter your phone number.', 'flexo-booking' ) );
+			} elseif ( '' !== $phone ) {
+				$phone = Flexo_Booking_Phone::normalize( $phone, isset( $data['phone_country'] ) ? $data['phone_country'] : '' );
+				if ( ! Flexo_Booking_Phone::looks_valid( $phone ) ) {
+					return new WP_Error( 'flexo_invalid_phone', __( 'Please enter a phone number we can reach you on, for example +359 888 123 456.', 'flexo-booking' ) );
+				}
 			}
 			if ( 'hidden' === Flexo_Booking_Settings::get( 'field_notes' ) ) {
 				$notes = '';

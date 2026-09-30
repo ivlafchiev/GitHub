@@ -140,6 +140,10 @@ class Flexo_Booking_Privacy {
 			array( 'id' => (int) $booking_id )
 		);
 		Flexo_Booking_Invoices::delete( $booking_id );
+		// Messages from the guest booking page.
+		if ( Flexo_Booking_Schema::table_exists( 'booking_log' ) ) {
+			Flexo_Booking_Log::erase_booking( $booking_id );
+		}
 		if ( Flexo_Booking_Schema::table_exists( 'email_log' ) && '' !== $booking['guest_email'] ) {
 			$wpdb->query( $wpdb->prepare( 'UPDATE ' . Flexo_Booking_Schema::table( 'email_log' ) . " SET recipient = '' WHERE booking_id = %d AND recipient = %s", $booking_id, $booking['guest_email'] ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		}
@@ -282,6 +286,21 @@ class Flexo_Booking_Privacy {
 					),
 				);
 			}
+			// Enquiries sent from the booking form (not bookings).
+			foreach ( Flexo_Booking_Schema::table_exists( 'booking_log' ) ? Flexo_Booking_Log::enquiries_by_email( $email ) : array() as $entry ) {
+				$d       = $entry['details'];
+				$items[] = array(
+					'group_id'    => 'flexo-booking-enquiries',
+					'group_label' => __( 'Enquiries to the hotel', 'flexo-booking' ),
+					'item_id'     => 'flexo-enquiry-' . $entry['id'],
+					'data'        => array(
+						array( 'name' => __( 'Sent', 'flexo-booking' ), 'value' => $entry['created_at'] ),
+						array( 'name' => __( 'Name', 'flexo-booking' ), 'value' => isset( $d['name'] ) ? $d['name'] : '' ),
+						array( 'name' => __( 'Phone', 'flexo-booking' ), 'value' => isset( $d['phone'] ) ? $d['phone'] : '' ),
+						array( 'name' => __( 'Message', 'flexo-booking' ), 'value' => isset( $d['message'] ) ? $d['message'] : '' ),
+					),
+				);
+			}
 		}
 
 		return array(
@@ -313,6 +332,11 @@ class Flexo_Booking_Privacy {
 		if ( Flexo_Booking_Schema::table_exists( 'email_log' ) ) {
 			$log = (int) $wpdb->query( $wpdb->prepare( 'DELETE FROM ' . Flexo_Booking_Schema::table( 'email_log' ) . ' WHERE recipient = %s', $email ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		}
+		$enquiries = Flexo_Booking_Schema::table_exists( 'booking_log' ) ? Flexo_Booking_Log::enquiries_by_email( $email ) : array();
+		foreach ( $enquiries as $entry ) {
+			Flexo_Booking_Log::delete( $entry['id'] );
+		}
+		$log     += count( $enquiries );
 		$messages = array();
 		if ( $bookings ) {
 			/* translators: %d: number of bookings */

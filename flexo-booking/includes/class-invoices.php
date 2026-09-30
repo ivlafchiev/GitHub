@@ -91,7 +91,7 @@ class Flexo_Booking_Invoices {
 				$value = '';
 			} elseif ( 'required' === $mode && '' === $value ) {
 				/* translators: %s: field name, e.g. "Company name" */
-				return new WP_Error( 'flexo_invoice', sprintf( __( 'Please fill in "%s" for the invoice.', 'flexo-booking' ), $def['label'] ) );
+				return new WP_Error( 'flexo_invoice', sprintf( __( 'Please fill in "%s" for the invoice.', 'flexo-booking' ), $def['label'] ), array( 'field' => 'invoice_' . $field ) );
 			}
 			$clean[ $field ] = mb_substr( $value, 0, 'address' === $field || 'company_address' === $field ? 255 : 190 );
 		}
@@ -99,7 +99,7 @@ class Flexo_Booking_Invoices {
 		// with letters (other countries) and VAT numbers are not checked.
 		$digits = preg_replace( '/\s+/', '', $clean['company_id'] );
 		if ( '' !== $digits && ctype_digit( $digits ) && ! in_array( strlen( $digits ), array( 9, 13 ), true ) ) {
-			return new WP_Error( 'flexo_invoice', __( 'The company ID (EIK/BULSTAT) should have 9 or 13 digits.', 'flexo-booking' ) );
+			return new WP_Error( 'flexo_invoice', __( 'The company ID (EIK/BULSTAT) should have 9 or 13 digits.', 'flexo-booking' ), array( 'field' => 'invoice_company_id' ) );
 		}
 		if ( '' !== $digits && ctype_digit( $digits ) ) {
 			$clean['company_id'] = $digits;

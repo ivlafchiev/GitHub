@@ -70,6 +70,7 @@ class Flexo_Booking_Schema {
 			payment_session varchar(255) NOT NULL DEFAULT '',
 			payment_conflict tinyint(1) NOT NULL DEFAULT 0,
 			access_key char(64) NOT NULL DEFAULT '',
+			staff_notes text NULL,
 			created_at datetime NOT NULL,
 			updated_at datetime NOT NULL,
 			PRIMARY KEY  (id),
@@ -157,6 +158,7 @@ class Flexo_Booking_Schema {
 			adjustment_value decimal(10,3) NOT NULL DEFAULT 0,
 			refundable tinyint(1) NOT NULL DEFAULT 1,
 			cancellation_policy text NULL,
+			meals varchar(20) NOT NULL DEFAULT '',
 			active tinyint(1) NOT NULL DEFAULT 0,
 			sort_order int(11) NOT NULL DEFAULT 0,
 			created_at datetime NOT NULL,
@@ -268,6 +270,20 @@ class Flexo_Booking_Schema {
 			created_at datetime NOT NULL,
 			PRIMARY KEY  (id),
 			UNIQUE KEY event (event_id(190))
+		) {$charset};";
+
+		// Day 6. Booking history: who did what and when (status changes,
+		// payments, emails, guest requests, notes).
+		$tables['booking_log'] = 'CREATE TABLE ' . self::table( 'booking_log' ) . " (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			booking_id bigint(20) unsigned NOT NULL DEFAULT 0,
+			action varchar(40) NOT NULL DEFAULT '',
+			details text NULL,
+			user_id bigint(20) unsigned NOT NULL DEFAULT 0,
+			created_at datetime NOT NULL,
+			PRIMARY KEY  (id),
+			KEY booking (booking_id),
+			KEY action_created (action,created_at)
 		) {$charset};";
 
 		return $tables;

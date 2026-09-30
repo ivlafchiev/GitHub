@@ -191,24 +191,43 @@ class Flexo_Booking_Emails {
 		return Flexo_Booking_I18n::with_locale(
 			$locale,
 			static function () use ( $booking, $type, $locale ) {
-				$vars    = self::placeholders( $booking );
-				$subject = strtr( self::template( $type, 'subject', $locale ), $vars );
-				$body    = strtr( self::template( $type, 'body', $locale ), $vars );
-				$headers = array( 'Reply-To: ' . Flexo_Booking_Settings::notification_email() );
+				$vars     = self::placeholders( $booking );
+				$subject  = strtr( self::template( $type, 'subject', $locale ), $vars );
+				$template = self::template( $type, 'body', $locale );
+				$body     = strtr( $template, $vars );
+				$headers  = array( 'Reply-To: ' . Flexo_Booking_Settings::notification_email() );
+				// Guest booking page: the link goes into every email that
+				// doesn't place {manage_link} itself (not after cancellation).
+				if ( '' !== $vars['{manage_link}'] && false === strpos( $template, '{manage_link}' ) && ! in_array( $type, array( 'cancelled', 'payment_cancelled', 'payment_failed', 'review' ), true ) ) {
+					$body .= "\n\n" . __( 'View your booking or ask us for a change', 'flexo-booking' ) . ': ' . $vars['{manage_link}'];
+				}
+				// The stay as a calendar file with confirmations.
+				$attachments = array();
+				if ( in_array( $type, array( 'confirmed', 'payment_received' ), true ) ) {
+					$file = self::ics_file( $booking );
+					if ( $file ) {
+						$attachments[] = $file;
+					}
+				}
 
-				$email = apply_filters( 'flexo_booking_guest_email', compact( 'subject', 'body', 'headers' ), $booking, $type );
+				$email = apply_filters( 'flexo_booking_guest_email', compact( 'subject', 'body', 'headers', 'attachments' ), $booking, $type );
 
-				return self::send(
+				$sent = self::send(
 					$booking['guest_email'],
 					$email['subject'],
 					$email['body'],
 					array(
-						'headers'    => $email['headers'],
-						'type'       => 'guest_' . $type,
-						'booking_id' => (int) $booking['id'],
-						'locale'     => $locale,
+						'headers'     => $email['headers'],
+						'type'        => 'guest_' . $type,
+						'booking_id'  => (int) $booking['id'],
+						'locale'      => $locale,
+						'attachments' => isset( $email['attachments'] ) ? (array) $email['attachments'] : array(),
 					)
 				);
+				foreach ( $attachments as $file ) {
+					wp_delete_file( $file );
+				}
+				return $sent;
 			}
 		);
 	}
@@ -472,10 +491,11 @@ class Flexo_Booking_Emails {
 		$args    = wp_parse_args(
 			$args,
 			array(
-				'headers'    => array(),
-				'type'       => '',
-				'booking_id' => 0,
-				'locale'     => determine_locale(),
+				'headers'     => array(),
+				'type'        => '',
+				'booking_id'  => 0,
+				'locale'      => determine_locale(),
+				'attachments' => array(),
 			)
 		);
 		$to      = array_values( array_filter( (array) $to, 'is_email' ) );
@@ -505,7 +525,7 @@ class Flexo_Booking_Emails {
 		};
 		add_action( 'phpmailer_init', $alt );
 		self::$last_error = '';
-		$ok               = wp_mail( $message['to'], $message['subject'], $message['html'], $message['headers'] );
+		$ok               = wp_mail( $message['to'], $message['subject'], $message['html'], $message['headers'], (array) $args['attachments'] );
 		remove_action( 'phpmailer_init', $alt );
 
 		self::log( $args['booking_id'], $args['type'], implode( ', ', $message['to'] ), $message['subject'], $ok ? 'sent' : 'failed', $ok ? '' : ( self::$last_error ? self::$last_error : __( 'The email could not be sent (wp_mail returned an error).', 'flexo-booking' ) ) );
@@ -516,6 +536,45 @@ class Flexo_Booking_Emails {
 		if ( is_wp_error( $error ) ) {
 			self::$last_error = $error->get_error_message();
 		}
+	}
+
+	/**
+	 * The stay as a temporary .ics file (deleted after sending).
+	 *
+	 * @return string File path, or '' when it can't be written.
+	 */
+	private static function ics_file( array $booking ) {
+		if ( ! function_exists( 'wp_tempnam' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+		$tmp = wp_tempnam( 'booking-' . $booking['reference'] );
+		if ( ! $tmp ) {
+			return '';
+		}
+		$file = dirname( $tmp ) . '/booking-' . sanitize_file_name( $booking['reference'] ) . '-' . wp_generate_password( 6, false ) . '.ics';
+		wp_delete_file( $tmp );
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- temporary attachment.
+		return false === file_put_contents( $file, Flexo_Booking_Guest::ics( $booking ) ) ? '' : $file;
+	}
+
+	/**
+	 * A block of "Label: value" lines, shown as a two-column table.
+	 */
+	private static function is_details_block( array $lines ) {
+		if ( count( $lines ) < 3 ) {
+			return false;
+		}
+		foreach ( $lines as $line ) {
+			// Indented lines (how a price was calculated) may be plain text.
+			if ( ' ' === substr( $line, 0, 1 ) ) {
+				continue;
+			}
+			$pos = strpos( $line, ': ' );
+			if ( false === $pos || $pos > 45 || 0 === $pos ) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -533,6 +592,27 @@ class Flexo_Booking_Emails {
 
 		$paragraphs = array();
 		foreach ( preg_split( "/\n\s*\n/", str_replace( "\r\n", "\n", trim( (string) $text ) ) ) as $block ) {
+			$raw = array_values( array_filter( explode( "\n", $block ), 'strlen' ) );
+			if ( self::is_details_block( $raw ) ) {
+				$rows = '';
+				foreach ( $raw as $line ) {
+					$indent = strlen( $line ) - strlen( ltrim( $line, ' ' ) );
+					if ( false === strpos( $line, ': ' ) ) {
+						$rows .= '<tr><td colspan="2" style="padding:0 0 6px ' . ( 8 * $indent ) . 'px;font-size:12px;color:#6b7280;border-bottom:1px solid #eef0f2;">' . esc_html( ltrim( $line ) ) . '</td></tr>';
+						continue;
+					}
+					list( $label, $value ) = explode( ': ', ltrim( $line ), 2 );
+					$rows  .= '<tr><td style="padding:6px 12px 6px 0;border-bottom:1px solid #eef0f2;color:#6b7280;vertical-align:top;' . ( $indent ? 'padding-left:16px;font-size:13px;' : '' ) . '">' . esc_html( $label ) . '</td>'
+						. '<td style="padding:6px 0;border-bottom:1px solid #eef0f2;text-align:right;vertical-align:top;' . ( $indent ? 'font-size:13px;' : 'font-weight:bold;' ) . '">' . make_clickable( esc_html( $value ) ) . '</td></tr>';
+				}
+				$paragraphs[] = '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 16px;border-collapse:collapse;font-size:14px;">' . $rows . '</table>';
+				continue;
+			}
+			// "View your booking: https://…" becomes a button.
+			if ( 1 === count( $raw ) && preg_match( '#^([^:]{3,80}):\s+(https?://\S+)$#u', trim( $raw[0] ), $m ) ) {
+				$paragraphs[] = '<p style="margin:8px 0 20px;"><a href="' . esc_url( $m[2] ) . '" style="display:inline-block;padding:12px 20px;border-radius:6px;background:' . esc_attr( $color ) . ';color:#ffffff;text-decoration:none;font-weight:bold;">' . esc_html( $m[1] ) . '</a></p>';
+				continue;
+			}
 			$lines = array();
 			foreach ( explode( "\n", $block ) as $line ) {
 				$indent  = strlen( $line ) - strlen( ltrim( $line, ' ' ) );
@@ -546,6 +626,9 @@ class Flexo_Booking_Emails {
 			$footer[] = esc_html( $settings['hotel_phone'] );
 		}
 		$footer[] = '<a href="' . esc_url( home_url( '/' ) ) . '" style="color:' . esc_attr( $color ) . ';">' . esc_html( wp_parse_url( home_url(), PHP_URL_HOST ) ) . '</a>';
+		if ( '' !== trim( (string) $settings['hotel_address'] ) ) {
+			$footer[] = esc_html( preg_replace( '/\s*\n\s*/', ', ', trim( $settings['hotel_address'] ) ) );
+		}
 
 		$lang = str_replace( '_', '-', $locale ? $locale : determine_locale() );
 		$html = '<!DOCTYPE html><html lang="' . esc_attr( $lang ) . '"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>' . esc_html( $subject ) . '</title></head>'
@@ -805,7 +888,7 @@ class Flexo_Booking_Emails {
 				'{site_name}'           => wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ),
 				'{hotel_name}'          => wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ),
 				'{hotel_phone}'         => $settings['hotel_phone'],
-				'{hotel_email}'         => Flexo_Booking_Settings::notification_email(),
+				'{hotel_email}'         => Flexo_Booking_Guest::contact()['email'],
 				'{review_link}'         => $settings['review_link'],
 				'{payment_method}'      => $pay['method'],
 				'{amount_due}'          => $pay['amount_due'],
@@ -813,6 +896,7 @@ class Flexo_Booking_Emails {
 				'{balance_due}'         => $pay['balance_due'],
 				'{payment_deadline}'    => $pay['deadline'],
 				'{payment_instructions}' => $pay['instructions'],
+				'{manage_link}'         => Flexo_Booking_Guest::links( $booking )['manage'],
 			),
 			$booking
 		);
@@ -883,6 +967,6 @@ class Flexo_Booking_Emails {
 	 * Placeholders for the Emails settings screen.
 	 */
 	public static function placeholder_names() {
-		return array( '{guest_name}', '{booking_ref}', '{room}', '{check_in}', '{check_out}', '{nights}', '{guests}', '{rate_plan}', '{total}', '{price_breakdown}', '{cancellation_policy}', '{promo_code}', '{status}', '{booking_details}', '{check_in_time}', '{check_out_time}', '{hotel_name}', '{hotel_phone}', '{hotel_email}', '{review_link}', '{guest_email}', '{guest_phone}', '{payment_method}', '{amount_due}', '{amount_paid}', '{balance_due}', '{payment_deadline}', '{payment_instructions}' );
+		return array( '{guest_name}', '{booking_ref}', '{room}', '{check_in}', '{check_out}', '{nights}', '{guests}', '{rate_plan}', '{total}', '{price_breakdown}', '{cancellation_policy}', '{promo_code}', '{status}', '{booking_details}', '{check_in_time}', '{check_out_time}', '{hotel_name}', '{hotel_phone}', '{hotel_email}', '{review_link}', '{guest_email}', '{guest_phone}', '{payment_method}', '{amount_due}', '{amount_paid}', '{balance_due}', '{payment_deadline}', '{payment_instructions}', '{manage_link}' );
 	}
 }

@@ -74,7 +74,8 @@ async function layoutChecks( p, width, stage ) {
 		const cs = ( el ) => ( el ? getComputedStyle( el ) : null );
 		const visible = ( el ) => el && el.offsetParent !== null;
 		const small = [];
-		root.querySelectorAll( '.fb-button, .fb-link, .fb-choice, .fb-search select, .fb-search input' ).forEach( ( el ) => {
+		// Day 6: the native date fields are replaced by the date picker's buttons (checked instead).
+		root.querySelectorAll( '.fb-button, .fb-link, .fb-choice, .fb-search select, .fb-search input:not(.fb-native-date), .fb-date' ).forEach( ( el ) => {
 			if ( visible( el ) ) {
 				const b = el.getBoundingClientRect();
 				if ( b.height < 44 ) {
@@ -120,9 +121,10 @@ async function layoutChecks( p, width, stage ) {
 	ok( summary.includes( 'Deposit (30%) – to pay now 240.00 €' ), 'summary: deposit 240 to pay now' );
 	ok( summary.includes( 'At the property 560.00 €' ), 'summary: 560 at the property' );
 	ok( await guest.isVisible( '.fb-choice:has([value=stripe])' ) && await guest.isVisible( '.fb-choice:has([value=bank_transfer])' ), 'guest chooses card or bank transfer' );
-	ok( ( await guest.textContent( '.fb-details [type=submit]' ) ).trim() === 'Continue to payment', 'button: Continue to payment' );
+	// Day 6: the final button says exactly what happens, with the amount.
+	ok( ( await guest.textContent( '.fb-details [type=submit]' ) ).trim() === 'Continue to secure payment – 240.00 €', 'button: Continue to secure payment – 240.00 €' );
 	await guest.check( '[name=payment_method][value=bank_transfer]' );
-	ok( ( await guest.textContent( '.fb-details [type=submit]' ) ).trim() === 'Confirm booking', 'bank transfer: Confirm booking' );
+	ok( ( await guest.textContent( '.fb-details [type=submit]' ) ).trim() === 'Confirm and pay 240.00 € by bank transfer', 'bank transfer: Confirm and pay 240.00 € by bank transfer' );
 	await guest.check( '[name=payment_method][value=stripe]' );
 	await fillGuest( guest, 'Card Guest', 'card@example.com' );
 	await guest.screenshot( { path: SHOTS + '/d5-details-desktop.png', fullPage: true } );
@@ -203,7 +205,8 @@ async function layoutChecks( p, width, stage ) {
 	ok( ( await text( phone, '.fb-bank__row--reference' ) ).includes( refD ), 'payment reference = booking reference' );
 	ok( ( await phone.$$( '.fb-bank__copy' ) ).length === 3, 'copy buttons for amount, IBAN and reference' );
 	await layoutChecks( phone, 390, 'bank details' );
-	ok( ( await phone.evaluate( () => getComputedStyle( document.querySelector( '.fb-success__message' ) ).textAlign ) ) === 'center', 'result message centred' );
+	// Day 6: the confirmation is a left-aligned summary card with a heading.
+	ok( await phone.isVisible( '.fb-done__title' ) && ( await phone.textContent( '.fb-done__title' ) ).includes( 'please pay to confirm' ), 'confirmation heading: please pay to confirm' );
 	await phone.screenshot( { path: SHOTS + '/d5-bank-success-390.png', fullPage: true } );
 	ok( booking( refD ).status === 'awaiting_payment', 'booking awaiting payment' );
 
@@ -237,9 +240,10 @@ async function layoutChecks( p, width, stage ) {
 		await p.click( '.fb-promo__toggle' );
 		await layoutChecks( p, width, 'details' );
 		if ( width <= 1024 ) {
+			// Day 6: the summary is a bar above the form (next to it on wide forms).
 			const sum = await p.evaluate( () => {
-				const b = document.querySelector( '.fb-summary' ).getBoundingClientRect();
-				const f = document.querySelector( '.fb-details' ).getBoundingClientRect();
+				const b = ( document.querySelector( '.fb-aside' ) || document.querySelector( '.fb-summary' ) ).getBoundingClientRect();
+				const f = ( document.querySelector( '.fb-layout' ) || document.querySelector( '.fb-details' ) ).getBoundingClientRect();
 				return Math.abs( ( b.left - f.left ) - ( f.right - b.right ) );
 			} );
 			ok( sum <= 2, `${ width }px: price summary centred` );

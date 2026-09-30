@@ -984,3 +984,974 @@
 .flexo-booking [aria-invalid="true"] {
 	border-color: var(--fb-error);
 }
+
+/* ------------------------------------------------------------------------
+ * Day 6: steps, date picker, stay line, summary next to / above the form,
+ * room details, "Before you book", nothing-free help, confirmation and the
+ * guest booking page.
+ * --------------------------------------------------------------------- */
+
+.flexo-booking {
+	--fb-sticky-top: 0px;
+}
+
+.flexo-booking input,
+.flexo-booking select,
+.flexo-booking textarea,
+.flexo-booking .fb-date {
+	scroll-margin-top: 90px;
+	scroll-margin-bottom: 140px;
+}
+
+.flexo-booking :focus-visible {
+	outline: 2px solid var(--fb-primary);
+	outline-offset: 2px;
+}
+
+/* Headings get focus only to guide screen readers to the new step. */
+.flexo-booking h3[tabindex="-1"],
+.flexo-booking h4[tabindex="-1"],
+.flexo-booking .fb-success:focus,
+.flexo-booking .fb-notice:focus,
+.flexo-booking .fb-enquiry__done:focus,
+.flexo-booking .fb-manage__done:focus {
+	outline: none;
+}
+
+/* Disabled buttons stay readable (contrast AA). */
+.flexo-booking .fb-button:disabled {
+	opacity: 1;
+	color: var(--fb-text);
+	background: color-mix(in srgb, var(--fb-text) 10%, var(--fb-bg));
+	border-color: transparent;
+	cursor: not-allowed;
+}
+
+.flexo-booking .fb-button.is-busy::before {
+	content: "";
+	width: 1em;
+	height: 1em;
+	margin-right: 8px;
+	border: 2px solid currentColor;
+	border-right-color: transparent;
+	border-radius: 50%;
+	animation: fb-spin 0.8s linear infinite;
+}
+
+.flexo-booking .fb-req {
+	color: var(--fb-error);
+}
+
+.flexo-booking .fb-optional,
+.flexo-booking .fb-hint,
+.flexo-booking .fb-required-note {
+	font-weight: 400;
+	font-size: 0.8125rem;
+	color: var(--fb-muted);
+}
+
+.flexo-booking .fb-required-note {
+	margin: -4px 0 12px;
+}
+
+/* Steps */
+.flexo-booking .fb-steps {
+	display: flex;
+	gap: 4px;
+	margin: 0 0 20px;
+	padding: 0;
+	list-style: none;
+	counter-reset: none;
+}
+
+.flexo-booking .fb-steps__item {
+	display: flex;
+	flex: 1 1 0;
+	align-items: center;
+	gap: 8px;
+	min-width: 0;
+	padding-top: 8px;
+	border-top: 3px solid var(--fb-border);
+	font-size: 0.875em;
+	color: var(--fb-muted);
+}
+
+.flexo-booking .fb-steps__num {
+	display: inline-flex;
+	flex: 0 0 auto;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	font-size: 0.8125rem;
+	font-weight: 700;
+	background: color-mix(in srgb, var(--fb-text) 10%, var(--fb-bg));
+	color: var(--fb-text);
+}
+
+.flexo-booking .fb-steps__label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.flexo-booking .fb-steps__item.is-done,
+.flexo-booking .fb-steps__item.is-current {
+	border-top-color: var(--fb-primary);
+	color: var(--fb-text);
+}
+
+.flexo-booking .fb-steps__item.is-current {
+	font-weight: 700;
+}
+
+.flexo-booking .fb-steps__item.is-current .fb-steps__num,
+.flexo-booking .fb-steps__item.is-done .fb-steps__num {
+	background: var(--fb-primary);
+	color: var(--fb-primary-contrast);
+}
+
+/* Date fields (the picker's buttons) */
+.flexo-booking .fb-native-date {
+	position: absolute !important;
+	width: 1px !important;
+	height: 1px !important;
+	min-height: 0 !important;
+	padding: 0 !important;
+	margin: -1px !important;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	border: 0 !important;
+}
+
+.flexo-booking .fb-date {
+	width: 100%;
+	min-height: 46px;
+	padding: 10px 12px;
+	font: inherit;
+	text-align: left;
+	color: var(--fb-text);
+	background: var(--fb-field-bg);
+	border: 1px solid var(--fb-border);
+	border-radius: calc(var(--fb-radius) * 0.75);
+	cursor: pointer;
+}
+
+.flexo-booking .fb-date.is-empty {
+	color: var(--fb-muted);
+}
+
+.flexo-booking .fb-date[aria-expanded="true"] {
+	border-color: var(--fb-primary);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--fb-primary) 25%, transparent);
+}
+
+.flexo-booking .fb-search {
+	position: relative;
+}
+
+.flexo-booking .fb-picker {
+	flex: 1 1 100%;
+	width: 100%;
+	padding: 12px;
+	border: 1px solid var(--fb-border);
+	border-radius: var(--fb-radius);
+	background: var(--fb-bg);
+	box-shadow: 0 8px 24px -12px color-mix(in srgb, var(--fb-text) 40%, transparent);
+}
+
+.flexo-booking .fb-picker__head {
+	position: relative;
+}
+
+.flexo-booking .fb-picker__months {
+	display: grid;
+	flex: 1 1 auto;
+	gap: 24px;
+	grid-template-columns: 1fr;
+}
+
+.flexo-booking .fb-picker.is-double .fb-picker__months {
+	grid-template-columns: 1fr 1fr;
+}
+
+.flexo-booking .fb-picker__nav {
+	position: absolute;
+	top: 0;
+	z-index: 1;
+	width: 44px;
+	height: 44px;
+	font-size: 1.5em;
+	line-height: 1;
+	color: var(--fb-text);
+	background: transparent;
+	border: 1px solid var(--fb-border);
+	border-radius: 50%;
+	cursor: pointer;
+}
+
+.flexo-booking .fb-picker__nav--prev {
+	left: 0;
+}
+
+.flexo-booking .fb-picker__nav--next {
+	right: 0;
+}
+
+.flexo-booking .fb-picker__nav:disabled {
+	opacity: 0.35;
+	cursor: default;
+}
+
+.flexo-booking .fb-month__title {
+	min-height: 44px;
+	margin: 0 0 4px;
+	padding: 10px 48px 0;
+	text-align: center;
+	font-size: 1em;
+	text-transform: capitalize;
+	font-family: var(--fb-heading-font);
+}
+
+.flexo-booking .fb-month__grid {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+	margin: 0;
+}
+
+.flexo-booking .fb-month__grid th {
+	padding: 4px 0;
+	font-size: 0.75em;
+	font-weight: 600;
+	text-align: center;
+	color: var(--fb-muted);
+	text-transform: capitalize;
+	border: 0;
+	background: none;
+}
+
+.flexo-booking .fb-month__grid td {
+	padding: 1px;
+	border: 0;
+	background: none;
+	text-align: center;
+}
+
+.flexo-booking .fb-day {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	min-height: 44px;
+	padding: 2px 0;
+	font: inherit;
+	font-size: 0.9375em;
+	line-height: 1.1;
+	color: var(--fb-text);
+	background: transparent;
+	border: 1px solid transparent;
+	border-radius: calc(var(--fb-radius) * 0.6);
+	cursor: pointer;
+}
+
+.flexo-booking .fb-day:hover:not([aria-disabled="true"]) {
+	border-color: var(--fb-primary);
+}
+
+.flexo-booking .fb-day.is-today {
+	font-weight: 700;
+}
+
+.flexo-booking .fb-day[aria-disabled="true"] {
+	cursor: not-allowed;
+	color: var(--fb-muted);
+}
+
+/* Unavailable: greyed and crossed out, not colour only. */
+.flexo-booking .fb-day.is-blocked {
+	text-decoration: line-through;
+	background: color-mix(in srgb, var(--fb-text) 6%, transparent);
+}
+
+.flexo-booking .fb-day.is-past {
+	opacity: 0.45;
+}
+
+.flexo-booking .fb-day.is-range {
+	background: color-mix(in srgb, var(--fb-primary) 14%, transparent);
+	border-radius: 0;
+}
+
+.flexo-booking .fb-day.is-start,
+.flexo-booking .fb-day.is-end {
+	color: var(--fb-primary-contrast);
+	background: var(--fb-primary);
+	text-decoration: none;
+	opacity: 1;
+}
+
+.flexo-booking .fb-day__price {
+	font-size: 0.6875rem;
+	font-weight: 400;
+	opacity: 0.85;
+}
+
+.flexo-booking .fb-picker__status {
+	margin: 10px 0 0;
+	font-size: 0.9375em;
+	font-weight: 600;
+}
+
+.flexo-booking .fb-picker.is-loading .fb-picker__months {
+	opacity: 0.6;
+}
+
+.flexo-booking .fb-picker__foot {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+	margin-top: 8px;
+}
+
+/* The stay, once rooms are shown */
+.flexo-booking .fb-stay {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 4px 16px;
+	padding: 10px 14px;
+	border: 1px solid var(--fb-border);
+	border-radius: var(--fb-radius);
+}
+
+.flexo-booking .fb-stay__text {
+	margin: 0;
+}
+
+/* Layout: summary next to the steps on wide forms, above them on narrow ones. */
+.flexo-booking .fb-layout {
+	display: flex;
+	flex-direction: column;
+	gap: var(--fb-gap);
+}
+
+.flexo-booking .fb-main {
+	min-width: 0;
+}
+
+.flexo-booking .fb-aside {
+	order: -1;
+	position: sticky;
+	top: var(--fb-sticky-top);
+	z-index: 6;
+	border: 1px solid var(--fb-border);
+	border-radius: var(--fb-radius);
+	background: var(--fb-bg);
+	box-shadow: 0 6px 16px -10px color-mix(in srgb, var(--fb-text) 45%, transparent);
+}
+
+.flexo-booking .fb-aside__toggle {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	width: 100%;
+	min-height: 48px;
+	padding: 10px 14px;
+	font: inherit;
+	text-align: left;
+	color: var(--fb-text);
+	background: transparent;
+	border: 0;
+	border-radius: var(--fb-radius);
+	cursor: pointer;
+}
+
+.flexo-booking .fb-aside__title {
+	flex: 0 0 auto;
+	white-space: nowrap;
+	font-weight: 700;
+	font-family: var(--fb-heading-font);
+}
+
+.flexo-booking .fb-aside__short {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-weight: 600;
+	text-align: right;
+}
+
+.flexo-booking .fb-aside__short::after {
+	content: "▾";
+	display: inline-block;
+	margin-left: 8px;
+	transition: transform 0.15s;
+}
+
+.flexo-booking .fb-aside.is-open .fb-aside__short::after {
+	transform: rotate(180deg);
+}
+
+.flexo-booking .fb-aside .fb-summary {
+	display: none;
+	margin: 0;
+	max-height: 60vh;
+	overflow: auto;
+	border-radius: 0 0 var(--fb-radius) var(--fb-radius);
+}
+
+.flexo-booking .fb-aside.is-open .fb-summary {
+	display: block;
+}
+
+/* Narrow forms: the stay summary only once a room is chosen. */
+.flexo-booking:not(.fb-wide).fb-step--rooms .fb-aside {
+	display: none;
+}
+
+.flexo-booking.fb-wide.has-aside .fb-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+	align-items: start;
+}
+
+.flexo-booking.fb-wide .fb-aside {
+	order: 0;
+	top: calc(var(--fb-sticky-top) + 16px);
+	box-shadow: none;
+}
+
+.flexo-booking.fb-wide .fb-aside__toggle {
+	cursor: default;
+}
+
+.flexo-booking.fb-wide .fb-aside__short {
+	display: none;
+}
+
+.flexo-booking.fb-wide .fb-aside .fb-summary {
+	display: block;
+	max-height: none;
+}
+
+.flexo-booking .fb-summary__stay {
+	margin: 0;
+}
+
+.flexo-booking .fb-summary__stay dt {
+	font-weight: 600;
+}
+
+.flexo-booking .fb-summary__stay dd {
+	margin: 0;
+	text-align: right;
+}
+
+.flexo-booking .fb-summary__hint {
+	margin: 8px 0 0;
+	color: var(--fb-muted);
+	font-size: 0.875em;
+}
+
+/* Room cards */
+.flexo-booking .fb-results__title {
+	margin: 4px 0 12px;
+	outline: none;
+}
+
+@media (min-width: 1025px) {
+	.flexo-booking .fb-room {
+		grid-template-columns: 200px 1fr auto;
+		align-items: start;
+	}
+}
+
+.flexo-booking .fb-room__image {
+	height: auto;
+	aspect-ratio: 4 / 3;
+	background: color-mix(in srgb, var(--fb-text) 7%, var(--fb-bg));
+}
+
+.flexo-booking .fb-room__image--empty {
+	background:
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23889' stroke-width='1.5'%3E%3Cpath d='M3 18V7m0 7h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5'/%3E%3Ccircle cx='7' cy='11' r='2'/%3E%3C/svg%3E") center / 48px no-repeat,
+		color-mix(in srgb, var(--fb-text) 7%, var(--fb-bg));
+}
+
+.flexo-booking .fb-room__facts,
+.flexo-booking .fb-room__amenities {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px 14px;
+	margin: 0 0 8px;
+	padding: 0;
+	list-style: none;
+	font-size: 0.9375em;
+}
+
+.flexo-booking .fb-room__facts li + li::before {
+	content: "·";
+	margin-right: 14px;
+	margin-left: -8px;
+	color: var(--fb-muted);
+}
+
+.flexo-booking .fb-room__amenities li {
+	font-size: 0.875em;
+	color: var(--fb-muted);
+}
+
+.flexo-booking .fb-room__amenities li::before {
+	content: "✓";
+	margin-right: 5px;
+	color: var(--fb-primary);
+	font-weight: 700;
+}
+
+.flexo-booking .fb-room__amenities .fb-room__amenities-more::before {
+	content: none;
+}
+
+.flexo-booking .fb-room__avg {
+	font-size: 0.8125em;
+}
+
+.flexo-booking .fb-rooms-loading {
+	display: grid;
+	gap: var(--fb-gap);
+}
+
+.flexo-booking .fb-skeleton-card {
+	display: grid;
+	grid-template-columns: 180px 1fr;
+	gap: var(--fb-gap);
+	padding: 12px;
+	border: 1px solid var(--fb-border);
+	border-radius: var(--fb-radius);
+}
+
+.flexo-booking .fb-skeleton--image {
+	aspect-ratio: 4 / 3;
+}
+
+.flexo-booking.fb-narrow .fb-skeleton-card {
+	grid-template-columns: 1fr;
+}
+
+.flexo-booking.fb-narrow .fb-skeleton--image {
+	aspect-ratio: 16 / 9;
+}
+
+.flexo-booking .fb-skeleton {
+	border-radius: 6px;
+	background: linear-gradient(90deg, color-mix(in srgb, var(--fb-text) 7%, var(--fb-bg)) 25%, color-mix(in srgb, var(--fb-text) 13%, var(--fb-bg)) 50%, color-mix(in srgb, var(--fb-text) 7%, var(--fb-bg)) 75%);
+	background-size: 200% 100%;
+	animation: fb-shimmer 1.2s linear infinite;
+}
+
+.flexo-booking .fb-skeleton--title {
+	width: 50%;
+	height: 1.4em;
+	margin-bottom: 10px;
+}
+
+.flexo-booking .fb-skeleton--line {
+	width: 80%;
+	height: 0.9em;
+	margin-bottom: 8px;
+}
+
+@keyframes fb-shimmer {
+	to {
+		background-position: -200% 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.flexo-booking .fb-skeleton,
+	.flexo-booking .fb-button.is-busy::before {
+		animation: none;
+	}
+}
+
+.flexo-booking .fb-plan__policy {
+	font-size: 0.875em;
+}
+
+/* Phone number with country code */
+.flexo-booking .fb-phone {
+	display: flex;
+	gap: 8px;
+}
+
+.flexo-booking .fb-phone input {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.flexo-booking .fb-phone__cc {
+	position: relative;
+	display: flex;
+	flex: 0 0 auto;
+	align-items: center;
+	justify-content: center;
+	min-width: 5.5em;
+	min-height: 46px;
+	padding: 0 22px 0 12px;
+	background: var(--fb-field-bg);
+	border: 1px solid var(--fb-border);
+	border-radius: calc(var(--fb-radius) * 0.75);
+}
+
+.flexo-booking .fb-phone__cc::after {
+	content: "▾";
+	position: absolute;
+	right: 8px;
+	font-size: 0.75em;
+	color: var(--fb-muted);
+}
+
+.flexo-booking .fb-phone__cc select {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	min-height: 0;
+	height: 100%;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.flexo-booking .fb-phone__cc:focus-within {
+	border-color: var(--fb-primary);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--fb-primary) 25%, transparent);
+}
+
+/* Before you book */
+.flexo-booking .fb-before {
+	margin-top: var(--fb-gap);
+	padding: 12px 14px;
+	border: 1px solid var(--fb-border);
+	border-left: 4px solid var(--fb-primary);
+	border-radius: calc(var(--fb-radius) * 0.75);
+}
+
+.flexo-booking .fb-before__title {
+	margin: 0 0 6px;
+	font-size: 1em;
+	font-family: var(--fb-heading-font);
+}
+
+.flexo-booking .fb-before__list {
+	margin: 0;
+	padding-left: 1.2em;
+}
+
+.flexo-booking .fb-before__list li {
+	margin: 2px 0;
+}
+
+.flexo-booking .fb-before a,
+.flexo-booking .fb-done a:not(.fb-button) {
+	color: var(--fb-primary);
+}
+
+/* Nothing free */
+.flexo-booking .fb-nothing {
+	padding: 16px;
+	border: 1px solid var(--fb-border);
+	border-radius: var(--fb-radius);
+}
+
+.flexo-booking .fb-nothing__title {
+	margin: 0 0 6px;
+	font-family: var(--fb-heading-font);
+}
+
+.flexo-booking .fb-nothing__subtitle {
+	margin: 12px 0 8px;
+	font-size: 1em;
+}
+
+.flexo-booking .fb-alternatives {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 8px;
+	margin: 0 0 12px;
+	padding: 0;
+	list-style: none;
+}
+
+.flexo-booking .fb-alt {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	width: 100%;
+	min-height: 44px;
+	padding: 10px 12px;
+	font: inherit;
+	text-align: left;
+	color: var(--fb-text);
+	background: color-mix(in srgb, var(--fb-primary) 6%, var(--fb-bg));
+	border: 1px solid var(--fb-border);
+	border-radius: calc(var(--fb-radius) * 0.75);
+	cursor: pointer;
+}
+
+.flexo-booking .fb-alt:hover {
+	border-color: var(--fb-primary);
+}
+
+.flexo-booking .fb-alt span {
+	font-size: 0.875em;
+	color: var(--fb-muted);
+}
+
+.flexo-booking .fb-nothing__ask {
+	margin-top: 12px;
+}
+
+.flexo-booking .fb-enquiry {
+	margin-top: 16px;
+}
+
+.flexo-booking .fb-enquiry__title {
+	margin: 0 0 4px;
+	font-size: 1em;
+}
+
+.flexo-booking .fb-enquiry__note {
+	margin: 0 0 12px;
+	color: var(--fb-muted);
+	font-size: 0.875em;
+}
+
+.flexo-booking .fb-enquiry__done,
+.flexo-booking .fb-manage__done {
+	padding: 12px 14px;
+	font-weight: 600;
+	border-radius: calc(var(--fb-radius) * 0.75);
+	background: color-mix(in srgb, var(--fb-primary) 10%, transparent);
+}
+
+/* Confirmation and guest booking page */
+.flexo-booking .fb-success {
+	text-align: left;
+}
+
+.flexo-booking .fb-done__head {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 8px;
+}
+
+.flexo-booking .fb-done__icon {
+	display: inline-flex;
+	flex: 0 0 auto;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	font-weight: 700;
+	color: var(--fb-primary-contrast);
+	background: var(--fb-primary);
+}
+
+.flexo-booking .fb-done__title {
+	margin: 0;
+	font-family: var(--fb-heading-font);
+	outline: none;
+}
+
+.flexo-booking .fb-done__section {
+	margin-top: 16px;
+	padding-top: 12px;
+	border-top: 1px solid var(--fb-border);
+}
+
+.flexo-booking .fb-done__subtitle {
+	margin: 0 0 8px;
+	font-size: 1em;
+	font-family: var(--fb-heading-font);
+}
+
+.flexo-booking .fb-done__list {
+	margin: 0;
+}
+
+.flexo-booking .fb-done__row {
+	display: flex;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 3px 0;
+}
+
+.flexo-booking .fb-done__row dt {
+	color: var(--fb-muted);
+}
+
+.flexo-booking .fb-done__row dd {
+	margin: 0;
+	text-align: right;
+}
+
+.flexo-booking .fb-done__line {
+	font-size: 0.875em;
+}
+
+.flexo-booking .fb-done__total {
+	font-weight: 700;
+	border-top: 1px solid var(--fb-border);
+	margin-top: 4px;
+	padding-top: 6px;
+}
+
+.flexo-booking .fb-done__next ul {
+	margin: 0;
+	padding-left: 1.2em;
+}
+
+.flexo-booking .fb-done__address {
+	white-space: pre-line;
+}
+
+.flexo-booking .fb-badge {
+	display: inline-block;
+	padding: 2px 10px;
+	border-radius: 999px;
+	font-size: 0.875em;
+	background: color-mix(in srgb, var(--fb-primary) 15%, var(--fb-bg));
+}
+
+.flexo-booking .fb-badge--cancelled,
+.flexo-booking .fb-badge--expired,
+.flexo-booking .fb-badge--failed {
+	background: color-mix(in srgb, var(--fb-error) 12%, var(--fb-bg));
+	color: var(--fb-error);
+}
+
+.flexo-booking .fb-manage__requests {
+	margin: 0 0 12px;
+	padding-left: 1.2em;
+}
+
+.flexo-booking .fb-manage__types {
+	display: grid;
+	gap: 8px;
+	margin: 0 0 12px;
+	padding: 0;
+	border: 0;
+}
+
+.flexo-booking .fb-manage__types legend {
+	margin-bottom: 6px;
+	font-weight: 600;
+	font-size: 0.875em;
+}
+
+.flexo-booking .fb-actions--result {
+	justify-content: flex-start;
+	align-items: center;
+}
+
+@media (max-width: 1024px) {
+	.flexo-booking .fb-success {
+		text-align: left;
+	}
+
+	.flexo-booking .fb-actions--result {
+		justify-content: center;
+	}
+}
+
+/* Narrow forms: only the current step is named. */
+.flexo-booking.fb-narrow .fb-steps__label {
+	display: none;
+}
+
+.flexo-booking.fb-narrow .fb-steps__item.is-current .fb-steps__label {
+	display: inline;
+}
+
+.flexo-booking.fb-narrow .fb-steps__item {
+	flex: 0 0 auto;
+}
+
+.flexo-booking.fb-narrow .fb-steps__item.is-current {
+	flex: 1 1 auto;
+}
+
+@media (max-width: 767px) {
+
+	.flexo-booking .fb-room__image {
+		height: auto;
+		aspect-ratio: 16 / 9;
+	}
+
+	.flexo-booking .fb-picker {
+		padding: 8px;
+	}
+
+	.flexo-booking .fb-picker__nav {
+		width: 40px;
+		height: 40px;
+	}
+
+	.flexo-booking .fb-done__row {
+		flex-direction: column;
+		gap: 0;
+	}
+
+	.flexo-booking .fb-done__row dd {
+		text-align: left;
+	}
+
+	.flexo-booking .fb-actions--result .fb-button {
+		width: 100%;
+	}
+}
+
+@media (max-width: 1024px) {
+	.flexo-booking .fb-room__facts,
+	.flexo-booking .fb-room__amenities {
+		justify-content: center;
+	}
+}
+
+/* Unavailable rooms: the reason stays readable (no fading of the text). */
+.flexo-booking .fb-room.is-unavailable {
+	opacity: 1;
+}
+
+.flexo-booking .fb-room.is-unavailable .fb-room__image {
+	opacity: 0.5;
+	filter: grayscale(1);
+}
+
+.flexo-booking .fb-room.is-unavailable .fb-room__total {
+	color: var(--fb-muted);
+}
+
+/* Larger screens with a narrow booking column: the summary stays in place, open. */
+@media (min-width: 768px) {
+	.flexo-booking:not(.fb-wide) .fb-aside {
+		position: static;
+		box-shadow: none;
+	}
+}
+
+.flexo-booking .fb-promo-slot:empty {
+	display: none;
+}
+
+.flexo-booking .fb-promo-slot {
+	margin-top: var(--fb-gap);
+}

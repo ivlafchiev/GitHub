@@ -21,7 +21,61 @@ class Flexo_Booking_Rooms {
 		'_flexo_units'         => 'int',
 		'_flexo_min_nights'    => 'int',
 		'_flexo_max_adults'    => 'int',
+		// Day 6: shown on the room cards.
+		'_flexo_size'          => 'int',
+		'_flexo_beds'          => 'text',
+		'_flexo_amenities'     => 'list',
 	);
+
+	/**
+	 * Amenities a room can list (key => label). Room cards show up to 5.
+	 */
+	public static function amenities() {
+		return apply_filters(
+			'flexo_booking_amenities',
+			array(
+				'wifi'            => __( 'Free Wi-Fi', 'flexo-booking' ),
+				'air_conditioning' => __( 'Air conditioning', 'flexo-booking' ),
+				'private_bathroom' => __( 'Private bathroom', 'flexo-booking' ),
+				'balcony'         => __( 'Balcony', 'flexo-booking' ),
+				'terrace'         => __( 'Terrace', 'flexo-booking' ),
+				'sea_view'        => __( 'Sea view', 'flexo-booking' ),
+				'mountain_view'   => __( 'Mountain view', 'flexo-booking' ),
+				'garden_view'     => __( 'Garden view', 'flexo-booking' ),
+				'kitchen'         => __( 'Kitchen', 'flexo-booking' ),
+				'kitchenette'     => __( 'Kitchenette', 'flexo-booking' ),
+				'tv'              => __( 'TV', 'flexo-booking' ),
+				'minibar'         => __( 'Minibar', 'flexo-booking' ),
+				'fridge'          => __( 'Fridge', 'flexo-booking' ),
+				'coffee'          => __( 'Coffee / tea maker', 'flexo-booking' ),
+				'safe'            => __( 'Safe', 'flexo-booking' ),
+				'bathtub'         => __( 'Bathtub', 'flexo-booking' ),
+				'heating'         => __( 'Heating', 'flexo-booking' ),
+				'washing_machine' => __( 'Washing machine', 'flexo-booking' ),
+				'parking'         => __( 'Free parking', 'flexo-booking' ),
+				'pets'            => __( 'Pets allowed', 'flexo-booking' ),
+				'accessible'      => __( 'Step-free access', 'flexo-booking' ),
+				'non_smoking'     => __( 'Non-smoking', 'flexo-booking' ),
+			)
+		);
+	}
+
+	/**
+	 * Names of a room's amenities, in the order of the amenity list.
+	 *
+	 * @param string[] $keys
+	 * @return string[]
+	 */
+	public static function amenity_labels( array $keys ) {
+		$all = self::amenities();
+		$out = array();
+		foreach ( $all as $key => $label ) {
+			if ( in_array( $key, $keys, true ) ) {
+				$out[] = $label;
+			}
+		}
+		return $out;
+	}
 
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'register_post_type' ) );
@@ -65,12 +119,17 @@ class Flexo_Booking_Rooms {
 
 	public static function render_meta_box( $post ) {
 		$room = self::to_array( $post );
+		// Sensible starting values for a new room (a free, one-guest room is never what a hotel wants).
+		if ( 'auto-draft' === $post->post_status ) {
+			$room['capacity'] = 2;
+			$room['price']    = '';
+		}
 		wp_nonce_field( 'flexo_room_meta', 'flexo_room_nonce' );
 		?>
 		<table class="form-table" role="presentation">
 			<tr>
 				<th scope="row"><label for="flexo-price"><?php esc_html_e( 'Price per night', 'flexo-booking' ); ?></label></th>
-				<td><input id="flexo-price" type="number" min="0" step="0.01" name="_flexo_price" value="<?php echo esc_attr( $room['price'] ); ?>"> <?php echo esc_html( Flexo_Booking_Settings::get( 'currency' ) ); ?></td>
+				<td><input id="flexo-price" type="number" min="0" step="0.01" name="_flexo_price" value="<?php echo esc_attr( $room['price'] ); ?>" required> <?php echo esc_html( Flexo_Booking_Settings::get( 'currency' ) ); ?></td>
 			</tr>
 			<tr>
 				<th scope="row"><label for="flexo-weekend-price"><?php esc_html_e( 'Weekend price per night', 'flexo-booking' ); ?></label></th>
@@ -130,6 +189,26 @@ class Flexo_Booking_Rooms {
 					<p class="description"><?php esc_html_e( 'Optional. Leave empty to use the global setting.', 'flexo-booking' ); ?><?php echo Flexo_Booking_Seasons::enabled() ? ' ' . esc_html__( 'Seasons can set their own minimum.', 'flexo-booking' ) : ''; ?></p>
 				</td>
 			</tr>
+			<tr>
+				<th scope="row"><label for="flexo-size"><?php esc_html_e( 'Size', 'flexo-booking' ); ?></label></th>
+				<td><input id="flexo-size" type="number" min="0" class="small-text" name="_flexo_size" value="<?php echo esc_attr( $room['size'] ? $room['size'] : '' ); ?>"> m² <span class="description"><?php esc_html_e( 'Optional. Shown on the room card.', 'flexo-booking' ); ?></span></td>
+			</tr>
+			<tr>
+				<th scope="row"><label for="flexo-beds"><?php esc_html_e( 'Beds', 'flexo-booking' ); ?></label></th>
+				<td><input id="flexo-beds" type="text" class="regular-text" name="_flexo_beds" value="<?php echo esc_attr( $room['beds'] ); ?>" placeholder="<?php esc_attr_e( 'e.g. 1 double bed or 2 single beds', 'flexo-booking' ); ?>"> <p class="description"><?php esc_html_e( 'Optional. Shown on the room card.', 'flexo-booking' ); ?></p></td>
+			</tr>
+			<tr>
+				<th scope="row"><?php esc_html_e( 'Amenities', 'flexo-booking' ); ?></th>
+				<td>
+					<input type="hidden" name="_flexo_amenities[]" value="">
+					<div class="flexo-amenities">
+						<?php foreach ( self::amenities() as $flexo_key => $flexo_label ) : ?>
+							<label><input type="checkbox" name="_flexo_amenities[]" value="<?php echo esc_attr( $flexo_key ); ?>" <?php checked( in_array( $flexo_key, $room['amenities'], true ) ); ?>> <?php echo esc_html( $flexo_label ); ?></label>
+						<?php endforeach; ?>
+					</div>
+					<p class="description"><?php esc_html_e( 'The room card shows the first five you tick, in this order.', 'flexo-booking' ); ?></p>
+				</td>
+			</tr>
 			<?php if ( Flexo_Booking_Rate_Plans::enabled() ) : ?>
 				<tr>
 					<th scope="row"><?php esc_html_e( 'Rate plans', 'flexo-booking' ); ?></th>
@@ -172,6 +251,10 @@ class Flexo_Booking_Rooms {
 			if ( '_flexo_max_adults' === $key && ! isset( $_POST[ $key ] ) ) {
 				continue; // Field hidden while "Children & ages" is off: keep the saved value.
 			}
+			if ( 'list' === self::META[ $key ] ) {
+				$values[ $key ] = isset( $_POST[ $key ] ) ? array_map( 'sanitize_key', (array) wp_unslash( $_POST[ $key ] ) ) : null;
+				continue;
+			}
 			$values[ $key ] = isset( $_POST[ $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) : '';
 		}
 		self::save_meta_values( $post_id, $values );
@@ -197,11 +280,20 @@ class Flexo_Booking_Rooms {
 				continue;
 			}
 			$value = $values[ $key ];
-			if ( '' === $value || null === $value ) {
+			if ( 'list' === $type ) {
+				$value = array_values( array_intersect( array_keys( self::amenities() ), array_map( 'sanitize_key', (array) $value ) ) );
+			}
+			if ( '' === $value || null === $value || array() === $value ) {
 				delete_post_meta( $post_id, $key );
 				continue;
 			}
-			$value = 'float' === $type ? max( 0, round( (float) $value, 2 ) ) : absint( $value );
+			if ( 'text' === $type ) {
+				$value = substr( sanitize_text_field( $value ), 0, 190 );
+			} elseif ( 'float' === $type ) {
+				$value = max( 0, round( (float) $value, 2 ) );
+			} elseif ( 'int' === $type ) {
+				$value = absint( $value );
+			}
 			update_post_meta( $post_id, $key, $value );
 		}
 	}
@@ -268,6 +360,9 @@ class Flexo_Booking_Rooms {
 			'min_nights_override' => $min,
 			'min_nights'          => $min > 0 ? $min : (int) Flexo_Booking_Settings::get( 'min_nights' ),
 			'max_adults'          => (int) get_post_meta( $post->ID, '_flexo_max_adults', true ),
+			'size'                => (int) get_post_meta( $post->ID, '_flexo_size', true ),
+			'beds'                => (string) get_post_meta( $post->ID, '_flexo_beds', true ),
+			'amenities'           => array_values( array_filter( (array) get_post_meta( $post->ID, '_flexo_amenities', true ) ) ),
 		);
 	}
 

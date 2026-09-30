@@ -51,7 +51,7 @@ class Flexo_Booking_Closures {
 	/**
 	 * All closures (any room) touching a stay – one query per search.
 	 */
-	private static function for_range( $check_in, $check_out ) {
+	public static function for_range( $check_in, $check_out ) {
 		global $wpdb;
 		$key = $check_in . '|' . $check_out;
 		if ( ! isset( self::$cache[ $key ] ) ) {

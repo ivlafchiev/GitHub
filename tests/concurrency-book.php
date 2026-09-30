@@ -17,7 +17,7 @@ $result = Flexo_Booking_Bookings::create(
 		'adults'      => 1,
 		'guest_name'  => 'Racer ' . getenv( 'RACER' ),
 		'guest_email' => 'racer@example.com',
-		'guest_phone' => '1',
+		'guest_phone' => '+359 888 000 111',
 		// RACE_PAY: both guests start a card payment (a hold on the room).
 		'payment_method' => getenv( 'RACE_PAY' ) ? 'stripe' : '',
 	)

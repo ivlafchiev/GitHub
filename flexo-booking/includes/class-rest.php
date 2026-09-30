@@ -142,6 +142,11 @@ class Flexo_Booking_Rest {
 							'type'    => 'string',
 							'default' => '',
 						),
+						// ISO country of the phone number ("BG"); numbers starting with + or 00 keep their own code.
+						'phone_country' => array(
+							'type'    => 'string',
+							'default' => '',
+						),
 						'notes'       => array(
 							'type'    => 'string',
 							'default' => '',
@@ -466,16 +471,13 @@ class Flexo_Booking_Rest {
 				'guest_name'  => $request['guest_name'],
 				'guest_email' => $request['guest_email'],
 				'guest_phone' => $request['guest_phone'],
+				'phone_country' => $request['phone_country'],
 				'notes'       => $request['notes'],
 				'source'      => 'website',
 			)
 		);
 
 		if ( is_wp_error( $booking ) ) {
-			if ( in_array( $booking->get_error_code(), array( 'flexo_consent', 'flexo_invoice' ), true ) ) {
-				$booking->add_data( array( 'status' => 400 ) );
-				return $booking;
-			}
 			$booking->add_data( array_merge( (array) $booking->get_error_data(), array( 'status' => in_array( $booking->get_error_code(), array( 'flexo_unavailable', 'flexo_closed', 'flexo_busy', 'flexo_price_changed' ), true ) ? 409 : 400 ) ) );
 			return $booking;
 		}
@@ -513,6 +515,9 @@ class Flexo_Booking_Rest {
 				'redirect'        => $redirect,
 				// Payment details (bank transfer) or the payment page to go to (card).
 				'payment'         => $payment ? array_merge( $payment, array( 'key' => $booking['access_token'] ) ) : null,
+				// The confirmation, and the key that shows it again after a refresh.
+				'key'             => Flexo_Booking_Guest::key( $booking ),
+				'view'            => $payment && ! empty( $payment['redirect'] ) ? null : Flexo_Booking_Guest::view( Flexo_Booking_Bookings::get( $booking['id'] ) ),
 			),
 			201
 		);

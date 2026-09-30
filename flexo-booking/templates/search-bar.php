@@ -21,7 +21,7 @@
 
 defined( 'ABSPATH' ) || exit;
 ?>
-<div class="flexo-booking flexo-booking--search" data-flexo-booking-search>
+<div class="flexo-booking flexo-booking--search" data-flexo-booking-search<?php echo Flexo_Booking_Frontend::locale_attributes(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in locale_attributes(). ?>>
 	<?php if ( $atts['title'] ) : ?>
 		<h3 class="fb-title"><?php echo esc_html( $atts['title'] ); ?></h3>
 	<?php endif; ?>

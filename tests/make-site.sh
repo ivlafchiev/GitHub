@@ -31,7 +31,16 @@ sed -i "s/define( 'WP_DEBUG', false );/define( 'WP_DEBUG', true ); define( 'WP_D
 # Capture outgoing email instead of sending it.
 cat > "$SITE/wp-content/mu-plugins/capture-mail.php" <<'PHP'
 <?php
+// The plain-text part of Flexo Booking emails is kept with the message.
+add_filter( 'flexo_booking_email', function ( $email ) {
+	$GLOBALS['flexo_mail_text'] = $email['text'];
+	return $email;
+}, 99 );
 add_filter( 'pre_wp_mail', function ( $null, $atts ) {
+	if ( ! empty( $GLOBALS['flexo_mail_text'] ) ) {
+		$atts['message'] .= "\n<!-- text -->\n" . $GLOBALS['flexo_mail_text'];
+		$GLOBALS['flexo_mail_text'] = '';
+	}
 	$GLOBALS['flexo_mails'][] = $atts;
 	$log = WP_CONTENT_DIR . '/mail.log';
 	file_put_contents( $log, wp_json_encode( $atts ) . "\n", FILE_APPEND );

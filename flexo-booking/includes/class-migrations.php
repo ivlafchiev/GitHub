@@ -192,10 +192,30 @@ class Flexo_Booking_Migrations {
 	}
 
 	/**
-	 * Day 6 (1.6.0): Appearance settings switched on (the form keeps
-	 * matching the website until the hotel chooses Custom).
+	 * Day 6 (1.6.0): booking history, staff notes and rate plan meals;
+	 * Appearance switched on (the form keeps matching the website until the
+	 * hotel chooses Custom).
 	 */
 	private static function migrate_7_day6() {
+		global $wpdb;
+		if ( ! Flexo_Booking_Schema::table_exists( 'booking_log' ) ) {
+			return new WP_Error( 'flexo_migration', 'booking_log table missing' );
+		}
+		foreach ( array( 'bookings' => 'staff_notes', 'rate_plans' => 'meals' ) as $table => $column ) {
+			if ( ! Flexo_Booking_Schema::column_exists( $table, $column ) ) {
+				return new WP_Error( 'flexo_migration', $table . '.' . $column . ' column missing' );
+			}
+		}
+		// Plans made from a ready-made plan state their meals.
+		$plans = Flexo_Booking_Schema::table( 'rate_plans' );
+		foreach ( array( 'room_only' => 'none', 'breakfast' => 'breakfast', 'half_board' => 'half_board', 'full_board' => 'full_board', 'all_inclusive' => 'all_inclusive' ) as $preset => $meals ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from the schema.
+			$wpdb->query( $wpdb->prepare( "UPDATE {$plans} SET meals = %s WHERE preset = %s AND meals = ''", $meals, $preset ) );
+		}
+		if ( class_exists( 'Flexo_Booking_Rate_Plans' ) ) {
+			Flexo_Booking_Rate_Plans::flush_cache();
+		}
+
 		$enabled = get_option( Flexo_Booking_Features::ENABLED_OPTION, false );
 		if ( is_array( $enabled ) && ! in_array( 'custom_appearance', $enabled, true ) ) {
 			$enabled[] = 'custom_appearance';

@@ -1,12 +1,18 @@
 /**
  * Flexo Booking – front-end booking flow.
  * Vanilla JS, no dependencies. Works with the shortcode and the Elementor widget.
+ *
+ * Steps: Dates → Room → Your details → (Payment) → Confirmation. The step,
+ * dates, guests, room, rate and promo code are kept in the address (no
+ * personal data), so Back/Forward move between steps and a refresh keeps
+ * the place. Guest details stay in the page only.
  */
 ( function () {
 	'use strict';
 
 	var cfg = window.FlexoBookingConfig || { restUrl: '/wp-json/flexo-booking/v1/', minNights: 1, i18n: {} };
-	var t = cfg.i18n;
+	var t = cfg.i18n || {};
+	var urlOwner = null; // Only the first full form on a page uses the address.
 
 	function apiUrl( path, params ) {
 		var url = cfg.restUrl + path;
@@ -27,6 +33,7 @@
 					if ( ! res.ok ) {
 						var err = new Error( body && body.message ? body.message : t.genericError );
 						err.code = body && body.code ? body.code : '';
+						err.data = body && body.data ? body.data : {};
 						throw err;
 					}
 					return body;
@@ -34,12 +41,27 @@
 			} );
 	}
 
+	function postJson( path, payload ) {
+		return request( apiUrl( path ), {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+			body: JSON.stringify( payload ),
+		} );
+	}
+
 	function fmt( str, n ) {
-		return String( str ).replace( '%d', n ).replace( '%s', n );
+		return String( str || '' ).replace( '%d', n ).replace( '%s', n );
+	}
+
+	function fmtN( str ) {
+		var args = Array.prototype.slice.call( arguments, 1 );
+		return String( str || '' ).replace( /%(\d)\$[sd]/g, function ( m, i ) {
+			return args[ i - 1 ] !== undefined ? args[ i - 1 ] : m;
+		} );
 	}
 
 	function parseDate( ymd ) {
-		var p = ymd.split( '-' );
+		var p = String( ymd ).split( '-' );
 		return new Date( +p[ 0 ], +p[ 1 ] - 1, +p[ 2 ] );
 	}
 
@@ -49,21 +71,52 @@
 		return date.getFullYear() + '-' + m + '-' + d;
 	}
 
+	function addDays( ymd, n ) {
+		var d = parseDate( ymd );
+		d.setDate( d.getDate() + n );
+		return toYmd( d );
+	}
+
+	function diffDays( a, b ) {
+		return Math.round( ( parseDate( b ) - parseDate( a ) ) / 86400000 );
+	}
+
+	function lang( locale ) {
+		return locale ? locale.replace( '_', '-' ) : ( document.documentElement.lang || undefined );
+	}
+
 	/**
 	 * Date for guests: DD.MM.YYYY where the language writes it so (e.g.
 	 * Bulgarian), otherwise the browser's format for the page language.
 	 */
 	function humanDate( ymd, format, locale ) {
+		if ( ! ymd ) {
+			return '';
+		}
 		if ( format === 'd.m.Y' ) {
 			var p = ymd.split( '-' );
 			return p[ 2 ] + '.' + p[ 1 ] + '.' + p[ 0 ];
 		}
-		var lang = locale ? locale.replace( '_', '-' ) : ( document.documentElement.lang || undefined );
 		try {
-			return parseDate( ymd ).toLocaleDateString( lang, { day: 'numeric', month: 'short', year: 'numeric' } );
+			return parseDate( ymd ).toLocaleDateString( lang( locale ), { day: 'numeric', month: 'short', year: 'numeric' } );
 		} catch ( e ) {
 			return ymd;
 		}
+	}
+
+	/**
+	 * Short date with the weekday, e.g. "Mon, 19 Oct".
+	 */
+	function shortDate( ymd, locale ) {
+		try {
+			return parseDate( ymd ).toLocaleDateString( lang( locale ), { weekday: 'short', day: 'numeric', month: 'short' } );
+		} catch ( e ) {
+			return ymd;
+		}
+	}
+
+	function nightsText( n ) {
+		return n === 1 ? t.night1 : fmt( t.nightsN, n );
 	}
 
 	/**
@@ -101,12 +154,196 @@
 		} catch ( e ) {}
 	}
 
+	var uidCounter = 0;
+	function uid( prefix ) {
+		uidCounter++;
+		return ( prefix || 'fb' ) + '-' + Math.random().toString( 36 ).slice( 2, 7 ) + uidCounter;
+	}
+
+	function el( tag, className, text ) {
+		var node = document.createElement( tag );
+		if ( className ) {
+			node.className = className;
+		}
+		if ( text !== undefined && text !== null ) {
+			node.textContent = text;
+		}
+		return node;
+	}
+
+	function button( className, text ) {
+		var b = el( 'button', className, text );
+		b.type = 'button';
+		return b;
+	}
+
+	/**
+	 * Moves focus without jumping behind a sticky bar.
+	 */
+	function focusEl( node ) {
+		if ( ! node ) {
+			return;
+		}
+		if ( ! node.hasAttribute( 'tabindex' ) && ! /^(A|BUTTON|INPUT|SELECT|TEXTAREA)$/.test( node.tagName ) ) {
+			node.setAttribute( 'tabindex', '-1' );
+		}
+		try {
+			node.focus( { preventScroll: true } );
+		} catch ( e ) {
+			node.focus();
+		}
+		var rect = node.getBoundingClientRect();
+		var top = 90;
+		if ( rect.top < top || rect.bottom > window.innerHeight - 120 ) {
+			window.scrollTo( { top: Math.max( 0, window.pageYOffset + rect.top - top ), behavior: 'auto' } );
+		}
+	}
+
+	/* ---------------------------------------------------------------------
+	 * Field validation: messages under the field, in the page's language.
+	 * ------------------------------------------------------------------- */
+
+	var EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+	function isShown( field ) {
+		return ! field.disabled && ! field.closest( '[hidden]' ) && field.type !== 'hidden';
+	}
+
+	function errorAnchor( field ) {
+		if ( field.type === 'checkbox' || field.type === 'radio' ) {
+			return field.closest( 'label, fieldset' ) || field;
+		}
+		return field.closest( '.fb-phone' ) || field;
+	}
+
+	function setError( field, message ) {
+		if ( ! field ) {
+			return;
+		}
+		clearError( field );
+		if ( ! message ) {
+			return;
+		}
+		var id = ( field.id || uid( 'fb-f' ) ) + '-error';
+		var p = el( 'p', 'fb-field__error', message );
+		p.id = id;
+		errorAnchor( field ).insertAdjacentElement( 'afterend', p );
+		field.setAttribute( 'aria-invalid', 'true' );
+		var described = ( field.getAttribute( 'aria-describedby' ) || '' ).split( ' ' ).filter( Boolean );
+		described.push( id );
+		field.setAttribute( 'aria-describedby', described.join( ' ' ) );
+		field._fbError = p;
+	}
+
+	function clearError( field ) {
+		if ( ! field || ! field._fbError ) {
+			return;
+		}
+		var id = field._fbError.id;
+		field._fbError.remove();
+		field._fbError = null;
+		field.removeAttribute( 'aria-invalid' );
+		var described = ( field.getAttribute( 'aria-describedby' ) || '' ).split( ' ' ).filter( function ( d ) {
+			return d && d !== id;
+		} );
+		if ( described.length ) {
+			field.setAttribute( 'aria-describedby', described.join( ' ' ) );
+		} else {
+			field.removeAttribute( 'aria-describedby' );
+		}
+	}
+
+	/**
+	 * @return {string} Error message, or '' when the field is fine.
+	 */
+	function checkField( field ) {
+		if ( ! isShown( field ) ) {
+			return '';
+		}
+		var name = field.name;
+		var value = field.type === 'checkbox' ? ( field.checked ? '1' : '' ) : String( field.value || '' ).trim();
+		var messages = {
+			guest_name: t.nameMissing,
+			name: t.nameMissing,
+			guest_email: t.emailMissing,
+			email: t.emailMissing,
+			guest_phone: t.phoneMissing,
+			phone: t.phoneMissing,
+			terms: t.termsMissing,
+			privacy_consent: t.consent,
+			'children_ages[]': t.ageMissing,
+		};
+		if ( field.required && ! value ) {
+			return field.getAttribute( 'data-fb-message' ) || messages[ name ] || t.required;
+		}
+		if ( value && field.type === 'email' && ! EMAIL.test( value ) ) {
+			return t.emailInvalid;
+		}
+		if ( value && field.type === 'tel' ) {
+			var digits = value.replace( /\D/g, '' ).length;
+			if ( digits < 6 || digits > 15 ) {
+				return t.phoneInvalid;
+			}
+		}
+		return '';
+	}
+
+	/**
+	 * Checks on leaving a field; clears the message while correcting it.
+	 */
+	function bindValidation( form ) {
+		if ( ! form ) {
+			return;
+		}
+		form.addEventListener( 'focusout', function ( e ) {
+			var f = e.target;
+			if ( ! f.name || ! /^(INPUT|SELECT|TEXTAREA)$/.test( f.tagName ) || f.type === 'checkbox' || f.type === 'radio' ) {
+				return;
+			}
+			if ( f.value !== '' || f._fbTouched ) {
+				f._fbTouched = true;
+				setError( f, checkField( f ) );
+			}
+		} );
+		function recheck( e ) {
+			var f = e.target;
+			if ( f && f._fbError ) {
+				var msg = checkField( f );
+				if ( ! msg ) {
+					clearError( f );
+				} else if ( f.type === 'checkbox' || f.tagName === 'SELECT' ) {
+					setError( f, msg );
+				}
+			}
+		}
+		form.addEventListener( 'input', recheck );
+		form.addEventListener( 'change', recheck );
+	}
+
+	/**
+	 * @return {Element|null} The first field with a problem.
+	 */
+	function validateForm( form ) {
+		var first = null;
+		form.querySelectorAll( 'input, select, textarea' ).forEach( function ( f ) {
+			if ( ! f.name || f.name === 'fb_website' ) {
+				return;
+			}
+			var msg = checkField( f );
+			setError( f, msg );
+			if ( msg && ! first ) {
+				first = f;
+			}
+		} );
+		return first;
+	}
+
 	/**
 	 * The invoice part of the details form: shown when "I would like an
 	 * invoice" is ticked, with the fields for a person or a company.
 	 */
 	function bindInvoice( form ) {
-		var box = form.querySelector( '[data-fb-invoice]' );
+		var box = form ? form.querySelector( '[data-fb-invoice]' ) : null;
 		if ( ! box ) {
 			return;
 		}
@@ -123,25 +360,18 @@
 				field.hidden = ! show;
 				input.disabled = ! show;
 				input.required = show && input.getAttribute( 'data-required' ) === '1';
+				if ( ! show ) {
+					clearError( input );
+				}
 			} );
 		}
 		box.addEventListener( 'change', sync );
 		sync();
 	}
 
-	function el( tag, className, text ) {
-		var node = document.createElement( tag );
-		if ( className ) {
-			node.className = className;
-		}
-		if ( text !== undefined && text !== null ) {
-			node.textContent = text;
-		}
-		return node;
-	}
-
 	/**
-	 * Keeps check-out after check-in on both the full form and the search bar.
+	 * Keeps check-out after check-in when the native date fields are used
+	 * (no date picker).
 	 */
 	function bindDates( form ) {
 		var checkIn = form.querySelector( '[name="check_in"]' );
@@ -186,7 +416,7 @@
 		var initial = ( box.getAttribute( 'data-fb-ages' ) || '' ).split( ',' ).filter( function ( v ) {
 			return v !== '';
 		} );
-		var uid = 'fb-age-' + Math.random().toString( 36 ).slice( 2, 8 );
+		var id = uid( 'fb-age' );
 
 		function render() {
 			var count = parseInt( children.value, 10 ) || 0;
@@ -194,15 +424,16 @@
 				return sel.value;
 			} );
 			if ( ! current.length ) {
-				current = initial;
+				current = box._fbAges || initial;
 			}
+			box._fbAges = null;
 			box.innerHTML = '';
 			for ( var i = 0; i < count; i++ ) {
 				var field = el( 'div', 'fb-field fb-field--small fb-field--age' );
 				var label = el( 'label', '', fmt( t.childAge, i + 1 ) );
-				label.htmlFor = uid + '-' + i;
+				label.htmlFor = id + '-' + i;
 				var select = el( 'select' );
-				select.id = uid + '-' + i;
+				select.id = id + '-' + i;
 				select.name = 'children_ages[]';
 				select.required = true;
 				var pick = el( 'option', '', t.agePick );
@@ -223,10 +454,595 @@
 			box.hidden = count === 0;
 		}
 		children.addEventListener( 'change', render );
+		box._fbRender = function ( ages ) {
+			box._fbAges = ages;
+			box.innerHTML = '';
+			render();
+		};
 		render();
 	}
 
+	/* ---------------------------------------------------------------------
+	 * Date picker: an accessible range calendar on top of the check-in and
+	 * check-out fields (which stay in the form with the same names). It
+	 * greys out and strikes through days that can't be booked, and shows
+	 * the minimum stay. The server still checks everything.
+	 * ------------------------------------------------------------------- */
+
+	function DatePicker( form, options ) {
+		this.form = form;
+		this.options = options || {};
+		this.inInput = form.querySelector( '[name="check_in"]' );
+		this.outInput = form.querySelector( '[name="check_out"]' );
+		this.enhanced = false;
+		if ( ! this.inInput || ! this.outInput || ! window.fetch || ! window.URLSearchParams ) {
+			return;
+		}
+		this.enhanced = true;
+		this.locale = this.options.locale || '';
+		this.cache = {};
+		this.data = null;
+		this.mode = 'in';
+		var self = this;
+
+		this.buttons = {};
+		[ [ 'in', this.inInput ], [ 'out', this.outInput ] ].forEach( function ( pair ) {
+			var input = pair[ 1 ];
+			var btn = button( 'fb-date' );
+			btn.id = ( input.id || uid( 'fb-date' ) ) + '-btn';
+			btn.setAttribute( 'aria-haspopup', 'dialog' );
+			btn.setAttribute( 'aria-expanded', 'false' );
+			var label = input.id ? form.querySelector( 'label[for="' + input.id + '"]' ) : null;
+			if ( label ) {
+				label.htmlFor = btn.id;
+				label.id = label.id || btn.id + '-label';
+			}
+			input.insertAdjacentElement( 'afterend', btn );
+			input.classList.add( 'fb-native-date' );
+			input.tabIndex = -1;
+			input.setAttribute( 'aria-hidden', 'true' );
+			btn.addEventListener( 'click', function () {
+				if ( self.isOpen() && self.mode === pair[ 0 ] ) {
+					self.close();
+				} else {
+					self.open( pair[ 0 ] );
+				}
+			} );
+			self.buttons[ pair[ 0 ] ] = btn;
+		} );
+
+		this.panel = el( 'div', 'fb-picker' );
+		this.panel.id = uid( 'fb-picker' );
+		this.panel.setAttribute( 'role', 'dialog' );
+		this.panel.setAttribute( 'aria-label', t.datesDialog );
+		this.panel.hidden = true;
+		this.buttons.in.setAttribute( 'aria-controls', this.panel.id );
+		this.buttons.out.setAttribute( 'aria-controls', this.panel.id );
+
+		var head = el( 'div', 'fb-picker__head' );
+		this.prev = button( 'fb-picker__nav fb-picker__nav--prev', '‹' );
+		this.prev.setAttribute( 'aria-label', t.prevMonth );
+		this.next = button( 'fb-picker__nav fb-picker__nav--next', '›' );
+		this.next.setAttribute( 'aria-label', t.nextMonth );
+		this.monthsBox = el( 'div', 'fb-picker__months' );
+		head.appendChild( this.prev );
+		head.appendChild( this.monthsBox );
+		head.appendChild( this.next );
+		this.status = el( 'p', 'fb-picker__status' );
+		this.status.setAttribute( 'aria-live', 'polite' );
+		var foot = el( 'div', 'fb-picker__foot' );
+		this.clearBtn = button( 'fb-link', t.clear );
+		this.doneBtn = button( 'fb-button fb-button--ghost', t.done );
+		foot.appendChild( this.clearBtn );
+		foot.appendChild( this.doneBtn );
+		this.panel.appendChild( head );
+		this.panel.appendChild( this.status );
+		this.panel.appendChild( foot );
+		form.appendChild( this.panel );
+
+		this.prev.addEventListener( 'click', function () {
+			self.shift( -1 );
+		} );
+		this.next.addEventListener( 'click', function () {
+			self.shift( 1 );
+		} );
+		this.clearBtn.addEventListener( 'click', function () {
+			self.start = '';
+			self.end = '';
+			self.mode = 'in';
+			self.commit();
+			self.render();
+			self.focusDay( self.focusDate );
+		} );
+		this.doneBtn.addEventListener( 'click', function () {
+			self.close( true );
+		} );
+		this.monthsBox.addEventListener( 'click', function ( e ) {
+			var day = e.target.closest( '.fb-day' );
+			if ( day ) {
+				self.pick( day.getAttribute( 'data-date' ) );
+			}
+		} );
+		this.monthsBox.addEventListener( 'keydown', this.onKey.bind( this ) );
+		this.panel.addEventListener( 'keydown', function ( e ) {
+			if ( e.key === 'Escape' ) {
+				e.preventDefault();
+				self.close( true );
+			}
+		} );
+		// Values from a link or the browser keep working.
+		[ this.inInput, this.outInput ].forEach( function ( input ) {
+			input.addEventListener( 'change', function () {
+				self.sync();
+			} );
+		} );
+		this.sync();
+	}
+
+	DatePicker.prototype.isOpen = function () {
+		return ! this.panel.hidden;
+	};
+
+	DatePicker.prototype.today = function () {
+		return this.data ? this.data.today : toYmd( new Date() );
+	};
+
+	DatePicker.prototype.sync = function () {
+		this.start = this.inInput.value || '';
+		this.end = this.outInput.value && this.outInput.value > this.start ? this.outInput.value : '';
+		this.updateButtons();
+	};
+
+	DatePicker.prototype.updateButtons = function () {
+		var self = this;
+		[ [ 'in', this.start ], [ 'out', this.end ] ].forEach( function ( pair ) {
+			var btn = self.buttons[ pair[ 0 ] ];
+			btn.textContent = pair[ 1 ] ? humanDate( pair[ 1 ], self.options.dateFormat, self.locale ) : t.chooseDates;
+			btn.classList.toggle( 'is-empty', ! pair[ 1 ] );
+		} );
+	};
+
+	/**
+	 * Writes the chosen dates into the form fields.
+	 */
+	DatePicker.prototype.commit = function () {
+		this.inInput.value = this.start || '';
+		this.outInput.value = this.end || '';
+		this.updateButtons();
+		clearError( this.buttons.in );
+		clearError( this.buttons.out );
+		if ( this.options.onChange ) {
+			this.options.onChange( this.start, this.end );
+		}
+	};
+
+	DatePicker.prototype.open = function ( which ) {
+		this.sync();
+		this.mode = which === 'out' && this.start ? 'out' : 'in';
+		var anchor = ( this.mode === 'out' ? this.end || this.start : this.start ) || this.today();
+		this.focusDate = this.mode === 'out' ? ( this.end || addDays( this.start, 1 ) ) : anchor;
+		var first = parseDate( anchor );
+		this.view = new Date( first.getFullYear(), first.getMonth(), 1 );
+		this.panel.hidden = false;
+		this.buttons.in.setAttribute( 'aria-expanded', 'true' );
+		this.buttons.out.setAttribute( 'aria-expanded', 'true' );
+		this.months = this.panel.offsetWidth >= 560 ? 2 : 1;
+		this.panel.classList.toggle( 'is-double', this.months === 2 );
+		this.render();
+		this.load();
+		this.focusDay( this.focusDate );
+	};
+
+	DatePicker.prototype.close = function ( returnFocus ) {
+		if ( ! this.isOpen() ) {
+			return;
+		}
+		this.panel.hidden = true;
+		this.buttons.in.setAttribute( 'aria-expanded', 'false' );
+		this.buttons.out.setAttribute( 'aria-expanded', 'false' );
+		if ( returnFocus ) {
+			this.buttons[ this.end ? 'out' : 'in' ].focus();
+		}
+	};
+
+	DatePicker.prototype.shift = function ( months ) {
+		var v = new Date( this.view.getFullYear(), this.view.getMonth() + months, 1 );
+		var today = parseDate( this.today() );
+		if ( v < new Date( today.getFullYear(), today.getMonth(), 1 ) ) {
+			return;
+		}
+		this.view = v;
+		this.render();
+		this.load();
+	};
+
+	DatePicker.prototype.key = function () {
+		var g = this.options.guests ? this.options.guests() : { adults: 2, children: 0 };
+		var room = this.options.room ? this.options.room() : '';
+		var month = toYmd( this.view ).slice( 0, 7 );
+		return [ room, g.adults, g.children, month, this.months ].join( '|' );
+	};
+
+	/**
+	 * Availability of the months shown (cached per month, room and guests).
+	 */
+	DatePicker.prototype.load = function () {
+		var self = this;
+		var key = this.key();
+		if ( this.cache[ key ] ) {
+			this.data = this.cache[ key ] === 'failed' ? null : this.cache[ key ];
+			this.render();
+			return;
+		}
+		var g = this.options.guests ? this.options.guests() : { adults: 2, children: 0 };
+		var params = { month: toYmd( this.view ).slice( 0, 7 ), months: this.months, adults: g.adults, children: g.children };
+		var room = this.options.room ? this.options.room() : '';
+		if ( room ) {
+			params.room = room;
+		}
+		if ( this.locale ) {
+			params.locale = this.locale;
+		}
+		this.loading = true;
+		this.panel.classList.add( 'is-loading' );
+		this.setStatus();
+		request( apiUrl( 'calendar', params ) )
+			.then( function ( data ) {
+				self.cache[ key ] = data;
+				if ( self.key() === key ) {
+					self.data = data;
+				}
+			} )
+			.catch( function () {
+				// Without availability every day can be chosen; the search tells.
+				self.cache[ key ] = 'failed';
+				self.data = null;
+			} )
+			.finally( function () {
+				self.loading = false;
+				self.panel.classList.remove( 'is-loading' );
+				if ( self.key() === key ) {
+					var focused = self.monthsBox.contains( document.activeElement );
+					self.render();
+					if ( focused ) {
+						self.focusDay( self.focusDate );
+					}
+				}
+			} );
+	};
+
+	/** Guests or room changed: availability is loaded again. */
+	DatePicker.prototype.reset = function () {
+		this.data = null;
+		if ( this.isOpen() ) {
+			this.render();
+			this.load();
+		}
+	};
+
+	DatePicker.prototype.index = function ( ymd ) {
+		if ( ! this.data || ! this.data.rooms.length ) {
+			return -1;
+		}
+		var i = diffDays( this.data.from, ymd );
+		return i >= 0 && i < this.data.rooms[ 0 ].free.length ? i : -1;
+	};
+
+	/**
+	 * Free nights of one room from index i for n nights (unknown = free).
+	 */
+	function runFree( room, i, n ) {
+		for ( var k = i; k < i + n; k++ ) {
+			if ( k < room.free.length && room.free.charAt( k ) !== '1' ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	DatePicker.prototype.inRange = function ( ymd ) {
+		var today = this.today();
+		var last = this.data ? this.data.last : '';
+		return ymd >= today && ( ! last || ymd <= last );
+	};
+
+	/**
+	 * @return {{ok: boolean, reason: string, min: number}}
+	 */
+	DatePicker.prototype.arrival = function ( ymd ) {
+		if ( ! this.inRange( ymd ) ) {
+			return { ok: false, reason: '', min: 0 };
+		}
+		var i = this.index( ymd );
+		if ( i < 0 ) {
+			// No room fits the guests: nothing can be booked. Otherwise unknown = allowed.
+			var none = this.data && this.data.rooms && ! this.data.rooms.length;
+			return { ok: ! none, reason: none ? t.dayUnavailable : '', min: 0 };
+		}
+		var free = false;
+		var closed = true;
+		var minOk = 0;
+		var minAll = 0;
+		this.data.rooms.forEach( function ( room ) {
+			var c = room.free.charAt( i );
+			free = free || c === '1';
+			closed = closed && c === 'c';
+			if ( c === '1' ) {
+				var m = room.min[ i ] || 1;
+				minAll = minAll ? Math.min( minAll, m ) : m;
+				if ( runFree( room, i, m ) ) {
+					minOk = minOk ? Math.min( minOk, m ) : m;
+				}
+			}
+		} );
+		if ( minOk ) {
+			return { ok: true, reason: '', min: minOk };
+		}
+		if ( ! free ) {
+			return { ok: false, reason: closed ? t.dayClosed : t.dayFull, min: 0 };
+		}
+		return { ok: false, reason: minAll > 1 ? fmt( t.dayMinStay, minAll ) : t.dayNoArrival, min: minAll };
+	};
+
+	/**
+	 * Whether a stay from the chosen check-in to this day can be booked.
+	 */
+	DatePicker.prototype.departure = function ( ymd ) {
+		var nights = diffDays( this.start, ymd );
+		var max = cfg.maxNights || ( this.data ? this.data.max_nights : 0 );
+		if ( nights < 1 || ( max && nights > max ) ) {
+			return { ok: false, reason: '' };
+		}
+		var i = this.index( this.start );
+		if ( i < 0 ) {
+			return { ok: true, reason: '' };
+		}
+		var ok = false;
+		var min = 0;
+		this.data.rooms.forEach( function ( room ) {
+			if ( room.free.charAt( i ) !== '1' ) {
+				return;
+			}
+			var m = room.min[ i ] || 1;
+			min = min ? Math.min( min, m ) : m;
+			if ( nights >= m && runFree( room, i, nights ) ) {
+				ok = true;
+			}
+		} );
+		if ( ok ) {
+			return { ok: true, reason: '' };
+		}
+		return { ok: false, reason: min > nights ? fmt( t.dayMinStay, min ) : t.dayUnavailable };
+	};
+
+	DatePicker.prototype.dayState = function ( ymd ) {
+		if ( this.mode === 'out' && this.start && ymd > this.start ) {
+			return this.departure( ymd );
+		}
+		return this.arrival( ymd );
+	};
+
+	DatePicker.prototype.setStatus = function ( message ) {
+		if ( message ) {
+			this.status.textContent = message;
+			return;
+		}
+		if ( this.loading ) {
+			this.status.textContent = t.loadingDates;
+		} else if ( this.mode === 'out' && this.start ) {
+			var a = this.arrival( this.start );
+			this.status.textContent = fmt( t.pickDeparture, humanDate( this.start, this.options.dateFormat, this.locale ) ) + ( a.min > 1 ? ' ' + fmt( t.minStayHint, a.min ) : '' );
+		} else {
+			this.status.textContent = t.pickArrival;
+		}
+	};
+
+	DatePicker.prototype.render = function () {
+		var self = this;
+		this.monthsBox.innerHTML = '';
+		var today = parseDate( this.today() );
+		this.prev.disabled = this.view <= new Date( today.getFullYear(), today.getMonth(), 1 );
+		var weekdays = [];
+		for ( var w = 0; w < 7; w++ ) {
+			// 5 Jan 1970 was a Monday.
+			var d = new Date( 1970, 0, 5 + w );
+			weekdays.push( {
+				short: d.toLocaleDateString( lang( this.locale ), { weekday: 'short' } ),
+				long: d.toLocaleDateString( lang( this.locale ), { weekday: 'long' } ),
+			} );
+		}
+		for ( var m = 0; m < this.months; m++ ) {
+			var first = new Date( this.view.getFullYear(), this.view.getMonth() + m, 1 );
+			var month = el( 'div', 'fb-month' );
+			var title = el( 'h5', 'fb-month__title', first.toLocaleDateString( lang( this.locale ), { month: 'long', year: 'numeric' } ) );
+			title.id = uid( 'fb-month' );
+			month.appendChild( title );
+			var table = el( 'table', 'fb-month__grid' );
+			table.setAttribute( 'role', 'grid' );
+			table.setAttribute( 'aria-labelledby', title.id );
+			var thead = el( 'thead' );
+			var hr = el( 'tr' );
+			weekdays.forEach( function ( wd ) {
+				var th = el( 'th', '', wd.short );
+				th.scope = 'col';
+				th.abbr = wd.long;
+				hr.appendChild( th );
+			} );
+			thead.appendChild( hr );
+			table.appendChild( thead );
+			var tbody = el( 'tbody' );
+			var offset = ( first.getDay() + 6 ) % 7;
+			var days = new Date( first.getFullYear(), first.getMonth() + 1, 0 ).getDate();
+			var row = el( 'tr' );
+			for ( var b = 0; b < offset; b++ ) {
+				row.appendChild( el( 'td', 'fb-month__blank' ) );
+			}
+			for ( var day = 1; day <= days; day++ ) {
+				var ymd = toYmd( new Date( first.getFullYear(), first.getMonth(), day ) );
+				row.appendChild( this.dayCell( ymd, day ) );
+				if ( ( offset + day ) % 7 === 0 ) {
+					tbody.appendChild( row );
+					row = el( 'tr' );
+				}
+			}
+			if ( row.childNodes.length ) {
+				while ( row.childNodes.length < 7 ) {
+					row.appendChild( el( 'td', 'fb-month__blank' ) );
+				}
+				tbody.appendChild( row );
+			}
+			table.appendChild( tbody );
+			month.appendChild( table );
+			this.monthsBox.appendChild( month );
+		}
+		// Roving tabindex: one day in the tab order.
+		var target = this.monthsBox.querySelector( '[data-date="' + this.focusDate + '"]' ) || this.monthsBox.querySelector( '.fb-day:not([aria-disabled="true"])' ) || this.monthsBox.querySelector( '.fb-day' );
+		if ( target ) {
+			target.tabIndex = 0;
+		}
+		this.setStatus();
+		self.updateButtons();
+	};
+
+	DatePicker.prototype.dayCell = function ( ymd, day ) {
+		var td = el( 'td' );
+		td.setAttribute( 'role', 'gridcell' );
+		var state = this.dayState( ymd );
+		var btn = button( 'fb-day', String( day ) );
+		btn.tabIndex = -1;
+		btn.setAttribute( 'data-date', ymd );
+		var past = ymd < this.today();
+		var parts = [ parseDate( ymd ).toLocaleDateString( lang( this.locale ), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' } ) ];
+		if ( ymd === this.start ) {
+			btn.classList.add( 'is-start' );
+			parts.push( t.dayCheckIn );
+		}
+		if ( ymd === this.end ) {
+			btn.classList.add( 'is-end' );
+			parts.push( t.dayCheckOut );
+		}
+		if ( this.start && this.end && ymd > this.start && ymd < this.end ) {
+			btn.classList.add( 'is-range' );
+		}
+		if ( ymd === this.today() ) {
+			btn.classList.add( 'is-today' );
+		}
+		if ( ! state.ok ) {
+			btn.setAttribute( 'aria-disabled', 'true' );
+			btn.classList.add( past ? 'is-past' : 'is-blocked' );
+			if ( state.reason ) {
+				parts.push( state.reason );
+				btn.title = state.reason;
+			}
+		} else if ( ! past ) {
+			parts.push( t.dayAvailable );
+		}
+		if ( ymd === this.start || ymd === this.end ) {
+			btn.setAttribute( 'aria-pressed', 'true' );
+		}
+		var price = this.data && this.data.prices && ! Array.isArray( this.data.prices ) ? this.data.prices[ ymd ] : '';
+		if ( price && state.ok && this.mode === 'in' ) {
+			btn.appendChild( el( 'small', 'fb-day__price', price ) );
+			parts.push( price );
+		}
+		btn.setAttribute( 'aria-label', parts.join( ', ' ) );
+		td.appendChild( btn );
+		return td;
+	};
+
+	DatePicker.prototype.focusDay = function ( ymd ) {
+		if ( ! ymd ) {
+			return;
+		}
+		var first = new Date( this.view.getFullYear(), this.view.getMonth(), 1 );
+		var after = new Date( this.view.getFullYear(), this.view.getMonth() + this.months, 1 );
+		var date = parseDate( ymd );
+		if ( date < first || date >= after ) {
+			var today = parseDate( this.today() );
+			if ( date < new Date( today.getFullYear(), today.getMonth(), 1 ) ) {
+				return;
+			}
+			this.view = date < first ? new Date( date.getFullYear(), date.getMonth(), 1 ) : new Date( date.getFullYear(), date.getMonth() - this.months + 1, 1 );
+			this.focusDate = ymd;
+			this.render();
+			this.load();
+		}
+		this.focusDate = ymd;
+		this.monthsBox.querySelectorAll( '.fb-day' ).forEach( function ( b ) {
+			b.tabIndex = b.getAttribute( 'data-date' ) === ymd ? 0 : -1;
+		} );
+		var btn = this.monthsBox.querySelector( '[data-date="' + ymd + '"]' );
+		if ( btn ) {
+			btn.focus();
+		}
+	};
+
+	DatePicker.prototype.onKey = function ( e ) {
+		var day = e.target.closest( '.fb-day' );
+		if ( ! day ) {
+			return;
+		}
+		var ymd = day.getAttribute( 'data-date' );
+		var date = parseDate( ymd );
+		var moves = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 };
+		var target = null;
+		if ( moves[ e.key ] ) {
+			target = addDays( ymd, moves[ e.key ] );
+		} else if ( e.key === 'Home' ) {
+			target = addDays( ymd, -( ( date.getDay() + 6 ) % 7 ) );
+		} else if ( e.key === 'End' ) {
+			target = addDays( ymd, 6 - ( ( date.getDay() + 6 ) % 7 ) );
+		} else if ( e.key === 'PageUp' || e.key === 'PageDown' ) {
+			var step = ( e.key === 'PageUp' ? -1 : 1 ) * ( e.shiftKey ? 12 : 1 );
+			var moved = new Date( date.getFullYear(), date.getMonth() + step, 1 );
+			var lastDay = new Date( moved.getFullYear(), moved.getMonth() + 1, 0 ).getDate();
+			target = toYmd( new Date( moved.getFullYear(), moved.getMonth(), Math.min( date.getDate(), lastDay ) ) );
+		}
+		if ( target ) {
+			e.preventDefault();
+			if ( target >= this.today() ) {
+				this.focusDay( target );
+			}
+		}
+	};
+
+	DatePicker.prototype.pick = function ( ymd ) {
+		var state = this.dayState( ymd );
+		if ( this.mode === 'out' && this.start && ymd > this.start ) {
+			if ( ! state.ok ) {
+				this.setStatus( state.reason || t.dayUnavailable );
+				return;
+			}
+			this.end = ymd;
+			this.commit();
+			this.setStatus( humanDate( this.start, this.options.dateFormat, this.locale ) + ' – ' + humanDate( this.end, this.options.dateFormat, this.locale ) + ' · ' + nightsText( diffDays( this.start, this.end ) ) );
+			this.close( true );
+			return;
+		}
+		if ( ! state.ok ) {
+			this.setStatus( state.reason || t.dayUnavailable );
+			return;
+		}
+		this.start = ymd;
+		this.mode = 'out';
+		// A check-out that no longer fits is cleared.
+		if ( this.end && ( this.end <= ymd || ! this.departure( this.end ).ok ) ) {
+			this.end = '';
+		}
+		this.commit();
+		this.focusDate = this.end || addDays( ymd, Math.max( 1, state.min || 1 ) );
+		this.render();
+		this.focusDay( this.focusDate );
+	};
+
+	/* ---------------------------------------------------------------------
+	 * The booking form
+	 * ------------------------------------------------------------------- */
+
+	var STATE_KEYS = [ 'check_in', 'check_out', 'adults', 'children', 'children_ages', 'children_ages[]', 'fb_step', 'fb_room', 'fb_plan', 'fb_promo', 'fb_all', 'fb_done', 'fb_key', 'fb_manage', 'fb_payment', 'fb_ref' ];
+
 	function BookingForm( root ) {
+		var self = this;
 		this.root = root;
 		this.searchForm = root.querySelector( '.fb-search' );
 		this.detailsForm = root.querySelector( '.fb-details' );
@@ -234,35 +1050,385 @@
 		this.notice = root.querySelector( '.fb-notice' );
 		this.success = root.querySelector( '.fb-success' );
 		this.summary = root.querySelector( '.fb-summary' );
+		this.aside = root.querySelector( '[data-fb-aside]' );
 		this.room = root.getAttribute( 'data-room' ) || '';
 		this.locale = root.getAttribute( 'data-locale' ) || '';
 		this.dateFormat = root.getAttribute( 'data-date-format' ) || '';
 		this.showAll = false;
 		this.stay = null;
+		this.rooms = [];
 		this.selected = null;
 		this.view = null;
 		this.promo = '';
+		this.step = '';
+		this.useUrl = ! urlOwner && !! ( window.history && window.history.pushState && window.URL );
+		if ( this.useUrl ) {
+			urlOwner = this;
+		}
 
-		bindDates( this.searchForm );
+		this.buildChrome();
+
+		this.picker = new DatePicker( this.searchForm, {
+			locale: this.locale,
+			dateFormat: this.dateFormat,
+			room: function () {
+				return self.room && ! self.showAll ? self.room : '';
+			},
+			guests: function () {
+				var v = self.values();
+				return { adults: v.adults, children: v.children || 0 };
+			},
+		} );
+		if ( ! this.picker.enhanced ) {
+			bindDates( this.searchForm );
+		}
 		bindAges( this.searchForm );
 		bindInvoice( this.detailsForm );
+		bindValidation( this.detailsForm );
+		bindValidation( this.searchForm );
 		this.bindPayment();
+		this.bindPhone();
 
+		this.searchForm.addEventListener( 'change', function ( e ) {
+			if ( e.target && ( e.target.name === 'adults' || e.target.name === 'children' ) ) {
+				self.picker.reset && self.picker.reset();
+			}
+		} );
 		this.searchForm.addEventListener( 'submit', this.onSearch.bind( this ) );
 		this.detailsForm.addEventListener( 'submit', this.onBook.bind( this ) );
 		this.detailsForm.querySelector( '[data-fb-back]' ).addEventListener( 'click', this.back.bind( this ) );
 
-		// Back from the payment page: show the payment result instead of the search.
-		var query = new URLSearchParams( window.location.search );
-		if ( query.get( 'fb_payment' ) && query.get( 'fb_ref' ) && query.get( 'fb_key' ) ) {
-			this.resumePayment( query.get( 'fb_payment' ), query.get( 'fb_ref' ), query.get( 'fb_key' ) );
+		if ( this.useUrl ) {
+			window.addEventListener( 'popstate', function () {
+				self.route( false );
+			} );
+		}
+		this.route( true );
+	}
+
+	/**
+	 * Step bar, stay line, summary toggle and the screen-reader announcer,
+	 * added when a theme's template override doesn't have them.
+	 */
+	BookingForm.prototype.buildChrome = function () {
+		var self = this;
+		var root = this.root;
+		this.stepsEl = root.querySelector( '[data-fb-steps]' );
+		if ( ! this.stepsEl && cfg.steps ) {
+			this.stepsEl = el( 'ol', 'fb-steps' );
+			this.stepsEl.setAttribute( 'data-fb-steps', '' );
+			Object.keys( cfg.steps ).forEach( function ( key, i ) {
+				var li = el( 'li', 'fb-steps__item' );
+				li.setAttribute( 'data-step', key );
+				var num = el( 'span', 'fb-steps__num', String( i + 1 ) );
+				num.setAttribute( 'aria-hidden', 'true' );
+				li.appendChild( num );
+				li.appendChild( el( 'span', 'fb-steps__label', cfg.steps[ key ] ) );
+				self.stepsEl.appendChild( li );
+			} );
+			var title = root.querySelector( '.fb-title' );
+			root.insertBefore( this.stepsEl, title ? title.nextSibling : root.firstChild );
+		}
+		this.stayBar = root.querySelector( '[data-fb-stay]' );
+		if ( ! this.stayBar ) {
+			this.stayBar = el( 'div', 'fb-stay' );
+			this.stayBar.setAttribute( 'data-fb-stay', '' );
+			this.stayBar.hidden = true;
+			this.searchForm.insertAdjacentElement( 'afterend', this.stayBar );
+		}
+		this.live = el( 'p', 'screen-reader-text' );
+		this.live.setAttribute( 'aria-live', 'polite' );
+		root.appendChild( this.live );
+
+		if ( this.aside ) {
+			var toggle = this.aside.querySelector( '.fb-aside__toggle' );
+			this.asideToggle = toggle;
+			this.asideShort = this.aside.querySelector( '[data-fb-aside-short]' );
+			toggle.addEventListener( 'click', function () {
+				if ( self.root.classList.contains( 'fb-wide' ) ) {
+					return;
+				}
+				var open = ! self.aside.classList.contains( 'is-open' );
+				self.aside.classList.toggle( 'is-open', open );
+				toggle.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+			} );
+		}
+		// Wide forms show the summary next to the steps; narrow ones above them.
+		function measure() {
+			var wide = root.clientWidth >= 900;
+			root.classList.toggle( 'fb-wide', wide );
+			root.classList.toggle( 'fb-narrow', root.clientWidth < 600 );
+			if ( self.asideToggle ) {
+				self.asideToggle.setAttribute( 'aria-expanded', wide || self.aside.classList.contains( 'is-open' ) ? 'true' : 'false' );
+			}
+		}
+		if ( window.ResizeObserver ) {
+			new window.ResizeObserver( measure ).observe( root );
+		} else {
+			window.addEventListener( 'resize', measure );
+		}
+		measure();
+	};
+
+	BookingForm.prototype.announce = function ( text ) {
+		var live = this.live;
+		live.textContent = '';
+		window.setTimeout( function () {
+			live.textContent = text;
+		}, 60 );
+	};
+
+	/**
+	 * Shows one step: dates, rooms, details, done or manage.
+	 */
+	BookingForm.prototype.show = function ( step, focus ) {
+		var r = this.root;
+		this.step = step;
+		var hasStay = !! this.stay;
+		this.searchForm.hidden = ! ( step === 'dates' || ( step === 'rooms' && ! hasStay ) );
+		this.stayBar.hidden = ! ( hasStay && ( step === 'rooms' || step === 'details' ) );
+		this.results.hidden = step !== 'rooms' || ! hasStay;
+		this.detailsForm.hidden = step !== 'details';
+		this.success.hidden = step !== 'done' && step !== 'manage';
+		if ( this.aside ) {
+			this.aside.hidden = ! ( hasStay && ( step === 'rooms' || step === 'details' ) );
+			r.classList.toggle( 'has-aside', ! this.aside.hidden );
+			// Phones: a collapsed bar that opens on tap. Larger screens: open.
+			var open = step === 'details' && ( r.classList.contains( 'fb-wide' ) || window.innerWidth > 767 );
+			this.aside.classList.toggle( 'is-open', open );
+			if ( this.asideToggle ) {
+				this.asideToggle.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+			}
+		}
+		if ( this.picker.close && step !== 'dates' ) {
+			this.picker.close();
+		}
+		[ 'dates', 'rooms', 'details', 'done', 'manage' ].forEach( function ( s ) {
+			r.classList.toggle( 'fb-step--' + s, s === step );
+		} );
+		if ( this.stepsEl ) {
+			this.stepsEl.hidden = step === 'manage';
+			var items = Array.prototype.slice.call( this.stepsEl.querySelectorAll( '[data-step]' ) );
+			var current = step === 'manage' ? 'done' : step;
+			var index = items.findIndex( function ( li ) {
+				return li.getAttribute( 'data-step' ) === current;
+			} );
+			items.forEach( function ( li, i ) {
+				li.classList.toggle( 'is-done', i < index );
+				li.classList.toggle( 'is-current', i === index );
+				if ( i === index ) {
+					li.setAttribute( 'aria-current', 'step' );
+				} else {
+					li.removeAttribute( 'aria-current' );
+				}
+			} );
+			if ( index >= 0 && step !== 'manage' ) {
+				this.announce( fmtN( t.stepOf, index + 1, items.length, items[ index ].textContent.replace( /^\d+/, '' ) ) );
+			}
+		}
+		if ( ! focus ) {
 			return;
 		}
-
-		if ( root.getAttribute( 'data-autosearch' ) === '1' ) {
-			this.search();
+		var target = null;
+		if ( step === 'dates' ) {
+			target = this.picker.enhanced ? this.picker.buttons.in : this.searchForm.querySelector( 'input, select' );
+		} else if ( step === 'rooms' ) {
+			target = this.results.querySelector( '.fb-results__title' );
+		} else if ( step === 'details' ) {
+			target = this.detailsForm.querySelector( '.fb-step-title' );
+		} else {
+			target = this.success.querySelector( '.fb-done__title' ) || this.success;
 		}
-	}
+		focusEl( target );
+	};
+
+	/* ---- Address (URL) state ---- */
+
+	BookingForm.prototype.stayParams = function () {
+		var s = this.stay;
+		var p = { check_in: s.check_in, check_out: s.check_out, adults: String( s.adults ) };
+		if ( parseInt( s.children, 10 ) > 0 ) {
+			p.children = String( s.children );
+			if ( s.ages && s.ages.length ) {
+				p.children_ages = s.ages.join( ',' );
+			}
+		}
+		if ( this.showAll && this.room ) {
+			p.fb_all = '1';
+		}
+		return p;
+	};
+
+	BookingForm.prototype.setUrl = function ( params, replace ) {
+		if ( ! this.useUrl ) {
+			return;
+		}
+		var url = new URL( window.location.href );
+		STATE_KEYS.forEach( function ( k ) {
+			url.searchParams.delete( k );
+		} );
+		Object.keys( params ).forEach( function ( k ) {
+			if ( params[ k ] !== '' && params[ k ] !== null && params[ k ] !== undefined ) {
+				url.searchParams.set( k, params[ k ] );
+			}
+		} );
+		if ( url.toString() === window.location.href ) {
+			return;
+		}
+		window.history[ replace ? 'replaceState' : 'pushState' ]( { fb: true }, '', url.toString() );
+	};
+
+	BookingForm.prototype.detailsParams = function () {
+		var p = this.stayParams();
+		p.fb_step = 'details';
+		p.fb_room = this.selected.slug || String( this.selected.id );
+		if ( this.view && this.view.rate_plan ) {
+			p.fb_plan = String( this.view.rate_plan.id );
+		}
+		if ( this.promo ) {
+			p.fb_promo = this.promo;
+		}
+		return p;
+	};
+
+	/**
+	 * Puts the page in the state the address describes (first load, Back,
+	 * Forward, refresh).
+	 */
+	BookingForm.prototype.route = function ( initial ) {
+		var self = this;
+		var q = new URLSearchParams( window.location.search );
+		if ( ! this.useUrl && ! initial ) {
+			return;
+		}
+		if ( q.get( 'fb_payment' ) && q.get( 'fb_ref' ) && q.get( 'fb_key' ) ) {
+			// Back from the payment page: show the payment result.
+			this.resumePayment( q.get( 'fb_payment' ), q.get( 'fb_ref' ), q.get( 'fb_key' ) );
+			return;
+		}
+		if ( q.get( 'fb_manage' ) && q.get( 'fb_key' ) ) {
+			this.loadBooking( q.get( 'fb_manage' ), q.get( 'fb_key' ), true );
+			return;
+		}
+		if ( q.get( 'fb_done' ) && q.get( 'fb_key' ) ) {
+			this.loadBooking( q.get( 'fb_done' ), q.get( 'fb_key' ), false );
+			return;
+		}
+		this.showAll = q.get( 'fb_all' ) === '1';
+		var ci = q.get( 'check_in' ) || '';
+		var co = q.get( 'check_out' ) || '';
+		if ( ! ci || ! co ) {
+			if ( initial && this.root.getAttribute( 'data-autosearch' ) === '1' ) {
+				this.search( { replace: true } );
+				return;
+			}
+			this.stay = null;
+			this.show( 'dates', ! initial );
+			return;
+		}
+		if ( ! initial ) {
+			this.fillSearch( q );
+		}
+		var ages = q.get( 'children_ages' ) || q.getAll( 'children_ages[]' ).join( ',' );
+		var same = this.stay && this.stay.check_in === ci && this.stay.check_out === co && String( this.stay.adults ) === String( q.get( 'adults' ) || this.stay.adults ) && String( this.stay.children || 0 ) === String( q.get( 'children' ) || 0 ) && ( this.stay.ages || [] ).join( ',' ) === ages;
+		var ready = same ? Promise.resolve( true ) : this.search( { fromUrl: true } );
+		ready.then( function ( ok ) {
+			if ( ! ok ) {
+				return;
+			}
+			if ( q.get( 'fb_step' ) === 'details' && q.get( 'fb_room' ) ) {
+				self.restoreSelection( q.get( 'fb_room' ), q.get( 'fb_plan' ), q.get( 'fb_promo' ) || '', ! initial );
+			} else if ( initial && self.room && ! self.showAll ) {
+				self.skipToRoom();
+			} else {
+				self.show( 'rooms', ! initial );
+			}
+		} );
+	};
+
+	/**
+	 * Back/Forward to another stay: the search form shows it again.
+	 */
+	BookingForm.prototype.fillSearch = function ( q ) {
+		var f = this.searchForm;
+		var set = function ( name, value ) {
+			var field = f.querySelector( '[name="' + name + '"]' );
+			if ( field && value !== null ) {
+				field.value = value;
+			}
+		};
+		set( 'check_in', q.get( 'check_in' ) );
+		set( 'check_out', q.get( 'check_out' ) );
+		set( 'adults', q.get( 'adults' ) || '2' );
+		var children = f.querySelector( '[name="children"]' );
+		if ( children ) {
+			children.value = q.get( 'children' ) || '0';
+			var box = f.querySelector( '[data-fb-ages]' );
+			if ( box && box._fbRender ) {
+				box._fbRender( ( q.get( 'children_ages' ) || '' ).split( ',' ).filter( Boolean ) );
+			}
+		}
+		if ( this.picker.enhanced ) {
+			this.picker.sync();
+		}
+	};
+
+	/**
+	 * Came from a room's "Book now" link: one rate → straight to the
+	 * details; several rates → the rates of that room.
+	 */
+	BookingForm.prototype.skipToRoom = function () {
+		var self = this;
+		var room = this.rooms.filter( function ( r ) {
+			return r.slug === self.room || String( r.id ) === self.room;
+		} )[ 0 ];
+		if ( ! room || ! room.available ) {
+			this.show( 'rooms' );
+			return;
+		}
+		var plans = room.plans || [];
+		if ( plans.length > 1 ) {
+			this.show( 'rooms' );
+			var card = this.results.querySelector( '[data-room-id="' + room.id + '"]' );
+			if ( card ) {
+				this.showPlans( card, room, false );
+			}
+			return;
+		}
+		this.select( room, plans[ 0 ] || room.quote || null );
+	};
+
+	BookingForm.prototype.restoreSelection = function ( slug, planId, promo, focus ) {
+		var self = this;
+		var room = this.rooms.filter( function ( r ) {
+			return r.slug === slug || String( r.id ) === slug;
+		} )[ 0 ];
+		if ( ! room || ! room.available ) {
+			this.show( 'rooms', focus );
+			if ( room ) {
+				this.setNotice( room.reason || t.noRooms, true );
+			}
+			return;
+		}
+		var plan = null;
+		( room.plans || [] ).forEach( function ( p ) {
+			if ( p.rate_plan && String( p.rate_plan.id ) === String( planId ) ) {
+				plan = p;
+			}
+		} );
+		if ( ! plan && ( room.plans || [] ).length > 1 ) {
+			this.show( 'rooms', focus );
+			return;
+		}
+		this.select( room, plan || ( room.plans || [] )[ 0 ] || room.quote || null, { restore: true, focus: focus } );
+		if ( promo && cfg.promo ) {
+			this.applyPromo( promo ).then( function () {
+				self.setUrl( self.detailsParams(), true );
+			} );
+		}
+	};
+
+	/* ---- Payment choice and the final button ---- */
 
 	/**
 	 * Payment method choice and the submit button text that goes with it,
@@ -277,10 +1443,17 @@
 			this.actionsTotal = el( 'div', 'fb-actions__total' );
 			this.actionsTotal.setAttribute( 'aria-hidden', 'true' );
 			actions.insertBefore( this.actionsTotal, actions.firstChild );
+			this.before = el( 'section', 'fb-before' );
+			this.before.hidden = true;
+			actions.insertAdjacentElement( 'beforebegin', this.before );
+			// On phones the summary is a collapsed bar: the promo code field is in the form.
+			this.promoSlot = el( 'div', 'fb-promo-slot' );
+			this.before.insertAdjacentElement( 'beforebegin', this.promoSlot );
 		}
 		this.detailsForm.addEventListener( 'change', function ( e ) {
 			if ( e.target && e.target.name === 'payment_method' ) {
 				self.updateSubmit();
+				self.renderBefore();
 			}
 		} );
 		this.updateSubmit();
@@ -291,18 +1464,43 @@
 		return checked ? checked.value : '';
 	};
 
+	/**
+	 * The final button says exactly what happens next.
+	 */
 	BookingForm.prototype.updateSubmit = function () {
 		var submit = this.detailsForm.querySelector( '[type="submit"]' );
-		var pay = cfg.payments;
-		var method = this.paymentMethod();
-		if ( ! submit || ! pay || ! method || ! pay.methods[ method ] ) {
+		if ( ! submit || this.sending ) {
 			return;
 		}
-		if ( pay.methods[ method ].hosted ) {
-			submit.textContent = t.continuePay;
-		} else {
-			submit.textContent = pay.instant ? t.confirmBooking : t.sendRequest;
+		var pay = cfg.payments;
+		var method = this.paymentMethod();
+		var now = this.view && this.view.payment && this.view.payment.now > 0 ? this.view.payment.now_formatted : '';
+		var label = cfg.instant === undefined ? this.submitLabel : ( cfg.instant ? t.confirmBooking : t.sendRequest );
+		if ( pay && method && pay.methods[ method ] && now ) {
+			if ( pay.methods[ method ].hosted ) {
+				label = fmt( t.payCard, now );
+			} else if ( pay.instant ) {
+				label = fmt( t.payBank, now );
+			}
 		}
+		submit.textContent = label;
+	};
+
+	/**
+	 * Phone numbers: "+359" shown next to the number, updated with the country.
+	 */
+	BookingForm.prototype.bindPhone = function () {
+		this.root.querySelectorAll( '.fb-phone__cc select' ).forEach( function ( select ) {
+			var code = select.parentNode.querySelector( '.fb-phone__code' );
+			function sync() {
+				var opt = select.options[ select.selectedIndex ];
+				if ( code && opt ) {
+					code.textContent = '+' + opt.getAttribute( 'data-code' );
+				}
+			}
+			select.addEventListener( 'change', sync );
+			sync();
+		} );
 	};
 
 	BookingForm.prototype.setNotice = function ( message, isError ) {
@@ -329,26 +1527,44 @@
 		return v;
 	};
 
+	/* ---- Search ---- */
+
 	BookingForm.prototype.onSearch = function ( e ) {
 		e.preventDefault();
 		this.showAll = false;
-		this.search();
+		this.search( { focus: true } );
 	};
 
-	BookingForm.prototype.search = function () {
+	/**
+	 * @param {Object} opts fromUrl: the address already has this stay; replace: replace the address; focus: move focus to the results.
+	 * @return {Promise<boolean>} Whether rooms were found (or shown).
+	 */
+	BookingForm.prototype.search = function ( opts ) {
 		var self = this;
+		opts = opts || {};
 		var v = this.values();
+		this.setNotice( '' );
 
-		this.detailsForm.hidden = true;
-		this.success.hidden = true;
-
-		if ( ! this.searchForm.checkValidity() ) {
-			this.searchForm.reportValidity();
-			return;
-		}
-		if ( v.check_out <= v.check_in ) {
+		var invalid = null;
+		if ( ! v.check_in || ! v.check_out ) {
+			var dates = this.picker.enhanced ? this.picker.buttons[ v.check_in ? 'out' : 'in' ] : this.searchForm.querySelector( '[name="' + ( v.check_in ? 'check_out' : 'check_in' ) + '"]' );
+			setError( dates, t.datesMissing );
+			invalid = dates;
+		} else if ( v.check_out <= v.check_in ) {
 			this.setNotice( t.datesInvalid, true );
-			return;
+			return Promise.resolve( false );
+		}
+		this.searchForm.querySelectorAll( '[name="children_ages[]"]' ).forEach( function ( sel ) {
+			var msg = checkField( sel );
+			setError( sel, msg );
+			invalid = invalid || ( msg ? sel : null );
+		} );
+		if ( invalid ) {
+			this.show( 'dates' );
+			if ( opts.focus || ! opts.fromUrl ) {
+				focusEl( invalid );
+			}
+			return Promise.resolve( false );
 		}
 
 		var params = Object.assign( {}, v );
@@ -359,16 +1575,26 @@
 			params.locale = this.locale;
 		}
 
-		this.setNotice( t.checking );
-		this.results.hidden = true;
 		this.root.classList.add( 'is-loading' );
+		this.renderSkeleton();
+		this.announce( t.checking );
 
-		request( apiUrl( 'availability', params ) )
+		return request( apiUrl( 'availability', params ) )
 			.then( function ( data ) {
 				self.stay = { check_in: data.check_in, check_out: data.check_out, nights: data.nights, nightsLabel: data.nights_label, adults: v.adults, children: v.children, ages: data.children_ages || [] };
-				self.setNotice( '' );
+				self.selected = null;
+				self.view = null;
 				self.closedNotice = data.notice || '';
+				self.rooms = data.rooms;
+				self.renderStay();
+				self.renderStaySummary();
 				self.renderRooms( data.rooms );
+				if ( ! opts.fromUrl ) {
+					self.setUrl( self.stayParams(), !! opts.replace );
+				}
+				if ( opts.focus ) {
+					self.show( 'rooms', true );
+				}
 				track( {
 					event: 'search',
 					search_term: data.check_in + ' – ' + data.check_out,
@@ -379,127 +1605,44 @@
 					children: parseInt( v.children, 10 ) || 0,
 				} );
 				pixel( 'Search', { search_string: data.check_in + ' – ' + data.check_out } );
+				if ( opts.replace && ! opts.focus ) {
+					self.show( 'rooms' );
+				}
+				return true;
 			} )
 			.catch( function ( err ) {
+				self.results.innerHTML = '';
+				self.stay = null;
+				self.show( 'dates' );
 				self.setNotice( err.message, true );
+				return false;
 			} )
 			.finally( function () {
 				self.root.classList.remove( 'is-loading' );
 			} );
 	};
 
-	BookingForm.prototype.renderRooms = function ( rooms ) {
-		var self = this;
-		var list = el( 'div', 'fb-rooms' );
-		var anyAvailable = rooms.some( function ( r ) {
-			return r.available;
-		} );
-
-		this.results.innerHTML = '';
-
-		rooms.forEach( function ( room ) {
-			var card = el( 'article', 'fb-room' + ( room.available ? '' : ' is-unavailable' ) );
-
-			if ( room.image ) {
-				var img = el( 'img', 'fb-room__image' );
-				img.src = room.image;
-				img.alt = '';
-				img.loading = 'lazy';
-				card.appendChild( img );
-			}
-
-			var body = el( 'div', 'fb-room__body' );
-			body.appendChild( el( 'h4', 'fb-room__title', room.title ) );
-			if ( room.excerpt ) {
-				body.appendChild( el( 'p', 'fb-room__excerpt', room.excerpt ) );
-			}
-			var nightly = room.price_varies && t.avgPerNight
-				? fmt( t.avgPerNight, room.price_average_formatted )
-				: ( room.price_average_formatted || room.price_formatted ) + ' ' + t.perNight;
-			body.appendChild( el( 'p', 'fb-room__meta', fmt( t.upTo, room.capacity ) + ' · ' + nightly ) );
-			if ( room.available && room.units_left > 0 && room.units_left <= 2 ) {
-				body.appendChild( el( 'p', 'fb-room__urgency', fmt( t.onlyLeft, room.units_left ) ) );
-			}
-			if ( ! room.available && room.reason ) {
-				body.appendChild( el( 'p', 'fb-room__reason', room.reason ) );
-			}
-			card.appendChild( body );
-
-			var side = el( 'div', 'fb-room__side' );
-			side.appendChild( el( 'span', 'fb-room__total-label', self.stay.nightsLabel ) );
-			side.appendChild( el( 'strong', 'fb-room__total', room.price_from ? fmt( t.from, room.total_formatted ) : room.total_formatted ) );
-			var btn = el( 'button', 'fb-button', room.available ? t.select : t.unavailable );
-			btn.type = 'button';
-			btn.disabled = ! room.available;
-			var plans = room.plans || [];
-			btn.addEventListener( 'click', function () {
-				if ( plans.length > 1 ) {
-					self.showPlans( card, room );
-				} else {
-					self.select( room, plans[ 0 ] || room.quote || null );
-				}
-			} );
-			side.appendChild( btn );
-			card.appendChild( side );
-
-			list.appendChild( card );
-		} );
-
-		if ( ! anyAvailable ) {
-			this.setNotice( this.closedNotice || t.noRooms, true );
-		}
-
-		this.results.appendChild( list );
-
-		if ( this.room && ! this.showAll && ! anyAvailable ) {
-			var more = el( 'button', 'fb-button fb-button--ghost', t.showAll );
-			more.type = 'button';
-			more.addEventListener( 'click', function () {
-				self.showAll = true;
-				self.search();
-			} );
-			this.results.appendChild( more );
-		}
-
-		this.results.hidden = false;
-	};
-
 	/**
-	 * Rooms with several rate plans: the guest chooses one inside the card.
+	 * Grey placeholders while searching, so the page doesn't jump.
 	 */
-	BookingForm.prototype.showPlans = function ( card, room ) {
-		var self = this;
-		var open = card.querySelector( '.fb-plans' );
-		if ( open ) {
-			open.remove();
-			return;
+	BookingForm.prototype.renderSkeleton = function () {
+		this.results.innerHTML = '';
+		var list = el( 'div', 'fb-rooms-loading' );
+		list.setAttribute( 'aria-hidden', 'true' );
+		for ( var i = 0; i < 2; i++ ) {
+			var card = el( 'div', 'fb-skeleton-card' );
+			card.appendChild( el( 'div', 'fb-skeleton fb-skeleton--image' ) );
+			var body = el( 'div', 'fb-skeleton-card__body' );
+			body.appendChild( el( 'div', 'fb-skeleton fb-skeleton--title' ) );
+			body.appendChild( el( 'div', 'fb-skeleton fb-skeleton--line' ) );
+			body.appendChild( el( 'div', 'fb-skeleton fb-skeleton--line' ) );
+			card.appendChild( body );
+			list.appendChild( card );
 		}
-		var box = el( 'div', 'fb-plans' );
-		box.appendChild( el( 'h5', 'fb-plans__title', t.chooseRate ) );
-		room.plans.forEach( function ( plan ) {
-			var rate = plan.rate_plan || {};
-			var row = el( 'div', 'fb-plan' );
-			var info = el( 'div', 'fb-plan__info' );
-			info.appendChild( el( 'strong', 'fb-plan__name', rate.name ) );
-			if ( rate.description ) {
-				info.appendChild( el( 'span', 'fb-plan__desc', rate.description ) );
-			}
-			info.appendChild( el( 'span', 'fb-plan__policy' + ( rate.refundable ? '' : ' is-strict' ), ( rate.refundable ? '✓ ' : '✕ ' ) + rate.refundable_label ) );
-			row.appendChild( info );
-			var price = el( 'div', 'fb-plan__price' );
-			price.appendChild( el( 'strong', '', plan.total_formatted ) );
-			var choose = el( 'button', 'fb-button', t.choose );
-			choose.type = 'button';
-			choose.setAttribute( 'aria-label', t.choose + ': ' + rate.name + ', ' + plan.total_formatted );
-			choose.addEventListener( 'click', function () {
-				self.select( room, plan );
-			} );
-			price.appendChild( choose );
-			row.appendChild( price );
-			box.appendChild( row );
-		} );
-		card.appendChild( box );
-		box.querySelector( 'button' ).focus();
+		this.results.appendChild( list );
+		if ( this.step === 'dates' || ! this.step ) {
+			this.results.hidden = false;
+		}
 	};
 
 	BookingForm.prototype.guestsText = function () {
@@ -522,6 +1665,483 @@
 		return humanDate( ymd, this.dateFormat, this.locale );
 	};
 
+	BookingForm.prototype.rangeText = function () {
+		var s = this.stay;
+		return this.date( s.check_in ) + ' – ' + this.date( s.check_out );
+	};
+
+	/**
+	 * "15.10.2026 – 18.10.2026 · 3 nights · 2 adults  [Change]"
+	 */
+	BookingForm.prototype.renderStay = function () {
+		var self = this;
+		var s = this.stay;
+		this.stayBar.innerHTML = '';
+		var text = el( 'p', 'fb-stay__text' );
+		text.appendChild( el( 'strong', '', this.rangeText() ) );
+		text.appendChild( document.createTextNode( ' · ' + nightsText( s.nights ) + ' · ' + this.guestsText() ) );
+		this.stayBar.appendChild( text );
+		var change = button( 'fb-link fb-stay__change', t.change );
+		change.setAttribute( 'aria-label', t.changeSearch );
+		change.addEventListener( 'click', function () {
+			self.setNotice( '' );
+			self.show( 'dates', true );
+			if ( self.picker.enhanced ) {
+				self.picker.open( 'in' );
+			}
+		} );
+		this.stayBar.appendChild( change );
+	};
+
+	/**
+	 * The summary before a room is chosen: the stay only.
+	 */
+	BookingForm.prototype.renderStaySummary = function () {
+		if ( ! this.aside ) {
+			return;
+		}
+		var summary = this.summary;
+		summary.innerHTML = '';
+		var dl = el( 'dl', 'fb-summary__stay' );
+		[ [ t.dates, this.rangeText() + ' · ' + nightsText( this.stay.nights ) ], [ t.guests, this.guestsText() ] ].forEach( function ( row ) {
+			var line = el( 'div', 'fb-summary__row' );
+			line.appendChild( el( 'dt', '', row[ 0 ] ) );
+			line.appendChild( el( 'dd', '', row[ 1 ] ) );
+			dl.appendChild( line );
+		} );
+		summary.appendChild( dl );
+		summary.appendChild( el( 'p', 'fb-summary__hint', t.chooseRoom ) );
+		if ( this.asideShort ) {
+			this.asideShort.textContent = this.rangeText();
+		}
+	};
+
+	/* ---- Rooms and rates ---- */
+
+	BookingForm.prototype.renderRooms = function ( rooms ) {
+		var self = this;
+		this.results.innerHTML = '';
+		var available = rooms.filter( function ( r ) {
+			return r.available;
+		} );
+		var title = el( 'h4', 'fb-results__title fb-step-title', t.chooseRoom );
+		title.tabIndex = -1;
+		this.results.appendChild( title );
+
+		var list = el( 'div', 'fb-rooms' );
+		// Rooms that can be booked first.
+		available.concat( rooms.filter( function ( r ) {
+			return ! r.available;
+		} ) ).forEach( function ( room ) {
+			list.appendChild( self.roomCard( room ) );
+		} );
+		this.results.appendChild( list );
+
+		if ( ! available.length ) {
+			this.renderNothing();
+		} else {
+			this.announce( available.length === 1 ? t.roomFound : fmt( t.roomsFound, available.length ) );
+		}
+		if ( this.room && ! this.showAll && ! available.length ) {
+			this.results.appendChild( this.showAllButton( t.showAll ) );
+		}
+	};
+
+	BookingForm.prototype.showAllButton = function ( label ) {
+		var self = this;
+		var more = button( 'fb-button fb-button--ghost fb-show-all', label );
+		more.addEventListener( 'click', function () {
+			self.showAll = true;
+			self.search( { focus: true } );
+		} );
+		return more;
+	};
+
+	BookingForm.prototype.roomCard = function ( room ) {
+		var self = this;
+		var card = el( 'article', 'fb-room' + ( room.available ? '' : ' is-unavailable' ) );
+		card.setAttribute( 'data-room-id', room.id );
+		var titleId = uid( 'fb-room' );
+		card.setAttribute( 'aria-labelledby', titleId );
+
+		if ( room.image ) {
+			var img = el( 'img', 'fb-room__image' );
+			img.src = room.image;
+			img.alt = fmt( t.roomPhoto, room.title );
+			img.loading = 'lazy';
+			img.decoding = 'async';
+			card.appendChild( img );
+		} else {
+			var ph = el( 'div', 'fb-room__image fb-room__image--empty' );
+			ph.setAttribute( 'aria-hidden', 'true' );
+			card.appendChild( ph );
+		}
+
+		var body = el( 'div', 'fb-room__body' );
+		var h = el( 'h4', 'fb-room__title', room.title );
+		h.id = titleId;
+		body.appendChild( h );
+		var facts = el( 'ul', 'fb-room__facts' );
+		if ( room.size ) {
+			facts.appendChild( el( 'li', '', fmt( t.sqm, room.size ) ) );
+		}
+		if ( room.beds ) {
+			facts.appendChild( el( 'li', '', room.beds ) );
+		}
+		facts.appendChild( el( 'li', '', fmt( t.upTo, room.capacity ) ) );
+		body.appendChild( facts );
+		var amenities = room.amenities || [];
+		if ( amenities.length ) {
+			var am = el( 'ul', 'fb-room__amenities' );
+			amenities.slice( 0, 5 ).forEach( function ( a ) {
+				am.appendChild( el( 'li', '', a ) );
+			} );
+			if ( amenities.length > 5 ) {
+				var more = el( 'li', 'fb-room__amenities-more', fmt( t.moreAmenities, amenities.length - 5 ) );
+				more.title = amenities.slice( 5 ).join( ', ' );
+				am.appendChild( more );
+			}
+			body.appendChild( am );
+		}
+		if ( room.excerpt ) {
+			body.appendChild( el( 'p', 'fb-room__excerpt', room.excerpt ) );
+		}
+		if ( room.available && room.units_left > 0 && room.units_left <= 2 ) {
+			body.appendChild( el( 'p', 'fb-room__urgency', fmt( t.onlyLeft, room.units_left ) ) );
+		}
+		if ( ! room.available && room.reason ) {
+			body.appendChild( el( 'p', 'fb-room__reason', room.reason ) );
+		}
+		card.appendChild( body );
+
+		var side = el( 'div', 'fb-room__side' );
+		side.appendChild( el( 'span', 'fb-room__total-label', this.stay.nightsLabel ) );
+		side.appendChild( el( 'strong', 'fb-room__total', room.price_from ? fmt( t.from, room.total_formatted ) : room.total_formatted ) );
+		var nightly = room.price_varies && t.avgPerNight
+			? fmt( t.avgPerNight, room.price_average_formatted )
+			: ( room.price_average_formatted || room.price_formatted ) + ' ' + t.perNight;
+		side.appendChild( el( 'span', 'fb-room__meta fb-room__avg', nightly ) );
+		var plans = room.plans || [];
+		var btn = button( 'fb-button', room.available ? ( plans.length > 1 ? t.chooseRate : t.select ) : t.unavailable );
+		btn.disabled = ! room.available;
+		if ( room.available ) {
+			btn.setAttribute( 'aria-label', ( plans.length > 1 ? t.chooseRate : t.select ) + ': ' + room.title );
+		}
+		if ( plans.length > 1 ) {
+			btn.setAttribute( 'aria-expanded', 'false' );
+		}
+		btn.addEventListener( 'click', function () {
+			if ( plans.length > 1 ) {
+				self.showPlans( card, room, true );
+			} else {
+				self.select( room, plans[ 0 ] || room.quote || null );
+			}
+		} );
+		side.appendChild( btn );
+		card.appendChild( side );
+		return card;
+	};
+
+	/**
+	 * "Breakfast included · ✓ Free cancellation" – rates compared at a glance.
+	 */
+	function planTerms( rate ) {
+		var parts = [];
+		if ( rate.meals_label ) {
+			parts.push( rate.meals_label );
+		}
+		parts.push( ( rate.refundable ? '✓ ' : '✕ ' ) + rate.refundable_label );
+		return parts.join( ' · ' );
+	}
+
+	/**
+	 * Rooms with several rate plans: the guest chooses one inside the card.
+	 */
+	BookingForm.prototype.showPlans = function ( card, room, focus ) {
+		var self = this;
+		var toggle = card.querySelector( '.fb-room__side .fb-button' );
+		var open = card.querySelector( '.fb-plans' );
+		if ( open ) {
+			open.remove();
+			toggle.setAttribute( 'aria-expanded', 'false' );
+			return;
+		}
+		var box = el( 'div', 'fb-plans' );
+		box.id = uid( 'fb-plans' );
+		toggle.setAttribute( 'aria-controls', box.id );
+		toggle.setAttribute( 'aria-expanded', 'true' );
+		box.appendChild( el( 'h5', 'fb-plans__title', t.chooseRate ) );
+		room.plans.forEach( function ( plan ) {
+			var rate = plan.rate_plan || {};
+			var row = el( 'div', 'fb-plan' );
+			var info = el( 'div', 'fb-plan__info' );
+			info.appendChild( el( 'strong', 'fb-plan__name', rate.name ) );
+			info.appendChild( el( 'span', 'fb-plan__policy' + ( rate.refundable ? '' : ' is-strict' ), planTerms( rate ) ) );
+			if ( rate.description ) {
+				info.appendChild( el( 'span', 'fb-plan__desc', rate.description ) );
+			}
+			row.appendChild( info );
+			var price = el( 'div', 'fb-plan__price' );
+			price.appendChild( el( 'strong', '', plan.total_formatted ) );
+			var choose = button( 'fb-button', t.choose );
+			choose.setAttribute( 'aria-label', t.choose + ': ' + rate.name + ', ' + plan.total_formatted );
+			choose.addEventListener( 'click', function () {
+				self.select( room, plan );
+			} );
+			price.appendChild( choose );
+			row.appendChild( price );
+			box.appendChild( row );
+		} );
+		card.appendChild( box );
+		if ( focus ) {
+			box.querySelector( 'button' ).focus();
+		}
+	};
+
+	/* ---- Nothing free: nearby dates, other rooms, enquiry ---- */
+
+	BookingForm.prototype.renderNothing = function () {
+		var self = this;
+		var box = el( 'section', 'fb-nothing' );
+		var h = el( 'h4', 'fb-nothing__title', t.nothingTitle );
+		h.id = uid( 'fb-nothing' );
+		box.setAttribute( 'aria-labelledby', h.id );
+		box.appendChild( h );
+		box.appendChild( el( 'p', 'fb-nothing__text', this.closedNotice || t.noRooms ) );
+		var alt = el( 'div', 'fb-nothing__alternatives' );
+		alt.appendChild( el( 'p', 'fb-nothing__loading', t.loading ) );
+		box.appendChild( alt );
+
+		var ask = el( 'div', 'fb-nothing__ask' );
+		ask.appendChild( el( 'p', '', t.askUs ) );
+		var open = button( 'fb-button fb-button--ghost', t.sendEnquiry );
+		open.setAttribute( 'aria-expanded', 'false' );
+		ask.appendChild( open );
+		box.appendChild( ask );
+		open.addEventListener( 'click', function () {
+			var form = box.querySelector( '.fb-enquiry' ) || self.enquiryForm( box );
+			form.hidden = ! form.hidden;
+			open.setAttribute( 'aria-expanded', form.hidden ? 'false' : 'true' );
+			if ( ! form.hidden ) {
+				form.querySelector( 'input' ).focus();
+			}
+		} );
+		this.results.appendChild( box );
+		this.announce( t.nothingTitle );
+
+		var s = this.stay;
+		var params = { check_in: s.check_in, check_out: s.check_out, adults: s.adults, children: s.children || 0 };
+		if ( s.ages && s.ages.length ) {
+			params.children_ages = s.ages.join( ',' );
+		}
+		if ( this.room && ! this.showAll ) {
+			params.room = this.room;
+		}
+		if ( this.locale ) {
+			params.locale = this.locale;
+		}
+		request( apiUrl( 'alternatives', params ) )
+			.then( function ( data ) {
+				alt.innerHTML = '';
+				if ( data.dates && data.dates.length ) {
+					alt.appendChild( el( 'h5', 'fb-nothing__subtitle', t.nearbyDates ) );
+					var ul = el( 'ul', 'fb-alternatives' );
+					data.dates.forEach( function ( d ) {
+						var li = el( 'li' );
+						var b = button( 'fb-alt' );
+						b.appendChild( el( 'strong', '', shortDate( d.check_in, self.locale ) + ' – ' + shortDate( d.check_out, self.locale ) ) );
+						b.appendChild( el( 'span', '', ( d.rooms === 1 ? t.oneRoom : fmt( t.nRooms, d.rooms ) ) + ' · ' + d.from ) );
+						b.addEventListener( 'click', function () {
+							self.useDates( d.check_in, d.check_out );
+						} );
+						li.appendChild( b );
+						ul.appendChild( li );
+					} );
+					alt.appendChild( ul );
+				}
+				if ( data.other_rooms > 0 && ! self.results.querySelector( '.fb-show-all' ) ) {
+					alt.appendChild( self.showAllButton( data.other_rooms === 1 ? t.otherRoom : fmt( t.otherRooms, data.other_rooms ) ) );
+				} else if ( data.other_rooms > 0 ) {
+					self.results.querySelector( '.fb-show-all' ).textContent = data.other_rooms === 1 ? t.otherRoom : fmt( t.otherRooms, data.other_rooms );
+				}
+			} )
+			.catch( function () {
+				alt.innerHTML = '';
+			} );
+	};
+
+	/**
+	 * A nearby stay from the suggestions: search it like a new search.
+	 */
+	BookingForm.prototype.useDates = function ( checkIn, checkOut ) {
+		this.searchForm.querySelector( '[name="check_in"]' ).value = checkIn;
+		this.searchForm.querySelector( '[name="check_out"]' ).value = checkOut;
+		if ( this.picker.enhanced ) {
+			this.picker.sync();
+		}
+		this.search( { focus: true } );
+	};
+
+	function field( form, opts ) {
+		var wrap = el( 'div', 'fb-field' + ( opts.wide ? ' fb-field--wide' : '' ) );
+		var id = uid( 'fb-enq' );
+		var label = el( 'label', '', opts.label + ' ' );
+		label.htmlFor = id;
+		if ( opts.required ) {
+			var req = el( 'span', 'fb-req', '*' );
+			req.setAttribute( 'aria-hidden', 'true' );
+			label.appendChild( req );
+		} else {
+			label.appendChild( el( 'span', 'fb-optional', t.optional ) );
+		}
+		var input = el( opts.tag || 'input' );
+		input.id = id;
+		input.name = opts.name;
+		if ( opts.type ) {
+			input.type = opts.type;
+		}
+		if ( opts.autocomplete ) {
+			input.setAttribute( 'autocomplete', opts.autocomplete );
+		}
+		if ( opts.inputmode ) {
+			input.setAttribute( 'inputmode', opts.inputmode );
+		}
+		if ( opts.placeholder ) {
+			input.placeholder = opts.placeholder;
+		}
+		if ( opts.tag === 'textarea' ) {
+			input.rows = 4;
+		}
+		input.required = !! opts.required;
+		wrap.appendChild( label );
+		wrap.appendChild( input );
+		form.appendChild( wrap );
+		return input;
+	}
+
+	/**
+	 * "Send us an enquiry": emailed to the hotel, not a booking.
+	 */
+	BookingForm.prototype.enquiryForm = function ( box ) {
+		var self = this;
+		var form = el( 'form', 'fb-enquiry' );
+		form.noValidate = true;
+		form.appendChild( el( 'h5', 'fb-enquiry__title', t.enquiryTitle ) );
+		form.appendChild( el( 'p', 'fb-enquiry__note', t.enquiryNote ) );
+		var grid = el( 'div', 'fb-grid' );
+		form.appendChild( grid );
+		field( grid, { name: 'name', label: t.yourName, required: true, autocomplete: 'name' } );
+		field( grid, { name: 'email', label: t.email, required: true, type: 'email', autocomplete: 'email', inputmode: 'email' } );
+		var phone = field( grid, { name: 'phone', label: t.phone, type: 'tel', autocomplete: 'tel', inputmode: 'tel' } );
+		var cc = this.detailsForm.querySelector( '.fb-phone__cc' );
+		if ( cc ) {
+			var wrap = el( 'div', 'fb-phone' );
+			var copy = cc.cloneNode( true );
+			copy.querySelector( 'select' ).id = uid( 'fb-enq-cc' );
+			copy.querySelector( 'select' ).value = cc.querySelector( 'select' ).value;
+			phone.parentNode.insertBefore( wrap, phone );
+			wrap.appendChild( copy );
+			wrap.appendChild( phone );
+		}
+		field( grid, { name: 'message', label: t.message, tag: 'textarea', wide: true, placeholder: t.enquiryPlaceholder } );
+		if ( cfg.consent ) {
+			var consent = el( 'label', 'fb-terms fb-consent' );
+			var box2 = el( 'input' );
+			box2.type = 'checkbox';
+			box2.name = 'privacy_consent';
+			box2.value = '1';
+			box2.required = !! cfg.consent.required;
+			box2.setAttribute( 'data-fb-message', t.consentMessage );
+			consent.appendChild( box2 );
+			var span = el( 'span' );
+			span.innerHTML = ' ' + cfg.consent.html; // Built and escaped on the server.
+			consent.appendChild( span );
+			form.appendChild( consent );
+		}
+		var hp = el( 'div', 'fb-hp' );
+		hp.setAttribute( 'aria-hidden', 'true' );
+		var hpInput = el( 'input' );
+		hpInput.type = 'text';
+		hpInput.name = 'fb_website';
+		hpInput.tabIndex = -1;
+		hpInput.autocomplete = 'off';
+		hp.appendChild( hpInput );
+		form.appendChild( hp );
+		var actions = el( 'div', 'fb-actions' );
+		var submit = el( 'button', 'fb-button', t.sendMessage );
+		submit.type = 'submit';
+		actions.appendChild( submit );
+		form.appendChild( actions );
+		var status = el( 'p', 'fb-enquiry__status' );
+		status.setAttribute( 'role', 'status' );
+		form.appendChild( status );
+		form.hidden = true;
+		box.appendChild( form );
+		bindValidation( form );
+		this.bindPhone();
+
+		form.addEventListener( 'submit', function ( e ) {
+			e.preventDefault();
+			if ( form._sending ) {
+				return;
+			}
+			var bad = validateForm( form );
+			if ( bad ) {
+				focusEl( bad );
+				return;
+			}
+			var get = function ( name ) {
+				var f = form.querySelector( '[name="' + name + '"]' );
+				return f ? ( f.type === 'checkbox' ? f.checked : f.value ) : '';
+			};
+			var s = self.stay || {};
+			form._sending = true;
+			submit.disabled = true;
+			submit.setAttribute( 'aria-busy', 'true' );
+			status.textContent = t.sending;
+			postJson( 'enquiry', {
+				name: get( 'name' ),
+				email: get( 'email' ),
+				phone: get( 'phone' ),
+				phone_country: get( 'phone_country' ),
+				message: get( 'message' ),
+				check_in: s.check_in || '',
+				check_out: s.check_out || '',
+				adults: s.adults || 1,
+				children: s.children || 0,
+				room: self.room && ! self.showAll ? self.room : '',
+				locale: self.locale,
+				privacy_consent: get( 'privacy_consent' ),
+				fb_website: get( 'fb_website' ),
+			} )
+				.then( function ( data ) {
+					form.innerHTML = '';
+					var done = el( 'p', 'fb-enquiry__done', data.message );
+					done.setAttribute( 'role', 'status' );
+					form.appendChild( done );
+					focusEl( done );
+				} )
+				.catch( function ( err ) {
+					var target = err.data && err.data.field ? form.querySelector( '[name="' + err.data.field + '"]' ) : null;
+					if ( target ) {
+						setError( target, err.message );
+						focusEl( target );
+						status.textContent = '';
+					} else {
+						status.textContent = err.message;
+					}
+				} )
+				.finally( function () {
+					form._sending = false;
+					submit.disabled = false;
+					submit.removeAttribute( 'aria-busy' );
+				} );
+		} );
+		return form;
+	};
+
+	/* ---- Room chosen: details ---- */
+
 	/**
 	 * Tracking data for the chosen room and plan (no personal data).
 	 */
@@ -542,16 +2162,18 @@
 		};
 	};
 
-	BookingForm.prototype.select = function ( room, view ) {
+	BookingForm.prototype.select = function ( room, view, opts ) {
+		opts = opts || {};
 		this.selected = room;
 		this.view = view || room.quote || null;
 		this.promo = '';
-		this.renderSummary();
-
-		this.results.hidden = true;
-		this.detailsForm.hidden = false;
+		this.promoError = '';
 		this.setNotice( '' );
-		this.detailsForm.querySelector( 'input' ).focus();
+		this.renderSummary();
+		if ( ! opts.restore ) {
+			this.setUrl( this.detailsParams(), false );
+		}
+		this.show( 'details', opts.restore ? !! opts.focus : true );
 
 		var total = this.view && typeof this.view.total === 'number' ? this.view.total : room.total;
 		track( Object.assign( { event: 'room_select' }, this.trackData( total ) ), true );
@@ -566,7 +2188,7 @@
 	 */
 	BookingForm.prototype.trackComplete = function ( data, done ) {
 		var key = 'flexo_tracked_' + data.reference;
-		if ( ! cfg.tracking || storageGet( key ) ) {
+		if ( ! cfg.tracking || storageGet( key ) || ! this.selected ) {
 			done();
 			return;
 		}
@@ -609,7 +2231,7 @@
 
 		row( room.title, view.total_formatted || room.total_formatted, 'fb-summary__room' );
 		if ( view.rate_plan ) {
-			row( t.rate, view.rate_plan.name, 'fb-summary__rate' );
+			row( t.rate, view.rate_plan.name + ( view.rate_plan.meals_label ? ' · ' + view.rate_plan.meals_label : '' ), 'fb-summary__rate' );
 		}
 		row( this.date( s.check_in ) + ' → ' + this.date( s.check_out ), s.nightsLabel );
 		row( t.guests, this.guestsText() );
@@ -663,9 +2285,66 @@
 			summary.appendChild( policy );
 		}
 
-		if ( cfg.promo ) {
-			this.renderPromo( summary, view );
+		if ( this.promoSlot ) {
+			this.promoSlot.innerHTML = '';
 		}
+		if ( cfg.promo ) {
+			var inForm = this.aside && this.promoSlot && window.innerWidth <= 767 && ! this.root.classList.contains( 'fb-wide' );
+			this.renderPromo( inForm ? this.promoSlot : summary, view );
+		}
+		if ( this.asideShort ) {
+			this.asideShort.textContent = room.title + ' · ' + ( view.total_formatted || room.total_formatted );
+		}
+		this.updateSubmit();
+		this.renderBefore();
+	};
+
+	/**
+	 * "Before you book": cancellation, what is paid now and at the
+	 * property, and how to reach the hotel – right above the final button.
+	 */
+	BookingForm.prototype.renderBefore = function () {
+		var box = this.before;
+		if ( ! box || ! this.selected ) {
+			return;
+		}
+		var view = this.view || {};
+		var pay = view.payment || null;
+		box.innerHTML = '';
+		box.appendChild( el( 'h5', 'fb-before__title', t.beforeYouBook ) );
+		var ul = el( 'ul', 'fb-before__list' );
+		if ( view.rate_plan ) {
+			ul.appendChild( el( 'li', '', t.cancellation + ': ' + ( view.rate_plan.cancellation_policy || view.rate_plan.refundable_label ) ) );
+		}
+		var method = this.paymentMethod();
+		if ( pay && pay.now > 0 && method ) {
+			ul.appendChild( el( 'li', '', t.payNowText + ': ' + pay.now_formatted + ( pay.at_property > 0 ? ' · ' + t.payLaterText + ': ' + pay.at_property_formatted : '' ) ) );
+		} else if ( ! cfg.instant ) {
+			ul.appendChild( el( 'li', '', fmt( t.requestNote, cfg.replyTime || '' ) ) );
+		} else {
+			ul.appendChild( el( 'li', '', t.nothingNow ) );
+		}
+		var c = cfg.contact || {};
+		if ( c.phone || c.email ) {
+			var li = el( 'li', 'fb-before__contact' );
+			li.appendChild( document.createTextNode( t.questions + ': ' ) );
+			if ( c.phone ) {
+				var tel = el( 'a', '', c.phone );
+				tel.href = c.phone_link;
+				li.appendChild( tel );
+			}
+			if ( c.phone && c.email ) {
+				li.appendChild( document.createTextNode( ' · ' ) );
+			}
+			if ( c.email ) {
+				var mail = el( 'a', '', c.email );
+				mail.href = 'mailto:' + c.email;
+				li.appendChild( mail );
+			}
+			ul.appendChild( li );
+		}
+		box.appendChild( ul );
+		box.hidden = false;
 	};
 
 	/**
@@ -680,8 +2359,7 @@
 		if ( view.promo ) {
 			message.textContent = String( t.promoApplied ).replace( '%1$s', view.promo.code ).replace( '%2$s', view.promo.label );
 			box.appendChild( message );
-			var remove = el( 'button', 'fb-link', t.remove );
-			remove.type = 'button';
+			var remove = button( 'fb-link', t.remove );
 			remove.addEventListener( 'click', function () {
 				self.applyPromo( '' );
 			} );
@@ -690,12 +2368,13 @@
 			return;
 		}
 
-		var toggle = el( 'button', 'fb-link fb-promo__toggle', t.havePromo );
-		toggle.type = 'button';
+		var toggle = button( 'fb-link fb-promo__toggle', t.havePromo );
 		toggle.setAttribute( 'aria-expanded', 'false' );
 		var fields = el( 'div', 'fb-promo__fields' );
 		fields.hidden = true;
-		var id = 'fb-promo-' + Math.random().toString( 36 ).slice( 2, 8 );
+		var id = uid( 'fb-promo' );
+		toggle.setAttribute( 'aria-controls', id + '-box' );
+		fields.id = id + '-box';
 		var label = el( 'label', 'fb-promo__label', t.promoLabel );
 		label.htmlFor = id;
 		var input = el( 'input' );
@@ -704,8 +2383,7 @@
 		input.autocomplete = 'off';
 		input.setAttribute( 'autocapitalize', 'characters' );
 		input.value = this.promoTried || '';
-		var apply = el( 'button', 'fb-button fb-button--ghost', t.apply );
-		apply.type = 'button';
+		var apply = button( 'fb-button fb-button--ghost', t.apply );
 		var row = el( 'div', 'fb-promo__row' );
 		row.appendChild( input );
 		row.appendChild( apply );
@@ -784,6 +2462,7 @@
 					self.promo = view.promo ? view.promo.code : '';
 				}
 				self.renderSummary();
+				self.setUrl( self.detailsParams(), true );
 			} )
 			.catch( function ( err ) {
 				self.promoError = err.message;
@@ -792,18 +2471,39 @@
 	};
 
 	BookingForm.prototype.back = function () {
-		this.detailsForm.hidden = true;
-		this.results.hidden = false;
+		var q = new URLSearchParams( window.location.search );
+		if ( this.useUrl && q.get( 'fb_step' ) === 'details' && window.history.state && window.history.state.fb ) {
+			window.history.back();
+			return;
+		}
+		this.setUrl( this.stayParams(), true );
 		this.setNotice( '' );
+		this.show( 'rooms', true );
+	};
+
+	/* ---- Booking ---- */
+
+	var FIELD_FOR_CODE = {
+		flexo_missing_name: 'guest_name',
+		flexo_invalid_email: 'guest_email',
+		flexo_missing_phone: 'guest_phone',
+		flexo_invalid_phone: 'guest_phone',
+		flexo_terms: 'terms',
+		flexo_consent: 'privacy_consent',
 	};
 
 	BookingForm.prototype.onBook = function ( e ) {
 		e.preventDefault();
 		var self = this;
 		var f = this.detailsForm;
-
-		if ( ! f.checkValidity() ) {
-			f.reportValidity();
+		// One booking per click: a second click or Enter does nothing.
+		if ( this.sending ) {
+			return;
+		}
+		var bad = validateForm( f );
+		if ( bad ) {
+			this.setNotice( t.checkFields, true );
+			focusEl( bad );
 			return;
 		}
 
@@ -838,6 +2538,7 @@
 			guest_name: f.querySelector( '[name="guest_name"]' ).value,
 			guest_email: f.querySelector( '[name="guest_email"]' ).value,
 			guest_phone: val( 'guest_phone' ),
+			phone_country: val( 'phone_country' ),
 			notes: val( 'notes' ),
 			terms: terms ? terms.checked : false,
 			privacy_consent: consent ? consent.checked : false,
@@ -846,20 +2547,19 @@
 			fb_website: f.querySelector( '[name="fb_website"]' ).value,
 			// Only the method: amounts are always calculated by the server.
 			payment_method: this.paymentMethod(),
-			return_url: window.location.href.split( '#' )[ 0 ],
+			return_url: this.returnUrl(),
 		};
 
 		var submit = f.querySelector( '[type="submit"]' );
 		var label = submit.textContent;
+		this.sending = true;
 		submit.disabled = true;
+		submit.setAttribute( 'aria-busy', 'true' );
+		submit.classList.add( 'is-busy' );
 		submit.textContent = t.sending;
 		this.setNotice( '' );
 
-		request( apiUrl( 'bookings' ), {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-			body: JSON.stringify( payload ),
-		} )
+		postJson( 'bookings', payload )
 			.then( function ( data ) {
 				if ( data.payment && data.payment.redirect ) {
 					// Card: continue on the secure payment page.
@@ -870,16 +2570,31 @@
 				}
 				if ( data.redirect ) {
 					// Leave the page only after the conversion was recorded.
+					self.leaving = true;
 					self.trackComplete( data, function () {
 						window.location.href = data.redirect;
 					} );
 					return;
 				}
-				self.showSuccess( data );
+				if ( data.view ) {
+					self.setUrl( { fb_done: data.reference, fb_key: data.key }, true );
+					self.showDone( data.view, false );
+				} else {
+					self.showSuccess( data );
+				}
 				self.trackComplete( data, function () {} );
 			} )
 			.catch( function ( err ) {
-				self.setNotice( err.message, true );
+				var name = err.data && err.data.field ? err.data.field : FIELD_FOR_CODE[ err.code ];
+				var target = name ? f.querySelector( '[name="' + name + '"]' ) : null;
+				if ( target && isShown( target ) ) {
+					setError( target, err.message );
+					self.setNotice( t.checkFields, true );
+					focusEl( target );
+				} else {
+					self.setNotice( err.message, true );
+					focusEl( self.notice );
+				}
 				// Show the current price (or why the promo code no longer applies).
 				if ( err.code === 'flexo_price_changed' || ( err.code && err.code.indexOf( 'flexo_promo' ) === 0 ) ) {
 					self.applyPromo( err.code === 'flexo_price_changed' ? self.promo : '' );
@@ -889,11 +2604,29 @@
 				if ( self.leaving ) {
 					return;
 				}
+				self.sending = false;
 				submit.disabled = false;
+				submit.removeAttribute( 'aria-busy' );
+				submit.classList.remove( 'is-busy' );
 				submit.textContent = label;
 			} );
 	};
 
+	/**
+	 * The page to come back to from the payment page: this page without
+	 * the step in the address.
+	 */
+	BookingForm.prototype.returnUrl = function () {
+		var url = new URL( window.location.href.split( '#' )[ 0 ] );
+		STATE_KEYS.forEach( function ( k ) {
+			url.searchParams.delete( k );
+		} );
+		return url.toString();
+	};
+
+	/**
+	 * Fallback confirmation (bookings made before the full view existed).
+	 */
 	BookingForm.prototype.showSuccess = function ( data ) {
 		this.success.innerHTML = '';
 		this.success.appendChild( el( 'p', 'fb-success__message', data.message ) );
@@ -905,12 +2638,282 @@
 		if ( data.payment ) {
 			this.renderPayment( data.payment );
 		}
+		this.show( 'done', true );
+	};
 
+	function section( parent, title, className ) {
+		var box = el( 'section', 'fb-done__section' + ( className ? ' ' + className : '' ) );
+		var h = el( 'h4', 'fb-done__subtitle', title );
+		h.id = uid( 'fb-sec' );
+		box.setAttribute( 'aria-labelledby', h.id );
+		box.appendChild( h );
+		parent.appendChild( box );
+		return box;
+	}
+
+	function dlRow( dl, label, value, className ) {
+		var row = el( 'div', 'fb-done__row' + ( className ? ' ' + className : '' ) );
+		row.appendChild( el( 'dt', '', label ) );
+		row.appendChild( el( 'dd', '', value ) );
+		dl.appendChild( row );
+	}
+
+	/**
+	 * The confirmation: reference, the whole booking, what happens next,
+	 * the hotel's contact details, add to calendar and directions. Also the
+	 * guest booking page (manage = true).
+	 */
+	BookingForm.prototype.showDone = function ( v, manage ) {
+		var self = this;
+		var box = this.success;
+		box.innerHTML = '';
+		box.setAttribute( 'data-state', v.state );
+		var titles = { confirmed: t.doneConfirmed, request: t.doneRequest, awaiting_transfer: t.doneTransfer };
+		var head = el( 'div', 'fb-done__head fb-done__head--' + v.state );
+		if ( ! manage && titles[ v.state ] ) {
+			var icon = el( 'span', 'fb-done__icon', '✓' );
+			icon.setAttribute( 'aria-hidden', 'true' );
+			head.appendChild( icon );
+		}
+		var title = el( 'h3', 'fb-done__title', manage ? t.yourBooking : ( titles[ v.state ] || t.doneOther ) );
+		title.tabIndex = -1;
+		head.appendChild( title );
+		box.appendChild( head );
+		if ( manage ) {
+			var status = el( 'p', 'fb-done__status' );
+			status.appendChild( document.createTextNode( t.status + ': ' ) );
+			status.appendChild( el( 'strong', 'fb-badge fb-badge--' + v.state, v.state_label ) );
+			box.appendChild( status );
+		} else {
+			box.appendChild( el( 'p', 'fb-success__message', v.message ) );
+		}
+		var ref = el( 'p', 'fb-success__reference' );
+		ref.appendChild( document.createTextNode( t.reference + ': ' ) );
+		ref.appendChild( el( 'strong', '', v.reference ) );
+		box.appendChild( ref );
+		box.appendChild( el( 'p', 'fb-success__stay', v.room + ' · ' + v.check_in_text + ' → ' + v.check_out_text + ' · ' + v.total_formatted ) );
+
+		if ( v.payment ) {
+			this.renderPayment( v.payment );
+		}
+
+		var details = section( box, t.yourBooking, 'fb-done__booking' );
+		var dl = el( 'dl', 'fb-done__list' );
+		dlRow( dl, t.room, v.room + ( v.rate ? ' · ' + v.rate.name + ( v.rate.meals ? ' · ' + v.rate.meals : '' ) : '' ) );
+		dlRow( dl, t.dates, v.check_in_text + ' → ' + v.check_out_text + ' · ' + v.nights_label );
+		dlRow( dl, t.guests, v.guests );
+		var q = v.quote || {};
+		( q.lines || [] ).forEach( function ( line ) {
+			if ( ( q.lines || [] ).length > 1 ) {
+				dlRow( dl, line.label, line.formatted, 'fb-done__line' );
+			}
+		} );
+		if ( q.discount_total > 0 ) {
+			dlRow( dl, t.discount, q.discount_formatted, 'fb-done__line' );
+		}
+		dlRow( dl, t.total, v.total_formatted, 'fb-done__total' );
+		if ( v.payment && v.payment.paid_formatted ) {
+			dlRow( dl, t.paid, v.payment.paid_formatted );
+		}
+		if ( v.payment && v.payment.at_property_formatted && [ 'confirmed' ].indexOf( v.state ) !== -1 ) {
+			dlRow( dl, t.atPropertyRest, v.payment.at_property_formatted );
+		}
+		if ( v.rate && v.rate.cancellation ) {
+			dlRow( dl, t.cancellation, v.rate.cancellation );
+		}
+		details.appendChild( dl );
+
+		if ( v.next_steps && v.next_steps.length && ! manage ) {
+			var next = section( box, t.nextSteps, 'fb-done__next' );
+			var ul = el( 'ul' );
+			v.next_steps.forEach( function ( s ) {
+				ul.appendChild( el( 'li', '', s ) );
+			} );
+			next.appendChild( ul );
+		}
+
+		var c = v.contact || {};
+		if ( c.phone || c.email || c.address ) {
+			var contact = section( box, t.contactUs, 'fb-done__contact' );
+			var p = el( 'p' );
+			if ( c.phone ) {
+				var tel = el( 'a', '', c.phone );
+				tel.href = c.phone_link;
+				p.appendChild( tel );
+			}
+			if ( c.email ) {
+				if ( p.childNodes.length ) {
+					p.appendChild( document.createTextNode( ' · ' ) );
+				}
+				var mail = el( 'a', '', c.email );
+				mail.href = 'mailto:' + c.email;
+				p.appendChild( mail );
+			}
+			if ( p.childNodes.length ) {
+				contact.appendChild( p );
+			}
+			if ( c.address ) {
+				var addr = el( 'p', 'fb-done__address', c.address );
+				contact.appendChild( addr );
+			}
+		}
+
+		var actions = el( 'div', 'fb-actions fb-actions--result' );
+		if ( v.ics ) {
+			var ics = el( 'a', 'fb-button fb-button--ghost fb-done__ics', t.addCalendar );
+			ics.href = v.ics;
+			ics.setAttribute( 'download', 'booking-' + v.reference + '.ics' );
+			actions.appendChild( ics );
+		}
+		if ( c.directions ) {
+			var dir = el( 'a', 'fb-button fb-button--ghost fb-done__directions', t.directions );
+			dir.href = c.directions;
+			dir.target = '_blank';
+			dir.rel = 'noopener';
+			actions.appendChild( dir );
+		}
+		if ( v.manage && ! manage ) {
+			var mg = el( 'a', 'fb-link fb-done__manage', t.manageBooking );
+			mg.href = v.manage;
+			actions.appendChild( mg );
+		}
+		if ( actions.childNodes.length ) {
+			box.appendChild( actions );
+		}
+		if ( manage ) {
+			this.renderRequests( v );
+		}
+		this.show( manage ? 'manage' : 'done', true );
+		void self;
+	};
+
+	/**
+	 * Guest booking page: requests sent, and a form to ask for a change
+	 * or cancellation (the hotel decides; nothing changes by itself).
+	 */
+	BookingForm.prototype.renderRequests = function ( v ) {
+		var self = this;
+		var box = section( this.success, t.askChange, 'fb-manage' );
+		if ( v.requests && v.requests.length ) {
+			var list = el( 'ul', 'fb-manage__requests' );
+			v.requests.forEach( function ( r ) {
+				var li = el( 'li' );
+				li.appendChild( el( 'strong', '', r.type ) );
+				li.appendChild( document.createTextNode( ' · ' + r.date + ' · ' + ( r.handled ? t.requestHandled : t.requestOpen ) ) );
+				if ( r.message ) {
+					li.appendChild( el( 'p', '', r.message ) );
+				}
+				list.appendChild( li );
+			} );
+			box.appendChild( el( 'h5', '', t.requests ) );
+			box.appendChild( list );
+		}
+		if ( ! v.can_request ) {
+			box.appendChild( el( 'p', '', t.noRequests ) );
+			return;
+		}
+		box.appendChild( el( 'p', 'fb-manage__note', t.askChangeNote ) );
+		var form = el( 'form', 'fb-manage__form' );
+		form.noValidate = true;
+		var fs = el( 'fieldset', 'fb-manage__types' );
+		fs.appendChild( el( 'legend', '', t.requestType ) );
+		Object.keys( v.request_types || {} ).forEach( function ( key ) {
+			var label = el( 'label', 'fb-choice' );
+			var radio = el( 'input' );
+			radio.type = 'radio';
+			radio.name = 'type';
+			radio.value = key;
+			radio.required = true;
+			label.appendChild( radio );
+			label.appendChild( el( 'span', 'fb-choice__text', v.request_types[ key ] ) );
+			fs.appendChild( label );
+		} );
+		form.appendChild( fs );
+		var msg = field( form, { name: 'message', label: t.requestMessage, tag: 'textarea', wide: true, placeholder: t.changePlaceholder } );
+		var actions = el( 'div', 'fb-actions' );
+		var submit = el( 'button', 'fb-button', t.sendRequestBtn );
+		submit.type = 'submit';
+		actions.appendChild( submit );
+		form.appendChild( actions );
+		var status = el( 'p', 'fb-manage__status' );
+		status.setAttribute( 'role', 'status' );
+		form.appendChild( status );
+		box.appendChild( form );
+		bindValidation( form );
+
+		form.addEventListener( 'submit', function ( e ) {
+			e.preventDefault();
+			if ( form._sending ) {
+				return;
+			}
+			var type = form.querySelector( '[name="type"]:checked' );
+			if ( ! type ) {
+				setError( form.querySelector( '[name="type"]' ), t.chooseRequest );
+				focusEl( form.querySelector( '[name="type"]' ) );
+				return;
+			}
+			clearError( form.querySelector( '[name="type"]' ) );
+			form._sending = true;
+			submit.disabled = true;
+			submit.setAttribute( 'aria-busy', 'true' );
+			postJson( 'guest-booking/request', { reference: self.guestRef, key: self.guestKey, type: type.value, message: msg.value, locale: self.locale } )
+				.then( function ( data ) {
+					form.innerHTML = '';
+					var done = el( 'p', 'fb-manage__done', data.message );
+					done.setAttribute( 'role', 'status' );
+					form.appendChild( done );
+					focusEl( done );
+				} )
+				.catch( function ( err ) {
+					var target = err.data && err.data.field ? form.querySelector( '[name="' + err.data.field + '"]' ) : null;
+					if ( target ) {
+						setError( target, err.message );
+						focusEl( target );
+					} else {
+						status.textContent = err.message;
+					}
+				} )
+				.finally( function () {
+					form._sending = false;
+					submit.disabled = false;
+					submit.removeAttribute( 'aria-busy' );
+				} );
+		} );
+	};
+
+	/**
+	 * The confirmation after a refresh, or the guest booking page.
+	 */
+	BookingForm.prototype.loadBooking = function ( reference, key, manage ) {
+		var self = this;
+		this.guestRef = reference;
+		this.guestKey = key;
 		this.searchForm.hidden = true;
-		this.detailsForm.hidden = true;
+		this.stayBar.hidden = true;
 		this.results.hidden = true;
+		this.detailsForm.hidden = true;
+		if ( this.stepsEl ) {
+			this.stepsEl.hidden = manage;
+		}
 		this.success.hidden = false;
-		this.success.focus();
+		this.success.innerHTML = '';
+		this.success.appendChild( el( 'p', 'fb-success__message fb-success__message--pending', t.loading ) );
+		var params = { reference: reference, key: key };
+		if ( manage ) {
+			params.manage = 1;
+		}
+		if ( this.locale ) {
+			params.locale = this.locale;
+		}
+		return request( apiUrl( 'guest-booking', params ) )
+			.then( function ( v ) {
+				self.showDone( v, manage );
+			} )
+			.catch( function ( err ) {
+				self.success.innerHTML = '';
+				self.success.appendChild( el( 'p', 'fb-success__message is-error', err.message ) );
+				self.addRestart();
+			} );
 	};
 
 	/**
@@ -938,8 +2941,7 @@
 				var dd = el( 'dd' );
 				dd.appendChild( el( 'span', 'fb-bank__value', item.value ) );
 				if ( [ 'iban', 'reference', 'amount' ].indexOf( item.key ) !== -1 && navigator.clipboard ) {
-					var copy = el( 'button', 'fb-link fb-bank__copy', t.copy );
-					copy.type = 'button';
+					var copy = button( 'fb-link fb-bank__copy', t.copy );
 					copy.setAttribute( 'aria-label', t.copy + ': ' + item.label );
 					copy.addEventListener( 'click', function () {
 						navigator.clipboard.writeText( item.key === 'iban' ? item.value.replace( /\s+/g, '' ) : item.value ).then( function () {
@@ -974,10 +2976,14 @@
 		this.searchForm.hidden = true;
 		this.detailsForm.hidden = true;
 		this.results.hidden = true;
+		this.stayBar.hidden = true;
 		this.success.hidden = false;
 		this.success.innerHTML = '';
 		this.success.appendChild( el( 'p', 'fb-success__message fb-success__message--pending', t.checkingPayment ) );
 		this.root.classList.add( 'is-loading' );
+		if ( this.stepsEl ) {
+			this.markStep( 'payment' );
+		}
 
 		var started = Date.now();
 		var params = { reference: reference, key: key };
@@ -1010,9 +3016,41 @@
 		poll();
 	};
 
+	BookingForm.prototype.markStep = function ( step ) {
+		var items = Array.prototype.slice.call( this.stepsEl.querySelectorAll( '[data-step]' ) );
+		var index = items.findIndex( function ( li ) {
+			return li.getAttribute( 'data-step' ) === step;
+		} );
+		items.forEach( function ( li, i ) {
+			li.classList.toggle( 'is-done', i < index );
+			li.classList.toggle( 'is-current', i === index );
+			if ( i === index ) {
+				li.setAttribute( 'aria-current', 'step' );
+			} else {
+				li.removeAttribute( 'aria-current' );
+			}
+		} );
+	};
+
 	BookingForm.prototype.showPaymentResult = function ( view ) {
 		var self = this;
 		var box = this.success;
+
+		if ( view.state === 'confirmed' ) {
+			this.selected = { title: view.room, slug: '', id: view.reference };
+			this.view = view.quote || null;
+			this.trackComplete( { reference: view.reference, status: 'confirmed', quote: view.quote }, function () {
+				if ( view.redirect ) {
+					window.location.href = view.redirect;
+					return;
+				}
+				// The full confirmation, which also survives a refresh.
+				self.setUrl( { fb_done: self.paymentRef, fb_key: self.paymentKey }, true );
+				self.loadBooking( self.paymentRef, self.paymentKey, false );
+			} );
+			return;
+		}
+
 		box.innerHTML = '';
 		box.setAttribute( 'data-state', view.state );
 		box.appendChild( el( 'p', 'fb-success__message' + ( [ 'expired', 'failed', 'conflict', 'cancelled' ].indexOf( view.state ) !== -1 ? ' is-error' : '' ), view.message ) );
@@ -1023,19 +3061,9 @@
 		box.appendChild( el( 'p', 'fb-success__stay', view.room + ' · ' + this.date( view.check_in ) + ' → ' + this.date( view.check_out ) + ' · ' + view.total_formatted ) );
 		this.renderPayment( view );
 
-		if ( view.state === 'confirmed' ) {
-			this.selected = { title: view.room, slug: '', id: view.reference };
-			this.view = view.quote || null;
-			this.trackComplete( { reference: view.reference, status: 'confirmed', quote: view.quote }, function () {
-				if ( view.redirect ) {
-					window.location.href = view.redirect;
-				}
-			} );
-		}
 		var actions = el( 'div', 'fb-actions fb-actions--result' );
 		if ( view.can_retry ) {
-			var retry = el( 'button', 'fb-button', t.payAgain );
-			retry.type = 'button';
+			var retry = button( 'fb-button', t.payAgain );
 			retry.addEventListener( 'click', function () {
 				self.retryPayment( retry );
 			} );
@@ -1052,17 +3080,18 @@
 
 	BookingForm.prototype.restartButton = function () {
 		var self = this;
-		var again = el( 'button', 'fb-button fb-button--ghost', t.searchAgain );
-		again.type = 'button';
+		var again = button( 'fb-button fb-button--ghost', t.searchAgain );
 		again.addEventListener( 'click', function () {
-			var url = new URL( window.location.href );
-			[ 'fb_payment', 'fb_ref', 'fb_key' ].forEach( function ( k ) {
-				url.searchParams.delete( k );
-			} );
-			window.history.replaceState( null, '', url.toString() );
-			self.success.hidden = true;
-			self.searchForm.hidden = false;
-			self.searchForm.querySelector( 'input' ).focus();
+			self.setUrl( {}, true );
+			if ( ! self.useUrl ) {
+				var url = new URL( window.location.href );
+				[ 'fb_payment', 'fb_ref', 'fb_key' ].forEach( function ( k ) {
+					url.searchParams.delete( k );
+				} );
+				window.history.replaceState( null, '', url.toString() );
+			}
+			self.stay = null;
+			self.show( 'dates', true );
 		} );
 		return again;
 	};
@@ -1073,25 +3102,51 @@
 		this.success.appendChild( actions );
 	};
 
-	BookingForm.prototype.retryPayment = function ( button ) {
+	BookingForm.prototype.retryPayment = function ( btn ) {
 		var self = this;
-		button.disabled = true;
-		request( apiUrl( 'payment/retry' ), {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-			body: JSON.stringify( { reference: this.paymentRef, key: this.paymentKey, locale: this.locale, return_url: window.location.href.split( '#' )[ 0 ] } ),
-		} )
+		btn.disabled = true;
+		postJson( 'payment/retry', { reference: this.paymentRef, key: this.paymentKey, locale: this.locale, return_url: this.returnUrl() } )
 			.then( function ( data ) {
 				if ( data.redirect ) {
-					button.textContent = t.redirecting;
+					btn.textContent = t.redirecting;
 					window.location.href = data.redirect;
 				}
 			} )
 			.catch( function ( err ) {
-				button.disabled = false;
+				btn.disabled = false;
 				self.setNotice( err.message, true );
 			} );
 	};
+
+	/**
+	 * The compact search bar: the same date picker, then off to the booking page.
+	 */
+	function SearchBar( node ) {
+		var form = node.querySelector( '.fb-search' );
+		var picker = new DatePicker( form, {
+			locale: node.getAttribute( 'data-locale' ) || '',
+			dateFormat: node.getAttribute( 'data-date-format' ) || '',
+			guests: function () {
+				var a = form.querySelector( '[name="adults"]' );
+				var c = form.querySelector( '[name="children"]' );
+				return { adults: a ? a.value : 2, children: c ? c.value : 0 };
+			},
+		} );
+		if ( ! picker.enhanced ) {
+			bindDates( form );
+		}
+		bindAges( form );
+		form.addEventListener( 'submit', function ( e ) {
+			var inInput = form.querySelector( '[name="check_in"]' );
+			var outInput = form.querySelector( '[name="check_out"]' );
+			if ( picker.enhanced && ( ! inInput.value || ! outInput.value ) ) {
+				e.preventDefault();
+				var target = picker.buttons[ inInput.value ? 'out' : 'in' ];
+				setError( target, t.datesMissing );
+				picker.open( inInput.value ? 'out' : 'in' );
+			}
+		} );
+	}
 
 	function init( scope ) {
 		var ctx = scope || document;
@@ -1101,8 +3156,7 @@
 		} );
 		ctx.querySelectorAll( '[data-flexo-booking-search]:not([data-fb-ready])' ).forEach( function ( node ) {
 			node.setAttribute( 'data-fb-ready', '1' );
-			bindDates( node.querySelector( '.fb-search' ) );
-			bindAges( node.querySelector( '.fb-search' ) );
+			new SearchBar( node ); // eslint-disable-line no-new
 		} );
 	}
 

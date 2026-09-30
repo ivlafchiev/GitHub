@@ -44,6 +44,13 @@ class Flexo_Booking_Settings {
 			'email_cancelled_body'     => __( "Hello {guest_name},\n\nYour booking {reference} at {site_name} has been cancelled. If you have any questions, simply reply to this email.\n\nKind regards,\n{site_name}", 'flexo-booking' ),
 			// Emails (Day 4).
 			'hotel_phone'                   => '',
+			// Day 6: contact details shown to guests, the booking page and form options.
+			'hotel_email'                   => '',
+			'hotel_address'                 => '',
+			'request_reply_hours'           => 24,
+			'phone_country'                 => 'BG',
+			'picker_prices'                 => 0,
+			'booking_page'                  => '',
 			'email_logo'                    => '',
 			'email_color'                   => '#1f6f5c',
 			'notify_new'                    => 1,
@@ -341,6 +348,23 @@ class Flexo_Booking_Settings {
 				case 'invoice_contact_person':
 					$clean[ $key ] = in_array( $value, array( 'required', 'optional', 'hidden' ), true ) ? $value : $default;
 					break;
+				case 'hotel_email':
+					$clean[ $key ] = is_email( $value ) ? sanitize_email( $value ) : '';
+					break;
+				case 'hotel_address':
+					$clean[ $key ] = sanitize_textarea_field( $value );
+					break;
+				case 'request_reply_hours':
+					$clean[ $key ] = min( 168, max( 1, absint( $value ) ) );
+					break;
+				case 'phone_country':
+					$value         = strtoupper( sanitize_text_field( $value ) );
+					$clean[ $key ] = preg_match( '/^[A-Z]{2}$/', $value ) && Flexo_Booking_Phone::code( $value ) ? $value : $default;
+					break;
+				case 'picker_prices':
+					$clean[ $key ] = empty( $value ) ? 0 : 1;
+					break;
+				case 'booking_page':
 				case 'thank_you_url':
 				case 'terms_url':
 					$clean[ $key ] = self::sanitize_path_or_url( $value );
@@ -526,6 +550,22 @@ class Flexo_Booking_Settings {
 						</td>
 					</tr>
 					<tr>
+						<th scope="row"><label for="fb-booking-page"><?php esc_html_e( 'Booking page', 'flexo-booking' ); ?></label></th>
+						<td>
+							<?php $flexo_detected = Flexo_Booking_Guest::detect_booking_page(); ?>
+							<input id="fb-booking-page" type="text" class="regular-text" name="<?php echo esc_attr( $name ); ?>[booking_page]" value="<?php echo esc_attr( $s['booking_page'] ); ?>" placeholder="<?php echo esc_attr( $flexo_detected ? wp_make_link_relative( $flexo_detected ) : '/booking/' ); ?>">
+							<p class="description">
+								<?php esc_html_e( 'The page with the full booking form. Links in emails (add to calendar, manage your booking) open it.', 'flexo-booking' ); ?>
+								<?php if ( '' === $s['booking_page'] && $flexo_detected ) : ?>
+									<?php
+									/* translators: %s: page address */
+									printf( esc_html__( 'Found automatically: %s', 'flexo-booking' ), '<code>' . esc_html( wp_make_link_relative( $flexo_detected ) ) . '</code>' );
+									?>
+								<?php endif; ?>
+							</p>
+						</td>
+					</tr>
+					<tr>
 						<th scope="row"><label for="fb-thanks"><?php esc_html_e( 'Thank-you page', 'flexo-booking' ); ?></label></th>
 						<td>
 							<input id="fb-thanks" type="text" class="regular-text" name="<?php echo esc_attr( $name ); ?>[thank_you_url]" value="<?php echo esc_attr( $s['thank_you_url'] ); ?>" placeholder="/thank-you/">
@@ -537,6 +577,39 @@ class Flexo_Booking_Settings {
 						<td>
 							<input id="fb-terms" type="text" class="regular-text" name="<?php echo esc_attr( $name ); ?>[terms_url]" value="<?php echo esc_attr( $s['terms_url'] ); ?>" placeholder="/terms-and-conditions/">
 							<p class="description"><?php esc_html_e( 'Optional. When set, guests must accept the terms before booking.', 'flexo-booking' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Your contact details for guests', 'flexo-booking' ); ?></th>
+						<td>
+							<p><label for="fb-hotel-email"><?php esc_html_e( 'Email', 'flexo-booking' ); ?></label><br>
+								<input id="fb-hotel-email" type="email" class="regular-text" name="<?php echo esc_attr( $name ); ?>[hotel_email]" value="<?php echo esc_attr( $s['hotel_email'] ); ?>" placeholder="<?php echo esc_attr( Flexo_Booking_Settings::notification_email() ); ?>"></p>
+							<p><label for="fb-hotel-address"><?php esc_html_e( 'Address', 'flexo-booking' ); ?></label><br>
+								<textarea id="fb-hotel-address" class="regular-text" rows="2" name="<?php echo esc_attr( $name ); ?>[hotel_address]" placeholder="<?php esc_attr_e( 'Street, town, postcode', 'flexo-booking' ); ?>"><?php echo esc_textarea( $s['hotel_address'] ); ?></textarea></p>
+							<p class="description"><?php esc_html_e( 'Shown to guests before they book and on the confirmation, with directions. The phone number is set under Emails. Leave the email empty to use the notification email.', 'flexo-booking' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="fb-reply-hours"><?php esc_html_e( 'You reply to requests within', 'flexo-booking' ); ?></label></th>
+						<td><input id="fb-reply-hours" type="number" min="1" max="168" class="small-text" name="<?php echo esc_attr( $name ); ?>[request_reply_hours]" value="<?php echo esc_attr( $s['request_reply_hours'] ); ?>"> <?php esc_html_e( 'hours', 'flexo-booking' ); ?>
+							<p class="description"><?php esc_html_e( 'Guests who send a booking request, an enquiry or a change request are told when to expect your answer.', 'flexo-booking' ); ?></p></td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="fb-phone-country"><?php esc_html_e( 'Phone country preselected', 'flexo-booking' ); ?></label></th>
+						<td>
+							<select id="fb-phone-country" name="<?php echo esc_attr( $name ); ?>[phone_country]">
+								<?php foreach ( Flexo_Booking_Phone::countries() as $flexo_cc => $flexo_country ) : ?>
+									<option value="<?php echo esc_attr( $flexo_cc ); ?>" <?php selected( $s['phone_country'], $flexo_cc ); ?>><?php echo esc_html( $flexo_country['name'] . ' (+' . $flexo_country['code'] . ')' ); ?></option>
+								<?php endforeach; ?>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Date picker', 'flexo-booking' ); ?></th>
+						<td>
+							<input type="hidden" name="<?php echo esc_attr( $name ); ?>[picker_prices]" value="0">
+							<label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[picker_prices]" value="1" <?php checked( $s['picker_prices'], 1 ); ?>> <?php esc_html_e( 'Show the lowest price per night under each date', 'flexo-booking' ); ?></label>
+							<p class="description"><?php esc_html_e( 'Unavailable dates and minimum stays are always shown.', 'flexo-booking' ); ?></p>
 						</td>
 					</tr>
 					<tr>

@@ -52,6 +52,9 @@ require_once FLEXO_BOOKING_DIR . 'includes/class-payments.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-pricing.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-bookings.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-emails.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-phone.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-booking-log.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-guest.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-rest.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-frontend.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-admin.php';
@@ -82,6 +85,7 @@ add_action(
 		Flexo_Booking_Tracking::init();
 		Flexo_Booking_Appearance::init();
 		Flexo_Booking_Rest::init();
+		Flexo_Booking_Guest::init();
 		Flexo_Booking_ICal::init();
 		Flexo_Booking_Rate_Plans::init();
 		Flexo_Booking_Frontend::init();

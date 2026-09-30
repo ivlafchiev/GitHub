@@ -604,6 +604,8 @@ class Flexo_Booking_Pricing {
 				'refundable'          => (bool) $plan['refundable'],
 				'refundable_label'    => Flexo_Booking_Rate_Plans::refundable_label( $plan['refundable'] ),
 				'cancellation_policy' => $plan['cancellation_policy'],
+				'meals'               => isset( $plan['meals'] ) ? $plan['meals'] : '',
+				'meals_label'         => Flexo_Booking_Rate_Plans::meals_label( isset( $plan['meals'] ) ? $plan['meals'] : '' ),
 			) : null,
 			'promo'                     => empty( $quote['promo'] ) ? null : array(
 				'code'  => $quote['promo']['code'],

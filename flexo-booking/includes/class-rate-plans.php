@@ -57,6 +57,24 @@ class Flexo_Booking_Rate_Plans {
 	}
 
 	/**
+	 * Meals a plan includes ('' = not stated).
+	 */
+	public static function meals() {
+		return array(
+			'none'          => __( 'No meals', 'flexo-booking' ),
+			'breakfast'     => __( 'Breakfast included', 'flexo-booking' ),
+			'half_board'    => __( 'Breakfast and dinner', 'flexo-booking' ),
+			'full_board'    => __( 'Breakfast, lunch and dinner', 'flexo-booking' ),
+			'all_inclusive' => __( 'All inclusive', 'flexo-booking' ),
+		);
+	}
+
+	public static function meals_label( $meals ) {
+		$all = self::meals();
+		return isset( $all[ $meals ] ) ? $all[ $meals ] : '';
+	}
+
+	/**
 	 * Ready-made plans, added switched off for the hotel to edit.
 	 */
 	public static function presets() {
@@ -65,6 +83,7 @@ class Flexo_Booking_Rate_Plans {
 			'room_only'      => array(
 				'name'                => __( 'Room Only', 'flexo-booking' ),
 				'description'         => __( 'Accommodation without meals.', 'flexo-booking' ),
+				'meals'               => 'none',
 				'adjustment_type'     => 'per_night',
 				'adjustment_value'    => 0,
 				'refundable'          => 1,
@@ -73,6 +92,7 @@ class Flexo_Booking_Rate_Plans {
 			'breakfast'      => array(
 				'name'                => __( 'Breakfast Included', 'flexo-booking' ),
 				'description'         => __( 'Breakfast every morning.', 'flexo-booking' ),
+				'meals'               => 'breakfast',
 				'adjustment_type'     => 'per_guest_night',
 				'adjustment_value'    => 8,
 				'refundable'          => 1,
@@ -81,6 +101,7 @@ class Flexo_Booking_Rate_Plans {
 			'half_board'     => array(
 				'name'                => __( 'Half Board', 'flexo-booking' ),
 				'description'         => __( 'Breakfast and dinner.', 'flexo-booking' ),
+				'meals'               => 'half_board',
 				'adjustment_type'     => 'per_guest_night',
 				'adjustment_value'    => 18,
 				'refundable'          => 1,
@@ -89,6 +110,7 @@ class Flexo_Booking_Rate_Plans {
 			'full_board'     => array(
 				'name'                => __( 'Full Board', 'flexo-booking' ),
 				'description'         => __( 'Breakfast, lunch and dinner.', 'flexo-booking' ),
+				'meals'               => 'full_board',
 				'adjustment_type'     => 'per_guest_night',
 				'adjustment_value'    => 28,
 				'refundable'          => 1,
@@ -97,6 +119,7 @@ class Flexo_Booking_Rate_Plans {
 			'all_inclusive'  => array(
 				'name'                => __( 'All Inclusive', 'flexo-booking' ),
 				'description'         => __( 'All meals, snacks and selected drinks.', 'flexo-booking' ),
+				'meals'               => 'all_inclusive',
 				'adjustment_type'     => 'per_guest_night',
 				'adjustment_value'    => 35,
 				'refundable'          => 1,
@@ -184,6 +207,7 @@ class Flexo_Booking_Rate_Plans {
 			'adjustment_value'    => (float) $row['adjustment_value'],
 			'refundable'          => (int) $row['refundable'],
 			'cancellation_policy' => (string) $row['cancellation_policy'],
+			'meals'               => isset( $row['meals'] ) ? (string) $row['meals'] : '',
 			'active'              => (int) $row['active'],
 			'sort_order'          => (int) $row['sort_order'],
 		);
@@ -227,6 +251,7 @@ class Flexo_Booking_Rate_Plans {
 			'adjustment_value'    => $value,
 			'refundable'          => empty( $data['refundable'] ) ? 0 : 1,
 			'cancellation_policy' => sanitize_textarea_field( isset( $data['cancellation_policy'] ) ? $data['cancellation_policy'] : '' ),
+			'meals'               => isset( $data['meals'] ) && array_key_exists( $data['meals'], self::meals() ) ? $data['meals'] : '',
 			'active'              => empty( $data['active'] ) ? 0 : 1,
 			'sort_order'          => isset( $data['sort_order'] ) ? (int) $data['sort_order'] : 0,
 			'updated_at'          => current_time( 'mysql' ),
@@ -424,6 +449,7 @@ class Flexo_Booking_Rate_Plans {
 			'description'         => $plan['description'],
 			'refundable'          => (int) $plan['refundable'],
 			'cancellation_policy' => $plan['cancellation_policy'],
+			'meals'               => isset( $plan['meals'] ) ? $plan['meals'] : '',
 			'adjustment_type'     => $plan['adjustment_type'],
 			'adjustment_value'    => (float) ( isset( $plan['value'] ) ? $plan['value'] : $plan['adjustment_value'] ),
 		);

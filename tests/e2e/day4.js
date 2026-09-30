@@ -102,8 +102,10 @@ async function fillGuest( p, name, email ) {
 	await guest.check( '[name=privacy_consent]' );
 	await guest.screenshot( { path: SHOTS + '/d4-details.png', fullPage: true } );
 	await guest.click( '.fb-details [type=submit]' );
+	// Day 6: the server's message is shown under the field it is about.
 	await guest.waitForSelector( '.fb-notice--error:not([hidden])' );
-	ok( ( await guest.textContent( '.fb-notice' ) ).includes( '9 or 13 digits' ), 'EIK checked on the server: ' + ( await guest.textContent( '.fb-notice' ) ) );
+	const eikError = await guest.evaluate( () => { const f = document.querySelector( '[name=invoice_company_id]' ); const id = f.getAttribute( 'aria-describedby' ) || ''; return f.getAttribute( 'aria-invalid' ) + ' ' + id.split( ' ' ).map( ( i ) => ( document.getElementById( i ) || {} ).textContent || '' ).join( ' ' ); } );
+	ok( eikError.startsWith( 'true' ) && eikError.includes( '9 or 13 digits' ), 'EIK checked on the server, shown under the field: ' + eikError );
 	await guest.fill( '[name=invoice_company_id]', '201234567' );
 	await guest.click( '.fb-details [type=submit]' );
 	await guest.waitForSelector( '.fb-success:not([hidden])' );
@@ -128,7 +130,9 @@ async function fillGuest( p, name, email ) {
 	ok( ! /Elena|Georgieva|elena@|888 555|Lake Tours|201234567/.test( all ), 'no personal data in any event' );
 	ok( ( await fbq( guest ) ).length === 0, 'Meta Pixel not called directly (off by default)' );
 	await guest.reload();
-	await guest.waitForSelector( '.fb-room' );
+	// Day 6: a reload shows the confirmation again (reference and key in the address).
+	await guest.waitForSelector( '.fb-done__title' );
+	ok( ( await guest.textContent( '.fb-success__reference' ) ).includes( ref ), 'reload shows the same confirmation' );
 	ev = await events( guest );
 	ok( ev.filter( ( e ) => e.event === 'booking_complete' ).length === 1, 'reloading the page does not fire booking_complete again' );
 	ok( '1' === await guest.evaluate( ( r ) => localStorage.getItem( 'flexo_tracked_' + r ), ref ), 'the booking is remembered as tracked' );

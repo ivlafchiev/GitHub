@@ -66,7 +66,9 @@ const menu = ( p ) => p.$$eval( '#toplevel_page_flexo-booking .wp-submenu a', ( 
 	ok( reason.includes( 'Minimum stay 3 nights for arrivals in High season' ), 'season minimum explained: ' + reason );
 	await guest.goto( `${ BASE }/booking/?check_in=${ day( 41 ) }&check_out=${ day( 43 ) }&adults=2` );
 	await guest.waitForSelector( '.fb-room' );
-	const notice = await guest.textContent( '.fb-notice' );
+	// Day 6: the reason is in the "nothing free" panel, with nearby dates.
+	await guest.waitForSelector( '.fb-nothing' );
+	const notice = await guest.textContent( '.fb-nothing' );
 	ok( /closed from .* to .*Please choose other dates/.test( notice ), 'closed-dates notice: ' + notice );
 	ok( ( await guest.$$( '.fb-room:not(.is-unavailable)' ) ).length === 0, 'no room bookable while closed' );
 	await guest.screenshot( { path: SHOTS + '/d1-closed.png', fullPage: true } );
@@ -85,8 +87,7 @@ const menu = ( p ) => p.$$eval( '#toplevel_page_flexo-booking .wp-submenu a', ( 
 	const mobile = await browser.newPage( { viewport: { width: 390, height: 844 } } );
 	mobile.on( 'pageerror', ( e ) => errors.push( 'mobile: ' + e.message ) );
 	await mobile.goto( `${ BASE }/booking/?room=deluxe-double&check_in=${ day( 12 ) }&check_out=${ day( 17 ) }` );
-	await mobile.waitForSelector( '.fb-room' );
-	await mobile.locator( '.fb-room .fb-button' ).click();
+	// Day 6: a "Book now" link for a room with one rate opens the details step directly.
 	await mobile.waitForSelector( '.fb-details:not([hidden])' );
 	await mobile.screenshot( { path: SHOTS + '/d1-mobile.png', fullPage: true } );
 	ok( ( await mobile.textContent( '.fb-summary' ) ).includes( 'High season' ), 'mobile: breakdown visible' );

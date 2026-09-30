@@ -1,8 +1,12 @@
 <?php
 /**
- * Full booking form: dates → room choice → guest details → confirmation.
+ * Full booking form: dates → room choice → guest details → (payment) →
+ * confirmation, with a summary next to the form (below it on phones).
  *
  * Override by copying to {your-theme}/flexo-booking/booking-form.php.
+ * Overrides made before 1.6.0 keep working: the script adds the step bar,
+ * the date picker and the stay line itself, and shows the summary where
+ * the template has it.
  *
  * @package FlexoBooking
  *
@@ -28,6 +32,11 @@ defined( 'ABSPATH' ) || exit;
 	<?php if ( $atts['title'] ) : ?>
 		<h3 class="fb-title"><?php echo esc_html( $atts['title'] ); ?></h3>
 	<?php endif; ?>
+
+	<?php echo Flexo_Booking_Frontend::steps(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in steps(). ?>
+
+	<div class="fb-layout">
+	<div class="fb-main">
 
 	<?php if ( $room ) : ?>
 		<p class="fb-selected-room">
@@ -74,34 +83,40 @@ defined( 'ABSPATH' ) || exit;
 		</div>
 	</form>
 
+	<div class="fb-stay" data-fb-stay hidden></div>
+
 	<div class="fb-notice" role="alert" hidden></div>
 
 	<div class="fb-results" aria-live="polite" hidden></div>
 
 	<form class="fb-details" novalidate hidden>
-		<h4 class="fb-step-title"><?php esc_html_e( 'Your details', 'flexo-booking' ); ?></h4>
-		<div class="fb-summary"></div>
+		<h4 class="fb-step-title" tabindex="-1"><?php esc_html_e( 'Your details', 'flexo-booking' ); ?></h4>
+		<p class="fb-required-note"><?php esc_html_e( 'Fields marked * are required.', 'flexo-booking' ); ?></p>
 
 		<div class="fb-grid">
 			<div class="fb-field">
-				<label for="<?php echo esc_attr( $uid ); ?>-name"><?php esc_html_e( 'Full name', 'flexo-booking' ); ?> <span aria-hidden="true">*</span></label>
-				<input id="<?php echo esc_attr( $uid ); ?>-name" type="text" name="guest_name" required autocomplete="name">
+				<label for="<?php echo esc_attr( $uid ); ?>-name"><?php esc_html_e( 'Full name', 'flexo-booking' ); ?> <span class="fb-req" aria-hidden="true">*</span></label>
+				<input id="<?php echo esc_attr( $uid ); ?>-name" type="text" name="guest_name" required autocomplete="name" autocapitalize="words" enterkeyhint="next">
 			</div>
 			<div class="fb-field">
-				<label for="<?php echo esc_attr( $uid ); ?>-email"><?php esc_html_e( 'Email', 'flexo-booking' ); ?> <span aria-hidden="true">*</span></label>
-				<input id="<?php echo esc_attr( $uid ); ?>-email" type="email" name="guest_email" required autocomplete="email">
+				<label for="<?php echo esc_attr( $uid ); ?>-email"><?php esc_html_e( 'Email', 'flexo-booking' ); ?> <span class="fb-req" aria-hidden="true">*</span></label>
+				<input id="<?php echo esc_attr( $uid ); ?>-email" type="email" name="guest_email" required autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" enterkeyhint="next" aria-describedby="<?php echo esc_attr( $uid ); ?>-email-hint">
+				<small class="fb-hint" id="<?php echo esc_attr( $uid ); ?>-email-hint"><?php esc_html_e( 'We send your confirmation here.', 'flexo-booking' ); ?></small>
 			</div>
 			<?php $phone_mode = isset( $settings['field_phone'] ) ? $settings['field_phone'] : 'required'; ?>
 			<?php if ( 'hidden' !== $phone_mode ) : ?>
-				<div class="fb-field">
-					<label for="<?php echo esc_attr( $uid ); ?>-phone"><?php esc_html_e( 'Phone', 'flexo-booking' ); ?><?php echo 'required' === $phone_mode ? ' <span aria-hidden="true">*</span>' : ''; ?></label>
-					<input id="<?php echo esc_attr( $uid ); ?>-phone" type="tel" name="guest_phone" <?php echo 'required' === $phone_mode ? 'required' : ''; ?> autocomplete="tel">
+				<div class="fb-field fb-field--phone">
+					<label for="<?php echo esc_attr( $uid ); ?>-phone"><?php esc_html_e( 'Phone', 'flexo-booking' ); ?><?php echo 'required' === $phone_mode ? ' <span class="fb-req" aria-hidden="true">*</span>' : ' <span class="fb-optional">' . esc_html__( '(optional)', 'flexo-booking' ) . '</span>'; ?></label>
+					<div class="fb-phone">
+						<?php echo Flexo_Booking_Frontend::phone_country_select( $uid ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in phone_country_select(). ?>
+						<input id="<?php echo esc_attr( $uid ); ?>-phone" type="tel" name="guest_phone" <?php echo 'required' === $phone_mode ? 'required' : ''; ?> autocomplete="tel" inputmode="tel" enterkeyhint="next">
+					</div>
 				</div>
 			<?php endif; ?>
 			<?php if ( ! isset( $settings['field_notes'] ) || 'hidden' !== $settings['field_notes'] ) : ?>
 				<div class="fb-field fb-field--wide">
-					<label for="<?php echo esc_attr( $uid ); ?>-notes"><?php esc_html_e( 'Special requests', 'flexo-booking' ); ?></label>
-					<textarea id="<?php echo esc_attr( $uid ); ?>-notes" name="notes" rows="3"></textarea>
+					<label for="<?php echo esc_attr( $uid ); ?>-notes"><?php esc_html_e( 'Special requests', 'flexo-booking' ); ?> <span class="fb-optional"><?php esc_html_e( '(optional)', 'flexo-booking' ); ?></span></label>
+					<textarea id="<?php echo esc_attr( $uid ); ?>-notes" name="notes" rows="3" placeholder="<?php esc_attr_e( 'e.g. late arrival, baby cot, quiet room', 'flexo-booking' ); ?>"></textarea>
 				</div>
 			<?php endif; ?>
 		</div>
@@ -123,6 +138,7 @@ defined( 'ABSPATH' ) || exit;
 					'<a href="' . esc_url( $terms_url ) . '" target="_blank" rel="noopener">' . esc_html__( 'terms and conditions', 'flexo-booking' ) . '</a>'
 				);
 				?>
+				<span class="fb-req" aria-hidden="true">*</span>
 			</label>
 		<?php endif; ?>
 
@@ -135,4 +151,14 @@ defined( 'ABSPATH' ) || exit;
 	</form>
 
 	<div class="fb-success" role="status" tabindex="-1" hidden></div>
+	</div>
+
+	<aside class="fb-aside" data-fb-aside hidden aria-labelledby="<?php echo esc_attr( $uid ); ?>-summary-title">
+		<button type="button" class="fb-aside__toggle" aria-expanded="false" aria-controls="<?php echo esc_attr( $uid ); ?>-summary">
+			<span class="fb-aside__title" id="<?php echo esc_attr( $uid ); ?>-summary-title"><?php esc_html_e( 'Your stay', 'flexo-booking' ); ?></span>
+			<span class="fb-aside__short" data-fb-aside-short></span>
+		</button>
+		<div class="fb-summary" id="<?php echo esc_attr( $uid ); ?>-summary"></div>
+	</aside>
+	</div>
 </div>

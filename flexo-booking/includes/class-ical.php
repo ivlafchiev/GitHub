@@ -853,14 +853,14 @@ class Flexo_Booking_ICal {
 		return implode( "\r\n", array_map( array( __CLASS__, 'fold' ), $lines ) ) . "\r\n";
 	}
 
-	private static function escape( $text ) {
+	public static function escape( $text ) {
 		return str_replace( array( '\\', ';', ',', "\r\n", "\n" ), array( '\\\\', '\\;', '\\,', '\\n', '\\n' ), (string) $text );
 	}
 
 	/**
 	 * Lines longer than 75 octets are folded (RFC 5545 §3.1).
 	 */
-	private static function fold( $line ) {
+	public static function fold( $line ) {
 		if ( strlen( $line ) <= 75 ) {
 			return $line;
 		}

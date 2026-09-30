@@ -99,7 +99,7 @@ $response = wp_remote_post(
 	array(
 		'timeout' => 30,
 		'headers' => array( 'Content-Type' => 'application/json' ),
-		'body'    => wp_json_encode( array( 'room' => 'sea-view', 'check_in' => $in, 'check_out' => $out, 'adults' => 2, 'guest_name' => 'Tom', 'guest_email' => 'tom@example.com', 'guest_phone' => '1', 'privacy_consent' => true, 'locale' => 'en_US' ) ),
+		'body'    => wp_json_encode( array( 'room' => 'sea-view', 'check_in' => $in, 'check_out' => $out, 'adults' => 2, 'guest_name' => 'Tom', 'guest_email' => 'tom@example.com', 'guest_phone' => '+359 888 000 111', 'privacy_consent' => true, 'locale' => 'en_US' ) ),
 	)
 );
 $data = json_decode( wp_remote_retrieve_body( $response ), true );
