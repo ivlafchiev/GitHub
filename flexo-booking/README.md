@@ -6,7 +6,7 @@ Guests pick dates and guests, see which rooms are free with the price, enter the
 
 It's one plugin that works with any theme or template. Extra features are switched on only where a property needs them, so a simple guest house still gets just *dates → room → details → booking request*.
 
-> Version **1.5.0**. All five development days are done. Development follows `ROADMAP.md`; technical design is in `IMPLEMENTATION_PLAN.md`.
+> Version **1.6.0**. All six development days are done; Day 6 made the plugin easier to use for guests, owners and reception, and added Appearance settings. Development follows `ROADMAP.md`; technical design is in `IMPLEMENTATION_PLAN.md`.
 
 ---
 
@@ -26,17 +26,20 @@ It's one plugin that works with any theme or template. Extra features are switch
 12. [Calendar sync (Booking.com, Airbnb…)](#12-calendar-sync-bookingcom-airbnb)
 13. [The booking calendar](#13-the-booking-calendar)
 14. [Putting the booking form on the site](#14-putting-the-booking-form-on-the-site)
-15. [Daily use: managing bookings](#15-daily-use-managing-bookings)
-16. [Privacy and data retention](#16-privacy-and-data-retention)
-17. [Invoice requests](#17-invoice-requests)
-18. [Emails](#18-emails)
-19. [Languages: Bulgarian, English, Polylang and WPML](#19-languages-bulgarian-english-polylang-and-wpml)
-20. [Conversion tracking (Google Tag Manager, GA4, Meta)](#20-conversion-tracking-google-tag-manager-ga4-meta)
-21. [Templates and moving between sites](#21-templates-and-moving-between-sites)
-22. [Settings reference](#22-settings-reference)
-23. [For developers](#23-for-developers)
-24. [Before going live on a client site](#24-before-going-live-on-a-client-site)
-25. [Testing](#25-testing)
+15. [Appearance of the booking form](#15-appearance-of-the-booking-form)
+16. [Guest booking page (manage booking)](#16-guest-booking-page-manage-booking)
+17. [Daily use: managing bookings](#17-daily-use-managing-bookings)
+18. [Health check and help](#18-health-check-and-help)
+19. [Privacy and data retention](#19-privacy-and-data-retention)
+20. [Invoice requests](#20-invoice-requests)
+21. [Emails](#21-emails)
+22. [Languages: Bulgarian, English, Polylang and WPML](#22-languages-bulgarian-english-polylang-and-wpml)
+23. [Conversion tracking (Google Tag Manager, GA4, Meta)](#23-conversion-tracking-google-tag-manager-ga4-meta)
+24. [Templates and moving between sites](#24-templates-and-moving-between-sites)
+25. [Settings reference](#25-settings-reference)
+26. [For developers](#26-for-developers)
+27. [Before going live on a client site](#27-before-going-live-on-a-client-site)
+28. [Testing](#28-testing)
 
 ---
 
@@ -47,18 +50,40 @@ It's one plugin that works with any theme or template. Extra features are switch
 - Elementor 3.5+ for the widget (Elementor Pro works too). Without Elementor, the `[flexo_booking]` shortcode still works.
 
 **Install:**
-1. Build the zip with `bin/build-zip.sh`, or use the provided `flexo-booking-1.5.0.zip`.
+1. Build the zip with `bin/build-zip.sh`, or use the provided `flexo-booking-1.6.0.zip`.
 2. Go to **Plugins → Add New → Upload Plugin**, choose the zip, then **Install** and **Activate**.
-3. A **Bookings** menu appears in the admin.
-4. Check **Settings → General → Timezone**. It must be the hotel's city, because "today" and arrival dates depend on it.
+3. A **Bookings** menu appears in the admin. On a new site (no rooms, no bookings) the **setup wizard** opens once (below).
+4. Check **Settings → General → Timezone**. It must be the hotel's city, because "today" and arrival dates depend on it. **Bookings → Settings → Health** warns if it isn't.
 
-**Upgrade from any earlier version (1.0.0–1.4.0):** upload the new zip and choose **Replace current with uploaded**.
+### First setup: the setup wizard
+
+The wizard takes a new hotel from an empty site to a working test booking in seven short steps. Each step can be skipped, the progress is saved, and **Finish later** leaves it; it's always available again under **Bookings → Help → Setup wizard**.
+
+1. **Your hotel:** name, address, phone and email (shown to guests and in emails).
+2. **How guests book:** booking requests (you confirm) or instant booking, explained in one line each.
+3. **First room:** name, photo, price per night (required), max guests (default 2) and how many identical rooms.
+4. **Booking page:** **create one automatically** with the booking form, or choose an existing page.
+5. **Emails:** where hotel notifications go, and **Send a test email**.
+6. **Look:** match the website (default) or pick a main colour (§15).
+7. **Test booking:** opens the booking page in a new tab; the wizard notices the booking when it arrives and shows it, then tells you what to do next.
+
+The wizard never opens by itself on a site that already has rooms or bookings, so upgrades are not interrupted.
+
+### Upgrading
+
+**Upgrade from any earlier version (1.0.0–1.5.0):** upload the new zip and choose **Replace current with uploaded**.
 - The database updates itself on the next page load. No reinstall is needed, and rooms, bookings and settings are kept.
 - If an update step ever fails, a red notice appears in the admin and the step is retried automatically.
 - On staging or in scripts you can also run `wp flexo-booking migrate`.
 - After upgrading, **Seasonal prices**, **Calendar sync**, **Children & ages**, **Rate plans**, **Tourist tax**, **Promo codes**, **Privacy consent**, **Invoice request** and **Conversion tracking** are off. Switch on what the hotel needs under **Bookings → Settings → Features**. The six ready-made rate plans are added switched off, so nothing changes for guests until you use them.
 - Emails keep working as before and now look like simple HTML emails. Bookings made before 1.4.0 have no stored language; their emails use the site language.
 - The payment features (1.5.0) are off after upgrading. Existing bookings are unchanged and show no payment information until you record one.
+- **1.6.0 (Day 6):**
+  - The booking form **looks exactly as before**: Appearance starts on *Match my website* (§15).
+  - The first screen under **Bookings** is now **Today** (§17). **All bookings** has its own entry; seasons, closed dates and rates are tabs under **Rooms & prices**, and Calendar sync and Import & export are linked from the Settings tabs. Old admin links (including the booking links in emails already sent) keep working.
+  - **Editors keep the access they had**; two new roles, **Hotel Staff** and **Hotel Manager**, are added for reception and managers (§17).
+  - The **guest booking page** is off until switched on (§16). The new room fields (size, beds, amenities) and rate-plan meals are empty/filled from the presets and simply not shown while empty.
+  - Status names are clearer (e.g. *Waiting for confirmation*, *Not paid in time*); the stored statuses, CSV values and filters are unchanged.
 
 ---
 
@@ -87,12 +112,14 @@ The hotel only ever sees features you made available. Switching a feature off hi
 | Rate plans | Room Only, Breakfast, Half Board, Non-refundable… with their own price and cancellation text | Ready (1.3.0) |
 | Tourist tax | Per person per night, as its own line; in the total or paid at the property | Ready (1.3.0) |
 | Promo codes | Discount codes such as DIRECT10, with dates, limits and conditions | Ready (1.3.0) |
-| Privacy consent | Consent checkbox with proof, automatic removal of old guest data, "Anonymise" button | Ready (1.4.0) |
+| Privacy consent | Consent checkbox with proof, automatic removal of old guest data, "Remove personal data" button | Ready (1.4.0) |
 | Invoice request | "I would like an invoice" with details for a person or a company | Ready (1.4.0) |
 | Conversion tracking | Booking events for Google Tag Manager, GA4 and Meta | Ready (1.4.0) |
 | Online card payment | Guests pay by card on Stripe's secure page; Instant booking only | Ready (1.5.0) |
 | Deposits | A % of the total or a fixed amount when booking, the rest at the property (needs card payment or bank transfer) | Ready (1.5.0) |
 | Bank transfer | Deposit or full amount by bank transfer, with deadline, reminder and automatic cancellation | Ready (1.5.0) |
+| Guest booking page | A private link in the emails where guests see their booking and can ask to change or cancel it (§16) | Ready (1.6.0), off by default |
+| Appearance settings | Choose the form's colours, fonts and corners, or let it match the website (§15) | Ready (1.6.0), on by default (mode *Match my website*) |
 
 ### Controlling what a hotel can use (agency level)
 
@@ -120,7 +147,7 @@ wp flexo-booking features enable seasonal_pricing
 wp flexo-booking features disable guest_emails
 ```
 
-With nothing defined, everything is available. Feature keys: `booking_request`, `instant_booking`, `seasonal_pricing`, `calendar_sync`, `rate_plans`, `children`, `tourist_tax`, `promo_codes`, `privacy_consent`, `invoice_request`, `guest_emails`, `tracking`, `online_payment`, `deposit`, `bank_transfer`.
+With nothing defined, everything is available. Feature keys: `booking_request`, `instant_booking`, `seasonal_pricing`, `calendar_sync`, `rate_plans`, `children`, `tourist_tax`, `promo_codes`, `privacy_consent`, `invoice_request`, `guest_emails`, `tracking`, `online_payment`, `deposit`, `bank_transfer`, `guest_booking_page`, `custom_appearance`.
 
 **Packages.** A typical way to sell the booking system as FlexoHotels packages is to put one line in each client's `wp-config.php`:
 
@@ -141,11 +168,12 @@ Upgrading a client to a bigger package only means changing that line: their sett
 
 ## 3. Creating rooms
 
-Go to **Bookings → Rooms → Add room** and create one entry per **room type** (not per physical room).
+Go to **Bookings → Rooms & prices → Add room** and create one entry per **room type** (not per physical room). A new room starts with 2 max guests and 1 unit; the price per night is required.
 
 | Field | Notes |
 |---|---|
 | Title, description, excerpt, featured image | Shown in the search results (the excerpt is the short line) |
+| **Size**, **Beds**, **Amenities** | Optional (1.6.0). Shown on the room card: m², e.g. "1 double bed or 2 single beds", and up to five ticked amenities with icons. Left empty, they're simply not shown. |
 | **Price per night** | The normal price (see §4) |
 | **Weekend price per night** | Optional. Used for Friday and Saturday nights. |
 | **Max guests** | Adults and children together, babies included |
@@ -179,7 +207,7 @@ The room price of a stay is the sum of its nights. Optional extras are then adde
 
 When nights have different prices, guests see the average per night on the room card and an itemised list before they confirm, e.g. *Low season: 2 nights × 80.00 € · High season: 3 nights × 150.00 €*.
 
-**Currency** is set under **Settings → General**:
+**Currency** is set under **Settings → Hotel**:
 - Code (default **EUR**; Bulgaria uses the euro since 01.01.2026)
 - Symbol and its position (4 options)
 - Number format (e.g. `1 234,50`)
@@ -191,7 +219,7 @@ Changing the currency **never converts** prices; update the room and season pric
 
 ## 5. Seasonal prices
 
-Switch on **Settings → Features → Seasonal prices**. A **Bookings → Seasonal prices** screen appears.
+Switch on **Settings → Features → Seasonal prices**. A **Seasonal prices** tab appears under **Bookings → Rooms & prices**.
 
 1. Choose the **room** at the top. The page shows its normal price (used on dates without a season).
 2. **Add a season**:
@@ -218,7 +246,7 @@ Switching Seasonal prices off makes new quotes use the room prices again. Season
 
 ## 6. Closed dates
 
-**Bookings → Closed dates** is always available, because closing the property is about availability, not prices.
+**Bookings → Rooms & prices → Closed dates** is always available, because closing the property is about availability, not prices.
 
 - **Applies to:** *Whole property* (e.g. closed for the winter) or a single room type (e.g. renovation of all apartments of one type).
 - **From / To (last night)** in DD.MM.YYYY, and an optional **message for guests**.
@@ -237,7 +265,7 @@ Switch on **Settings → Features → Children & ages**.
 
 **Capacity:** children count towards each room's **Max guests**, babies included. A room can also have **Max adults** (e.g. 4 guests, at most 2 adults). Rooms that don't fit show why: *"Fits up to 4 guests."* or *"Fits up to 2 adults."*
 
-**Child prices** (**Settings → Children**) apply to per-person amounts: rate plans charged *per guest per night* (breakfast, half board…) and, if you choose, the tourist tax. The room price itself stays the same.
+**Child prices** (**Settings → Booking rules**) apply to per-person amounts: rate plans charged *per guest per night* (breakfast, half board…) and, if you choose, the tourist tax. The room price itself stays the same.
 
 | Setting | Default | Meaning |
 |---|---|---|
@@ -249,15 +277,15 @@ The settings screen explains the current rules in one line, e.g. *"Under 3: free
 
 **Example:** Half Board +18 € per guest per night, 3 nights, 2 adults + children aged 2 and 6: 2 × 3 × 18 = 108 € + child 2 free + child 6: 3 × 9 = 27 € → **135 €**. The guest sees each line.
 
-**Switched off:** the form shows *Adults* and *Children* counts exactly as before (set *Children up to* to 0 under Settings → General to hide children completely), and "max adults" isn't applied. Existing bookings keep their ages.
+**Switched off:** the form shows *Adults* and *Children* counts exactly as before (set *Children up to* to 0 under Settings → Booking rules to hide children completely), and "max adults" isn't applied. Existing bookings keep their ages.
 
 ---
 
 ## 8. Rate plans
 
-Switch on **Settings → Features → Rate plans**. A **Bookings → Rate plans** screen appears. Hotels are never forced to use them: a room that offers no plan is booked at its normal price, exactly as before.
+Switch on **Settings → Features → Rate plans**. A **Rates** tab appears under **Bookings → Rooms & prices**. Hotels are never forced to use them: a room that offers no plan is booked at its normal price, exactly as before.
 
-A rate plan is one way of selling a room: **name**, **description for guests**, **price change**, **refundable yes/no** and **cancellation text**. Create only the combinations you really sell, e.g. *Room Only*, *Breakfast Included*, *Half Board*, *Half Board – Non-refundable*. There is no meal × policy grid to fill in.
+A rate plan is one way of selling a room: **name**, **description for guests**, **meals** (none, breakfast, half board, full board, all inclusive – filled in for the ready-made plans), **price change**, **refundable yes/no** and **cancellation text**. Guests compare the rates in one line each: *name · meals · cancellation · total*. Create only the combinations you really sell, e.g. *Room Only*, *Breakfast Included*, *Half Board*, *Half Board – Non-refundable*. There is no meal × policy grid to fill in.
 
 **Ready-made plans.** Six plans are waiting, switched off: Room Only, Breakfast Included (+8 per guest per night), Half Board (+18), Full Board (+28), All Inclusive (+35) and Non-refundable (−10%). Edit the amounts and texts, tick the rooms, and tick *Offer this plan to guests*. If you delete them, **Add the ready-made plans** brings back the missing ones.
 
@@ -292,7 +320,7 @@ Use a minus sign for a lower price. Percentages never apply to other plans, disc
 
 ## 9. Tourist tax
 
-Switch on **Settings → Features → Tourist tax**, then set it under **Settings → Tourist tax**:
+Switch on **Settings → Features → Tourist tax**, then set it under **Settings → Taxes & invoices**:
 
 - **Amount per adult per night**, as set by the municipality. 0 means no tax.
 - **Children:** *pay the same as adults*, or *younger than N years don't pay* (older children pay the full amount), or *use the child price rules* (§7).
@@ -385,12 +413,12 @@ The hotel needs its **own Stripe account** (stripe.com). Money goes straight fro
 6. **Test** in a private window: book with card **4242 4242 4242 4242**, any future expiry date and any CVC. The booking must become **Confirmed** with *Payment received* (or *Deposit received*), and the guest and hotel emails must arrive. In Stripe, the webhook endpoint must show successful (200) deliveries. Try a declined card too: **4000 0000 0000 0002**.
 7. **Go live:** repeat steps 3–4 in Stripe's **live mode** (live keys and a separate live webhook endpoint with its own signing secret) and enter them under *Live keys*. Switch **Mode** to **Live**. Make one small real booking and refund it in Stripe.
 
-Keys are stored only on that website: they're never shown again (only the last 4 characters), and never included in Import / Export.
+Keys are stored only on that website: they're never shown again (only the last 4 characters), and never included in Import & export.
 
 **In Stripe → Settings → Payment methods**, keep cards (and Apple Pay / Google Pay). Avoid slow methods such as SEPA Direct Debit: they take days to confirm, and the room stays reserved (up to 7 days) until Stripe reports the result.
 
 **What happens when a guest pays by card:**
-1. The guest fills in the form and clicks **Continue to payment**. The booking is saved as **Pending payment** and the room is **held** for 20–30 minutes (*Hold the room for*, default 30). Nobody else can book it meanwhile.
+1. The guest fills in the form and clicks **Continue to payment**. The booking is saved as **Card payment in progress** and the room is **held** for 20–30 minutes (*Hold the room for*, default 30). Nobody else can book it meanwhile.
 2. The guest pays on Stripe's page. Card details go only to Stripe; the website never sees or stores them. It stores only Stripe's IDs, the amount, currency, status and time.
 3. Stripe tells the website (**signed webhook**) that the payment succeeded. Only then is the booking **Confirmed**, and the guest gets *Payment received – your booking is confirmed* while the hotel gets the *New booking* email. Coming back to the website never confirms anything by itself. The page the guest returns to waits for Stripe's confirmation, then shows the result.
 4. Stripe sometimes repeats a notification. Each one is processed only once, so there is never a second confirmation or email.
@@ -398,7 +426,7 @@ Keys are stored only on that website: they're never shown again (only the last 4
 **If the guest doesn't pay:**
 - **Back on the payment page:** the website shows "Your payment has not been completed. The room is reserved for you until 14:35", with a **Pay now** button.
 - **Card declined:** the guest can try another card while the room is held. If the time runs out after a decline, the guest gets *Payment failed*.
-- **Abandoned:** when the hold ends, the room is released automatically (no email), and the booking shows as **Not paid (expired)**.
+- **Abandoned:** when the hold ends, the room is released automatically (no email), and the booking shows as **Not paid in time**.
 - **Paid too late:** if a payment still arrives after the hold ended, the booking is confirmed if the room is still free. If someone else has taken it, the booking is **not** confirmed (no double booking). It's marked **⚠ Payment conflict**, you get an *Action needed* email and a box at the top of the bookings list, and the guest is told the hotel will contact them. Offer another room or dates (then confirm the booking), or refund in Stripe. Then click *Mark as resolved*.
 
 **Refunds** are made in the Stripe Dashboard (Payments → the payment → *Refund*, full or partial). The refund appears on the booking automatically, the payment status becomes *Refunded* or *Partially refunded*, and the hotel gets an email. The booking itself isn't changed, so cancel it if the stay is cancelled. The Stripe transaction ID on the booking links straight to the payment in Stripe.
@@ -413,13 +441,13 @@ Keys are stored only on that website: they're never shown again (only the last 4
 - **Not paid in time:** cancel automatically after the deadline, with emails to the guest and to you (default on; can be switched off).
 
 **With Instant booking:**
-1. The booking is saved as **Awaiting payment** and the room is kept for the guest.
+1. The booking is saved as **Waiting for bank transfer** and the room is kept for the guest.
 2. The success page and the email *Payment details for your booking* show the amount, beneficiary, IBAN, BIC, bank, payment reference and deadline, with copy buttons on phones.
 3. When the money arrives, open the booking. Under **Payments**, check the amount and click **Payment received**. The booking becomes **Confirmed** and the guest gets *Payment received*.
 
 **With Booking requests:**
 1. The guest is told the bank details follow once you confirm.
-2. The button on the request reads **Confirm & ask for payment**. It moves the booking to *Awaiting payment*, emails the bank details and starts the deadline.
+2. The button on the request reads **Confirm & ask for payment**. It moves the booking to *Waiting for bank transfer*, emails the bank details and starts the deadline.
 3. **Confirm without payment** is there for trusted guests.
 
 Reminders and automatic cancellations run once an hour through WordPress's scheduled tasks. On quiet sites, add a real server cron job (§12).
@@ -428,8 +456,8 @@ Reminders and automatic cancellations run once an hour through WordPress's sched
 
 | Shown as | Meaning |
 |---|---|
-| Pending payment | The guest is paying by card; the room is held until the time shown |
-| Awaiting deposit / Awaiting payment | Waiting for a bank transfer until the deadline; the room is kept |
+| Card payment in progress | The guest is paying by card; the room is held until the time shown |
+| Awaiting deposit / Waiting for bank transfer | Waiting for a bank transfer until the deadline; the room is kept |
 | Deposit received / Payment received | Paid (part or all) |
 | Payment failed | The card payment didn't go through; the room was released |
 | Not paid in time | The guest didn't pay within the hold; the room was released |
@@ -449,14 +477,14 @@ Flexo Booking records payments so you can manage your bookings. It does **not** 
 
 Calendar sync reduces the risk of double bookings when a property also sells on Booking.com, Airbnb, Vrbo or similar sites. It uses standard **iCal links**, which every booking site supports. It is not a channel manager: prices and room details are still managed on each site separately.
 
-Switch it on under **Settings → Features → Calendar sync**. A **Bookings → Calendar Sync** screen appears with one card per room. Each card has:
+Switch it on under **Settings → Features → Calendar sync**. A **Calendar sync** screen appears (linked from **Settings** and **Rooms & prices**) with one card per room. Each card has:
 
 - **This room's calendar link**, which you give to Booking.com, Airbnb and so on
 - **Calendars imported into this room**, where you paste their links
 
 ### Step by step: Booking.com
 
-1. **Bookings → Calendar Sync**, room card → **Copy link**.
+1. **Bookings → Settings → Calendar sync**, room card → **Copy link**.
 2. In the Booking.com **Extranet**: **Rates & Availability → Sync calendars** (shown only for room types that allow calendar sync).
 3. Choose **Import calendar**, paste the link, give it a name (e.g. "Website") and save. Booking.com now blocks dates booked on your website.
 4. On the same Booking.com page, choose **Export calendar** and copy Booking.com's link.
@@ -494,7 +522,7 @@ If an imported booking doesn't fit, meaning the room type is already full on tho
 
 - a **⚠ Conflict** box at the top of **All bookings**, with a badge on the affected website booking
 - **⚠** on both bookings in **Bookings → Calendar**, and a notice on every admin screen
-- **one email** to the notification address (Settings → Emails), naming the room, calendar, dates and overlapping booking reference
+- **one email** to the notification address (**Bookings → Emails**), naming the room, calendar, dates and overlapping booking reference
 
 Resolve it with the guest or the booking site, then click **Mark as reviewed**. Cancelling one of the bookings clears the conflict automatically.
 
@@ -547,58 +575,149 @@ The calendar is for inventory and reservations only. It has no housekeeping or r
    - `[flexo_booking room="deluxe-double"]`
    - `[flexo_booking layout="search" booking_page="/booking/"]`
 
-**Styling:** the form picks up the site's **Elementor Global Colors and Fonts**, so it matches each template automatically. To override:
-- For one widget, use its **Style** tab.
-- Site-wide, add CSS such as `.flexo-booking { --fb-primary: #b08d57; --fb-radius: 0; }`.
-- To change the markup, copy `templates/booking-form.php` or `templates/search-bar.php` to `wp-content/themes/<theme>/flexo-booking/`.
+5. **Tell the plugin which page it is** (optional): **Settings → Hotel → Booking page**. Left empty, the plugin finds the page with the form by itself (shortcode or Elementor widget). Links in emails (*Add to calendar*, *Manage your booking*) open this page, and **Settings → Health** warns when no published page has the form.
 
-**On phones and tablets** (up to 1024 px wide) the whole flow is centred: headings, room cards, prices, rate plans, the price summary, promo code, buttons, the confirmation and the bank details. Text in fields and longer texts stay left-aligned. Buttons are at least 44 px tall. On phones, the amount to pay and the continue button stay visible at the bottom while the guest fills in the form. On desktop the layout is unchanged.
+**Styling:** by default the form picks up the site's **Elementor Global Colors and Fonts** (or the theme's), so it matches each template automatically. To change it for the whole site, use **Bookings → Appearance** (§15). To change one widget, use its **Style** tab. To change the markup, copy `templates/booking-form.php` or `templates/search-bar.php` to `wp-content/themes/<theme>/flexo-booking/` (copies made before 1.6.0 keep working; the script adds the step bar, summary and date picker around them).
 
-**With payments:** after **Continue to payment** the guest goes to Stripe's page and comes back to the same booking page, which shows the result. Keep the booking page reachable at its address with extra `?fb_payment=…` parameters (the page itself can be cached; the result comes from `/wp-json/`, which must not be cached).
+### What guests see
 
-**Test:** make a booking in a private window and check both emails arrive. If they don't, install an SMTP plugin such as WP Mail SMTP. If you use Cloudflare "Cache Everything", bypass `/wp-json/*`.
+1. **Steps:** *Dates → Room → Your details → (Payment) → Confirmation*, shown at the top. *Payment* appears only when guests are sent to Stripe. Once rooms are shown, the search collapses to one line (*15–18 Oct · 2 adults · Change*).
+2. **Date picker:** a calendar that shows which days are full or closed (greyed **and** crossed out), where arrival isn't possible, and the minimum stay once an arrival is chosen. Keyboard and screen-reader friendly, Monday first. Optionally it shows the lowest price per night under each date (**Settings → Booking rules → Show the lowest price per night under each date**, off by default).
+3. **No dead ends:** when nothing is free, the guest sees up to three nearby dates of the same length that are free, other rooms that fit, and a **Send an enquiry** form. Enquiries are emailed to the hotel, appear under **Today → Needs your attention**, and are deleted automatically after 12 months (they are not bookings).
+4. **Room cards:** photo, size, beds, max guests, up to five amenities, the **total for the stay** and the average per night. Rates are compared in one line each: name · meals · cancellation · total.
+5. **Summary always visible:** beside the form on wide pages, and as a small bar at the bottom on phones that opens the full price breakdown.
+6. **Details:** required fields are marked *, optional ones say "(optional)". The phone has a country selector (default from **Settings → Booking rules**) and is saved as `+359 888 123 456`. Mistakes are explained under the field as soon as the guest leaves it. A **Before you book** box repeats the cancellation terms, what is paid now and at the property, and the hotel's contact. The final button says exactly what happens: *Send booking request*, *Confirm booking*, *Confirm and pay 240.00 € by bank transfer* or *Continue to secure payment – 240.00 €*. It can't be pressed twice.
+7. **Confirmation:** reference, full summary, what happens next (e.g. *We'll reply within 24 hours*, from **Settings → Hotel → You reply to requests within**), the hotel's contact, **Add to calendar** (.ics) and **Directions** (from the hotel address).
+8. **Back, forward and refresh** work: dates, guests, room, rate, promo code and the step are kept in the address (no personal data). The confirmation shows again after a refresh.
+
+**On phones and tablets** (up to 1024 px wide) the flow is centred, buttons are at least 44 px tall, and the amount to pay and the continue button stay visible at the bottom. Tested at 360, 390, 414, 768 and 1024 px and on desktop.
 
 ---
 
-## 15. Daily use: managing bookings
+## 15. Appearance of the booking form
 
-**Bookings → All bookings** has filters by status and room, "Current & upcoming only", and search by reference, name, email or phone. Each booking shows its guests (with children's ages), rate plan, promo code, total and price lines.
+**Bookings → Appearance** (feature *Appearance settings*, on by default).
 
-Click a **reference** to open the booking: stay, guest, rate plan with its cancellation text, guests with ages, promo code and the **full price breakdown** (subtotal, discount, tourist tax, total, anything payable at the property), with Confirm / Cancel buttons.
+- **Match my website** (default, and what every upgraded site keeps): the form uses the website's Elementor global colours and fonts, or the theme's. Nothing is added.
+- **Custom:** choose
+  - **Colours:** main colour (buttons, selected options, links), accent (badges such as "Only 2 left!"), text, background, button text. Each has **Use website colour**.
+  - **Corners:** square, slightly rounded or rounded.
+  - **Fonts** for headings and text: *Website font* or one of **Inter, Roboto, Open Sans, Manrope, Montserrat, Lora, Playfair Display**. The fonts are part of the plugin, include Cyrillic, and are loaded from the hotel's own website – **never from Google** (GDPR). Only the chosen fonts are loaded, and only on pages with the form.
+  - **Text size:** small, normal or large.
+- **Live preview** beside the settings, with the real form and your site's styles, in desktop or phone width. Changes show before saving.
+- **Contrast warnings** when text and background, or button text and the main colour, are hard to read (below 4.5:1), with a suggested colour.
+- **Reset to website style** (after a confirmation) goes back to *Match my website*.
+- **Emails:** logo and email colour are set here too (in Custom style, emails use the main colour).
+- **Only the booking form and the emails change.** The settings are CSS variables on `.flexo-booking`, so the rest of the website is never affected.
+
+**Which setting wins** (highest first):
+1. The **Style tab of an Elementor Flexo Booking widget** – for that widget only.
+2. **Appearance → Custom** – for every booking form on the site.
+3. The **website's global colours and fonts** (Elementor Site Settings or the theme).
+
+The Appearance settings travel with **Import & export** (§24).
+
+---
+
+## 16. Guest booking page (manage booking)
+
+Feature **Guest booking page** (off by default; **Settings → Features**).
+
+- Every guest email gets a private **Manage your booking** link (also available as `{manage_link}` in the email texts). It opens the booking page and shows the booking, what was paid, the bank details when a transfer is due, and the hotel's contact.
+- The guest can send a **cancellation or change request** with a message while the booking is active and the stay hasn't ended. The hotel gets an email, and the request appears on the booking (**Open requests**) and under **Today → Needs your attention**. **Nothing changes automatically** – the hotel decides and acts as usual.
+- The link contains a key that only works for that booking; the page shows the guest's email partly hidden. Up to three requests per booking per day.
+- Without the feature the confirmation page and **Add to calendar** still work; only the manage link and requests are hidden.
+
+---
+
+## 17. Daily use: managing bookings
+
+### The menu
+
+**Today · Calendar · All bookings · Add booking · Rooms & prices · Promo codes · Emails · Appearance · Settings · Help.** Only switched-on features appear. **Rooms & prices** has tabs for *Rooms*, *Seasonal prices*, *Closed dates* and *Rates*; **Settings** links *Calendar sync* and *Import & export*. The number on the menu counts what needs attention. A **Booking form** link in the admin bar opens the booking page.
+
+### Today
+
+The first screen under **Bookings**:
+- **Arriving today**, **Arriving tomorrow**, **Leaving today** and **Staying tonight**, each with guest, room, nights, a tap-to-call phone and what is paid or still due.
+- **Needs your attention**, with one-click actions: requests waiting for confirmation (**Confirm**), bank transfers waiting (with the deadline) and overdue (**Payment received**), payment conflicts, possible double bookings from external calendars, calendars that stopped updating, emails that failed, guests' change or cancellation requests and enquiries (**Mark as handled**).
+- **The next 7 days** (arrivals, departures, nights sold) and **occupancy this month**.
+
+### All bookings
+
+Search by reference, name, email or phone, and filter by **status**, **payment status**, **room**, **arrival between** two dates and **source** (website, staff, each external calendar). Rows have quick actions (**Confirm**, **Cancel**, **Payment received**, **Open**). On a phone the list turns into cards.
+
+Click a **reference** to open the booking. The actions are at the top; below are the **guest** (tap to call or email), **stay**, **price** with its full breakdown, **payment**, **invoice request**, the guest's **open requests**, **internal notes** and the **history**.
 
 | Status | Meaning | Holds the room? |
 |---|---|---|
-| Pending | Request waiting for you | Yes |
+| Waiting for confirmation | Request waiting for you | Yes |
 | Confirmed | Confirmed | Yes |
 | Cancelled | Cancelled | No |
-| Blocked | Dates closed by staff | Yes |
-| Pending payment | The guest is paying by card (§11) | Yes, until the hold ends |
-| Awaiting payment | Waiting for a bank transfer (§11) | Yes, until paid or cancelled |
-| Not paid (expired) | The card payment wasn't completed in time | No |
+| Dates blocked | Dates closed by staff | Yes |
+| Card payment in progress | The guest is paying by card (§11) | Yes, until the hold ends |
+| Waiting for bank transfer | Waiting for a bank transfer (§11) | Yes, until paid or cancelled |
+| Not paid in time | The card payment wasn't completed in time | No |
 
 With payments on, each booking also shows its **payment status** (e.g. *💳 Deposit received*, *🏦 Awaiting deposit · until 27.09.*), and bookings waiting for a transfer have a **Payment received** button (§11).
 
-Actions on each booking:
+Actions on each booking (each asks first and says what will happen, e.g. that a deposit is **not** refunded automatically):
 - **Confirm** emails the guest.
 - **Cancel** frees the room and emails the guest.
-- **Reinstate** (cancelled or expired bookings) works only if the room is still free.
-- **Delete** removes the booking.
+- **Restore booking** (cancelled or not paid in time) works only if the room is still free.
+- **Delete** removes the booking for good.
+- **Internal notes** are for the team only and never shown to the guest.
+- **Resend an email:** choose any guest email that applies (confirmation, payment details, reminder…) and send it again.
+- **History:** who did what and when – created, confirmed, cancelled, restored, payments and refunds, emails sent and resent, notes, guest requests, personal data removed.
 
-Each booking shows where it came from: **Website**, **✎ Added by staff** or **⛔ Blocked dates**. With Calendar sync on, a second tab, **⇄ From external calendars**, lists the imported bookings (read-only), and a **⚠ Conflict** box appears at the top when something needs attention (see §12).
+Each booking shows where it came from: **Website**, **✎ Added by staff** or **⛔ Dates blocked**. With Calendar sync on, a second tab, **⇄ From external calendars**, lists the imported bookings (read-only), and a **⚠ Conflict** box appears at the top when something needs attention (see §12).
 
-**Add booking** records phone, walk-in or other-channel bookings, or blocks dates. It is also reachable from empty days in the **Calendar**. When the features are on, staff can enter **children's ages** (e.g. `4, 11`), choose a **rate plan** and apply a **promo code**; the price is calculated automatically.
+**Add booking** records phone, walk-in or other-channel bookings, or blocks dates. It is also reachable from empty days in the **Calendar**. When the features are on, staff can enter **children's ages** (e.g. `4, 11`), choose a **rate** (only the chosen room's rates are listed; the room's first rate is used by default) and apply a **promo code**; the price is calculated automatically.
 
 **Export CSV** includes a *Price details* column and, at the end (so existing spreadsheets keep working), *Children ages*, *Rate plan*, *Refundable*, *Promo code*, *Discount*, *Tourist tax*, *Payable at property*, the language, consent and invoice columns, and the payment columns *Payment method*, *Payment status*, *Due when booking*, *Paid*, *Refunded*, *Balance*, *Payment deadline* and *Transaction IDs*.
 
-**Who can do what:**
-- Editors and Administrators can manage bookings, the calendar, seasonal prices, closed dates, calendar sync, rate plans and promo codes.
-- Only Administrators can change Settings and use Import / Export.
+### Who can do what (roles)
+
+| Role | Can |
+|---|---|
+| **Hotel Staff** (new) | Today, calendar, all bookings, add bookings and block dates, confirm/cancel/restore, record payments received, notes, resend emails. Sees a trimmed admin (no posts, pages or Elementor) and lands on **Today** after logging in. |
+| **Hotel Manager** (new) | Everything staff can, plus rooms and prices (seasons, closed dates, rates), promo codes, emails (texts, notification addresses, hotel phone, review link) and appearance. No other settings. |
+| **Editor** | As before 1.6.0: bookings, rooms and prices, promo codes, emails and appearance. |
+| **Administrator** | Everything, including Settings, payments keys, Import & export and features. |
+
+Give reception accounts **Hotel Staff** under **Users → Add New → Role**. Which features exist stays with FlexoHotels (§2). The roles are built on the capabilities `flexo_manage_bookings`, `flexo_manage_prices` and `flexo_manage_settings`, so role-editor plugins can adjust them.
 
 **No double bookings:** availability is counted night by night against the number of rooms. The final check, price calculation and save happen under a per-room lock. When two guests try to take the last room at the same moment, one gets it and the other is told it's no longer available.
 
 ---
 
-## 16. Privacy and data retention
+## 18. Health check and help
+
+**Bookings → Settings → Health** checks, with ✓ / ⚠ / ✕ and a one-line fix for each:
+- the **database update** finished;
+- there are **rooms** with prices;
+- a published **booking page** contains the form;
+- **email sending**: an SMTP plugin is active, the last test email went out, no emails failed in the last 7 days;
+- **scheduled jobs (WP-Cron)** ran in the last few hours (reminders, payment deadlines and calendar sync depend on them);
+- **calendar sync**: each connected calendar is updating;
+- **card payments (Stripe)**: keys and webhook secret for the chosen mode, test or live, the last notification from Stripe, and a **Check the keys** button (one call to Stripe);
+- **bank transfer** details entered;
+- a **privacy policy** page;
+- **time zone** (a city, not a UTC offset) and currency.
+
+**Copy system report** copies versions, features and settings (without keys, passwords or guest data) for FlexoHotels support.
+
+**Bookings → Help** has short guides (add a room, seasonal prices, connect Booking.com, handle a request, block dates, bank transfer received, refunds), the setup wizard and the FlexoHotels support contact. Small **?** links next to settings open the matching guide. The support contact is set in `wp-config.php`:
+
+```php
+define( 'FLEXO_BOOKING_SUPPORT', 'FlexoHotels|support@flexohotels.com|+359 88 000 0000|https://flexohotels.com/support' ); // name|email|phone|web page
+```
+
+or on the **Agency** screen.
+
+---
+
+## 19. Privacy and data retention
 
 **Always available** (whatever the feature switches):
 - **Tools → Export Personal Data** and **Tools → Erase Personal Data** include the guest's bookings, invoice details, privacy consent and the emails sent to them. Search by the guest's email address. *Erase* anonymises the bookings (see below) and removes the emails from the email log.
@@ -615,17 +734,17 @@ Each booking shows where it came from: **Website**, **✎ Added by staff** or **
 
 **Consent.** The checkbox is **never ticked in advance**, and the server checks it too, so a booking can't be sent without it. For each consent the booking keeps the **date and time**, the **exact text** the guest agreed to (in their language, with the privacy page address) and a **text version** (a fingerprint of that text), which changes whenever you edit the text. You can see it on the booking's page and in the CSV.
 
-**Data minimisation.** Under **Settings → General → Guest details form**, only name and email are always required. *Phone* can be required, optional or not asked, and *Special requests* optional or not asked. Fields that aren't asked are never stored, even if something sends them.
+**Data minimisation.** Under **Settings → Booking rules → Guest details form**, only name and email are always required. *Phone* can be required, optional or not asked, and *Special requests* optional or not asked. Fields that aren't asked are never stored, even if something sends them.
 
 **Data retention.** With a number of months set, once a day every booking whose check-out is older than that is **anonymised**: the guest's name, email, phone, special requests and invoice details are removed. The dates, room, guests, prices, promo code and status stay, so your statistics keep working. The consent record stays as proof, without personal data. It's off by default. Many hotels choose **24 months**, which still covers returning guests and complaints. Invoices you issued live in your accounting software and follow accounting law. Ask your accountant or lawyer if unsure.
 
-**Anonymise one booking now.** Open the booking (click its reference) → **Anonymise**. It can't be undone.
+**Remove one guest's personal data now.** Open the booking (click its reference) → **Remove personal data**, and confirm. It can't be undone; the booking then shows *Guest (personal data removed)*, with dates, room and price kept.
 
 **Payments and personal data.** Card details never reach the website. The payment history keeps only amounts, dates, Stripe's transaction IDs and staff notes, no personal data, so it stays when a booking is anonymised (it's needed for your accounts). The guest's email is passed to Stripe for the receipt; Stripe processes the payment under its own terms and privacy policy.
 
 ---
 
-## 17. Invoice requests
+## 20. Invoice requests
 
 Switch on **Settings → Features → Invoice request**. The guest details form then shows **☐ I would like an invoice**. When it's ticked, the guest chooses **A person** or **A company**:
 
@@ -634,7 +753,7 @@ Switch on **Settings → Features → Invoice request**. The guest details form 
 | A person | Full name (required), Address (required) |
 | A company | Company name (required), Company ID – EIK/BULSTAT (required), VAT number (optional), Registered address (required), Contact person (optional) |
 
-Under **Settings → Invoices** each field can be **Required**, **Optional** or **Hidden**.
+Under **Settings → Taxes & invoices** each field can be **Required**, **Optional** or **Hidden**.
 
 **Checks are light on purpose.** A company ID made only of digits must have 9 or 13 digits, the Bulgarian EIK/BULSTAT format; spaces are removed. IDs with letters (foreign companies) and VAT numbers of any country are accepted as typed.
 
@@ -648,15 +767,15 @@ The details are stored apart from the guest details, and are included in the Wor
 
 ---
 
-## 18. Emails
+## 21. Emails
 
-**Bookings → Settings → Emails.**
+**Bookings → Emails** (Administrators, Editors and Hotel Managers).
 
 **Your hotel:**
 - **Send hotel notifications to:** one or more addresses separated by commas, e.g. `reception@hotel.bg, owner@hotel.bg`. Guests' replies go to the first one. It's empty on a new site, which means the WordPress admin email.
 - **Notify the hotel about:** new booking or booking request · booking cancelled · possible double booking from an external calendar (with Calendar sync on) · refunds made in Stripe and payments received for a room that is no longer free (with card payments on). Each can be switched off. A card booking is announced to the hotel only once it is paid.
 - **Hotel phone**, for `{hotel_phone}` and the email footer.
-- **Email design:** colour and logo. Leave the logo empty to use the site logo.
+- **Email design:** colour and logo are set under **Bookings → Appearance** (§15). Leave the logo empty to use the site logo.
 
 **Emails to guests** (with the *Guest emails* feature on), each with an editable subject and text:
 
@@ -678,21 +797,25 @@ With payments on, these are added (only for the ways of paying that are switched
 | Payment failed | A card payment didn't go through and the room was released |
 | Cancelled – payment not received | The bank transfer deadline passed (automatic cancellation) |
 
-**Placeholders:** `{guest_name}` `{booking_ref}` `{room}` `{check_in}` `{check_out}` `{nights}` `{guests}` `{rate_plan}` `{total}` `{price_breakdown}` `{cancellation_policy}` `{promo_code}` `{status}` `{booking_details}` `{check_in_time}` `{check_out_time}` `{hotel_name}` `{hotel_phone}` `{hotel_email}` `{review_link}` `{guest_email}` `{guest_phone}` `{payment_method}` `{amount_due}` `{amount_paid}` `{balance_due}` `{payment_deadline}` `{payment_instructions}`. With payments on, `{booking_details}` also lists how the booking is paid, what was paid and what is left to pay at the property. The older `{reference}` and `{site_name}` still work.
+**Placeholders:** `{guest_name}` `{booking_ref}` `{room}` `{check_in}` `{check_out}` `{nights}` `{guests}` `{rate_plan}` `{total}` `{price_breakdown}` `{cancellation_policy}` `{promo_code}` `{status}` `{booking_details}` `{check_in_time}` `{check_out_time}` `{hotel_name}` `{hotel_phone}` `{hotel_email}` `{review_link}` `{guest_email}` `{guest_phone}` `{payment_method}` `{amount_due}` `{amount_paid}` `{balance_due}` `{payment_deadline}` `{payment_instructions}` `{manage_link}`. With payments on, `{booking_details}` also lists how the booking is paid, what was paid and what is left to pay at the property. The older `{reference}` and `{site_name}` still work.
 
 **Scheduled emails** (reminders and review requests) are sent by WordPress's scheduled tasks once an hour, between 08:00 and 21:00 hotel time. They go **only once per booking** and **never for cancelled bookings**: the booking is checked again just before sending. A review request is sent only within 2 days of its due date, so switching it on doesn't email guests from long ago. On quiet sites, set up a real server cron job (as for Calendar sync, §12) so they go out on time.
 
-**What the emails look like:** simple HTML that works on phones, in the hotel colour with the logo, plus a plain-text version for email programs that don't show HTML.
+**What the emails look like:** simple HTML that works on phones, in the hotel colour with the logo, plus a plain-text version for email programs that don't show HTML. Booking details appear as a clear table (booking, payment, next steps), a single link such as the manage link becomes a button, and the footer shows the hotel's address and contact.
+
+**Calendar file and manage link:** *Booking confirmed* and *Payment received* carry the stay as an `.ics` attachment (add to calendar). With the **Guest booking page** on (§16), guest emails end with a **Manage your booking** link unless the text already contains `{manage_link}`.
+
+**Resending:** any guest email that applies to a booking can be sent again from the booking's page (§17); the history records it.
 
 **Deliverability, please read.** By default WordPress sends email from the web server without logging in to a mail server. Many providers then put booking confirmations in spam or drop them. While no SMTP plugin is detected, a yellow notice on the booking screens says so.
 1. Install **WP Mail SMTP** or **FluentSMTP** (both free).
 2. Connect it to the hotel's email account: its SMTP server, or Gmail/Google Workspace or Microsoft 365. Use an address on the hotel's own domain, e.g. `booking@hotel.bg`, and set up SPF and DKIM for that domain with the hosting company.
-3. Go to **Bookings → Settings → Emails → Send a test email**. It sends the *Booking confirmed* email with example details.
+3. Go to **Bookings → Emails → Send a test email**. It sends the *Booking confirmed* email with example details.
 4. Check **Recent emails** at the bottom of the same page. Every email the plugin sends is listed with recipient, type, time and **Sent** or **Failed** (with the reason). *Sent* means the website handed the email to the mail server. The log is kept for 90 days by default (configurable) and cleaned up automatically. Each booking's page also lists its emails.
 
 ---
 
-## 19. Languages: Bulgarian, English, Polylang and WPML
+## 22. Languages: Bulgarian, English, Polylang and WPML
 
 - **Everything is translatable:** admin screens, booking form, messages and emails use the `flexo-booking` text domain. The plugin ships a **complete Bulgarian translation** (`languages/flexo-booking-bg_BG.*`), and English is built in. On a site set to Bulgarian (**Settings → General → Site Language**), everything is Bulgarian. `languages/flexo-booking.pot` is the template for other languages (e.g. with Loco Translate).
 - **Dates:** guests see dates in their language's format: **DD.MM.YYYY** for Bulgarian (e.g. *28.10.2026*), *October 28, 2026* for English. The admin always uses DD.MM.YYYY.
@@ -708,7 +831,7 @@ With payments on, these are added (only for the ways of paying that are switched
 
 ---
 
-## 20. Conversion tracking (Google Tag Manager, GA4, Meta)
+## 23. Conversion tracking (Google Tag Manager, GA4, Meta)
 
 Switch on **Settings → Features → Conversion tracking**. The booking form then adds events to the Google Tag Manager **data layer** (`window.dataLayer`). The plugin does **not** add Google or Meta scripts itself, so your cookie/consent plugin and Tag Manager (with Consent Mode) stay in control of what is sent.
 
@@ -732,13 +855,13 @@ Switch on **Settings → Features → Conversion tracking**. The booking form th
 
 ---
 
-## 21. Templates and moving between sites
+## 24. Templates and moving between sites
 
 | Part | Where it lives | How it moves |
 |---|---|---|
-| Plugin code | `wp-content/plugins/flexo-booking` | Install the zip, or it comes with a full-site clone |
+| Plugin code (including the bundled fonts) | `wp-content/plugins/flexo-booking` | Install the zip, or it comes with a full-site clone |
 | Widget placement and styling | Elementor page/template data | Elementor template/kit export |
-| Rooms, **seasons, closed dates**, settings (incl. child prices, tourist tax, **email texts, privacy, invoice fields, tracking and payment settings**), enabled features, **rate plans** (and which rooms offer them), **promo codes** | Posts, plugin tables, options | **Bookings → Import / Export** (JSON) or WP-CLI |
+| Rooms, **seasons, closed dates**, settings (incl. child prices, tourist tax, **email texts, privacy, invoice fields, tracking and payment settings, Appearance**), enabled features, **rate plans** (and which rooms offer them), **promo codes** | Posts, plugin tables, options | **Bookings → Import / Export** (JSON) or WP-CLI |
 | Stripe keys and webhook secrets, the hotel's bank account, notification addresses | Options | **Never exported**: enter them on each site |
 | Calendar connections (Booking.com/Airbnb links) | Plugin table | In the export file, but imported **only when ticked** (moving the same hotel) |
 | Bookings | `wp_flexo_bookings` table | Full-site migration, or export with "include bookings" |
@@ -748,11 +871,11 @@ Switch on **Settings → Features → Conversion tracking**. The booking form th
 2. Add demo rooms, their seasons and any closed dates.
 3. Switch on the features the template should ship with.
 4. Place the widgets.
-5. **Import / Export → Download export file** and keep the file with the template.
+5. **Settings → Import & export → Download export file** and keep the file with the template.
 
 **B. New client site from a template:**
 1. Clone the site, or install the plugin **before** importing the Elementor kit.
-2. **Import / Export → Import** the template's file.
+2. **Settings → Import & export → Import** the template's file.
 3. Adjust rooms, prices, seasons, the **notification addresses**, the **hotel phone**, the **review link** and the **privacy page**. Notification addresses are never exported, so the new site uses its own admin email until you set them.
 4. **Payments:** the payment choice, deposit, hold time and bank-transfer rules come with the file, but the **Stripe keys and webhook secrets** and the **bank account** (beneficiary, IBAN, BIC, bank) never do. A copied site can't take money into the template's account. Until they're entered, guests aren't asked to pay online (bookings say "pay at the property"). Enter the hotel's own keys, create its own Stripe webhook (§11), and fill in its bank details.
 5. Make a test booking (in Stripe test mode first, if card payments are used).
@@ -766,7 +889,7 @@ How the import behaves:
 - **Promo codes** are matched by code. Their room and rate-plan limits are re-linked by room slug and plan name. **Usage is not copied**: it's counted from each site's own bookings, so it starts at 0.
 - Calendar connections are **not** imported unless you tick *Import calendar connections* (or use `--calendars`). A template's Booking.com links belong to the template, not to the client. Export links are never copied: every site creates its own, so paste the new links into the booking sites after moving a hotel.
 - Files from 1.0.0–1.4.0 still import.
-- With "include bookings" (moving a live hotel), bookings keep their payment status and payment history. A card payment still in progress when the file was made arrives as *Not paid (expired)*.
+- With "include bookings" (moving a live hotel), bookings keep their payment status and payment history. A card payment still in progress when the file was made arrives as *Not paid in time*.
 
 **C. Add-on sale:**
 1. Install the plugin on the client site.
@@ -787,41 +910,33 @@ wp flexo-booking import template.flexo-booking.json --images      # --skip-setti
 
 ---
 
-## 22. Settings reference
+## 25. Settings reference
 
-**Settings → General:**
-- Currency: code, symbol, position, number format, decimals
-- Minimum and maximum stay
-- How far ahead guests can book
-- Guest selector limits (0 children hides that field)
-- Check-in and check-out times
-- Thank-you page and terms page, as **paths** such as `/terms/`
-- Guest details form: phone required / optional / not asked; special requests optional / not asked (§16)
-- Data removal on uninstall
+**Settings → Hotel:** contact details shown to guests (email, address), check-in and check-out times, booking page (found automatically when empty), thank-you and terms pages as **paths** such as `/terms/`, how quickly you reply to requests, currency (code, symbol, position, number format, decimals), data removal on uninstall.
 
-**Settings → Features:** see §2.
-
-**Settings → Children** (with *Children & ages* on): free under age, percentage for older children, adult price from age (§7).
-
-**Settings → Tourist tax** (with *Tourist tax* on): amount per adult per night, children, included in the total or paid at the property (§9).
+**Settings → Booking rules:** booking mode, minimum and maximum stay, how far ahead guests can book, guest selector limits (0 children hides that field), child prices (with *Children & ages* on, §7), guest details form (phone required / optional / not asked; special requests optional / not asked, §19), the phone country preselected in the form, and lowest prices in the date picker.
 
 **Settings → Payments** (with *Online card payment* or *Bank transfer* on): what guests pay when booking (nothing online / a deposit as % or fixed amount / the full amount), ways to pay and whether each is ready, Stripe test and live keys, webhook address, hold time (20–30 minutes), bank details, payment reference, deadline, reminder and automatic cancellation (§11).
 
-**Settings → Privacy** (with *Privacy consent* on): consent checkbox, its text, privacy page, retention period (§16).
+**Settings → Taxes & invoices** (with *Tourist tax* or *Invoice request* on): tourist tax amount per adult per night, children, included in the total or paid at the property (§9); required / optional / hidden for each invoice field (§20).
 
-**Settings → Invoices** (with *Invoice request* on): required / optional / hidden for each field (§17).
+**Settings → Privacy** (with *Privacy consent* on): consent checkbox, its text, privacy page, retention period (§19).
 
-**Settings → Emails:** notification addresses and which notifications, hotel phone, colour and logo, guest email texts with the reminder and review-request schedule and review link, email log period, test email, recent emails (§18).
+**Settings → Tracking** (with *Conversion tracking* on): the events for Tag Manager and the optional direct Meta Pixel (§23).
 
-**Settings → Tracking** (with *Conversion tracking* on): the events for Tag Manager and the optional direct Meta Pixel (§20).
+**Settings → Features:** see §2. **Settings → Health:** see §18. **Calendar sync** (§12) and **Import & export** (§24) are linked from the same tab bar.
+
+Technical settings are hidden until **Show advanced settings** is ticked (remembered per browser).
+
+**Bookings → Emails:** notification addresses and which notifications, hotel phone, guest email texts with the reminder and review-request schedule and review link, email log period, test email, recent emails (§21). **Bookings → Appearance:** §15. Old addresses such as `…&tab=children`, `…&tab=tourist_tax`, `…&tab=invoices` and `…&tab=emails` still open the right screen.
 
 `{booking_details}` lists the guests (with children's ages), the rate plan, the promo code, the total with its price lines (plan, discount, tourist tax, anything payable at the property) and the cancellation text.
 
-**Uninstalling:** deleting the plugin keeps all data, unless **Settings → General → Data removal** is ticked first.
+**Uninstalling:** deleting the plugin keeps all data, unless **Settings → Hotel → Data removal** is ticked first. The Hotel Staff and Hotel Manager roles are removed with the plugin (their users keep their accounts).
 
 ---
 
-## 23. For developers
+## 26. For developers
 
 **REST API** (public, used by the form):
 
@@ -832,14 +947,20 @@ wp flexo-booking import template.flexo-booking.json --images      # --skip-setti
 | GET | `/wp-json/flexo-booking/v1/quote?room=&check_in=&check_out=&adults=&children=&children_ages=&rate_plan=&promo_code=` | Price of one room, plan and code: `lines`, `subtotal`, `discount_formatted`, `total`, `due_at_property`, `rate_plan`, `promo`, `promo_error`. 429 after too many wrong codes. |
 | POST | `/wp-json/flexo-booking/v1/bookings` | Create a booking (`children_ages`, `rate_plan`, `promo_code`, `privacy_consent`, `invoice` object, `locale`, optional `expected_total`). Returns 201; 409 if no longer available, closed, or the price differs from `expected_total`; 400 for an invalid code or missing ages. A `total` field is ignored: the server always calculates the price. |
 | GET | `/wp-json/flexo-booking/v1/ical/{room}.ics?token=…` | The room's iCal export (Calendar sync). 403 for a wrong token, 404 while the feature is off. |
-| POST | `/bookings` with `payment_method` (`stripe` / `bank_transfer`) and `return_url` | With payments on, the response has `payment`: `redirect` (the Stripe page), or `instructions` (bank details), `state`, amounts and a guest `key`. 502 if Stripe can't be reached (the hold is released). Amount fields sent by the browser are ignored. |
+| POST | `/bookings` with `payment_method` (`stripe` / `bank_transfer`) and `return_url` | With payments on, the response has `payment`: `redirect` (the Stripe page), or `instructions` (bank details), `state`, amounts and a guest `key`. Since 1.6.0 every created booking also returns `key` and `view` (the confirmation), and validation errors carry the `field` they belong to. 502 if Stripe can't be reached (the hold is released). Amount fields sent by the browser are ignored. |
 | GET | `/wp-json/flexo-booking/v1/payment?reference=&key=` | Payment state for the page the guest returns to (`held`, `confirmed`, `failed`, `expired`, `conflict`, `awaiting_transfer`, …). 404 without the right key. Releases a lapsed hold. |
 | POST | `/wp-json/flexo-booking/v1/payment/retry` (`reference`, `key`, `return_url`) | A new Stripe page while the hold lasts, or a new hold if the room is still free (409 if not). |
+| GET | `/wp-json/flexo-booking/v1/calendar?month=YYYY-MM&months=1–3&room=&adults=&children=` | The date picker: per room and day `free` (`1` free, `0` full or closed, `c` no arrival), the minimum stay for arrivals, and (with the setting on) the lowest price per night. Cached briefly. |
+| GET | `/wp-json/flexo-booking/v1/alternatives?check_in=&check_out=&adults=&children=&children_ages=&room=` | When nothing fits: up to 3 date ranges of the same length within ±14 days, and other rooms that fit |
+| POST | `/wp-json/flexo-booking/v1/enquiry` | "Send an enquiry" (name, email, phone, message, dates). Emailed to the hotel, logged; rate-limited (filter `flexo_booking_enquiry_limit`). |
+| GET | `/wp-json/flexo-booking/v1/guest-booking?reference=&key=[&manage=1]` | The confirmation after a refresh, or the guest booking page (§16). 404 without the right key. |
+| POST | `/wp-json/flexo-booking/v1/guest-booking/request` (`reference`, `key`, `type` = `cancel`/`change`, `message`) | A guest's request (§16): emailed and logged, the booking is not changed. 3 per booking per day. |
+| GET | `/wp-json/flexo-booking/v1/booking.ics?reference=&key=` | The stay as a calendar file (`text/calendar`) |
 | POST | `/wp-json/flexo-booking/v1/stripe-webhook` | Stripe webhooks. Checked against the `Stripe-Signature` header (HMAC-SHA256, 5-minute tolerance); 400 otherwise. Each event ID is processed once. Events from the other mode (test/live) are ignored. |
 
 All routes accept `locale` (e.g. `en_US`): the answer is in that language, and a booking stores it.
 
-**Architecture (1.5.0):**
+**Architecture (1.6.0):**
 
 | Class | Role |
 |---|---|
@@ -861,6 +982,12 @@ All routes accept `locale` (e.g. `en_US`): the answer is in that language, and a
 | `Flexo_Booking_Money` | Currency formatting |
 | `Flexo_Booking_ICal` | iCal parser, fetch (`wp_safe_remote_get`), sync, conflicts, export feed, tokens, WP-Cron (`flexo_booking_ical_sync`) |
 | Imported bookings | Table `flexo_calendar_events` (not bookings rows), counted by `Flexo_Booking_Inventory::nightly_usage()` with the unit rule in §12 |
+| `Flexo_Booking_Guest` | Guest keys (HMAC of the booking), confirmation and guest booking page views, requests, `.ics`, date-picker calendar, alternatives, enquiries, booking-page detection |
+| `Flexo_Booking_Log` | Booking history and enquiries (table `flexo_booking_log`), cleaned up daily |
+| `Flexo_Booking_Phone` | Country codes and names (via `intl` when available), phone normalisation to `+359 888 123 456` |
+| `Flexo_Booking_Appearance` | Custom-mode CSS variables on `.flexo-booking`, bundled `@font-face` rules, contrast checks, the preview |
+| `Flexo_Booking_Roles` | Hotel Staff / Hotel Manager roles, capabilities, room capabilities, trimmed menu |
+| `Flexo_Booking_Today_Admin`, `Flexo_Booking_Health`, `Flexo_Booking_Help`, `Flexo_Booking_Wizard` | Today screen and "Needs your attention", health checks and system report, guides and support contact, setup wizard |
 
 **Hooks:**
 
@@ -886,31 +1013,39 @@ All routes accept `locale` (e.g. `en_US`): the answer is in that language, and a
 | `flexo_booking_date_format` | filter `( $format, $locale )` | Guest date format per language |
 | `flexo_booking_smtp_detected` | filter | Tell the plugin a mail setup exists (hides the SMTP notice) |
 | `flexo_booking_anonymised` | action `( $booking_id )` | After a booking was anonymised |
-| `flexo_booking_before_insert`, `flexo_booking_guest_email`, `flexo_booking_admin_email`, `flexo_booking_email_placeholders`, `flexo_booking_manage_capability`, `flexo_booking_rate_limit`, `flexo_booking_promo_attempts`, `flexo_booking_template`, `flexo_booking_use_mysql_locks` | filters | As named |
+| `flexo_booking_attention` | filter `( $items )` | Items under Today → Needs your attention (and the menu count) |
+| `flexo_booking_health_checks` | filter `( $checks )` | Add or change Health checks (`id`, `status` ok/warning/error, `title`, `text`, `action`) |
+| `flexo_booking_help_guides` | filter `( $guides )` | Guides on the Help page |
+| `flexo_booking_guest_view` | filter `( $view, $booking )` | What the confirmation / guest booking page shows |
+| `flexo_booking_guest_request`, `flexo_booking_enquiry` | actions | After a guest's change/cancellation request, after an enquiry |
+| `flexo_booking_before_insert`, `flexo_booking_guest_email`, `flexo_booking_admin_email`, `flexo_booking_email_placeholders`, `flexo_booking_manage_capability` (default `flexo_manage_bookings`), `flexo_booking_rate_limit`, `flexo_booking_promo_attempts`, `flexo_booking_template`, `flexo_booking_use_mysql_locks` | filters | As named |
 
 **Build:** `bin/build-zip.sh` → `dist/flexo-booking-<version>.zip`.
 
 ---
 
-## 24. Before going live on a client site
+## 27. Before going live on a client site
 
-1. **Features and package:** `FLEXO_BOOKING_FEATURES` in `wp-config.php` matches what the client bought (§2); the hotel's Features tab has the right booking mode.
-2. **Timezone** (Settings → General) is the hotel's city.
-3. **Rooms:** prices, weekend prices, max guests (and max adults), number of identical rooms, minimum stay, photos. Seasons, closed dates, rate plans, child prices and tourist tax as needed.
-4. **Pages:** booking page with the widget or `[flexo_booking]`; hero search bar pointing to it; "Book now" buttons; privacy policy page (Settings → Privacy); terms and thank-you pages if used. Translated pages linked in Polylang/WPML.
-5. **Emails:** notification addresses, hotel phone, logo/colour; an SMTP plugin connected to the hotel's own domain; **Send test email** arrives in the inbox (not spam).
-6. **Payments** (if used):
+1. **Setup wizard** finished (or each of its steps done by hand), and **Settings → Health** shows no ✕.
+2. **Features and package:** `FLEXO_BOOKING_FEATURES` in `wp-config.php` matches what the client bought (§2); the hotel's Features tab has the right booking mode.
+3. **Timezone** (Settings → General) is the hotel's city.
+4. **Rooms:** prices, weekend prices, max guests (and max adults), number of identical rooms, minimum stay, photos. Seasons, closed dates, rate plans, child prices and tourist tax as needed.
+5. **Pages:** booking page with the widget or `[flexo_booking]`; hero search bar pointing to it; "Book now" buttons; privacy policy page (Settings → Privacy); terms and thank-you pages if used. Translated pages linked in Polylang/WPML.
+6. **Emails:** notification addresses, hotel phone, logo/colour; an SMTP plugin connected to the hotel's own domain; **Send test email** arrives in the inbox (not spam).
+7. **Payments** (if used):
    - Stripe in **test mode** with the hotel's own keys and webhook; a 4242 test booking becomes *Confirmed*; the webhook shows 200 in Stripe.
    - Then **live** keys, a live webhook and **Mode: Live**; one small real payment, refunded.
    - Bank details and payment reference checked on a test booking.
    - The hotel knows its fiscal obligations (§11).
-7. **Calendar sync** (if used): export links pasted into Booking.com/Airbnb, their links imported here; a real server cron job for syncing, reminders and payment deadlines.
-8. **Caching/CDN:** `/wp-json/*` is not cached.
-9. **Tracking** (if used): Tag Manager triggers receive `booking_complete` once per booking.
-10. **A full test booking** on a phone and a desktop, then delete the test bookings (or cancel them in Stripe test mode).
+8. **Calendar sync** (if used): export links pasted into Booking.com/Airbnb, their links imported here; a real server cron job for syncing, reminders and payment deadlines.
+9. **Caching/CDN:** `/wp-json/*` is not cached.
+10. **Tracking** (if used): Tag Manager triggers receive `booking_complete` once per booking.
+11. **Accounts:** reception gets **Hotel Staff**, the manager **Hotel Manager**; only the owner/agency is Administrator.
+12. **Look:** **Appearance** on *Match my website*, or checked in the preview on desktop and phone (no contrast warnings).
+13. **A full test booking** on a phone and a desktop, then delete the test bookings (or cancel them in Stripe test mode).
 
 ---
 
-## 25. Testing
+## 28. Testing
 
-The `tests/` folder in the repository is not shipped in the zip. It holds WP-CLI test scripts (including the calendar-sync engine test with Booking.com/Airbnb-style sample feeds), a concurrency test (two simultaneous bookings for the last unit), the upgrade and portability tests, a promo-code race test (two bookings for a code's last use), privacy/email/invoice tests, a Bulgarian-site language test, a Polylang test, Day 5 payment tests (`test-day5.php`, with Stripe's API faked inside WordPress and webhooks signed like Stripe's), a local **Stripe stand-in** (`tests/stripe-mock/server.php`: Checkout API, hosted payment page, signed webhooks, refunds) used by the Day 5 browser test, a payment-hold race test, and Playwright browser tests for Days 1–5 (Day 5 includes the layout checks at 360, 390, 414, 768, 1024 and 1280 px). See `tests/README.md`. Run them against a throwaway site only.
+The `tests/` folder in the repository is not shipped in the zip. It holds WP-CLI test scripts (including the calendar-sync engine test with Booking.com/Airbnb-style sample feeds), a concurrency test (two simultaneous bookings for the last unit), the upgrade and portability tests, a promo-code race test (two bookings for a code's last use), privacy/email/invoice tests, a Bulgarian-site language test, a Polylang test, Day 5 payment tests (`test-day5.php`, with Stripe's API faked inside WordPress and webhooks signed like Stripe's), a local **Stripe stand-in** (`tests/stripe-mock/server.php`: Checkout API, hosted payment page, signed webhooks, refunds) used by the Day 5 browser test, a payment-hold race test, Day 6 tests (`test-day6.php`: history, notes, resend, roles and capabilities, Today, health, wizard, guest keys and pages, calendar and alternatives, enquiries, phone numbers, Appearance CSS and fonts, Import & export), and Playwright browser tests for Days 1–6 (Days 5 and 6 include layout checks at 360, 390, 414, 768, 1024 and 1280 px; Day 6 also keyboard-only booking, screen-reader labels, contrast, back/refresh, double submit, no Google requests, Cyrillic fonts, Elementor priority, the wizard on a fresh site, roles and the admin on a phone). See `tests/README.md`. Run them against a throwaway site only.

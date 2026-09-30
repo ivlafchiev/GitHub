@@ -1,12 +1,12 @@
-# Flexo Booking: implementation plan (Days 1–5)
+# Flexo Booking: implementation plan (Days 1–6)
 
-Status: **All five days done (1.5.0).** Day 1 (1.1.0) is in §9, Day 2
+Status: **All six days done (1.6.0).** Day 1 (1.1.0) is in §9, Day 2
 (1.2.0) in §10, Day 3 (1.3.0) in §11, Day 4 (1.4.0) in §12 and Day 5 (1.5.0)
 in §13, each with what was built, the deviations and the test results. §14
-is the final status: the complete feature list, the final regression, known
-limitations and what to check before installing on a client site. Sections
-1–8 are the original plan; where Day 5 differs from it, §13.2 says so.
-Read together with `ROADMAP.md`.
+is the status after Day 5. §15 is Day 6 (1.6.0, usability and appearance,
+planned in `UX_REVIEW.md`), with the regression of Days 1–5 and the updated
+known limitations. Sections 1–8 are the original plan.
+Read together with `ROADMAP.md` and `UX_REVIEW.md`.
 
 Contents:
 
@@ -23,7 +23,8 @@ Contents:
 11. Day 3 status, deviations and test results
 12. Day 4 status, deviations and test results
 13. Day 5 status, deviations and test results
-14. Final status
+14. Status after Day 5
+15. Day 6 status, deviations and test results
 
 ---
 
@@ -778,10 +779,6 @@ Run on **MariaDB 10.11**, which uses `GET_LOCK`, and on **SQLite**, which uses t
 ---
 
 ## 10. Day 2 status, deviations and test results
-11. Day 3 status, deviations and test results
-12. Day 4 status, deviations and test results
-13. Day 5 status, deviations and test results
-14. Final status
 
 ### 10.1 Built (1.2.0, migration 3)
 
@@ -830,9 +827,6 @@ Bugs found and fixed during testing:
 ---
 
 ## 11. Day 3 status, deviations and test results
-12. Day 4 status, deviations and test results
-13. Day 5 status, deviations and test results
-14. Final status
 
 ### 11.1 Built (1.3.0, migration 4)
 
@@ -955,7 +949,7 @@ Found and fixed during testing:
 
 ### 13.2 Deviations and decisions
 
-1. **Stripe could not be reached from the build environment** (`api.stripe.com`, `checkout.stripe.com`, `js.stripe.com`: proxy 403). Card payments were tested against Stripe's documented API and webhook format with (a) a fake inside WordPress (`pre_http_request`) and (b) a local stand-in server with a hosted payment page and signed webhooks. **A real Stripe test-mode run is still needed** (README §24).
+1. **Stripe could not be reached from the build environment** (`api.stripe.com`, `checkout.stripe.com`, `js.stripe.com`: proxy 403). Card payments were tested against Stripe's documented API and webhook format with (a) a fake inside WordPress (`pre_http_request`) and (b) a local stand-in server with a hosted payment page and signed webhooks. **A real Stripe test-mode run is still needed** (README §27).
 2. **The hold status is `pending_payment`**, not `awaiting_payment` as sketched in §2.8; `awaiting_payment` is the bank-transfer wait. A hold occupies the room only while it is valid, directly in the availability SQL, so availability is right the moment it ends. Cron only tidies up.
 3. **Stripe keeps a Checkout page open for at least 30 minutes**, but the hold is 20–30 minutes (setting). When the hold ends, the plugin closes the page through the API. A payment that still slips through is the "late payment" case: confirmed if the room is free, otherwise a conflict.
 4. **The payments table is a history** (one row per payment, refund or failed attempt) plus summary columns on the booking, instead of the planned one-row-per-payment-with-status design. This makes reporting and the CSV simpler, and gives idempotency by transaction ID.
@@ -992,7 +986,7 @@ Found and fixed during testing:
 
 ---
 
-## 14. Final status
+## 14. Status after Day 5
 
 ### 14.1 Features (1.5.0)
 
@@ -1020,7 +1014,7 @@ Found and fixed during testing:
 
 ### 14.3 Known limitations and untested areas
 
-- **Real Stripe not exercised** (the network is blocked here). A test-mode payment, the real Checkout page, real webhook delivery and refunds must be checked once per site (README §24). The Stripe API version is pinned to `2024-06-20` in the request header.
+- **Real Stripe not exercised** (the network is blocked here). A test-mode payment, the real Checkout page, real webhook delivery and refunds must be checked once per site (README §27). The Stripe API version is pinned to `2024-06-20` in the request header.
 - **Elementor Pro editor UI not tested.** The Elementor source checkout used here has no compiled editor assets. The widget, dynamic tag, front-end rendering and style inheritance are tested; dragging the widget in the editor is not.
 - **WPML** is supported through its public hooks but untested (paid plugin).
 - **WP-Cron timing:** reminders, auto-cancel, iCal sync and scheduled emails need site traffic or a real cron job. Payment holds don't: availability ignores expired holds immediately.
@@ -1028,3 +1022,66 @@ Found and fixed during testing:
 - **No fiscal receipts or invoices** are issued (the hotel's responsibility).
 - **Staff bookings** don't take online payments (payments are recorded manually).
 - **A payment conflict needs a person:** the plugin never moves a guest to another room by itself.
+
+---
+
+## 15. Day 6 status, deviations and test results
+
+Day 6 followed `UX_REVIEW.md` (approved with Q1–Q6 as proposed) in the
+agreed order **C Appearance → A Guest → B Owner/staff → language pass →
+regression**, one commit per part.
+
+### 15.1 Built (1.6.0, migration 7)
+
+| Area | Files |
+|---|---|
+| Schema (migration 7, additive) | Table `flexo_booking_log` (booking history and enquiries: booking, action, details JSON, user, time); `bookings.staff_notes`; `rate_plans.meals` (filled in for the presets); feature `custom_appearance` switched on; roles installed. |
+| C. Appearance | `class-appearance.php`, `admin/class-appearance-admin.php`, `assets/fonts/*` (7 OFL variable fonts, Latin + Cyrillic, self-hosted). *Match my website* (default and after upgrades) or *Custom*: CSS custom properties on `.flexo-booking` in an inline style after `booking.css`; only the chosen fonts are declared, only on pages with the form. Live preview (the real form in an iframe, desktop/phone), WCAG contrast warnings with suggestions, reset, email colour/logo moved here, Import/Export. |
+| A. Guest flow | `assets/js/booking.js` (rewritten: accessible date-range picker, steps, URL state with `pushState`, summary sidebar / phone bar, inline validation, no-availability panel, enquiry, confirmation, guest booking page, search bar), `booking.css` (Day 6 section; container-width classes `.fb-wide` / `.fb-narrow`), `templates/booking-form.php`, `class-guest.php` (keys, views, `.ics`, calendar, alternatives, enquiries, requests, booking-page detection), `class-phone.php`, `class-frontend.php` (steps, config, texts). Room fields size/beds/amenities; rate-plan meals; phone saved as `+CC …`; `{manage_link}`; `.ics` attached to *Booking confirmed* / *Payment received*; emails with table blocks, a button for single links and the address in the footer. |
+| B. Owner/staff | `admin/class-today-admin.php` (Today, Needs your attention, admin-bar link), `class-admin.php` (menu order, tabs, list filters and quick actions, phone cards, details with a top action bar, open requests, notes, history, resend, dialogs, old-URL redirects, Add booking rate fix), `class-booking-log.php`, `class-roles.php`, `admin/class-health.php` (+ Stripe `check_keys()`), `admin/class-help.php`, `admin/class-wizard.php`, `class-settings.php` (tabs Hotel / Booking rules / Payments / Taxes & invoices / Privacy / Tracking / Features / Health, aliases for the old tabs, advanced toggle, managers limited to email/appearance keys), `assets/js/admin-bookings.js`, `admin.css` (Day 6 section). |
+| Language | Glossary applied to EN and BG (status names, *Restore booking*, *Remove personal data*, *Rates*, *Import & export*, *на място* …); 523 new Bulgarian strings; `.po`/`.mo`/`.l10n.php` regenerated. |
+
+### 15.2 Deviations and decisions
+
+1. **Hidden admin pages stay registered.** Removing sub-pages from `$submenu` makes WordPress refuse them ("Sorry, you are not allowed…"), including *Add room* for managers. Seasons, closed dates, rates, calendar sync, import & export, the wizard and *Add room* are therefore registered and hidden with a class (`flexo-menu-hidden`, CSS only in the admin). They are reached through the *Rooms & prices* tabs and the Settings tab bar.
+2. **Menu names:** *Promotions* stayed **Promo codes** (the term hotels already know, and the feature's name). **Emails** is its own menu entry so Hotel Managers can use it without Settings access. Calendar sync and Import & export keep their own screens, linked from the Settings tab bar (and Calendar sync from the Rooms & prices tabs), instead of being rendered inside Settings.
+3. **The summary placement follows the form's width, not the viewport.** Many themes put the form in a narrow column, so the sidebar appears when the form itself is at least 900 px wide. Below that the summary is a sticky bar on phones and an open, static box from 768 px.
+4. **Enquiries are stored in the history table** (not as bookings) so they can appear under *Needs your attention*. They are deleted after 12 months (daily job), included in the WordPress personal data export/erase, and rate-limited. Not switchable (Q3).
+5. **The guest booking page is the booking page** with `fb_manage` + `fb_key`. The key is an HMAC of the booking (nothing stored); the Day 5 payment key is accepted too, so links in payment emails keep working.
+6. **Phone numbers are validated** (6–15 digits) for new bookings and saved with the country code; existing bookings are untouched. API clients that send placeholder numbers such as `1` now get `flexo_invalid_phone`; test fixtures were updated.
+7. **"Preview booking form"** opens the booking page (admin bar and Today). When no page is found it isn't shown; the wizard and Health offer to create the page rather than creating it silently.
+8. **Room short description** reuses the existing excerpt; no new field.
+9. **Secrets:** when a logged-in non-administrator saves settings, Stripe keys and webhook secrets are left unchanged. WP-CLI and the tests are unaffected.
+10. **Booking modes offered in the wizard** follow the features *available* on the site (agency level), like the Features tab.
+11. **Editors** get all three new capabilities (Q4: no hotel loses access); `flexo_booking_manage_capability` is still applied.
+12. **Status labels changed, keys didn't** (`pending`, `expired` …), so CSV values, filters and integrations are unchanged. The Days 1–5 browser tests were updated only where wording or navigation intentionally changed (the list's address, tab names, labels, the in-page confirmation dialog); no check was removed.
+
+### 15.3 Tests run (MariaDB 10.11)
+
+| Test | Result |
+|---|---|
+| `test-day6.php`: migration 7 (tables, columns, roles, editors keep access, preset meals); room and rate details; phone numbers (country codes, `00`/`+` prefixes, too short refused, stored with the code); confirmation, key and `.ics` (key checks, refresh, all-day event, CRLF, email table, manage link, attachment removed after sending, feature off); guest requests (message required, nothing changes, hotel emailed, 3 a day, Needs attention); date-picker calendar (full, closed, minimum stay, fitting rooms, prices on/off, invalid month); nearby dates and enquiries (validation, honeypot, email, log, no booking, Needs attention, personal data export and erase); list filters and order; Today (arrivals, departures, tomorrow, next 7 days, cancelled not counted, menu badge); history in hotel words and new status names; roles (staff, manager, editor); settings a manager may change (keys untouched); **health** (missing booking page, failing email, stopped WP-Cron, broken calendar feed, missing/invalid Stripe keys via the stand-in, report without secrets or guest data); wizard helpers (page created and set, no redirect on sites with rooms); Appearance (Match adds nothing, custom CSS scoped to the form without `!important`, only the chosen self-hosted Cyrillic font, email colour, no Google Fonts anywhere, Import/Export incl. meals) | **108/108** with the Stripe stand-in (`STRIPE_MOCK`); 105/105 without it (the three key checks are skipped) |
+| Browser `e2e/day6.js`: steps, picker (focus, minimum stay, keyboard), address state, room cards and rates at 390 px, phone summary bar, mobile keyboards/autocomplete, optional marks, phone country, inline errors and focus; refresh/Back/Forward, personal data not kept; **three quick submits → one booking**; confirmation (refresh, directions, calendar, fits 390 px); guest booking page and a cancellation request reaching the hotel, wrong key refused; nothing free → nearby dates, other rooms, enquiry emailed; **keyboard-only booking**, every field named for screen readers, **contrast AA**; layout at 360/414/768/1024/1280 (no horizontal scroll, no layout shift); minimal setup (request mode, no guest page link); Today, old list address, search, filters, cancel dialog, history, notes, resend; health and system report, help links, old tab address; roles (staff lands on Today, manager adds a room); admin at 390 px (Today, cards, details); Appearance (upgrade keeps *Match*, contrast warning, preview = front end, rest of the site unchanged, **Cyrillic font ranges**, **no requests to Google**, **Elementor widget colour > Appearance > website**, reset, Import/Export) | **117/117** |
+| Setup wizard on a fresh site (MariaDB, by hand in the browser): activation redirect, all seven steps, page created, test email, test booking detected | pass |
+| Browser Days 1–5 | 37 / 51 / 63 / 49 / 167 – all pass |
+| PHP suite: pricing parity / seasons / features / regression / iCal / Day 3 / Day 4 / Day 5 / Bulgarian site / constants | 8 / 46 / 30 / 43 / 66 / 122 / 93 / 258 / 18 / 6 – all pass |
+| Concurrency: last unit / payment hold / promo code's last use | pass |
+| Polylang (real plugin) | 21/21 |
+| Upgrades 1.0.0 → 1.6.0 and 1.5.0 → 1.6.0 (`upgrade-verify.php`, MariaDB) | 27/27 each; DB version 7, history table, notes and meals columns, roles, Appearance on *Match*, no wizard redirect, no migration error |
+| Portability into fresh sites: base (+ re-import), Day 3, full configuration | 11 + 3, 4 + 21, 7 + 30 |
+
+Found and fixed during testing:
+- The details page overflowed at 390 px (payment table); the table now scrolls inside its box and the page is one column.
+- On phones the promo field was hidden in the collapsed search bar; it moved into the form.
+- The summary was collapsed on desktops with narrow theme columns; it is open and static there.
+- The loading skeleton reused the room card class; it has its own class.
+- "Loading availability…" replaced the date prompt after a date was chosen; it now shows only before a check-in is picked.
+- A leftover "(Settings → Children)" hint now points to *Booking rules*.
+
+### 15.4 Known limitations (in addition to §14.3)
+
+- **Screen readers** were checked through the accessibility tree and ARIA attributes in Chromium, not by hand with NVDA or VoiceOver.
+- **The fonts add about 0.8 MB to the plugin** (the 1.6.0 zip is 1.3 MB); browsers download only the chosen fonts and the subsets a page needs.
+- **Theme copies of `booking-form.php` made before 1.6.0** keep working; the script adds the step bar, summary and picker around them, but custom markup inside them isn't restyled.
+- **The Elementor editor** (drag and drop) is still untested here, as in §14.3; the widget style priority is tested on the front end.
+- **Guest requests never change bookings**, by design; the hotel acts on them.

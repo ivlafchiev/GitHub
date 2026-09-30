@@ -63,4 +63,4 @@ before changing code.
 | Day 3 | **Done** (1.3.0): children & ages, rate plans, tourist tax, promo codes, booking details view |
 | Day 4 | **Done** (1.4.0): privacy consent and data retention, invoice request, guest/hotel emails (HTML, log, reminders, review requests), Bulgarian translation and Polylang/WPML, conversion tracking |
 | Day 5 | **Done** (1.5.0): payments (Stripe Checkout with holds and signed idempotent webhooks, deposits, bank transfer with reminders and auto-cancel, refunds, conflicts), responsive centred mobile/tablet flow, final regression, final README |
-| Day 6 | **Usability review done** (`UX_REVIEW.md`) – implementation waits for approval |
+| Day 6 | **Done** (1.6.0): usability review (`UX_REVIEW.md`), guest flow (steps, date picker with availability, summary, URL state, no dead ends, room/rate details, checkout, confirmation with calendar file, guest booking page), setup wizard, Today, bookings list/details with history, notes and resend, roles, health check, help, clearer settings, BG/EN wording, Appearance settings with bundled fonts |

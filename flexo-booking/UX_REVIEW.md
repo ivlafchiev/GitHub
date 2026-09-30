@@ -1,7 +1,9 @@
 # Flexo Booking – Day 6 usability review
 
-Status: **review only – nothing implemented yet.** Waiting for approval of the
-planned changes (§3) and the open questions (§5) before coding.
+Status: **approved and implemented (1.6.0).** The review (§1–§2), the plan
+(§3) and the risks (§4) are kept as written; the answers to the open
+questions and what was actually built, including where it differs from the
+plan, are in §6. Details and test results: `IMPLEMENTATION_PLAN.md` §15.
 
 ## 1. How the review was done
 
@@ -225,7 +227,7 @@ Then a full pass over all ~1 100 strings for natural wording and the same terms 
 
 ---
 
-## 5. Open questions (please answer before I start)
+## 5. Open questions (answered: all approved as proposed)
 
 - **Q1 – Refresh and personal data.** I'll keep dates/room/plan/promo/step in the URL (refresh restores them) but **not** name/email/phone (the brief says no personal data in browser storage). After a refresh the guest re-types their details (browsers often refill them anyway). OK?
 - **Q2 – Card button text.** With Stripe the money is taken on Stripe's page, after our button. I propose **"Continue to secure payment – 130.50 €"** rather than "Pay 130.50 € and confirm", which would promise something our button doesn't do. OK?
@@ -233,3 +235,35 @@ Then a full pass over all ~1 100 strings for natural wording and the same terms 
 - **Q4 – Editors.** Keep existing Editors at manager level (today's access) and use the new *Hotel Staff* role for reception accounts from now on – or downgrade Editors to staff level on upgrade (safer, but some hotels will suddenly lose access to prices)? I recommend keeping them.
 - **Q5 – New room/rate fields** (size, beds, amenities, meals) are needed for the richer cards. They're optional and cards simply leave them out when empty. OK to add?
 - **Q6 – Scope/order.** This is the largest day so far. I'd deliver in this order, each part tested and committed: **C Appearance → A Guest → B Owner/staff → language pass → regression**. OK?
+
+---
+
+## 6. What was done
+
+Approved with Q1–Q6 as proposed and built in the agreed order (C → A → B →
+language → regression), each part committed separately.
+
+| Plan item | Done | Differences from the plan |
+|---|---|---|
+| **C** Appearance | Match / Custom, 5 colours with "Use website colour", corners, 7 bundled fonts (OFL, Cyrillic, self-hosted), text size, live preview (desktop/phone), contrast warnings with suggestions, reset, email colour/logo, Import/Export; upgrades stay on *Match* | – |
+| **A1** Steps and orientation | Step bar, collapsed stay line, summary (sidebar / phone bar), URL state with Back/Forward/refresh, confirmation survives refresh, prefill and skip from links | The sidebar depends on the form's own width (≥ 900 px), not the viewport, because theme columns are often narrow; from 768 px the summary is an open box |
+| **A2** Dates and availability | Accessible range picker over the native inputs, `/calendar` API (full, closed, no arrival, minimum stay), optional "from" prices (off), nearby dates, other rooms, enquiry | Enquiries are kept in the history table (12 months) so they show under *Needs your attention* |
+| **A3** Room selection | Size, beds, amenities (max 5 + "more"), total and per-night price, rate rows with meals and cancellation | Short description = the existing excerpt |
+| **A4** Details and checkout | Order, required/optional marks, phone with country code, inline validation with focus, keyboards/autocomplete, "Before you book", exact button texts (Q2), no double submit | Phone numbers are validated for new bookings (6–15 digits) |
+| **A5** Confirmation | Reference, summary, next steps, contact, Add to calendar, Directions; emails in blocks, `.ics` attached, manage link | – |
+| **A6** Guest booking page | Feature `guest_booking_page` (off by default), view + cancel/change request, email + Today, 3 a day | Lives on the booking page (`fb_manage`); the payment key also works |
+| **A7** Accessibility and performance | Keyboard-only flow, focus management, announcements, AA contrast, reserved image space, lazy images, skeleton | Checked in Chromium's accessibility tree, not with a real screen reader |
+| **B1** Setup wizard | 7 steps, skippable, saved, fresh sites only, page created, test email, test booking detected | – |
+| **B2** Today | Arriving today/tomorrow, leaving, staying; Needs your attention with one-click actions; next 7 days; occupancy; menu count | – |
+| **B3** List and details | Filters, quick actions, phone cards, sections, top actions, history table, internal notes, resend, dialogs with consequences, Add booking rate fix | – |
+| **B4** Settings structure | Menu *Today · Calendar · All bookings · Add booking · Rooms & prices · Promo codes · Emails · Appearance · Settings · Help*; tabs Hotel / Booking rules / Payments / Taxes & invoices / Privacy / Tracking / Features / Health; advanced toggle; empty states; preview link; old URLs redirect | *Promotions* kept the name **Promo codes**; Emails is its own menu entry (for managers); Calendar sync and Import & export stay separate screens linked from the Settings tab bar; hidden screens stay registered (WordPress refuses unregistered ones) |
+| **B5** Roles | Hotel Staff, Hotel Manager, custom capabilities, trimmed admin for staff, Editors keep access (Q4) | – |
+| **B6** Health check | All listed checks incl. Stripe "Check the keys", copy system report | "Preview booking form" doesn't create a missing page by itself; Health and the wizard offer it |
+| **B7** Mobile admin | Today, cards, details, calendar at 360/390/414 | – |
+| **B8** Help | Guides, "?" links, support contact (constant or Agency screen) | – |
+| **B9** Language | Glossary in EN and BG, 523 new Bulgarian strings, full pass | – |
+
+**Tests:** Day 6 PHP tests 108/108, Day 6 browser tests 117/117, wizard on a fresh
+site by hand, and the full regression of Days 1–5 (PHP suite, browser tests,
+concurrency, Polylang, upgrades from 1.0.0 and 1.5.0, portability) – all pass.
+
