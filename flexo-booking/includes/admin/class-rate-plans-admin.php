@@ -22,7 +22,7 @@ class Flexo_Booking_Rate_Plans_Admin {
 
 	public static function menu() {
 		if ( Flexo_Booking_Rate_Plans::enabled() ) {
-			add_submenu_page( Flexo_Booking_Admin::MENU_SLUG, __( 'Rate plans', 'flexo-booking' ), __( 'Rate plans', 'flexo-booking' ), Flexo_Booking_Admin::capability(), self::SLUG, array( __CLASS__, 'render' ) );
+			add_submenu_page( Flexo_Booking_Admin::MENU_SLUG, __( 'Rate plans', 'flexo-booking' ), __( 'Rate plans', 'flexo-booking' ), Flexo_Booking_Admin::cap( 'prices' ), self::SLUG, array( __CLASS__, 'render' ) );
 		}
 	}
 
@@ -36,7 +36,7 @@ class Flexo_Booking_Rate_Plans_Admin {
 
 	private static function check_access( $nonce_action ) {
 		check_admin_referer( $nonce_action );
-		if ( ! current_user_can( Flexo_Booking_Admin::capability() ) || ! Flexo_Booking_Rate_Plans::enabled() ) {
+		if ( ! current_user_can( Flexo_Booking_Admin::cap( 'prices' ) ) || ! Flexo_Booking_Rate_Plans::enabled() ) {
 			wp_die( esc_html__( 'You are not allowed to manage rate plans.', 'flexo-booking' ) );
 		}
 	}
@@ -46,7 +46,7 @@ class Flexo_Booking_Rate_Plans_Admin {
 	}
 
 	public static function render() {
-		if ( ! current_user_can( Flexo_Booking_Admin::capability() ) ) {
+		if ( ! current_user_can( Flexo_Booking_Admin::cap( 'prices' ) ) ) {
 			return;
 		}
 		$plans   = Flexo_Booking_Rate_Plans::all();
@@ -97,6 +97,7 @@ class Flexo_Booking_Rate_Plans_Admin {
 		$missing   = array_diff( array_keys( Flexo_Booking_Rate_Plans::presets() ), wp_list_pluck( $plans, 'preset' ) );
 		?>
 		<div class="wrap flexo-admin flexo-plans">
+			<?php Flexo_Booking_Admin::section_nav( 'rooms', 'flexo-booking-rate-plans' ); ?>
 			<h1 class="wp-heading-inline"><?php esc_html_e( 'Rate plans', 'flexo-booking' ); ?></h1>
 			<a class="page-title-action" href="<?php echo esc_url( self::page_url( array( 'add' => 1 ) ) . '#flexo-plan-form' ); ?>"><?php esc_html_e( 'Add rate plan', 'flexo-booking' ); ?></a>
 			<hr class="wp-header-end">
@@ -117,7 +118,7 @@ class Flexo_Booking_Rate_Plans_Admin {
 				</thead>
 				<tbody>
 					<?php if ( ! $plans ) : ?>
-						<tr><td colspan="6"><?php esc_html_e( 'No rate plans yet. Guests book rooms at their normal price.', 'flexo-booking' ); ?></td></tr>
+						<tr><td colspan="6"><?php esc_html_e( 'No rates yet – guests book rooms at their normal price. Add a rate for breakfast, half board or a non-refundable discount.', 'flexo-booking' ); ?></td></tr>
 					<?php endif; ?>
 					<?php foreach ( $plans as $plan ) : ?>
 						<?php $plan_rooms = isset( $offered[ $plan['id'] ] ) ? $offered[ $plan['id'] ] : array(); ?>

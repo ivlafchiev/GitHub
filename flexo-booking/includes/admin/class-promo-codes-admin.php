@@ -21,7 +21,7 @@ class Flexo_Booking_Promo_Codes_Admin {
 
 	public static function menu() {
 		if ( Flexo_Booking_Promo_Codes::enabled() ) {
-			add_submenu_page( Flexo_Booking_Admin::MENU_SLUG, __( 'Promo codes', 'flexo-booking' ), __( 'Promo codes', 'flexo-booking' ), Flexo_Booking_Admin::capability(), self::SLUG, array( __CLASS__, 'render' ) );
+			add_submenu_page( Flexo_Booking_Admin::MENU_SLUG, __( 'Promo codes', 'flexo-booking' ), __( 'Promo codes', 'flexo-booking' ), Flexo_Booking_Admin::cap( 'prices' ), self::SLUG, array( __CLASS__, 'render' ) );
 		}
 	}
 
@@ -37,7 +37,7 @@ class Flexo_Booking_Promo_Codes_Admin {
 
 	private static function check_access( $nonce_action ) {
 		check_admin_referer( $nonce_action );
-		if ( ! current_user_can( Flexo_Booking_Admin::capability() ) || ! Flexo_Booking_Promo_Codes::enabled() ) {
+		if ( ! current_user_can( Flexo_Booking_Admin::cap( 'prices' ) ) || ! Flexo_Booking_Promo_Codes::enabled() ) {
 			wp_die( esc_html__( 'You are not allowed to manage promo codes.', 'flexo-booking' ) );
 		}
 	}
@@ -97,7 +97,7 @@ class Flexo_Booking_Promo_Codes_Admin {
 	}
 
 	public static function render() {
-		if ( ! current_user_can( Flexo_Booking_Admin::capability() ) ) {
+		if ( ! current_user_can( Flexo_Booking_Admin::cap( 'prices' ) ) ) {
 			return;
 		}
 		$codes  = Flexo_Booking_Promo_Codes::all();
@@ -170,7 +170,7 @@ class Flexo_Booking_Promo_Codes_Admin {
 				</thead>
 				<tbody>
 					<?php if ( ! $codes ) : ?>
-						<tr><td colspan="6"><?php esc_html_e( 'No promo codes yet.', 'flexo-booking' ); ?></td></tr>
+						<tr><td colspan="6"><?php esc_html_e( 'No promo codes yet. Create one for your newsletter, returning guests or social media, e.g. SUMMER10 for 10% off.', 'flexo-booking' ); ?></td></tr>
 					<?php endif; ?>
 					<?php foreach ( $codes as $promo ) : ?>
 						<?php

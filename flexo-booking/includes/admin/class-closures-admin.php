@@ -20,7 +20,7 @@ class Flexo_Booking_Closures_Admin {
 	}
 
 	public static function menu() {
-		add_submenu_page( Flexo_Booking_Admin::MENU_SLUG, __( 'Closed dates', 'flexo-booking' ), __( 'Closed dates', 'flexo-booking' ), Flexo_Booking_Admin::capability(), self::SLUG, array( __CLASS__, 'render' ) );
+		add_submenu_page( Flexo_Booking_Admin::MENU_SLUG, __( 'Closed dates', 'flexo-booking' ), __( 'Closed dates', 'flexo-booking' ), Flexo_Booking_Admin::cap( 'prices' ), self::SLUG, array( __CLASS__, 'render' ) );
 	}
 
 	private static function page_url( $args = array() ) {
@@ -29,13 +29,13 @@ class Flexo_Booking_Closures_Admin {
 
 	private static function check_access( $nonce_action ) {
 		check_admin_referer( $nonce_action );
-		if ( ! current_user_can( Flexo_Booking_Admin::capability() ) ) {
+		if ( ! current_user_can( Flexo_Booking_Admin::cap( 'prices' ) ) ) {
 			wp_die( esc_html__( 'You are not allowed to manage closed dates.', 'flexo-booking' ) );
 		}
 	}
 
 	public static function render() {
-		if ( ! current_user_can( Flexo_Booking_Admin::capability() ) ) {
+		if ( ! current_user_can( Flexo_Booking_Admin::cap( 'prices' ) ) ) {
 			return;
 		}
 		$rooms    = Flexo_Booking_Rooms::all( array( 'publish', 'draft', 'private', 'pending', 'future' ) );
@@ -73,7 +73,8 @@ class Flexo_Booking_Closures_Admin {
 		sort( $years );
 		?>
 		<div class="wrap flexo-admin">
-			<h1><?php esc_html_e( 'Closed dates', 'flexo-booking' ); ?></h1>
+			<?php Flexo_Booking_Admin::section_nav( 'rooms', 'flexo-booking-closures' ); ?>
+			<h1><?php esc_html_e( 'Closed dates', 'flexo-booking' ); ?> <?php echo Flexo_Booking_Help::link( 'block' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in link(). ?></h1>
 			<p class="description"><?php esc_html_e( 'Close the whole property (e.g. for the winter) or a single room type. Guests cannot book nights inside a closed period and see a clear message instead. To take just one room out of service, use Add booking → Block dates.', 'flexo-booking' ); ?></p>
 			<?php Flexo_Booking_Seasons_Admin::notices(); ?>
 
@@ -89,7 +90,7 @@ class Flexo_Booking_Closures_Admin {
 				</thead>
 				<tbody>
 					<?php if ( ! $closures ) : ?>
-						<tr><td colspan="5"><?php esc_html_e( 'No closed dates. The property is open all year.', 'flexo-booking' ); ?></td></tr>
+						<tr><td colspan="5"><?php esc_html_e( 'No closed dates – the property is open all year. Add a period here when you close for the season or renovate, so guests can\'t book it.', 'flexo-booking' ); ?></td></tr>
 					<?php endif; ?>
 					<?php foreach ( $closures as $closure ) : ?>
 						<tr class="<?php echo $closure['date_to'] < $today ? 'flexo-past' : ''; ?>">

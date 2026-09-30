@@ -126,6 +126,23 @@ class Flexo_Booking_Gateway_Stripe implements Flexo_Booking_Payment_Gateway {
 	}
 
 	/**
+	 * One read-only API call to see whether the secret key works (Health).
+	 *
+	 * @return true|WP_Error
+	 */
+	public function check_keys() {
+		if ( '' === $this->secret_key() ) {
+			return new WP_Error( 'flexo_stripe_key', __( 'No secret key entered.', 'flexo-booking' ) );
+		}
+		$result = $this->api( 'GET', '/balance' );
+		if ( is_wp_error( $result ) ) {
+			$data = $result->get_error_data();
+			return new WP_Error( 'flexo_stripe_key', isset( $data['detail'] ) ? $data['detail'] : $result->get_error_message() );
+		}
+		return true;
+	}
+
+	/**
 	 * Opens a Stripe Checkout page for the amount due on the booking.
 	 */
 	public function start( array $booking, array $args ) {

@@ -135,6 +135,7 @@ class Flexo_Booking_Privacy {
 				'guest_email'   => '',
 				'guest_phone'   => '',
 				'notes'         => '',
+				'staff_notes'   => '',
 				'anonymized_at' => current_time( 'mysql' ),
 			),
 			array( 'id' => (int) $booking_id )

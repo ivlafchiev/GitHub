@@ -750,16 +750,18 @@ class Flexo_Booking_Emails {
 		$vars    = self::placeholders( $sample );
 		$subject = __( 'Test email', 'flexo-booking' ) . ': ' . strtr( self::template( 'confirmed', 'subject', determine_locale() ), $vars );
 		$body    = __( 'This is a test email from your booking system. If you can read it, emails to guests and to you are working.', 'flexo-booking' ) . "\n\n---\n\n" . strtr( self::template( 'confirmed', 'body', determine_locale() ), $vars );
-		return self::send( $to, $subject, $body, array( 'type' => 'test' ) );
+		$sent = self::send( $to, $subject, $body, array( 'type' => 'test' ) );
+		update_option( 'flexo_booking_last_test_email', array( 'time' => time(), 'sent' => (bool) $sent ), false );
+		return $sent;
 	}
 
 	public static function handle_test_email() {
 		check_admin_referer( 'flexo_booking_test_email' );
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( Flexo_Booking_Admin::cap( 'emails' ) ) ) {
 			wp_die( esc_html__( 'You are not allowed to do this.', 'flexo-booking' ) );
 		}
 		$to   = isset( $_POST['test_email'] ) ? sanitize_email( wp_unslash( $_POST['test_email'] ) ) : '';
-		$back = admin_url( 'admin.php?page=' . Flexo_Booking_Admin::MENU_SLUG . '-settings&tab=emails' );
+		$back = admin_url( 'admin.php?page=' . Flexo_Booking_Admin::MENU_SLUG . '-emails' );
 		if ( ! is_email( $to ) ) {
 			wp_safe_redirect( add_query_arg( 'flexo_error', rawurlencode( __( 'Please enter a valid email address.', 'flexo-booking' ) ), $back ) . '#flexo-test-email' );
 			exit;

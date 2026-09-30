@@ -11,6 +11,95 @@ defined( 'ABSPATH' ) || exit;
 
 class Flexo_Booking_Log {
 
+	public static function init() {
+		add_action( 'flexo_booking_created', array( __CLASS__, 'on_created' ), 20 );
+		add_action( 'flexo_booking_status_changed', array( __CLASS__, 'on_status' ), 20, 4 );
+		add_action( 'flexo_booking_payment_recorded', array( __CLASS__, 'on_payment' ), 20, 3 );
+		add_action( 'flexo_booking_refund_recorded', array( __CLASS__, 'on_refund' ), 20, 3 );
+		add_action( 'flexo_booking_anonymised', array( __CLASS__, 'on_anonymised' ), 20 );
+	}
+
+	public static function on_created( $booking ) {
+		self::add( $booking['id'], 'created', array( 'status' => $booking['status'], 'source' => $booking['source'] ) );
+	}
+
+	public static function on_status( $booking, $old, $new, $context = array() ) {
+		self::add(
+			$booking['id'],
+			'status',
+			array(
+				'from'   => $old,
+				'to'     => $new,
+				'reason' => isset( $context['reason'] ) ? (string) $context['reason'] : '',
+			)
+		);
+	}
+
+	public static function on_payment( $booking, $result, $payment ) {
+		self::add(
+			$booking['id'],
+			'payment',
+			array(
+				'amount'   => isset( $payment['amount'] ) ? (float) $payment['amount'] : 0,
+				'gateway'  => isset( $payment['gateway'] ) ? $payment['gateway'] : '',
+				'currency' => $booking['currency'],
+			)
+		);
+	}
+
+	public static function on_refund( $booking, $amount, $gateway ) {
+		self::add(
+			$booking['id'],
+			'refund',
+			array(
+				'amount'   => (float) $amount,
+				'gateway'  => $gateway,
+				'currency' => $booking['currency'],
+			)
+		);
+	}
+
+	public static function on_anonymised( $booking_id ) {
+		self::add( $booking_id, 'anonymised', array() );
+	}
+
+	/**
+	 * One history line in the hotel's words.
+	 */
+	public static function describe( array $entry ) {
+		$d = $entry['details'];
+		switch ( $entry['action'] ) {
+			case 'created':
+				return isset( $d['source'] ) && 'admin' === $d['source'] ? __( 'Added by staff', 'flexo-booking' ) : __( 'Booked on the website', 'flexo-booking' );
+			case 'status':
+				/* translators: 1: old status, 2: new status */
+				return sprintf( __( 'Status: %1$s → %2$s', 'flexo-booking' ), Flexo_Booking_Bookings::status_label( isset( $d['from'] ) ? $d['from'] : '' ), Flexo_Booking_Bookings::status_label( isset( $d['to'] ) ? $d['to'] : '' ) );
+			case 'payment':
+				/* translators: 1: amount, 2: payment method */
+				return sprintf( __( 'Payment of %1$s recorded (%2$s)', 'flexo-booking' ), Flexo_Booking_Money::format( isset( $d['amount'] ) ? $d['amount'] : 0, isset( $d['currency'] ) ? $d['currency'] : null ), Flexo_Booking_Payments::method_label( isset( $d['gateway'] ) ? $d['gateway'] : '' ) );
+			case 'refund':
+				/* translators: %s: amount */
+				return sprintf( __( 'Refund of %s recorded', 'flexo-booking' ), Flexo_Booking_Money::format( isset( $d['amount'] ) ? $d['amount'] : 0, isset( $d['currency'] ) ? $d['currency'] : null ) );
+			case 'note':
+				return __( 'Staff note', 'flexo-booking' ) . ': ' . ( isset( $d['text'] ) ? $d['text'] : '' );
+			case 'email_resent':
+				/* translators: %s: email name */
+				return sprintf( __( 'Email sent again: %s', 'flexo-booking' ), Flexo_Booking_Emails::type_label( 'guest_' . ( isset( $d['type'] ) ? $d['type'] : '' ) ) );
+			case 'guest_request':
+				if ( ! empty( $d['erased'] ) ) {
+					return __( 'Guest request (personal data removed)', 'flexo-booking' );
+				}
+				$types = Flexo_Booking_Guest::request_types();
+				/* translators: 1: request, 2: message */
+				return sprintf( __( 'Guest asked: "%1$s" %2$s', 'flexo-booking' ), isset( $types[ $d['type'] ] ) ? $types[ $d['type'] ] : '', '' !== (string) $d['message'] ? '– ' . $d['message'] : '' );
+			case 'request_answered':
+				return __( 'Guest request marked as answered', 'flexo-booking' );
+			case 'anonymised':
+				return __( 'Personal data removed', 'flexo-booking' );
+		}
+		return $entry['action'];
+	}
+
 	public static function table() {
 		return Flexo_Booking_Schema::table( 'booking_log' );
 	}

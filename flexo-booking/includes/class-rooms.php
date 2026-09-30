@@ -95,9 +95,9 @@ class Flexo_Booking_Rooms {
 					'add_new'       => __( 'Add room', 'flexo-booking' ),
 					'add_new_item'  => __( 'Add new room', 'flexo-booking' ),
 					'edit_item'     => __( 'Edit room', 'flexo-booking' ),
-					'all_items'     => __( 'Rooms', 'flexo-booking' ),
+					'all_items'     => __( 'Rooms & prices', 'flexo-booking' ),
 					'search_items'  => __( 'Search rooms', 'flexo-booking' ),
-					'not_found'     => __( 'No rooms yet.', 'flexo-booking' ),
+					'not_found'     => __( 'No rooms yet. Add your first room – guests can only book the rooms listed here.', 'flexo-booking' ),
 				),
 				// The room pages themselves are designed in Elementor, so the
 				// post type is only a data source for the booking engine.
@@ -108,7 +108,8 @@ class Flexo_Booking_Rooms {
 				'publicly_queryable' => false,
 				'supports'           => array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes' ),
 				'map_meta_cap'       => true,
-				'capability_type'    => 'page',
+				// Own capabilities, given to whoever manages prices (see Flexo_Booking_Roles).
+				'capability_type'    => array( 'flexo_room', 'flexo_rooms' ),
 			)
 		);
 	}

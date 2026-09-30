@@ -460,7 +460,7 @@ class Flexo_Booking_Payments_Admin {
 		wp_nonce_field( 'flexo_booking_payment_' . $op . '_' . $booking_id );
 	}
 
-	private static function action_url( $op, $booking_id ) {
+	public static function action_url( $op, $booking_id ) {
 		return wp_nonce_url( admin_url( 'admin-post.php?action=flexo_booking_payment&op=' . $op . '&id=' . (int) $booking_id ), 'flexo_booking_payment_' . $op . '_' . (int) $booking_id );
 	}
 

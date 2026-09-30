@@ -589,6 +589,7 @@ class Flexo_Booking_Bookings {
 		$row['payment_due_at']   = isset( $row['payment_due_at'] ) ? $row['payment_due_at'] : null;
 		$row['payment_conflict'] = ! empty( $row['payment_conflict'] ) ? 1 : 0;
 		$row['promo_code']    = isset( $row['promo_code'] ) ? (string) $row['promo_code'] : '';
+		$row['staff_notes']   = isset( $row['staff_notes'] ) ? (string) $row['staff_notes'] : '';
 		$room              = get_post( $row['room_id'] );
 		$row['room_title'] = $room ? get_the_title( $room ) : __( '(deleted room)', 'flexo-booking' );
 		return $row;
@@ -678,6 +679,12 @@ class Flexo_Booking_Bookings {
 				'from'     => '',
 				'per_page' => 20,
 				'page'     => 1,
+				// Day 6.
+				'payment_status' => '',
+				'source'         => '',
+				'arrival_from'   => '',
+				'arrival_to'     => '',
+				'order'          => '',
 			)
 		);
 
@@ -696,6 +703,24 @@ class Flexo_Booking_Bookings {
 			$where[]  = 'check_out >= %s';
 			$params[] = $args['from'];
 		}
+		if ( 'property' === $args['payment_status'] ) {
+			$where[] = "payment_method = 'property'";
+		} elseif ( $args['payment_status'] ) {
+			$where[]  = 'payment_status = %s';
+			$params[] = $args['payment_status'];
+		}
+		if ( $args['source'] ) {
+			$where[]  = 'source = %s';
+			$params[] = $args['source'];
+		}
+		if ( $args['arrival_from'] ) {
+			$where[]  = 'check_in >= %s';
+			$params[] = $args['arrival_from'];
+		}
+		if ( $args['arrival_to'] ) {
+			$where[]  = 'check_in <= %s';
+			$params[] = $args['arrival_to'];
+		}
 		if ( $args['search'] ) {
 			$like     = '%' . $wpdb->esc_like( $args['search'] ) . '%';
 			$where[]  = '(reference LIKE %s OR guest_name LIKE %s OR guest_email LIKE %s OR guest_phone LIKE %s)';
@@ -709,7 +734,11 @@ class Flexo_Booking_Bookings {
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$total = (int) $wpdb->get_var( $params ? $wpdb->prepare( $count_sql, $params ) : $count_sql );
 
-		$sql = "SELECT * FROM {$table} WHERE {$where_sql} ORDER BY check_in DESC, id DESC";
+		// "upcoming": current and future stays first (soonest first), then past ones (latest first).
+		$order = 'upcoming' === $args['order']
+			? $wpdb->prepare( 'ORDER BY (check_out >= %s) DESC, CASE WHEN check_out >= %s THEN check_in END ASC, check_in DESC, id DESC', wp_date( 'Y-m-d' ), wp_date( 'Y-m-d' ) )
+			: 'ORDER BY check_in DESC, id DESC';
+		$sql   = "SELECT * FROM {$table} WHERE {$where_sql} {$order}";
 		if ( $args['per_page'] > 0 ) {
 			$sql     .= ' LIMIT %d OFFSET %d';
 			$params[] = (int) $args['per_page'];

@@ -215,6 +215,8 @@ class Flexo_Booking_Migrations {
 		if ( class_exists( 'Flexo_Booking_Rate_Plans' ) ) {
 			Flexo_Booking_Rate_Plans::flush_cache();
 		}
+		// Hotel Staff / Hotel Manager; administrators and editors keep their access.
+		Flexo_Booking_Roles::install();
 
 		$enabled = get_option( Flexo_Booking_Features::ENABLED_OPTION, false );
 		if ( is_array( $enabled ) && ! in_array( 'custom_appearance', $enabled, true ) ) {

@@ -16,6 +16,8 @@ class Flexo_Booking_Install {
 		Flexo_Booking_Migrations::run();
 		Flexo_Booking_Rooms::register_post_type();
 		flush_rewrite_rules();
+		Flexo_Booking_Roles::install();
+		Flexo_Booking_Wizard::on_activate();
 	}
 
 	/**

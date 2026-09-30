@@ -24,7 +24,7 @@ class Flexo_Booking_Sync_Admin {
 
 	public static function menu() {
 		if ( Flexo_Booking_ICal::enabled() ) {
-			add_submenu_page( Flexo_Booking_Admin::MENU_SLUG, __( 'Calendar Sync', 'flexo-booking' ), __( 'Calendar Sync', 'flexo-booking' ), Flexo_Booking_Admin::capability(), self::SLUG, array( __CLASS__, 'render' ) );
+			add_submenu_page( Flexo_Booking_Admin::MENU_SLUG, __( 'Calendar Sync', 'flexo-booking' ), __( 'Calendar Sync', 'flexo-booking' ), Flexo_Booking_Admin::cap( 'prices' ), self::SLUG, array( __CLASS__, 'render' ) );
 		}
 	}
 
@@ -65,7 +65,7 @@ class Flexo_Booking_Sync_Admin {
 
 	private static function check( $action ) {
 		check_admin_referer( 'flexo_booking_ical_' . $action );
-		if ( ! current_user_can( Flexo_Booking_Admin::capability() ) || ! Flexo_Booking_ICal::enabled() ) {
+		if ( ! current_user_can( Flexo_Booking_Admin::cap( 'prices' ) ) || ! Flexo_Booking_ICal::enabled() ) {
 			wp_die( esc_html__( 'You are not allowed to manage calendar sync.', 'flexo-booking' ) );
 		}
 	}
@@ -91,7 +91,7 @@ class Flexo_Booking_Sync_Admin {
 	 * screen to the people who manage bookings.
 	 */
 	public static function notices() {
-		if ( ! Flexo_Booking_ICal::enabled() || ! current_user_can( Flexo_Booking_Admin::capability() ) ) {
+		if ( ! Flexo_Booking_ICal::enabled() || ! current_user_can( Flexo_Booking_Admin::cap( 'prices' ) ) ) {
 			return;
 		}
 		$failing = Flexo_Booking_ICal::failing_calendars();
@@ -124,7 +124,7 @@ class Flexo_Booking_Sync_Admin {
 	}
 
 	public static function render() {
-		if ( ! current_user_can( Flexo_Booking_Admin::capability() ) ) {
+		if ( ! current_user_can( Flexo_Booking_Admin::cap( 'prices' ) ) ) {
 			return;
 		}
 		$rooms    = Flexo_Booking_Rooms::all( array( 'publish', 'draft', 'private' ) );
@@ -132,7 +132,8 @@ class Flexo_Booking_Sync_Admin {
 		$next     = wp_next_scheduled( Flexo_Booking_ICal::CRON_HOOK );
 		?>
 		<div class="wrap flexo-admin flexo-sync">
-			<h1><?php esc_html_e( 'Calendar Sync', 'flexo-booking' ); ?></h1>
+			<?php Flexo_Booking_Admin::section_nav( 'rooms', 'flexo-booking-sync' ); ?>
+			<h1><?php esc_html_e( 'Calendar Sync', 'flexo-booking' ); ?> <?php echo Flexo_Booking_Help::link( 'sync' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in link(). ?></h1>
 			<?php Flexo_Booking_Seasons_Admin::notices(); ?>
 
 			<div class="flexo-tools-card flexo-sync-help">
@@ -254,7 +255,7 @@ class Flexo_Booking_Sync_Admin {
 							</tbody>
 						</table>
 					<?php else : ?>
-						<p class="flexo-muted"><?php esc_html_e( 'No calendars connected yet.', 'flexo-booking' ); ?></p>
+						<p class="flexo-muted"><?php esc_html_e( 'No calendars connected yet. Paste the room\'s iCal link from Booking.com or Airbnb below, so their bookings block the dates here.', 'flexo-booking' ); ?></p>
 					<?php endif; ?>
 
 					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="flexo-sync-add">

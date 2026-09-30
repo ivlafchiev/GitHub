@@ -24,7 +24,7 @@ class Flexo_Booking_Seasons_Admin {
 
 	public static function menu() {
 		if ( Flexo_Booking_Seasons::enabled() ) {
-			add_submenu_page( Flexo_Booking_Admin::MENU_SLUG, __( 'Seasonal prices', 'flexo-booking' ), __( 'Seasonal prices', 'flexo-booking' ), Flexo_Booking_Admin::capability(), self::SLUG, array( __CLASS__, 'render' ) );
+			add_submenu_page( Flexo_Booking_Admin::MENU_SLUG, __( 'Seasonal prices', 'flexo-booking' ), __( 'Seasonal prices', 'flexo-booking' ), Flexo_Booking_Admin::cap( 'prices' ), self::SLUG, array( __CLASS__, 'render' ) );
 		}
 	}
 
@@ -52,7 +52,7 @@ class Flexo_Booking_Seasons_Admin {
 
 	private static function check_access( $nonce_action ) {
 		check_admin_referer( $nonce_action );
-		if ( ! current_user_can( Flexo_Booking_Admin::capability() ) || ! Flexo_Booking_Seasons::enabled() ) {
+		if ( ! current_user_can( Flexo_Booking_Admin::cap( 'prices' ) ) || ! Flexo_Booking_Seasons::enabled() ) {
 			wp_die( esc_html__( 'You are not allowed to manage seasonal prices.', 'flexo-booking' ) );
 		}
 	}
@@ -93,13 +93,14 @@ class Flexo_Booking_Seasons_Admin {
 	}
 
 	public static function render() {
-		if ( ! current_user_can( Flexo_Booking_Admin::capability() ) ) {
+		if ( ! current_user_can( Flexo_Booking_Admin::cap( 'prices' ) ) ) {
 			return;
 		}
 		$rooms = self::rooms();
 		?>
 		<div class="wrap flexo-admin">
-			<h1><?php esc_html_e( 'Seasonal prices', 'flexo-booking' ); ?></h1>
+			<?php Flexo_Booking_Admin::section_nav( 'rooms', 'flexo-booking-seasons' ); ?>
+			<h1><?php esc_html_e( 'Seasonal prices', 'flexo-booking' ); ?> <?php echo Flexo_Booking_Help::link( 'seasons' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in link(). ?></h1>
 			<p class="description"><?php esc_html_e( 'Set different prices for high and low season. Each night is priced by the season it falls in; nights outside any season use the room\'s normal price.', 'flexo-booking' ); ?></p>
 			<?php self::notices(); ?>
 
@@ -191,7 +192,7 @@ class Flexo_Booking_Seasons_Admin {
 				</thead>
 				<tbody>
 					<?php if ( ! $seasons ) : ?>
-						<tr><td colspan="7"><?php esc_html_e( 'No seasons yet – this room uses its normal price all year.', 'flexo-booking' ); ?></td></tr>
+						<tr><td colspan="7"><?php esc_html_e( 'No seasons yet – this room uses its normal price all year. Add your summer or holiday prices with the form on this page, so guests see the right price.', 'flexo-booking' ); ?></td></tr>
 					<?php endif; ?>
 					<?php foreach ( $seasons as $season ) : ?>
 						<tr class="<?php echo $season['date_to'] < $today ? 'flexo-past' : ''; ?>">

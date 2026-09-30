@@ -163,7 +163,8 @@ class Flexo_Booking_Payments {
 	 */
 	public static function sanitize_secrets( $input ) {
 		$current = self::secrets();
-		if ( ! is_array( $input ) ) {
+		// Only administrators change payment keys (Hotel Managers save emails and appearance here too).
+		if ( ! is_array( $input ) || ( is_user_logged_in() && ! current_user_can( 'manage_options' ) ) ) {
 			return $current; // Another settings tab was saved.
 		}
 		foreach ( array_keys( $current ) as $key ) {

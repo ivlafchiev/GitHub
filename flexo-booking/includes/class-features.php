@@ -475,6 +475,7 @@ class Flexo_Booking_Features {
 					</p>
 				<?php endif; ?>
 			</form>
+			<?php Flexo_Booking_Help::render_support_form(); ?>
 		</div>
 		<?php
 	}

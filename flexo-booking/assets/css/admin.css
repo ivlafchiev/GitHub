@@ -510,3 +510,578 @@ input.flexo-code {
 		height: 900px;
 	}
 }
+
+/* ------------------------------------------------------------------------
+ * Day 6: Today, bookings list on phones, details, dialogs, settings,
+ * health, help and the setup wizard.
+ * --------------------------------------------------------------------- */
+
+.flexo-section-nav-wrap {
+	margin: 10px 20px 0 2px;
+}
+
+.flexo-admin .flexo-section-nav {
+	margin-bottom: 12px;
+}
+
+.flexo-admin .flexo-tab-intro {
+	font-size: 14px;
+	color: #50575e;
+	max-width: 760px;
+}
+
+.flexo-help-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	margin-left: 6px;
+	border-radius: 50%;
+	font-size: 13px;
+	font-weight: 700;
+	text-decoration: none;
+	vertical-align: middle;
+	background: #f0f0f1;
+	color: #1d2327;
+	border: 1px solid #c3c4c7;
+}
+
+.flexo-help-link:hover,
+.flexo-help-link:focus {
+	background: #2271b1;
+	color: #fff;
+}
+
+/* Today */
+.flexo-today__date {
+	font-size: 14px;
+	font-weight: 400;
+	color: #50575e;
+	margin-left: 8px;
+}
+
+.flexo-count {
+	display: inline-block;
+	min-width: 22px;
+	padding: 0 7px;
+	border-radius: 11px;
+	font-size: 13px;
+	line-height: 22px;
+	text-align: center;
+	color: #fff;
+	background: #d63638;
+	vertical-align: middle;
+}
+
+.flexo-today__attention {
+	margin: 16px 0 20px;
+}
+
+.flexo-today__allclear {
+	padding: 12px 16px;
+	background: #edfaef;
+	border-left: 4px solid #00a32a;
+	max-width: 760px;
+}
+
+.flexo-attention {
+	margin: 0;
+	max-width: 1100px;
+}
+
+.flexo-attention__item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px 16px;
+	margin: 0 0 8px;
+	padding: 10px 14px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-left: 4px solid #dba617;
+}
+
+.flexo-attention__item--payment_conflict,
+.flexo-attention__item--ical_conflict,
+.flexo-attention__item--payment_overdue,
+.flexo-attention__item--email_failed,
+.flexo-attention__item--sync_error {
+	border-left-color: #d63638;
+}
+
+.flexo-attention__item--request,
+.flexo-attention__item--guest_request,
+.flexo-attention__item--enquiry {
+	border-left-color: #2271b1;
+}
+
+.flexo-attention__text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+	flex: 1 1 320px;
+}
+
+.flexo-attention__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.flexo-today__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: 16px;
+	max-width: 1100px;
+}
+
+.flexo-today__grid .flexo-tools-card {
+	margin: 0;
+}
+
+.flexo-today__grid h2 {
+	margin-top: 0;
+}
+
+.flexo-today__list {
+	margin: 0;
+}
+
+.flexo-today__item {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 6px 12px;
+	padding: 8px 0;
+	border-top: 1px solid #f0f0f1;
+}
+
+.flexo-today__who {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.flexo-today__meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+}
+
+.flexo-today__empty {
+	color: #50575e;
+}
+
+.flexo-badge--due { background: #fff4e0; color: #6b3e00; }
+
+.flexo-today__stats {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 16px;
+	max-width: 1100px;
+	margin: 20px 0;
+}
+
+.flexo-stat {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 14px 16px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+}
+
+.flexo-stat__value {
+	font-size: 28px;
+	font-weight: 600;
+	line-height: 1.1;
+}
+
+.flexo-stat__label {
+	color: #50575e;
+}
+
+.flexo-meter {
+	display: block;
+	height: 8px;
+	margin-top: 6px;
+	background: #f0f0f1;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.flexo-meter span {
+	display: block;
+	height: 100%;
+	background: #2271b1;
+}
+
+.flexo-empty {
+	max-width: 760px;
+	margin: 16px 0;
+	padding: 20px 24px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-left: 4px solid #2271b1;
+}
+
+.flexo-empty h2 {
+	margin-top: 0;
+}
+
+/* Bookings list */
+.flexo-filters__dates {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px;
+}
+
+.flexo-results-count {
+	margin: 4px 0 8px;
+}
+
+.flexo-empty-row {
+	padding: 20px !important;
+}
+
+/* Booking details */
+.flexo-actionbar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin: 8px 0 12px;
+	padding: 8px 0;
+}
+
+.flexo-guest-request {
+	max-width: 900px;
+}
+
+.flexo-staff-notes,
+.flexo-history {
+	max-width: 900px;
+}
+
+.flexo-history__list {
+	margin: 0 0 0 20px;
+}
+
+.flexo-history__list li {
+	margin: 0 0 6px;
+}
+
+.flexo-history__list time {
+	font-variant-numeric: tabular-nums;
+	color: #50575e;
+	margin-right: 6px;
+}
+
+.flexo-resend {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin-top: 12px;
+}
+
+/* Confirmation dialog */
+.flexo-dialog {
+	max-width: 480px;
+	width: calc(100% - 32px);
+	padding: 20px 24px;
+	border: 0;
+	border-radius: 4px;
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.flexo-dialog::backdrop {
+	background: rgba(0, 0, 0, 0.45);
+}
+
+.flexo-dialog h2 {
+	margin-top: 0;
+}
+
+.flexo-dialog__actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: 8px;
+}
+
+/* Settings */
+.flexo-advanced-toggle {
+	margin: 4px 0 0;
+}
+
+.flexo-settings tr.flexo-advanced {
+	display: none;
+}
+
+body.flexo-advanced-on .flexo-settings tr.flexo-advanced {
+	display: table-row;
+}
+
+/* Health */
+.flexo-health {
+	max-width: 900px;
+	margin: 12px 0 20px;
+}
+
+.flexo-health__item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 14px;
+	margin: 0 0 8px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-left: 4px solid #00a32a;
+}
+
+.flexo-health__item--warning { border-left-color: #dba617; }
+.flexo-health__item--error { border-left-color: #d63638; }
+
+.flexo-health__icon {
+	flex: 0 0 auto;
+	width: 24px;
+	font-size: 18px;
+	font-weight: 700;
+	text-align: center;
+}
+
+.flexo-health__item--ok .flexo-health__icon { color: #007017; }
+.flexo-health__item--warning .flexo-health__icon { color: #8a6100; }
+.flexo-health__item--error .flexo-health__icon { color: #b32d2e; }
+
+.flexo-health__body {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+/* Help */
+.flexo-help__guides {
+	max-width: 900px;
+}
+
+.flexo-help__guide {
+	margin: 0 0 8px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+}
+
+.flexo-help__guide summary {
+	padding: 12px 16px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.flexo-help__guide ol {
+	margin: 0 16px 14px 36px;
+}
+
+.flexo-help__contact {
+	margin: 0;
+	font-size: 15px;
+}
+
+/* Wizard */
+.flexo-wizard__steps {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin: 12px 0 16px;
+	padding: 0;
+	list-style: none;
+	counter-reset: flexo-step;
+}
+
+.flexo-wizard__steps li {
+	counter-increment: flexo-step;
+	margin: 0;
+}
+
+.flexo-wizard__steps a {
+	display: inline-block;
+	padding: 6px 12px;
+	border-radius: 14px;
+	text-decoration: none;
+	background: #f0f0f1;
+	color: #1d2327;
+}
+
+.flexo-wizard__steps a::before {
+	content: counter(flexo-step) ". ";
+}
+
+.flexo-wizard__steps .is-done a {
+	background: #d1f0d8;
+}
+
+.flexo-wizard__steps .is-done a::before {
+	content: "✓ ";
+}
+
+.flexo-wizard__steps .is-current a {
+	background: #2271b1;
+	color: #fff;
+}
+
+.flexo-wizard__card {
+	max-width: 640px;
+}
+
+.flexo-choice-card {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin: 0 0 10px;
+	padding: 12px 14px 12px 36px;
+	position: relative;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.flexo-choice-card input[type="radio"] {
+	position: absolute;
+	left: 12px;
+	top: 14px;
+}
+
+.flexo-choice-card:has(input:checked) {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+}
+
+.flexo-choice-card span {
+	color: #50575e;
+}
+
+.flexo-wizard__buttons {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin-top: 20px;
+}
+
+.flexo-wizard__arrived {
+	padding: 10px 14px;
+	background: #edfaef;
+	border-left: 4px solid #00a32a;
+	font-weight: 600;
+}
+
+/* Phones: the bookings list becomes cards, details keep actions in reach. */
+@media (max-width: 782px) {
+	.flexo-bookings-table thead {
+		display: none;
+	}
+
+	.flexo-bookings-table,
+	.flexo-bookings-table tbody,
+	.flexo-bookings-table tr,
+	.flexo-bookings-table td {
+		display: block;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	.flexo-bookings-table tr.flexo-booking-row {
+		margin: 0 0 12px;
+		border: 1px solid #dcdcde;
+		background: #fff;
+	}
+
+	.flexo-bookings-table td[data-colname] {
+		padding: 6px 12px;
+	}
+
+	.flexo-bookings-table td[data-colname]::before {
+		content: attr(data-colname);
+		display: block;
+		font-size: 12px;
+		font-weight: 600;
+		color: #50575e;
+	}
+
+	.flexo-bookings-table td.flexo-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		padding-bottom: 12px;
+	}
+
+	.flexo-bookings-table td.flexo-actions::before {
+		width: 100%;
+	}
+
+	.flexo-bookings-table .flexo-actions .button {
+		min-height: 40px;
+		line-height: 38px;
+	}
+
+	.flexo-admin .flexo-filters {
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		gap: 8px;
+	}
+
+	.flexo-admin .flexo-filters input[type="search"],
+	.flexo-admin .flexo-filters select {
+		width: 100%;
+		max-width: none;
+	}
+
+	.flexo-actionbar {
+		position: sticky;
+		top: 46px;
+		z-index: 20;
+		margin: 0 -10px 12px;
+		padding: 8px 10px;
+		background: #f0f0f1;
+		box-shadow: 0 4px 8px -6px rgba(0, 0, 0, 0.4);
+	}
+
+	.flexo-actionbar .button {
+		min-height: 40px;
+		line-height: 38px;
+	}
+
+	.flexo-attention__actions .button {
+		min-height: 40px;
+		line-height: 38px;
+	}
+
+	.flexo-health__item {
+		flex-wrap: wrap;
+	}
+
+	.flexo-today__date {
+		display: block;
+		margin: 4px 0 0;
+	}
+}
+
+@media (max-width: 782px) {
+	.flexo-payments-card .flexo-payment-history,
+	.flexo-booking-emails table {
+		display: block;
+		max-width: 100%;
+		overflow-x: auto;
+	}
+
+	.flexo-booking-view__grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}

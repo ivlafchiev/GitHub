@@ -55,6 +55,7 @@ require_once FLEXO_BOOKING_DIR . 'includes/class-emails.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-phone.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-booking-log.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-guest.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-roles.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-rest.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-frontend.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-admin.php';
@@ -66,6 +67,10 @@ require_once FLEXO_BOOKING_DIR . 'includes/admin/class-rate-plans-admin.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-promo-codes-admin.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-payments-admin.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-appearance-admin.php';
+require_once FLEXO_BOOKING_DIR . 'includes/admin/class-today-admin.php';
+require_once FLEXO_BOOKING_DIR . 'includes/admin/class-health.php';
+require_once FLEXO_BOOKING_DIR . 'includes/admin/class-help.php';
+require_once FLEXO_BOOKING_DIR . 'includes/admin/class-wizard.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-portability.php';
 require_once FLEXO_BOOKING_DIR . 'includes/elementor/class-elementor.php';
 
@@ -86,6 +91,9 @@ add_action(
 		Flexo_Booking_Appearance::init();
 		Flexo_Booking_Rest::init();
 		Flexo_Booking_Guest::init();
+		Flexo_Booking_Roles::init();
+		Flexo_Booking_Log::init();
+		Flexo_Booking_Health::init();
 		Flexo_Booking_ICal::init();
 		Flexo_Booking_Rate_Plans::init();
 		Flexo_Booking_Frontend::init();
@@ -105,6 +113,9 @@ add_action(
 			Flexo_Booking_Payments_Admin::init();
 			Flexo_Booking_Appearance_Admin::init();
 			Flexo_Booking_Portability::init();
+			Flexo_Booking_Today_Admin::init();
+			Flexo_Booking_Help::init();
+			Flexo_Booking_Wizard::init();
 		}
 	}
 );

@@ -601,6 +601,7 @@ class Flexo_Booking_Portability {
 		// phpcs:enable
 		?>
 		<div class="wrap flexo-admin">
+			<?php Flexo_Booking_Admin::section_nav( 'settings', 'flexo-booking-tools' ); ?>
 			<h1><?php esc_html_e( 'Import / Export', 'flexo-booking' ); ?></h1>
 			<p><?php esc_html_e( 'Copy the booking setup (settings and rooms) from one site to another – for example from a template to a new client site built from it.', 'flexo-booking' ); ?></p>
 

@@ -85,6 +85,10 @@ if ( 0 === strpos( $path, '/v1/' ) ) {
 	if ( ! preg_match( '/^Bearer (sk|rk)_(test|live)_/', $auth ) ) {
 		mock_json( array( 'error' => array( 'message' => 'Invalid API Key provided' ) ), 401 );
 	}
+	// Health check: "Check keys".
+	if ( 'GET' === $method && '/v1/balance' === $path ) {
+		mock_json( array( 'object' => 'balance', 'livemode' => false === strpos( $auth, '_test_' ) ) );
+	}
 	if ( 'POST' === $method && '/v1/checkout/sessions' === $path ) {
 		$idem = isset( $_SERVER['HTTP_IDEMPOTENCY_KEY'] ) ? $_SERVER['HTTP_IDEMPOTENCY_KEY'] : '';
 		if ( $idem && is_file( $dir . '/idem-' . md5( $idem ) ) ) {
