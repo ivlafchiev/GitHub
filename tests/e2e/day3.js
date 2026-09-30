@@ -173,7 +173,7 @@ async function fillGuest( p, name ) {
 	await phone.screenshot( { path: SHOTS + '/d3-phone-summary.png', fullPage: true } );
 
 	section( 'Admin: bookings list and details' );
-	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking' );
+	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-list' );
 	const row = admin.locator( '.flexo-bookings-table tr', { hasText: 'Family Guest' } );
 	const rowText = ( await row.textContent() ).replace( /\s+/g, ' ' );
 	ok( rowText.includes( 'Half Board' ) && rowText.includes( 'DIRECT10' ) && rowText.includes( 'ages 5, 10' ), 'list: plan, promo code, children\'s ages' );
@@ -186,7 +186,7 @@ async function fillGuest( p, name ) {
 
 	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-promo-codes' );
 	ok( ( await text( admin, '.flexo-promos-table tr:has-text("DIRECT10")' ) ).includes( '0 confirmed bookings' ), 'promo list: a pending request is not a use' );
-	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking' );
+	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-list' );
 	await Promise.all( [ admin.waitForNavigation(), admin.locator( '.flexo-bookings-table tr', { hasText: 'Family Guest' } ).locator( 'a', { hasText: 'Confirm' } ).click() ] );
 	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-promo-codes' );
 	ok( ( await text( admin, '.flexo-promos-table tr:has-text("DIRECT10")' ) ).includes( '1 confirmed bookings' ), 'after confirming: used 1' );
@@ -230,16 +230,18 @@ async function fillGuest( p, name ) {
 	ok( '2' === await admin.inputValue( '#flexo-max-adults' ) && box.includes( 'Use different child prices' ) && box.includes( 'Half Board' ), 'room screen: max adults, child prices, its rate plans' );
 	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-settings' );
 	const tabs = await text( admin, '.nav-tab-wrapper' );
-	ok( tabs.includes( 'Children' ) && tabs.includes( 'Tourist tax' ), 'settings tabs: Children, Tourist tax' );
+	// Day 6: children live on "Booking rules", the tourist tax on "Taxes & invoices".
+	ok( tabs.includes( 'Booking rules' ) && tabs.includes( 'Taxes' ), 'settings tabs: Booking rules, Taxes' );
 	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-settings&tab=children' );
 	await admin.fill( '#fb-child-free', '2' );
 	await Promise.all( [ admin.waitForNavigation(), admin.click( '#submit' ) ] );
-	ok( ( await text( admin, '.form-table' ) ).includes( 'Now: Under 2: free · 2–11: 50%' ), 'children tab saved, explained in plain words' );
+	ok( ( await text( admin, '.wrap' ) ).includes( 'Now: Under 2: free · 2–11: 50%' ), 'children tab saved, explained in plain words' );
 	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-settings&tab=tourist_tax' );
 	ok( 'exempt' === await admin.$eval( '[name="flexo_booking_settings[tourist_tax_children]"]:checked', ( e ) => e.value ) && '7' === await admin.inputValue( '[name="flexo_booking_settings[tourist_tax_exempt_under]"]' ), 'tourist tax tab shows the saved exemption' );
 	const menuItems = await menu( admin );
-	ok( menuItems.includes( 'Rate plans' ) && menuItems.includes( 'Promo codes' ), 'menu: Rate plans, Promo codes' );
-	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking' );
+	// Day 6: "Rates" is a tab of Rooms & prices (its menu entry is registered but hidden).
+	ok( menuItems.includes( 'Rates' ) && menuItems.includes( 'Promo codes' ), 'menu: Rates, Promo codes' );
+	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-list' );
 	const csvHref = await admin.getAttribute( 'a.page-title-action:has-text("Export CSV")', 'href' );
 	const csv = await ( await admin.request.get( csvHref ) ).text();
 	const header = csv.split( '\n' )[ 0 ];
@@ -255,7 +257,7 @@ async function fillGuest( p, name ) {
 	}
 	await Promise.all( [ admin.waitForNavigation(), admin.click( '#submit' ) ] );
 	const menuOff = await menu( admin );
-	ok( ! menuOff.includes( 'Rate plans' ) && ! menuOff.includes( 'Promo codes' ), 'menu items gone' );
+	ok( ! menuOff.includes( 'Rates' ) && ! menuOff.includes( 'Promo codes' ), 'menu items gone' );
 	ok( ! ( await text( admin, '.nav-tab-wrapper' ) ).includes( 'Children' ), 'settings tabs gone' );
 	await guest.goto( `${ BASE }/booking/?check_in=${ day( 30 ) }&check_out=${ day( 33 ) }&adults=2&children=0` );
 	await guest.waitForSelector( '.fb-room' );
@@ -264,14 +266,14 @@ async function fillGuest( p, name ) {
 	await guest.waitForSelector( '.fb-details:not([hidden])' );
 	summary = await text( guest, '.fb-summary' );
 	ok( ( await guest.$$( '.fb-plans, .fb-promo' ) ).length === 0 && ! summary.includes( 'Tourist tax' ) && summary.includes( '300.00 €' ), 'no plan choice, no promo field, no tax: dates → room → details (300.00 €)' );
-	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking' );
+	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-list' );
 	ok( ( await text( admin, '.flexo-bookings-table' ) ).includes( 'Promo code DIRECT10: −46.20 €' ), 'existing bookings keep their stored breakdown' );
 	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-settings&tab=features' );
 	for ( const f of [ 'children', 'rate_plans', 'tourist_tax', 'promo_codes' ] ) {
 		await admin.check( `input[name="features[]"][value=${ f }]` );
 	}
 	await Promise.all( [ admin.waitForNavigation(), admin.click( '#submit' ) ] );
-	ok( ( await menu( admin ) ).includes( 'Rate plans' ), 'switched back on' );
+	ok( ( await menu( admin ) ).includes( 'Rates' ), 'switched back on' );
 
 	ok( errors.length === 0, 'no JavaScript errors' + ( errors.length ? ': ' + errors.join( '; ' ) : '' ) );
 	console.log( `\nResult: ${ pass } passed, ${ fail } failed` );

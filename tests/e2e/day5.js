@@ -289,10 +289,10 @@ async function layoutChecks( p, width, stage ) {
 	// Admin pages: Elementor's own admin scripts are not built in this test
 	// checkout, so JavaScript errors are only counted on the guest pages.
 	const admin = await login( browser, 'admin' );
-	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking' );
+	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-list' );
 	const list = await text( admin, '.flexo-bookings-table' );
 	ok( list.includes( 'Deposit received' ) && list.includes( 'Awaiting deposit' ), 'bookings list shows payment status' );
-	ok( list.includes( 'Not paid (expired)' ) && list.includes( 'Payment failed' ), 'failed payment visible' );
+	ok( list.includes( 'Not paid in time' ) && list.includes( 'Payment failed' ), 'failed payment visible' );
 	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking&booking=' + bA.id );
 	const card = await text( admin, '#flexo-payments' );
 	ok( card.includes( 'Card (Stripe)' ) && card.includes( 'Deposit received' ) && card.includes( 'Paid 240.00 €' ) && card.includes( 'Remaining balance 560.00 €' ), 'booking page: method, status, paid, balance' );
@@ -316,7 +316,7 @@ async function layoutChecks( p, width, stage ) {
 	ok( tab.includes( 'Test mode' ) && tab.includes( 'Ready – test mode (no real money)' ), 'settings: test mode, ready' );
 	ok( ! ( await admin.content() ).includes( 'sk_test_e2e' ), 'secret key never printed' );
 	await admin.screenshot( { path: SHOTS + '/d5-admin-settings.png', fullPage: true } );
-	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking' );
+	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-list' );
 	const [ download ] = await Promise.all( [ admin.waitForEvent( 'download' ), admin.click( 'a[href*="flexo_booking_csv"]' ) ] );
 	const csv = require( 'fs' ).readFileSync( await download.path(), 'utf8' );
 	ok( csv.includes( '"Payment method","Payment status","Due when booking",Paid,Refunded,Balance,"Payment deadline","Transaction IDs"' ), 'CSV has the payment columns' );

@@ -165,7 +165,7 @@ async function fillGuest( p, name, email ) {
 	await phone.screenshot( { path: SHOTS + '/d4-phone.png', fullPage: true } );
 
 	section( 'Admin: booking with invoice and consent' );
-	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking' );
+	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-list' );
 	const row = admin.locator( '.flexo-bookings-table tr', { hasText: ref } );
 	ok( ( await row.textContent() ).includes( 'Invoice' ), 'list: 🧾 Invoice badge' );
 	await Promise.all( [ admin.waitForNavigation(), row.locator( 'strong a' ).click() ] );
@@ -176,22 +176,25 @@ async function fillGuest( p, name, email ) {
 	await admin.screenshot( { path: SHOTS + '/d4-admin-booking.png', fullPage: true } );
 	const mail = execSync( `grep -h "${ ref }" ${ process.env.MAIL_LOG } || true` ).toString();
 	ok( mail.includes( 'desk@hotel.test' ) && mail.includes( 'INVOICE REQUESTED' ) && mail.includes( 'Lake Tours OOD' ), 'hotel email includes the invoice details' );
-	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking' );
+	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-list' );
 	const csv = await ( await admin.request.get( await admin.getAttribute( 'a.page-title-action:has-text("Export CSV")', 'href' ) ) ).text();
 	ok( csv.split( '\n' )[ 0 ].includes( 'Invoice name / company' ) && csv.includes( 'Lake Tours OOD' ) && csv.includes( 'BG201234567' ) && csv.includes( 'company' ), 'CSV: invoice columns' );
 
 	section( 'Admin: anonymise' );
-	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking' );
+	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-list' );
 	await Promise.all( [ admin.waitForNavigation(), admin.locator( '.flexo-bookings-table tr', { hasText: ref } ).locator( 'strong a' ).click() ] );
-	await Promise.all( [ admin.waitForNavigation(), admin.click( 'a:has-text("Anonymise")' ) ] );
+	// Day 6: the page's own dialog says what will happen before anything is removed.
+	await admin.click( '.flexo-booking-view a:has-text("Remove personal data")' );
+	await Promise.all( [ admin.waitForNavigation(), admin.click( '.flexo-dialog [data-yes]' ) ] );
 	const anon = await text( admin, '.flexo-booking-view' );
-	ok( anon.includes( 'personal data was removed' ) && anon.includes( 'Anonymised guest' ) && ! anon.includes( 'Elena' ) && ! anon.includes( 'Lake Tours' ), 'name, contact and invoice removed' );
+	ok( anon.includes( 'personal data was removed' ) && anon.includes( 'Guest (personal data removed)' ) && ! anon.includes( 'Elena' ) && ! anon.includes( 'Lake Tours' ), 'name, contact and invoice removed' );
 	ok( anon.includes( '200.00 €' ) && anon.includes( 'Lake Room' ), 'room and price kept' );
 
 	section( 'Admin: settings and emails' );
 	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-settings' );
 	const tabs = await text( admin, '.nav-tab-wrapper' );
-	ok( [ 'Privacy', 'Invoices', 'Emails', 'Tracking' ].every( ( t ) => tabs.includes( t ) ), 'tabs: Privacy, Invoices, Emails, Tracking' );
+	// Day 6: invoices share a tab with taxes; emails have their own menu entry.
+	ok( [ 'Privacy', 'invoices', 'Tracking' ].every( ( t ) => tabs.includes( t ) ), 'tabs: Privacy, Taxes & invoices, Tracking' );
 	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-settings&tab=emails' );
 	ok( ( await admin.$$( '#flexo-email-pre_arrival, #flexo-email-review' ) ).length === 2, 'pre-arrival and review templates' );
 	ok( ! ( await admin.content() ).includes( 'email_awaiting_deposit' ), 'Day 5 payment templates not shown yet' );

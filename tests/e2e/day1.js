@@ -94,7 +94,7 @@ const menu = ( p ) => p.$$eval( '#toplevel_page_flexo-booking .wp-submenu a', ( 
 
 	section( 'Hotel admin: menu and Features tab' );
 	const admin = await login( browser, 'admin' );
-	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking' );
+	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-list' );
 	let items = await menu( admin );
 	console.log( '    menu: ' + items.join( ' | ' ) );
 	ok( items.includes( 'Seasonal prices' ) && items.includes( 'Closed dates' ), 'Seasonal prices and Closed dates in the menu' );
@@ -170,7 +170,7 @@ const menu = ( p ) => p.$$eval( '#toplevel_page_flexo-booking .wp-submenu a', ( 
 	await admin.screenshot( { path: SHOTS + '/d1-closures.png', fullPage: true } );
 
 	section( 'CSV export' );
-	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking' );
+	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-list' );
 	const [ dl ] = await Promise.all( [ admin.waitForEvent( 'download' ), admin.click( 'a:has-text("Export CSV")' ) ] );
 	await dl.saveAs( SHOTS + '/bookings.csv' );
 	const csv = fs.readFileSync( SHOTS + '/bookings.csv', 'utf8' );
@@ -178,7 +178,7 @@ const menu = ( p ) => p.$$eval( '#toplevel_page_flexo-booking .wp-submenu a', ( 
 
 	section( 'Agency screen' );
 	const agency = await login( browser, 'agency' );
-	await agency.goto( BASE + '/wp-admin/admin.php?page=flexo-booking' );
+	await agency.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-list' );
 	ok( ( await menu( agency ) ).includes( 'Agency' ), 'agency user sees Agency' );
 	await agency.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-agency' );
 	await agency.screenshot( { path: SHOTS + '/d1-agency.png', fullPage: true } );
@@ -193,7 +193,7 @@ const menu = ( p ) => p.$$eval( '#toplevel_page_flexo-booking .wp-submenu a', ( 
 	ok( ! ( await admin.content() ).includes( 'import_seasons' ), 'and from Import / Export' );
 	await agency.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-agency' );
 	await Promise.all( [ agency.waitForNavigation(), agency.click( '#reset' ) ] );
-	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking' );
+	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-list' );
 	ok( ( await menu( admin ) ).includes( 'Seasonal prices' ), 'reset: everything available again, hotel choice restored' );
 
 	section( 'Elementor (regression)' );

@@ -33,10 +33,11 @@ const section = ( t ) => console.log( '\n== ' + t );
 	const menu = () => p.$$eval( '#toplevel_page_flexo-booking .wp-submenu a', ( els ) => els.map( ( e ) => e.textContent.trim().replace( /\s*\d+$/, '' ) ) );
 
 	section( 'Menu' );
-	await p.goto( BASE + '/wp-admin/admin.php?page=flexo-booking' );
+	await p.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-list' );
 	const items = await menu();
 	console.log( '    ' + items.join( ' | ' ) );
-	ok( items[ 1 ] === 'Calendar', 'Calendar right after All bookings' );
+	// Day 6: Today · Calendar · All bookings …
+	ok( items[ 1 ] === 'Calendar', 'Calendar right after Today' );
 	ok( items.includes( 'Calendar Sync' ), 'Calendar Sync in the menu' );
 
 	section( 'Bookings list: sources and conflicts' );
@@ -173,7 +174,7 @@ const section = ( t ) => console.log( '\n== ' + t );
 	await cal( month( 5 ) );
 	await p.locator( '.fbc-item--external.fbc-item--conflict' ).click();
 	await Promise.all( [ p.waitForNavigation(), p.click( '#fbc-dialog a:has-text("Mark as reviewed")' ) ] );
-	await p.goto( BASE + '/wp-admin/admin.php?page=flexo-booking' );
+	await p.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-list' );
 	ok( await p.locator( '#flexo-conflicts' ).count() === 0, 'conflict box gone after review' );
 
 	section( 'Feature switched off' );

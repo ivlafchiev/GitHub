@@ -22,7 +22,9 @@ not part of the plugin zip.
 | `portability-full.php` | Every feature configured on a template, imported into a fresh site: same totals, tax, discount and deposit; no Stripe keys, webhook secrets, bank account or notification email copied (`FLEXO_PHASE=source` / `target`, same `FLEXO_EXPORT`) |
 | `stripe-mock/server.php` | Local stand-in for Stripe (`php -S localhost:12111 tests/stripe-mock/server.php`): Checkout Session API, a hosted payment page (Pay / declined card / Back), signed webhooks to the site, `/_control/expire/{session}` and `/_control/refund/{session}`. State in `STRIPE_MOCK_DIR`. Test sites point Stripe at it with the `stripe-mock.php` mu-plugin and the option `flexo_test_stripe_api`. |
 | `e2e/day5.js` + `e2e/seed-day5.php` | Card deposit through the mock Stripe page and webhook, cancel + pay again, declined card then expiry, bank transfer on a phone (details, copy buttons, sticky total), layout at 360/390/414/768/1024/1280 px (centring, no horizontal scroll, 44 px tap targets, desktop unchanged), request mode, minimal package (only booking requests), admin payments (list, booking page, *Payment received*, *Confirm & ask for payment*, calendar, settings, CSV). Needs `WP`, `MOCK` and the seed run with `STRIPE_MOCK` and `STRIPE_MOCK_DIR`. |
-| `upgrade-fixture.php` / `upgrade-verify.php` | Data created on 1.0.0 survives the upgrade |
+| `test-day6.php` | Day 6: migration 7, room/rate details and meals, phone numbers, confirmation key and `.ics`, guest requests, date-picker calendar API, nearby dates and enquiries (incl. personal data export/erase), list filters, Today, booking history, roles, what managers may change, health checks (booking page, email, WP-Cron, calendar feed, Stripe keys), wizard helpers, Appearance (scoped CSS, bundled fonts, no Google Fonts, Import/Export). With `STRIPE_MOCK` set it also checks invalid/valid Stripe keys against the stand-in. |
+| `e2e/day6.js` + `e2e/seed-day6.php` | Guest flow at 360–1280 px (steps, picker, URL state, Back/Forward/refresh, double submit, confirmation, add to calendar, guest booking page and cancellation request, no availability → nearby dates / other rooms / enquiry, keyboard only, screen-reader names, contrast), minimal setup, Today, list, details, history, notes, resend, health, help, roles, admin on a phone, Appearance (preview = front end, contrast warning, reset, Cyrillic fonts, no Google requests, Elementor widget priority, Import/Export). Needs `WP` and `MAIL_LOG`; the seed creates the `staff` and `manager` users and an Elementor page. |
+| `upgrade-fixture.php` / `upgrade-verify.php` | Data created on 1.0.0 (or any later version) survives the upgrade |
 | `portability-*.php` | Export from a template site and import into a fresh site (including seasons, closed dates and features) |
 | `e2e/day1.js` + `e2e/seed-day1.php` | Browser flow (Playwright): guest booking with seasons, admin screens, Agency, CSV, Elementor |
 | `e2e/day4.js` + `e2e/seed-day4.php` | Consent, invoice request, dataLayer events (values, no personal data, once, redirect), Meta Pixel option, admin booking page, CSV, anonymise, emails screen, phone width, features off. Needs `WP` (the wp-cli command for the site) and `MAIL_LOG` (`wp-content/mail.log`). |
@@ -46,9 +48,14 @@ Upgrade test: build the site from the **1.0.0** plugin, run
 the plugin folder with the new version, then run `tests/upgrade-verify.php`
 with the same `FLEXO_FIXTURE`.
 
+Portability test (base): run `portability-source.php` on the template site with
+`FLEXO_EXPORT=/tmp/p.json`, set the fresh site's notification address to
+`owner@client.test` (it must stay the site's own), `wp flexo-booking import /tmp/p.json`,
+then `portability-verify.php`; import again and run `portability-reimport.php`.
+
 Browser tests: serve the site (`php -S localhost:8092 -t /tmp/site router.php`),
 run the seed (`wp eval-file tests/e2e/seed-day1.php`, or `seed-day2.php` /
-`seed-day3.php` / `seed-day4.php` / `seed-day5.php`, which print `D0`), then
-`BASE=http://localhost:8092 D0=<D0> node tests/e2e/day1.js` (or `day2.js` … `day5.js`).
+`seed-day3.php` / `seed-day4.php` / `seed-day5.php` / `seed-day6.php`, which print `D0`), then
+`BASE=http://localhost:8092 D0=<D0> node tests/e2e/day1.js` (or `day2.js` … `day6.js`).
 For Day 5, start the Stripe stand-in first and pass its address: `STRIPE_MOCK=http://localhost:12111 STRIPE_MOCK_DIR=/tmp/stripe-mock wp eval-file tests/e2e/seed-day5.php`, then `MOCK=http://localhost:12111 WP="wp --path=<site>" … node tests/e2e/day5.js`.
 Re-seed before every run.
