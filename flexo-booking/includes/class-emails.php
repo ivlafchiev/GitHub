@@ -524,7 +524,7 @@ class Flexo_Booking_Emails {
 	 */
 	public static function html( $subject, $text, $locale = '' ) {
 		$settings = Flexo_Booking_Settings::all();
-		$color    = sanitize_hex_color( $settings['email_color'] ) ? $settings['email_color'] : '#1f6f5c';
+		$color    = Flexo_Booking_Appearance::email_color();
 		$name     = wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES );
 		$logo     = self::logo_url();
 		$header   = $logo

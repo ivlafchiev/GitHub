@@ -84,6 +84,17 @@ class Flexo_Booking_Settings {
 			'bank_transfer_days'              => 3,
 			'bank_transfer_reminder_days'     => 1,
 			'bank_transfer_auto_cancel'       => 1,
+			// Appearance (Day 6): "match" = inherit the website's styles.
+			'appearance_mode'                 => 'match',
+			'appearance_primary'              => '',
+			'appearance_accent'               => '',
+			'appearance_text'                 => '',
+			'appearance_bg'                   => '',
+			'appearance_button_text'          => '',
+			'appearance_corners'              => 'slight',
+			'appearance_heading_font'         => '',
+			'appearance_body_font'            => '',
+			'appearance_text_size'            => 'normal',
 			'email_log_days'                => 90,
 			// Guest details form (Day 4, data minimisation).
 			'field_phone'                   => 'required',
@@ -233,6 +244,26 @@ class Flexo_Booking_Settings {
 					break;
 				case 'notification_email':
 					$clean[ $key ] = implode( ', ', array_filter( array_map( 'sanitize_email', preg_split( '/[,;\s]+/', (string) $value ) ) ) );
+					break;
+				case 'appearance_mode':
+					$clean[ $key ] = 'custom' === $value ? 'custom' : 'match';
+					break;
+				case 'appearance_primary':
+				case 'appearance_accent':
+				case 'appearance_text':
+				case 'appearance_bg':
+				case 'appearance_button_text':
+					$clean[ $key ] = Flexo_Booking_Appearance::sanitize_color( $value );
+					break;
+				case 'appearance_corners':
+					$clean[ $key ] = array_key_exists( $value, Flexo_Booking_Appearance::corners() ) ? $value : 'slight';
+					break;
+				case 'appearance_heading_font':
+				case 'appearance_body_font':
+					$clean[ $key ] = array_key_exists( $value, Flexo_Booking_Appearance::fonts() ) ? $value : '';
+					break;
+				case 'appearance_text_size':
+					$clean[ $key ] = array_key_exists( $value, Flexo_Booking_Appearance::text_sizes() ) ? $value : 'normal';
 					break;
 				case 'payment_mode':
 					$clean[ $key ] = in_array( $value, array( 'property', 'deposit', 'full' ), true ) ? $value : 'full';
@@ -633,6 +664,12 @@ class Flexo_Booking_Settings {
 						<th scope="row"><label for="fb-phone"><?php esc_html_e( 'Hotel phone', 'flexo-booking' ); ?></label></th>
 						<td><input id="fb-phone" type="text" class="regular-text" name="<?php echo esc_attr( $name ); ?>[hotel_phone]" value="<?php echo esc_attr( $s['hotel_phone'] ); ?>" placeholder="+359 …"> <span class="description"><?php esc_html_e( 'Used by {hotel_phone} and in the email footer.', 'flexo-booking' ); ?></span></td>
 					</tr>
+					<?php if ( Flexo_Booking_Appearance::enabled() ) : ?>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Email design', 'flexo-booking' ); ?></th>
+						<td><p class="description"><?php printf( /* translators: %s: link to the Appearance screen */ esc_html__( 'Logo and colour of the emails: %s.', 'flexo-booking' ), '<a href="' . esc_url( admin_url( 'admin.php?page=' . Flexo_Booking_Appearance_Admin::SLUG ) ) . '">' . esc_html__( 'Bookings → Appearance', 'flexo-booking' ) . '</a>' ); ?></p></td>
+					</tr>
+					<?php else : ?>
 					<tr>
 						<th scope="row"><?php esc_html_e( 'Email design', 'flexo-booking' ); ?></th>
 						<td>
@@ -641,6 +678,7 @@ class Flexo_Booking_Settings {
 							<p class="description"><?php esc_html_e( 'Leave the logo empty to use the site logo (Appearance → Customize). Emails are simple HTML that works on phones, with a plain-text version for email programs that don\'t show HTML.', 'flexo-booking' ); ?></p>
 						</td>
 					</tr>
+					<?php endif; ?>
 				</table>
 
 				<h2><?php esc_html_e( 'Emails to guests', 'flexo-booking' ); ?></h2>

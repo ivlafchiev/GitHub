@@ -9,6 +9,7 @@
 .flexo-booking {
 	--fb-primary: var(--e-global-color-accent, var(--e-global-color-primary, #1f6f5c));
 	--fb-primary-contrast: #fff;
+	--fb-accent: var(--fb-primary);
 	--fb-text: var(--e-global-color-text, #1f2933);
 	--fb-muted: color-mix(in srgb, var(--fb-text) 65%, transparent);
 	--fb-bg: #fff;
@@ -23,6 +24,7 @@
 	box-sizing: border-box;
 	color: var(--fb-text);
 	font-family: var(--fb-font);
+	font-size: var(--fb-font-size, inherit);
 	background: var(--fb-bg);
 	border-radius: var(--fb-radius);
 	padding: var(--fb-padding, 24px);
@@ -212,7 +214,7 @@
 
 .flexo-booking .fb-room__urgency {
 	margin: 0;
-	color: var(--fb-primary);
+	color: var(--fb-accent);
 	font-weight: 600;
 	font-size: 0.875em;
 }
@@ -421,7 +423,7 @@
 
 .flexo-booking .fb-plan__policy {
 	font-size: 0.875em;
-	color: var(--fb-primary);
+	color: var(--fb-accent);
 }
 
 .flexo-booking .fb-plan__policy.is-strict {
@@ -452,7 +454,7 @@
 
 .flexo-booking .fb-summary__discount,
 .flexo-booking .fb-summary__line--discount {
-	color: var(--fb-primary);
+	color: var(--fb-accent);
 }
 
 .flexo-booking .fb-summary__property {
@@ -969,4 +971,16 @@
 	.flexo-booking .fb-bank__row {
 		grid-template-columns: 1fr;
 	}
+}
+
+/* Field errors (Day 6) */
+.flexo-booking .fb-field__error {
+	margin: 4px 0 0;
+	font-size: 0.875em;
+	font-weight: 600;
+	color: var(--fb-error);
+}
+
+.flexo-booking [aria-invalid="true"] {
+	border-color: var(--fb-error);
 }

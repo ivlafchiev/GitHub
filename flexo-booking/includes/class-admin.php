@@ -32,6 +32,24 @@ class Flexo_Booking_Admin {
 		return apply_filters( 'flexo_booking_manage_capability', 'edit_others_posts' );
 	}
 
+	/**
+	 * Capability for an area of the plugin: bookings (daily work), prices
+	 * (rooms, seasons, rate plans, promotions), appearance / emails, settings.
+	 */
+	public static function cap( $area ) {
+		switch ( $area ) {
+			case 'bookings':
+				return self::capability();
+			case 'prices':
+				return apply_filters( 'flexo_booking_prices_capability', self::capability() );
+			case 'appearance':
+			case 'emails':
+				return apply_filters( 'flexo_booking_emails_capability', 'manage_options' );
+			default:
+				return 'manage_options';
+		}
+	}
+
 	public static function menu() {
 		$pending = Flexo_Booking_Bookings::count_pending();
 		$bubble  = $pending ? ' <span class="awaiting-mod count-' . $pending . '"><span class="pending-count">' . number_format_i18n( $pending ) . '</span></span>' : '';

@@ -197,6 +197,7 @@ class Flexo_Booking_Frontend {
 		);
 
 		wp_enqueue_style( 'flexo-booking' );
+		self::appearance();
 		wp_enqueue_script( 'flexo-booking' );
 		self::localize();
 
@@ -214,6 +215,18 @@ class Flexo_Booking_Frontend {
 			}
 		}
 		return $html;
+	}
+
+	/**
+	 * @var bool Custom appearance CSS already added.
+	 */
+	private static $styled = false;
+
+	private static function appearance() {
+		if ( ! self::$styled ) {
+			self::$styled = true;
+			Flexo_Booking_Appearance::enqueue();
+		}
 	}
 
 	/**

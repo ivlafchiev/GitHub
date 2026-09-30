@@ -108,10 +108,22 @@ class Flexo_Booking_Features {
 				'group'       => 'guests',
 				'ready'       => true,
 			),
+			'guest_booking_page' => array(
+				'label'       => __( 'Guest booking page', 'flexo-booking' ),
+				'description' => __( 'A private link in the emails where guests see their booking and can ask you to change or cancel it. Nothing changes until you do it yourself.', 'flexo-booking' ),
+				'group'       => 'guests',
+				'ready'       => true,
+			),
 			'tracking'         => array(
 				'label'       => __( 'Conversion tracking', 'flexo-booking' ),
 				'description' => __( 'Send booking events to Google Analytics, Tag Manager or Meta.', 'flexo-booking' ),
 				'group'       => 'guests',
+				'ready'       => true,
+			),
+			'custom_appearance' => array(
+				'label'       => __( 'Appearance settings', 'flexo-booking' ),
+				'description' => __( 'Choose the booking form\'s colours, fonts and corners yourself, or let it match your website (the default).', 'flexo-booking' ),
+				'group'       => 'appearance',
 				'ready'       => true,
 			),
 			'online_payment'   => array(
@@ -141,7 +153,8 @@ class Flexo_Booking_Features {
 			'booking'  => __( 'Bookings', 'flexo-booking' ),
 			'prices'   => __( 'Prices', 'flexo-booking' ),
 			'guests'   => __( 'Guests & communication', 'flexo-booking' ),
-			'payments' => __( 'Payments', 'flexo-booking' ),
+			'payments'   => __( 'Payments', 'flexo-booking' ),
+			'appearance' => __( 'Appearance', 'flexo-booking' ),
 		);
 	}
 
@@ -153,7 +166,7 @@ class Flexo_Booking_Features {
 	 * Enabled features for a new or upgraded site: today's behaviour.
 	 */
 	public static function default_enabled() {
-		return array( 'booking_request', 'instant_booking', 'guest_emails' );
+		return array( 'booking_request', 'instant_booking', 'guest_emails', 'custom_appearance' );
 	}
 
 	/**

@@ -19,7 +19,7 @@ class Flexo_Booking_Migrations {
 
 	const OPTION       = 'flexo_booking_db_version';
 	const ERROR_OPTION = 'flexo_booking_migration_error';
-	const LATEST       = 6;
+	const LATEST       = 7;
 
 	/**
 	 * @return array Version => method name.
@@ -32,6 +32,7 @@ class Flexo_Booking_Migrations {
 			4 => 'migrate_4_day3',
 			5 => 'migrate_5_day4',
 			6 => 'migrate_6_day5',
+			7 => 'migrate_7_day6',
 		);
 	}
 
@@ -186,6 +187,19 @@ class Flexo_Booking_Migrations {
 				unset( $settings[ 'email_' . $type . '_subject' ], $settings[ 'email_' . $type . '_body' ] );
 			}
 			update_option( Flexo_Booking_Settings::OPTION, $settings );
+		}
+		return true;
+	}
+
+	/**
+	 * Day 6 (1.6.0): Appearance settings switched on (the form keeps
+	 * matching the website until the hotel chooses Custom).
+	 */
+	private static function migrate_7_day6() {
+		$enabled = get_option( Flexo_Booking_Features::ENABLED_OPTION, false );
+		if ( is_array( $enabled ) && ! in_array( 'custom_appearance', $enabled, true ) ) {
+			$enabled[] = 'custom_appearance';
+			update_option( Flexo_Booking_Features::ENABLED_OPTION, $enabled );
 		}
 		return true;
 	}
