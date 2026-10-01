@@ -1,6 +1,6 @@
 # Flexo Booking: implementation plan (Days 1–6)
 
-Status: **All six days done (1.6.0).** Day 1 (1.1.0) is in §9, Day 2
+Status: **All six days done (1.6.0); admin redesign done (1.7.0, §16).** Day 1 (1.1.0) is in §9, Day 2
 (1.2.0) in §10, Day 3 (1.3.0) in §11, Day 4 (1.4.0) in §12 and Day 5 (1.5.0)
 in §13, each with what was built, the deviations and the test results. §14
 is the status after Day 5. §15 is Day 6 (1.6.0, usability and appearance,
@@ -25,6 +25,7 @@ Contents:
 13. Day 5 status, deviations and test results
 14. Status after Day 5
 15. Day 6 status, deviations and test results
+16. Admin redesign (1.7.0)
 
 ---
 
@@ -1085,3 +1086,40 @@ Found and fixed during testing:
 - **Theme copies of `booking-form.php` made before 1.6.0** keep working; the script adds the step bar, summary and picker around them, but custom markup inside them isn't restyled.
 - **The Elementor editor** (drag and drop) is still untested here, as in §14.3; the widget style priority is tested on the front end.
 - **Guest requests never change bookings**, by design; the hotel acts on them.
+
+---
+
+## 16. Admin redesign (1.7.0)
+
+Request after Day 6: make the plugin's admin as a whole user-friendly and
+not look like basic WordPress. Same rules as before: no business features,
+nothing changed for guests, scoped CSS (no global CSS, no `!important`),
+no Google fonts, BG/EN texts. No database change (DB version stays 7).
+
+### 16.1 Built
+
+| Area | What |
+|---|---|
+| Scope | `admin/class-admin-ui.php` adds the body class `flexo-admin-ui` only on the plugin's screens (its pages and the room list/editor). Every new rule is under that class, so the rest of the WordPress admin, other plugins' screens and the website are untouched. WordPress's own controls inside the plugin's content also pick up the brand colour through `--wp-admin-theme-color`, set only on `#wpbody-content`. |
+| Design system | `assets/css/admin-ui.css`: tokens (`--fx-*`: neutral surfaces, deep teal brand colour #0f6e6a with white text at 6:1 contrast, status colours, radii, shadows), the bundled Inter font for the content area (Latin, Latin Extended, Cyrillic; self-hosted), buttons, inputs, selects, checkboxes, radios, on/off switches, cards, settings tables as cards, a sticky save bar, list tables, notices, badges, empty states, dialog, room editor, footer and phone rules. `admin.css` and `admin-calendar.css` moved to the same tokens. |
+| App bar | Printed on `in_admin_header`: brand mark and hotel name, booking search (to *All bookings*), bell with the *Needs your attention* count, booking form, help, *New booking*; on phones a scrollable row of the visible menu entries (built from the registered submenu, so permissions and hidden pages are respected). |
+| Page header | `Flexo_Booking_Admin_UI::page_head()` on every screen: icon, title (+ status badges), one-line intro, actions (keeping `page-title-action` for compatibility), section tabs, then WordPress's notice marker. *Rooms & prices* and *Settings* use the section title with tabs; on the room list it replaces WordPress's own heading. |
+| Screens | **Today**: KPI tiles, attention list with icons by type, guest cards with initials, next-7-days and shortcuts column, greeting. **All bookings**: filter toolbar card with search icon, list in a card, phone cards. **Booking details**: actions in the header, guest/stay summary, two-column layout (stay, guest with Email/Call, price, payments \| notes, emails, history timeline). **Features**: cards with icons and switches; booking mode as choice cards. **Emails**: one card per guest email with when it is sent, scheduling controls and an *Edit text* fold-out; placeholders folded. **Health/Help/Wizard/Appearance/Calendar/Rates/Promo codes/Import & export/room editor**: cards, steppers, segmented control, amenity chips. |
+| Texts | 36 new strings (BG translated); stale hints fixed ("Settings → Tourist tax", "Awaiting payment", the SMTP notice path, the calendar legend); the email log names enquiry and guest-request emails; the SMTP notice got *Install an SMTP plugin* / *Send a test email* buttons. |
+
+### 16.2 Decisions
+
+1. **No duplicate navigation on desktop.** The WordPress menu stays the main navigation; the app bar's section row appears only on phones, where WordPress folds its menu away.
+2. **Markup changes kept small and compatible.** Existing classes, IDs and field names stay (`.flexo-today__attention`, `.flexo-attention__item`, `#flexo-email-pre_arrival`, `features[]`, `.page-title-action`, `.flexo-actionbar` …); switches are real checkboxes and folded email texts are `<details>`, so nothing needs JavaScript.
+3. **Section titles:** *Rooms & prices* and *Settings* pages share the section title; the tab says which page you are on.
+4. **One `!important`** remains in `admin.css` (the jQuery UI date picker's z-index, from Day 1).
+
+### 16.3 Tests (MariaDB 10.11)
+
+| Test | Result |
+|---|---|
+| PHP suite (all files, Bulgarian site, constants, concurrency) | all pass |
+| Browser Days 1–6 | 37 / 51 / 63 / 49 / 167 / 117 – all pass, no test changed |
+| Upgrade 1.6.0 → 1.7.0 (`upgrade-verify.php`) | 27/27, DB 7, no migration error |
+| Visual check of every admin screen at 1440 px and the main ones at 390 px, in English and Bulgarian | done; fixed during the check: app bar under the WordPress toolbar on phones (collapsing margin), filter search box height on phones, detail tables on phones, untyped inputs, narrow small inputs, empty email table on bookings without emails |
+

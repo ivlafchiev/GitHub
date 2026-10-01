@@ -6,7 +6,7 @@ Guests pick dates and guests, see which rooms are free with the price, enter the
 
 It's one plugin that works with any theme or template. Extra features are switched on only where a property needs them, so a simple guest house still gets just *dates → room → details → booking request*.
 
-> Version **1.6.0**. All six development days are done; Day 6 made the plugin easier to use for guests, owners and reception, and added Appearance settings. Development follows `ROADMAP.md`; technical design is in `IMPLEMENTATION_PLAN.md`.
+> Version **1.7.0**. All six development days are done; Day 6 made the plugin easier to use for guests, owners and reception, and added Appearance settings. 1.7.0 gives the plugin's admin screens their own, app-like design (§17). Development follows `ROADMAP.md`; technical design is in `IMPLEMENTATION_PLAN.md`.
 
 ---
 
@@ -50,7 +50,7 @@ It's one plugin that works with any theme or template. Extra features are switch
 - Elementor 3.5+ for the widget (Elementor Pro works too). Without Elementor, the `[flexo_booking]` shortcode still works.
 
 **Install:**
-1. Build the zip with `bin/build-zip.sh`, or use the provided `flexo-booking-1.6.0.zip`.
+1. Build the zip with `bin/build-zip.sh`, or use the provided `flexo-booking-1.7.0.zip`.
 2. Go to **Plugins → Add New → Upload Plugin**, choose the zip, then **Install** and **Activate**.
 3. A **Bookings** menu appears in the admin. On a new site (no rooms, no bookings) the **setup wizard** opens once (below).
 4. Check **Settings → General → Timezone**. It must be the hotel's city, because "today" and arrival dates depend on it. **Bookings → Settings → Health** warns if it isn't.
@@ -71,7 +71,7 @@ The wizard never opens by itself on a site that already has rooms or bookings, s
 
 ### Upgrading
 
-**Upgrade from any earlier version (1.0.0–1.5.0):** upload the new zip and choose **Replace current with uploaded**.
+**Upgrade from any earlier version (1.0.0–1.6.0):** upload the new zip and choose **Replace current with uploaded**.
 - The database updates itself on the next page load. No reinstall is needed, and rooms, bookings and settings are kept.
 - If an update step ever fails, a red notice appears in the admin and the step is retried automatically.
 - On staging or in scripts you can also run `wp flexo-booking migrate`.
@@ -84,6 +84,7 @@ The wizard never opens by itself on a site that already has rooms or bookings, s
   - **Editors keep the access they had**; two new roles, **Hotel Staff** and **Hotel Manager**, are added for reception and managers (§17).
   - The **guest booking page** is off until switched on (§16). The new room fields (size, beds, amenities) and rate-plan meals are empty/filled from the presets and simply not shown while empty.
   - Status names are clearer (e.g. *Waiting for confirmation*, *Not paid in time*); the stored statuses, CSV values and filters are unchanged.
+- **1.7.0:** the plugin's admin screens have a new design (§17). No settings, data, addresses or guest-facing pages change, and there is no database update. The rest of the WordPress admin looks as before.
 
 ---
 
@@ -632,6 +633,17 @@ Feature **Guest booking page** (off by default; **Settings → Features**).
 
 ## 17. Daily use: managing bookings
 
+### How the admin looks (1.7.0)
+
+The plugin's screens have their own clean design, so they feel like one booking app rather than a set of WordPress forms:
+- **App bar** at the top of every booking screen: the Flexo Booking mark with the hotel's name, a **booking search** (reference, name, email or phone – from any screen), a **bell** with the number of things that need attention (opens Today), **open the booking form** in a new tab, **Help**, and **New booking**.
+- **Page header** with the screen's title, a one-line explanation, its main actions and – for *Rooms & prices* and *Settings* – the tabs.
+- **Cards** instead of long forms: settings are grouped in cards with a **Save** bar that stays in reach at the bottom of long pages; **Features** are cards with on/off switches; each **guest email** is a card showing when it is sent, with *Edit text* to open the subject and message.
+- **Today** starts with four tiles (arriving, leaving, staying tonight, occupancy), then *Needs your attention* with coloured icons and one-click actions, the guest lists, and a side column with the next 7 days and shortcuts.
+- **Booking details**: the actions sit in the header; stay, guest (with *Email* and *Call* buttons), price and payments on the left; notes, emails and the history timeline on the right.
+- **Phones:** the app bar shows a scrollable row of section buttons (the WordPress menu is folded away there), lists become cards, and buttons and fields are at least 44 px tall.
+- The design uses the bundled Inter font (Latin and Cyrillic, loaded from the hotel's own site, never from Google) and is applied **only to the plugin's own screens**. The rest of the WordPress admin and the website are not affected, and the Appearance settings (§15) change the booking form, not the admin.
+
 ### The menu
 
 **Today · Calendar · All bookings · Add booking · Rooms & prices · Promo codes · Emails · Appearance · Settings · Help.** Only switched-on features appear. **Rooms & prices** has tabs for *Rooms*, *Seasonal prices*, *Closed dates* and *Rates*; **Settings** links *Calendar sync* and *Import & export*. The number on the menu counts what needs attention. A **Booking form** link in the admin bar opens the booking page.
@@ -960,7 +972,7 @@ Technical settings are hidden until **Show advanced settings** is ticked (rememb
 
 All routes accept `locale` (e.g. `en_US`): the answer is in that language, and a booking stores it.
 
-**Architecture (1.6.0):**
+**Architecture (1.7.0):**
 
 | Class | Role |
 |---|---|
@@ -987,6 +999,7 @@ All routes accept `locale` (e.g. `en_US`): the answer is in that language, and a
 | `Flexo_Booking_Phone` | Country codes and names (via `intl` when available), phone normalisation to `+359 888 123 456` |
 | `Flexo_Booking_Appearance` | Custom-mode CSS variables on `.flexo-booking`, bundled `@font-face` rules, contrast checks, the preview |
 | `Flexo_Booking_Roles` | Hotel Staff / Hotel Manager roles, capabilities, room capabilities, trimmed menu |
+| `Flexo_Booking_Admin_UI` | The admin look (1.7.0): body class `flexo-admin-ui` on the plugin's screens only, the app bar, `page_head()` (title, intro, actions, tabs), `icon()` (inline SVG icons), on/off switches, footer line. Styles: `assets/css/admin-ui.css` (design tokens `--fx-*`, fonts, controls, cards, tables, notices) and `admin.css` (screens). |
 | `Flexo_Booking_Today_Admin`, `Flexo_Booking_Health`, `Flexo_Booking_Help`, `Flexo_Booking_Wizard` | Today screen and "Needs your attention", health checks and system report, guides and support contact, setup wizard |
 
 **Hooks:**
