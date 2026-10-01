@@ -3,7 +3,7 @@
  * Plugin Name:       Flexo Booking
  * Plugin URI:        https://github.com/ivlafchiev/GitHub
  * Description:       Room & accommodation booking system for FlexoHotels websites. Works with any theme via the [flexo_booking] shortcode and ships a native Elementor widget. Settings and rooms can be exported/imported between sites.
- * Version:           1.6.0
+ * Version:           1.7.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            FlexoHotels
@@ -18,7 +18,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'FLEXO_BOOKING_VERSION', '1.6.0' );
+define( 'FLEXO_BOOKING_VERSION', '1.7.0' );
 define( 'FLEXO_BOOKING_DB_VERSION', '7' ); // Kept for compatibility; see Flexo_Booking_Migrations::LATEST.
 define( 'FLEXO_BOOKING_FILE', __FILE__ );
 define( 'FLEXO_BOOKING_DIR', plugin_dir_path( __FILE__ ) );
@@ -70,6 +70,7 @@ require_once FLEXO_BOOKING_DIR . 'includes/admin/class-appearance-admin.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-today-admin.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-health.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-help.php';
+require_once FLEXO_BOOKING_DIR . 'includes/admin/class-admin-ui.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-wizard.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-portability.php';
 require_once FLEXO_BOOKING_DIR . 'includes/elementor/class-elementor.php';
@@ -104,6 +105,7 @@ add_action(
 			Flexo_Booking_Features::init();
 			Flexo_Booking_Settings::init();
 			Flexo_Booking_Admin::init();
+			Flexo_Booking_Admin_UI::init();
 			Flexo_Booking_Seasons_Admin::init();
 			Flexo_Booking_Closures_Admin::init();
 			Flexo_Booking_Calendar_Admin::init();

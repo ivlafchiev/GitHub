@@ -151,10 +151,16 @@ class Flexo_Booking_Promo_Codes_Admin {
 		$show_form             = $editing || $adding || '' !== $form['code'] || ! $codes;
 		?>
 		<div class="wrap flexo-admin flexo-promos">
-			<h1 class="wp-heading-inline"><?php esc_html_e( 'Promo codes', 'flexo-booking' ); ?></h1>
-			<a class="page-title-action" href="<?php echo esc_url( self::page_url( array( 'add' => 1 ) ) . '#flexo-promo-form' ); ?>"><?php esc_html_e( 'Add promo code', 'flexo-booking' ); ?></a>
-			<hr class="wp-header-end">
-			<p class="description"><?php esc_html_e( 'Give guests a discount with a code such as DIRECT10. The discount applies to the room price and rate plan, never to the tourist tax. Guests enter the code before they send their booking; one code per booking.', 'flexo-booking' ); ?></p>
+			<?php
+			Flexo_Booking_Admin_UI::page_head(
+				array(
+					'title'   => __( 'Promo codes', 'flexo-booking' ),
+					'icon'    => 'tag',
+					'intro'   => esc_html__( 'Give guests a discount with a code such as DIRECT10. The discount applies to the room price and rate plan, never to the tourist tax. Guests enter the code before they send their booking; one code per booking.', 'flexo-booking' ),
+					'actions' => array( array( 'label' => __( 'Add promo code', 'flexo-booking' ), 'url' => self::page_url( array( 'add' => 1 ) ) . '#flexo-promo-form', 'icon' => 'plus', 'primary' => true ) ),
+				)
+			);
+			?>
 			<?php Flexo_Booking_Seasons_Admin::notices(); ?>
 
 			<table class="widefat striped flexo-promos-table">

@@ -73,9 +73,17 @@ class Flexo_Booking_Closures_Admin {
 		sort( $years );
 		?>
 		<div class="wrap flexo-admin">
-			<?php Flexo_Booking_Admin::section_nav( 'rooms', 'flexo-booking-closures' ); ?>
-			<h1><?php esc_html_e( 'Closed dates', 'flexo-booking' ); ?> <?php echo Flexo_Booking_Help::link( 'block' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in link(). ?></h1>
-			<p class="description"><?php esc_html_e( 'Close the whole property (e.g. for the winter) or a single room type. Guests cannot book nights inside a closed period and see a clear message instead. To take just one room out of service, use Add booking → Block dates.', 'flexo-booking' ); ?></p>
+			<?php
+			Flexo_Booking_Admin_UI::page_head(
+				array(
+					'title' => __( 'Rooms & prices', 'flexo-booking' ),
+					'icon'  => 'bed',
+					'intro' => esc_html__( 'Close the whole property (e.g. for the winter) or a single room type. Guests cannot book nights inside a closed period and see a clear message instead. To take just one room out of service, use Add booking → Block dates.', 'flexo-booking' ),
+					'help'  => 'block',
+					'tabs'  => array( 'rooms', 'flexo-booking-closures' ),
+				)
+			);
+			?>
 			<?php Flexo_Booking_Seasons_Admin::notices(); ?>
 
 			<table class="widefat striped">

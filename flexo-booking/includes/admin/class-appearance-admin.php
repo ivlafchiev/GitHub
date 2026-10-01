@@ -120,7 +120,15 @@ class Flexo_Booking_Appearance_Admin {
 		$name = Flexo_Booking_Settings::OPTION;
 		?>
 		<div class="wrap flexo-admin flexo-appearance">
-			<h1><?php esc_html_e( 'Appearance of the booking form', 'flexo-booking' ); ?></h1>
+			<?php
+			Flexo_Booking_Admin_UI::page_head(
+				array(
+					'title' => __( 'Appearance of the booking form', 'flexo-booking' ),
+					'icon'  => 'palette',
+					'intro' => esc_html__( 'Let the booking form match your website, or give it your own colours and fonts. Only the booking form and your emails change.', 'flexo-booking' ),
+				)
+			);
+			?>
 			<?php if ( isset( $_GET['settings-updated'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
 				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Appearance saved.', 'flexo-booking' ); ?></p></div>
 			<?php elseif ( isset( $_GET['reset'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>

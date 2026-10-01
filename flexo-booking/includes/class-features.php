@@ -327,7 +327,7 @@ class Flexo_Booking_Features {
 			<input type="hidden" name="action" value="flexo_booking_save_features">
 			<?php wp_nonce_field( 'flexo_booking_save_features' ); ?>
 
-			<p class="description"><?php esc_html_e( 'Switch on only what your property needs. Switching a feature off hides it from guests; your settings and existing bookings are kept.', 'flexo-booking' ); ?></p>
+			<p class="flexo-tab-intro"><?php esc_html_e( 'Switch on only what your property needs. Switching a feature off hides it from guests; your settings and existing bookings are kept.', 'flexo-booking' ); ?></p>
 
 			<?php foreach ( self::groups() as $group => $group_label ) : ?>
 				<?php
@@ -341,40 +341,70 @@ class Flexo_Booking_Features {
 					continue;
 				}
 				?>
-				<h2><?php echo esc_html( $group_label ); ?></h2>
-				<table class="form-table" role="presentation">
+				<section class="flexo-feature-group">
+					<h2><?php echo esc_html( $group_label ); ?></h2>
 					<?php if ( 'booking' === $group ) : ?>
-						<tr>
-							<th scope="row"><?php esc_html_e( 'How do guests book?', 'flexo-booking' ); ?></th>
-							<td>
-								<?php if ( in_array( 'request', $modes, true ) ) : ?>
-									<label class="flexo-feature-choice"><input type="radio" name="booking_mode" value="request" <?php checked( $mode, 'request' ); ?>> <strong><?php echo esc_html( $defs['booking_request']['label'] ); ?></strong> – <?php echo esc_html( $defs['booking_request']['description'] ); ?></label>
-								<?php endif; ?>
-								<?php if ( in_array( 'instant', $modes, true ) ) : ?>
-									<label class="flexo-feature-choice"><input type="radio" name="booking_mode" value="instant" <?php checked( $mode, 'instant' ); ?>> <strong><?php echo esc_html( $defs['instant_booking']['label'] ); ?></strong> – <?php echo esc_html( $defs['instant_booking']['description'] ); ?></label>
-								<?php endif; ?>
-							</td>
-						</tr>
+						<fieldset class="flexo-mode-choice">
+							<legend><?php esc_html_e( 'How do guests book?', 'flexo-booking' ); ?></legend>
+							<?php if ( in_array( 'request', $modes, true ) ) : ?>
+								<label class="flexo-choice-card flexo-feature-choice"><input type="radio" name="booking_mode" value="request" <?php checked( $mode, 'request' ); ?>> <strong><?php echo esc_html( $defs['booking_request']['label'] ); ?></strong> <span><?php echo esc_html( $defs['booking_request']['description'] ); ?></span></label>
+							<?php endif; ?>
+							<?php if ( in_array( 'instant', $modes, true ) ) : ?>
+								<label class="flexo-choice-card flexo-feature-choice"><input type="radio" name="booking_mode" value="instant" <?php checked( $mode, 'instant' ); ?>> <strong><?php echo esc_html( $defs['instant_booking']['label'] ); ?></strong> <span><?php echo esc_html( $defs['instant_booking']['description'] ); ?></span></label>
+							<?php endif; ?>
+						</fieldset>
 					<?php endif; ?>
-					<?php foreach ( $in_group as $key => $def ) : ?>
-						<tr class="<?php echo $def['ready'] ? '' : 'flexo-feature--soon'; ?>">
-							<th scope="row"><?php echo esc_html( $def['label'] ); ?></th>
-							<td>
-								<?php if ( $def['ready'] ) : ?>
-									<label><input type="checkbox" name="features[]" value="<?php echo esc_attr( $key ); ?>" <?php checked( in_array( $key, $enabled, true ) ); ?>> <?php esc_html_e( 'On', 'flexo-booking' ); ?></label>
-								<?php else : ?>
-									<span class="flexo-badge"><?php esc_html_e( 'Coming soon', 'flexo-booking' ); ?></span>
-								<?php endif; ?>
-								<p class="description"><?php echo esc_html( $def['description'] ); ?></p>
-							</td>
-						</tr>
-					<?php endforeach; ?>
-				</table>
+					<?php if ( $in_group ) : ?>
+						<div class="flexo-feature-grid">
+							<?php foreach ( $in_group as $key => $def ) : ?>
+								<div class="flexo-feature-card<?php echo $def['ready'] ? '' : ' flexo-feature--soon'; ?>">
+									<span class="flexo-feature-card__icon"><?php echo Flexo_Booking_Admin_UI::icon( self::icon( $key ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?></span>
+									<div class="flexo-feature-card__text">
+										<h3 id="flexo-feature-<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $def['label'] ); ?></h3>
+										<p id="flexo-feature-<?php echo esc_attr( $key ); ?>-desc"><?php echo esc_html( $def['description'] ); ?></p>
+									</div>
+									<?php if ( $def['ready'] ) : ?>
+										<label class="flexo-switch flexo-feature-card__switch">
+											<input type="checkbox" role="switch" name="features[]" value="<?php echo esc_attr( $key ); ?>" aria-labelledby="flexo-feature-<?php echo esc_attr( $key ); ?>" aria-describedby="flexo-feature-<?php echo esc_attr( $key ); ?>-desc" <?php checked( in_array( $key, $enabled, true ) ); ?>>
+											<span class="flexo-switch__track" aria-hidden="true"></span>
+										</label>
+									<?php else : ?>
+										<span class="flexo-badge"><?php esc_html_e( 'Coming soon', 'flexo-booking' ); ?></span>
+									<?php endif; ?>
+								</div>
+							<?php endforeach; ?>
+						</div>
+					<?php endif; ?>
+				</section>
 			<?php endforeach; ?>
 
 			<?php submit_button( __( 'Save features', 'flexo-booking' ) ); ?>
 		</form>
 		<?php
+	}
+
+	/**
+	 * Icon shown with a feature on the Features tab.
+	 */
+	private static function icon( $key ) {
+		$icons = array(
+			'seasonal_pricing'   => 'sun',
+			'calendar_sync'      => 'sync',
+			'rate_plans'         => 'coffee',
+			'children'           => 'child',
+			'tourist_tax'        => 'receipt',
+			'promo_codes'        => 'tag',
+			'privacy_consent'    => 'shield',
+			'invoice_request'    => 'note',
+			'guest_emails'       => 'mail',
+			'guest_booking_page' => 'door',
+			'tracking'           => 'chart',
+			'online_payment'     => 'card',
+			'deposit'            => 'pulse',
+			'bank_transfer'      => 'bank',
+			'custom_appearance'  => 'palette',
+		);
+		return isset( $icons[ $key ] ) ? $icons[ $key ] : 'toggle';
 	}
 
 	public static function handle_save() {
@@ -433,8 +463,15 @@ class Flexo_Booking_Features {
 		$locked    = 'constant' === $source;
 		?>
 		<div class="wrap flexo-admin">
-			<h1><?php esc_html_e( 'Agency: available features', 'flexo-booking' ); ?></h1>
-			<p><?php esc_html_e( 'Choose which features this hotel can see and switch on under Settings → Features. Hotel administrators never see this screen.', 'flexo-booking' ); ?></p>
+			<?php
+			Flexo_Booking_Admin_UI::page_head(
+				array(
+					'title' => __( 'Agency: available features', 'flexo-booking' ),
+					'icon'  => 'key',
+					'intro' => esc_html__( 'Choose which features this hotel can see and switch on under Settings → Features. Hotel administrators never see this screen.', 'flexo-booking' ),
+				)
+			);
+			?>
 			<?php if ( $locked ) : ?>
 				<div class="notice notice-info inline"><p>
 					<?php esc_html_e( 'Controlled by FLEXO_BOOKING_FEATURES in wp-config.php:', 'flexo-booking' ); ?>

@@ -99,9 +99,17 @@ class Flexo_Booking_Seasons_Admin {
 		$rooms = self::rooms();
 		?>
 		<div class="wrap flexo-admin">
-			<?php Flexo_Booking_Admin::section_nav( 'rooms', 'flexo-booking-seasons' ); ?>
-			<h1><?php esc_html_e( 'Seasonal prices', 'flexo-booking' ); ?> <?php echo Flexo_Booking_Help::link( 'seasons' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in link(). ?></h1>
-			<p class="description"><?php esc_html_e( 'Set different prices for high and low season. Each night is priced by the season it falls in; nights outside any season use the room\'s normal price.', 'flexo-booking' ); ?></p>
+			<?php
+			Flexo_Booking_Admin_UI::page_head(
+				array(
+					'title' => __( 'Rooms & prices', 'flexo-booking' ),
+					'icon'  => 'bed',
+					'intro' => esc_html__( 'Set different prices for high and low season. Each night is priced by the season it falls in; nights outside any season use the room\'s normal price.', 'flexo-booking' ),
+					'help'  => 'seasons',
+					'tabs'  => array( 'rooms', 'flexo-booking-seasons' ),
+				)
+			);
+			?>
 			<?php self::notices(); ?>
 
 			<?php if ( ! $rooms ) : ?>

@@ -63,7 +63,7 @@ class Flexo_Booking_Payments_Admin {
 						</p>
 					<?php endif; ?>
 					<label class="flexo-feature-choice"><input type="radio" name="<?php echo esc_attr( $name ); ?>[payment_mode]" value="full" <?php checked( $s['payment_mode'], 'full' ); ?>> <strong><?php esc_html_e( 'The full amount', 'flexo-booking' ); ?></strong> – <?php esc_html_e( 'guests pay the whole stay when booking.', 'flexo-booking' ); ?></label>
-					<p class="description"><?php esc_html_e( 'A tourist tax set to be paid at the property (Settings → Tourist tax) is always paid there. Amounts are always calculated by the website, never taken from the guest\'s browser.', 'flexo-booking' ); ?></p>
+					<p class="description"><?php esc_html_e( 'A tourist tax set to be paid at the property (Settings → Taxes & invoices) is always paid there. Amounts are always calculated by the website, never taken from the guest\'s browser.', 'flexo-booking' ); ?></p>
 				</td>
 			</tr>
 			<tr>
@@ -190,7 +190,7 @@ class Flexo_Booking_Payments_Admin {
 					<td>
 						<input type="hidden" name="<?php echo esc_attr( $name ); ?>[bank_transfer_auto_cancel]" value="0">
 						<label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[bank_transfer_auto_cancel]" value="1" <?php checked( $s['bank_transfer_auto_cancel'], 1 ); ?>> <?php esc_html_e( 'Cancel the booking automatically after the deadline and email the guest and you', 'flexo-booking' ); ?></label>
-						<p class="description"><?php esc_html_e( 'Checked once an hour. When off, unpaid bookings stay "Awaiting payment" until you cancel them.', 'flexo-booking' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Checked once an hour. When off, unpaid bookings stay "Waiting for bank transfer" until you cancel them.', 'flexo-booking' ); ?></p>
 					</td>
 				</tr>
 			</table>
@@ -348,7 +348,7 @@ class Flexo_Booking_Payments_Admin {
 		$live     = Flexo_Booking_Payments::gateway( 'stripe' ) && Flexo_Booking_Payments::gateway( 'stripe' )->is_live();
 		?>
 		<div class="flexo-tools-card flexo-payments-card" id="flexo-payments">
-			<h2><?php esc_html_e( 'Payments', 'flexo-booking' ); ?></h2>
+			<div class="flexo-card__head"><h2><?php echo Flexo_Booking_Admin_UI::icon( 'card' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?><?php esc_html_e( 'Payments', 'flexo-booking' ); ?></h2></div>
 			<?php if ( $b['payment_conflict'] ) : ?>
 				<div class="notice notice-error inline"><p>
 					<strong><?php esc_html_e( 'Payment conflict:', 'flexo-booking' ); ?></strong>

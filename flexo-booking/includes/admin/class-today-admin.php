@@ -392,8 +392,10 @@ class Flexo_Booking_Today_Admin {
 		echo '<ul class="flexo-today__list">';
 		foreach ( $bookings as $b ) {
 			$balance = Flexo_Booking_Payments::balance( $b );
+			$name    = $b['guest_name'] ? $b['guest_name'] : $b['reference'];
 			echo '<li class="flexo-today__item">';
-			echo '<div class="flexo-today__who"><a href="' . esc_url( Flexo_Booking_Admin::page_url( array( 'booking' => $b['id'] ) ) ) . '"><strong>' . esc_html( $b['guest_name'] ? $b['guest_name'] : $b['reference'] ) . '</strong></a>';
+			echo '<span class="flexo-avatar" aria-hidden="true">' . esc_html( self::initials( $name ) ) . '</span>';
+			echo '<div class="flexo-today__who"><a href="' . esc_url( Flexo_Booking_Admin::page_url( array( 'booking' => $b['id'] ) ) ) . '"><strong>' . esc_html( $name ) . '</strong></a>';
 			echo '<span class="flexo-muted">' . esc_html( $b['room_title'] . ' · ' . sprintf( /* translators: %d: nights */ _n( '%d night', '%d nights', $b['nights'], 'flexo-booking' ), $b['nights'] ) . ' · ' . Flexo_Booking_Children::guests_text( $b['adults'], $b['children'], $b['children_ages'] ) ) . '</span>';
 			if ( 'staying' === $kind ) {
 				/* translators: %s: date */
@@ -410,11 +412,56 @@ class Flexo_Booking_Today_Admin {
 				echo '<span class="flexo-badge flexo-badge--paid">✓ ' . esc_html__( 'Paid', 'flexo-booking' ) . '</span> ';
 			}
 			if ( $b['guest_phone'] ) {
-				echo '<a class="button button-small" href="tel:' . esc_attr( preg_replace( '/[^0-9+]/', '', $b['guest_phone'] ) ) . '">☎ ' . esc_html__( 'Call', 'flexo-booking' ) . '</a>';
+				echo '<a class="button button-small" href="tel:' . esc_attr( preg_replace( '/[^0-9+]/', '', $b['guest_phone'] ) ) . '">' . Flexo_Booking_Admin_UI::icon( 'phone' ) . esc_html__( 'Call', 'flexo-booking' ) . '</a>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG.
 			}
 			echo '</div></li>';
 		}
 		echo '</ul>';
+	}
+
+	/**
+	 * Up to two initials for the guest's avatar.
+	 */
+	private static function initials( $name ) {
+		$parts = preg_split( '/\s+/u', trim( (string) $name ) );
+		$out   = '';
+		foreach ( array_slice( array_filter( $parts ), 0, 2 ) as $part ) {
+			$out .= function_exists( 'mb_substr' ) ? mb_strtoupper( mb_substr( $part, 0, 1 ) ) : strtoupper( substr( $part, 0, 1 ) );
+		}
+		return '' !== $out ? $out : '?';
+	}
+
+	/**
+	 * Icon and tone of a "Needs your attention" item.
+	 */
+	private static function attention_look( $type ) {
+		$looks = array(
+			'payment_conflict' => array( 'alert', 'danger' ),
+			'ical_conflict'    => array( 'alert', 'danger' ),
+			'payment_overdue'  => array( 'alert', 'danger' ),
+			'email_failed'     => array( 'mail', 'danger' ),
+			'sync_error'       => array( 'sync', 'danger' ),
+			'payment_waiting'  => array( 'bank', 'warning' ),
+			'request'          => array( 'clock', 'info' ),
+			'guest_request'    => array( 'note', 'info' ),
+			'enquiry'          => array( 'mail', 'info' ),
+		);
+		return isset( $looks[ $type ] ) ? $looks[ $type ] : array( 'info', 'info' );
+	}
+
+	/**
+	 * A guest list card (arriving, leaving, staying).
+	 */
+	private static function guest_card( $id, $icon, $title, array $bookings, $empty, $kind ) {
+		?>
+		<section class="flexo-card flexo-today__card" aria-labelledby="<?php echo esc_attr( $id ); ?>">
+			<div class="flexo-card__head">
+				<h2 id="<?php echo esc_attr( $id ); ?>"><?php echo Flexo_Booking_Admin_UI::icon( $icon ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?><?php echo esc_html( $title ); ?></h2>
+				<span class="flexo-chip"><?php echo esc_html( number_format_i18n( count( $bookings ) ) ); ?></span>
+			</div>
+			<?php self::guest_rows( $bookings, $empty, $kind ); ?>
+		</section>
+		<?php
 	}
 
 	public static function render() {
@@ -423,109 +470,185 @@ class Flexo_Booking_Today_Admin {
 		}
 		// Holds whose time is up are released before counting.
 		Flexo_Booking_Payments::release_expired_holds();
-		$today    = wp_date( 'Y-m-d' );
-		$tomorrow = Flexo_Booking_Dates::add_days( $today, 1 );
-		$week     = self::period( $today, Flexo_Booking_Dates::add_days( $today, 7 ) );
-		$month    = self::occupancy( wp_date( 'Y-m-01' ) );
-		$items    = self::attention();
-		$page     = Flexo_Booking_Guest::booking_page_url();
+		$today      = wp_date( 'Y-m-d' );
+		$tomorrow   = Flexo_Booking_Dates::add_days( $today, 1 );
+		$week       = self::period( $today, Flexo_Booking_Dates::add_days( $today, 7 ) );
+		$month      = self::occupancy( wp_date( 'Y-m-01' ) );
+		$items      = self::attention();
+		$page       = Flexo_Booking_Guest::booking_page_url();
+		$arrivals   = self::arrivals( $today );
+		$departures = self::departures( $today );
+		$staying    = self::staying( $today );
+		$hour       = (int) wp_date( 'G' );
+		$user       = wp_get_current_user();
+		$first      = $user->first_name ? $user->first_name : $user->display_name;
+		if ( $hour < 12 ) {
+			/* translators: %s: first name */
+			$greeting = __( 'Good morning, %s', 'flexo-booking' );
+		} elseif ( $hour < 18 ) {
+			/* translators: %s: first name */
+			$greeting = __( 'Good afternoon, %s', 'flexo-booking' );
+		} else {
+			/* translators: %s: first name */
+			$greeting = __( 'Good evening, %s', 'flexo-booking' );
+		}
+		$actions = array();
+		if ( $page ) {
+			$actions[] = array(
+				'label' => __( 'Preview booking form', 'flexo-booking' ),
+				'url'   => $page,
+				'icon'  => 'external',
+				'attrs' => array(
+					'target' => '_blank',
+					'rel'    => 'noopener',
+				),
+			);
+		}
+		$actions[] = array(
+			'label' => __( 'Calendar', 'flexo-booking' ),
+			'url'   => admin_url( 'admin.php?page=' . Flexo_Booking_Calendar_Admin::SLUG ),
+			'icon'  => 'calendar',
+		);
+		$actions[] = array(
+			'label' => __( 'All bookings', 'flexo-booking' ),
+			'url'   => Flexo_Booking_Admin::list_url(),
+			'icon'  => 'list',
+		);
 		?>
 		<div class="wrap flexo-admin flexo-today">
-			<h1 class="wp-heading-inline"><?php esc_html_e( 'Today', 'flexo-booking' ); ?> <span class="flexo-today__date"><?php echo esc_html( wp_date( 'l, ' . get_option( 'date_format' ) ) ); ?></span></h1>
-			<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . Flexo_Booking_Admin::MENU_SLUG . '-new' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add booking', 'flexo-booking' ); ?></a>
-			<a href="<?php echo esc_url( Flexo_Booking_Admin::list_url() ); ?>" class="page-title-action"><?php esc_html_e( 'All bookings', 'flexo-booking' ); ?></a>
-			<?php if ( $page ) : ?>
-				<a href="<?php echo esc_url( $page ); ?>" class="page-title-action" target="_blank" rel="noopener"><?php esc_html_e( 'Preview booking form', 'flexo-booking' ); ?></a>
-			<?php endif; ?>
-			<hr class="wp-header-end">
+			<?php
+			Flexo_Booking_Admin_UI::page_head(
+				array(
+					'title'   => __( 'Today', 'flexo-booking' ),
+					'icon'    => 'sun',
+					'intro'   => esc_html( sprintf( $greeting, $first ) ) . ' · <span class="flexo-today__date">' . esc_html( wp_date( 'l, ' . get_option( 'date_format' ) ) ) . '</span>',
+					'actions' => $actions,
+				)
+			);
+			?>
 			<?php Flexo_Booking_Admin::notices(); ?>
 			<?php Flexo_Booking_Wizard::resume_notice(); ?>
 
 			<?php if ( ! Flexo_Booking_Rooms::all() ) : ?>
-				<div class="flexo-empty">
-					<h2><?php esc_html_e( 'Welcome! Let\'s get your booking form ready', 'flexo-booking' ); ?></h2>
-					<p><?php esc_html_e( 'Add your rooms and prices, and guests can book on your website.', 'flexo-booking' ); ?></p>
-					<p>
-						<?php if ( current_user_can( 'manage_options' ) ) : ?>
-							<a class="button button-primary button-hero" href="<?php echo esc_url( Flexo_Booking_Wizard::url() ); ?>"><?php esc_html_e( 'Start the setup wizard', 'flexo-booking' ); ?></a>
-						<?php endif; ?>
-						<?php if ( current_user_can( Flexo_Booking_Admin::cap( 'prices' ) ) ) : ?>
-							<a class="button button-hero" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=' . Flexo_Booking_Rooms::POST_TYPE ) ); ?>"><?php esc_html_e( 'Add a room', 'flexo-booking' ); ?></a>
-						<?php endif; ?>
-					</p>
+				<div class="flexo-card flexo-empty">
+					<div class="flexo-blank">
+						<span class="flexo-blank__icon"><?php echo Flexo_Booking_Admin_UI::icon( 'sparkle' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?></span>
+						<h2><?php esc_html_e( 'Welcome! Let\'s get your booking form ready', 'flexo-booking' ); ?></h2>
+						<p><?php esc_html_e( 'Add your rooms and prices, and guests can book on your website.', 'flexo-booking' ); ?></p>
+						<div class="flexo-blank__actions">
+							<?php if ( current_user_can( 'manage_options' ) ) : ?>
+								<a class="button button-primary button-hero" href="<?php echo esc_url( Flexo_Booking_Wizard::url() ); ?>"><?php esc_html_e( 'Start the setup wizard', 'flexo-booking' ); ?></a>
+							<?php endif; ?>
+							<?php if ( current_user_can( Flexo_Booking_Admin::cap( 'prices' ) ) ) : ?>
+								<a class="button button-hero" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=' . Flexo_Booking_Rooms::POST_TYPE ) ); ?>"><?php esc_html_e( 'Add a room', 'flexo-booking' ); ?></a>
+							<?php endif; ?>
+						</div>
+					</div>
 				</div>
 			<?php endif; ?>
 
-			<section class="flexo-today__attention" aria-labelledby="flexo-attention-title">
-				<h2 id="flexo-attention-title">
-					<?php esc_html_e( 'Needs your attention', 'flexo-booking' ); ?>
-					<?php if ( $items ) : ?>
-						<span class="flexo-count"><?php echo esc_html( number_format_i18n( count( $items ) ) ); ?></span>
-					<?php endif; ?>
-				</h2>
-				<?php if ( ! $items ) : ?>
-					<p class="flexo-today__allclear">✓ <?php esc_html_e( 'All clear – nothing is waiting for you.', 'flexo-booking' ); ?></p>
-				<?php else : ?>
-					<ul class="flexo-attention">
-						<?php foreach ( $items as $item ) : ?>
-							<li class="flexo-attention__item flexo-attention__item--<?php echo esc_attr( $item['type'] ); ?>">
-								<div class="flexo-attention__text">
-									<strong><?php echo esc_html( $item['title'] ); ?></strong>
-									<?php if ( '' !== $item['text'] ) : ?>
-										<span><?php echo esc_html( $item['text'] ); ?></span>
-									<?php endif; ?>
-								</div>
-								<div class="flexo-attention__actions">
-									<?php foreach ( $item['actions'] as $action ) : ?>
-										<a class="button<?php echo empty( $action['primary'] ) ? '' : ' button-primary'; ?>" href="<?php echo esc_url( $action['url'] ); ?>"<?php echo empty( $action['confirm'] ) ? '' : ' data-flexo-confirm="' . esc_attr( $action['confirm'] ) . '"'; ?>><?php echo esc_html( $action['label'] ); ?></a>
-									<?php endforeach; ?>
-								</div>
-							</li>
-						<?php endforeach; ?>
-					</ul>
-				<?php endif; ?>
-			</section>
-
-			<div class="flexo-today__grid">
-				<section class="flexo-tools-card" aria-labelledby="flexo-arrivals">
-					<h2 id="flexo-arrivals"><?php esc_html_e( 'Arriving today', 'flexo-booking' ); ?></h2>
-					<?php self::guest_rows( self::arrivals( $today ), __( 'No arrivals today.', 'flexo-booking' ), 'arrival' ); ?>
-				</section>
-				<section class="flexo-tools-card" aria-labelledby="flexo-departures">
-					<h2 id="flexo-departures"><?php esc_html_e( 'Leaving today', 'flexo-booking' ); ?></h2>
-					<?php self::guest_rows( self::departures( $today ), __( 'No departures today.', 'flexo-booking' ), 'departure' ); ?>
-				</section>
-				<section class="flexo-tools-card" aria-labelledby="flexo-staying">
-					<h2 id="flexo-staying"><?php esc_html_e( 'Staying tonight', 'flexo-booking' ); ?></h2>
-					<?php self::guest_rows( self::staying( $today ), __( 'No guests staying over.', 'flexo-booking' ), 'staying' ); ?>
-				</section>
-				<section class="flexo-tools-card" aria-labelledby="flexo-tomorrow">
-					<h2 id="flexo-tomorrow"><?php esc_html_e( 'Arriving tomorrow', 'flexo-booking' ); ?></h2>
-					<?php self::guest_rows( self::arrivals( $tomorrow ), __( 'No arrivals tomorrow.', 'flexo-booking' ), 'arrival' ); ?>
-				</section>
-			</div>
-
-			<section class="flexo-today__stats" aria-labelledby="flexo-stats-title">
+			<section class="flexo-kpis" aria-labelledby="flexo-stats-title">
 				<h2 id="flexo-stats-title" class="screen-reader-text"><?php esc_html_e( 'At a glance', 'flexo-booking' ); ?></h2>
-				<div class="flexo-stat"><span class="flexo-stat__value"><?php echo esc_html( number_format_i18n( $week['arrivals'] ) ); ?></span><span class="flexo-stat__label"><?php esc_html_e( 'arrivals in the next 7 days', 'flexo-booking' ); ?></span></div>
-				<div class="flexo-stat"><span class="flexo-stat__value"><?php echo esc_html( number_format_i18n( $week['departures'] ) ); ?></span><span class="flexo-stat__label"><?php esc_html_e( 'departures in the next 7 days', 'flexo-booking' ); ?></span></div>
-				<div class="flexo-stat"><span class="flexo-stat__value"><?php echo esc_html( number_format_i18n( $week['nights'] ) ); ?></span><span class="flexo-stat__label"><?php esc_html_e( 'room-nights booked in the next 7 days', 'flexo-booking' ); ?></span></div>
-				<div class="flexo-stat">
-					<span class="flexo-stat__value"><?php echo esc_html( $month['percent'] ); ?>%</span>
-					<span class="flexo-stat__label">
-						<?php
-						/* translators: 1: nights sold, 2: nights available */
-						echo esc_html( sprintf( __( 'occupancy this month (%1$s of %2$s room-nights)', 'flexo-booking' ), number_format_i18n( $month['sold'] ), number_format_i18n( $month['available'] ) ) );
-						?>
+				<a class="flexo-kpi flexo-kpi--arrive" href="#flexo-arrivals">
+					<span class="flexo-kpi__icon"><?php echo Flexo_Booking_Admin_UI::icon( 'arrive' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?></span>
+					<span class="flexo-kpi__body"><span class="flexo-kpi__value"><?php echo esc_html( number_format_i18n( count( $arrivals ) ) ); ?></span><span class="flexo-kpi__label"><?php esc_html_e( 'Arriving today', 'flexo-booking' ); ?></span></span>
+				</a>
+				<a class="flexo-kpi flexo-kpi--depart" href="#flexo-departures">
+					<span class="flexo-kpi__icon"><?php echo Flexo_Booking_Admin_UI::icon( 'depart' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?></span>
+					<span class="flexo-kpi__body"><span class="flexo-kpi__value"><?php echo esc_html( number_format_i18n( count( $departures ) ) ); ?></span><span class="flexo-kpi__label"><?php esc_html_e( 'Leaving today', 'flexo-booking' ); ?></span></span>
+				</a>
+				<a class="flexo-kpi flexo-kpi--stay" href="#flexo-staying">
+					<span class="flexo-kpi__icon"><?php echo Flexo_Booking_Admin_UI::icon( 'moon' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?></span>
+					<span class="flexo-kpi__body"><span class="flexo-kpi__value"><?php echo esc_html( number_format_i18n( count( $staying ) ) ); ?></span><span class="flexo-kpi__label"><?php esc_html_e( 'Staying tonight', 'flexo-booking' ); ?></span></span>
+				</a>
+				<div class="flexo-kpi flexo-kpi--occupancy">
+					<span class="flexo-kpi__icon"><?php echo Flexo_Booking_Admin_UI::icon( 'chart' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?></span>
+					<span class="flexo-kpi__body">
+						<span class="flexo-kpi__value"><?php echo esc_html( $month['percent'] ); ?>%</span>
+						<span class="flexo-kpi__label"><?php esc_html_e( 'Occupancy this month', 'flexo-booking' ); ?></span>
+						<span class="flexo-kpi__sub">
+							<?php
+							/* translators: 1: nights sold, 2: nights available */
+							echo esc_html( sprintf( __( '%1$s of %2$s room-nights', 'flexo-booking' ), number_format_i18n( $month['sold'] ), number_format_i18n( $month['available'] ) ) );
+							?>
+						</span>
+						<span class="flexo-meter" aria-hidden="true"><span style="width:<?php echo esc_attr( min( 100, $month['percent'] ) ); ?>%"></span></span>
 					</span>
-					<span class="flexo-meter" aria-hidden="true"><span style="width:<?php echo esc_attr( min( 100, $month['percent'] ) ); ?>%"></span></span>
 				</div>
 			</section>
 
-			<p class="flexo-today__links">
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . Flexo_Booking_Calendar_Admin::SLUG ) ); ?>"><?php esc_html_e( 'Open the calendar', 'flexo-booking' ); ?></a>
-				· <a href="<?php echo esc_url( Flexo_Booking_Help::url() ); ?>"><?php esc_html_e( 'Help', 'flexo-booking' ); ?></a>
-			</p>
+			<div class="flexo-today__layout">
+				<div class="flexo-today__main">
+					<section id="flexo-attention" class="flexo-card flexo-today__attention" aria-labelledby="flexo-attention-title">
+						<div class="flexo-card__head">
+							<h2 id="flexo-attention-title">
+								<?php echo Flexo_Booking_Admin_UI::icon( 'bell' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?>
+								<?php esc_html_e( 'Needs your attention', 'flexo-booking' ); ?>
+								<?php if ( $items ) : ?>
+									<span class="flexo-count"><?php echo esc_html( number_format_i18n( count( $items ) ) ); ?></span>
+								<?php endif; ?>
+							</h2>
+						</div>
+						<?php if ( ! $items ) : ?>
+							<div class="flexo-today__allclear">
+								<span class="flexo-today__allclear-icon"><?php echo Flexo_Booking_Admin_UI::icon( 'check' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?></span>
+								<span><?php esc_html_e( 'All clear – nothing is waiting for you.', 'flexo-booking' ); ?></span>
+							</div>
+						<?php else : ?>
+							<ul class="flexo-attention">
+								<?php foreach ( $items as $item ) : ?>
+									<?php $look = self::attention_look( $item['type'] ); ?>
+									<li class="flexo-attention__item flexo-attention__item--<?php echo esc_attr( $item['type'] ); ?> is-<?php echo esc_attr( $look[1] ); ?>">
+										<span class="flexo-attention__icon"><?php echo Flexo_Booking_Admin_UI::icon( $look[0] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?></span>
+										<div class="flexo-attention__text">
+											<strong><?php echo esc_html( $item['title'] ); ?></strong>
+											<?php if ( '' !== $item['text'] ) : ?>
+												<span><?php echo esc_html( $item['text'] ); ?></span>
+											<?php endif; ?>
+										</div>
+										<div class="flexo-attention__actions">
+											<?php foreach ( $item['actions'] as $action ) : ?>
+												<a class="button button-small<?php echo empty( $action['primary'] ) ? '' : ' button-primary'; ?>" href="<?php echo esc_url( $action['url'] ); ?>"<?php echo empty( $action['confirm'] ) ? '' : ' data-flexo-confirm="' . esc_attr( $action['confirm'] ) . '"'; ?>><?php echo esc_html( $action['label'] ); ?></a>
+											<?php endforeach; ?>
+										</div>
+									</li>
+								<?php endforeach; ?>
+							</ul>
+						<?php endif; ?>
+					</section>
+
+					<div class="flexo-today__grid">
+						<?php
+						self::guest_card( 'flexo-arrivals', 'arrive', __( 'Arriving today', 'flexo-booking' ), $arrivals, __( 'No arrivals today.', 'flexo-booking' ), 'arrival' );
+						self::guest_card( 'flexo-departures', 'depart', __( 'Leaving today', 'flexo-booking' ), $departures, __( 'No departures today.', 'flexo-booking' ), 'departure' );
+						self::guest_card( 'flexo-staying', 'moon', __( 'Staying tonight', 'flexo-booking' ), $staying, __( 'No guests staying over.', 'flexo-booking' ), 'staying' );
+						self::guest_card( 'flexo-tomorrow', 'calendar', __( 'Arriving tomorrow', 'flexo-booking' ), self::arrivals( $tomorrow ), __( 'No arrivals tomorrow.', 'flexo-booking' ), 'arrival' );
+						?>
+					</div>
+				</div>
+
+				<aside class="flexo-today__side">
+					<section class="flexo-card flexo-today__week" aria-labelledby="flexo-week-title">
+						<div class="flexo-card__head">
+							<h2 id="flexo-week-title"><?php echo Flexo_Booking_Admin_UI::icon( 'calendar' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?><?php esc_html_e( 'Next 7 days', 'flexo-booking' ); ?></h2>
+						</div>
+						<dl class="flexo-today__stats">
+							<div class="flexo-stat"><dt class="flexo-stat__label"><?php esc_html_e( 'arrivals in the next 7 days', 'flexo-booking' ); ?></dt><dd class="flexo-stat__value"><?php echo esc_html( number_format_i18n( $week['arrivals'] ) ); ?></dd></div>
+							<div class="flexo-stat"><dt class="flexo-stat__label"><?php esc_html_e( 'departures in the next 7 days', 'flexo-booking' ); ?></dt><dd class="flexo-stat__value"><?php echo esc_html( number_format_i18n( $week['departures'] ) ); ?></dd></div>
+							<div class="flexo-stat"><dt class="flexo-stat__label"><?php esc_html_e( 'room-nights booked in the next 7 days', 'flexo-booking' ); ?></dt><dd class="flexo-stat__value"><?php echo esc_html( number_format_i18n( $week['nights'] ) ); ?></dd></div>
+						</dl>
+					</section>
+					<nav class="flexo-card flexo-shortcuts" aria-labelledby="flexo-shortcuts-title">
+						<h2 id="flexo-shortcuts-title"><?php esc_html_e( 'Shortcuts', 'flexo-booking' ); ?></h2>
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . Flexo_Booking_Calendar_Admin::SLUG ) ); ?>"><?php echo Flexo_Booking_Admin_UI::icon( 'calendar' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?><span><?php esc_html_e( 'Open the calendar', 'flexo-booking' ); ?></span></a>
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . Flexo_Booking_Admin::MENU_SLUG . '-new' ) ); ?>"><?php echo Flexo_Booking_Admin_UI::icon( 'plus' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?><span><?php esc_html_e( 'Add booking', 'flexo-booking' ); ?></span></a>
+						<?php if ( current_user_can( Flexo_Booking_Admin::cap( 'prices' ) ) ) : ?>
+							<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . Flexo_Booking_Rooms::POST_TYPE ) ); ?>"><?php echo Flexo_Booking_Admin_UI::icon( 'bed' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?><span><?php esc_html_e( 'Rooms & prices', 'flexo-booking' ); ?></span></a>
+						<?php endif; ?>
+						<a href="<?php echo esc_url( Flexo_Booking_Help::url() ); ?>"><?php echo Flexo_Booking_Admin_UI::icon( 'help' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?><span><?php esc_html_e( 'Help', 'flexo-booking' ); ?></span></a>
+					</nav>
+				</aside>
+			</div>
 		</div>
 		<?php
 	}

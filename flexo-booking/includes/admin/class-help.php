@@ -165,7 +165,15 @@ class Flexo_Booking_Help {
 		$support = self::support();
 		?>
 		<div class="wrap flexo-admin flexo-help">
-			<h1><?php esc_html_e( 'Help', 'flexo-booking' ); ?></h1>
+			<?php
+			Flexo_Booking_Admin_UI::page_head(
+				array(
+					'title' => __( 'Help', 'flexo-booking' ),
+					'icon'  => 'help',
+					'intro' => esc_html__( 'Short guides for everyday tasks, and who to contact when you get stuck.', 'flexo-booking' ),
+				)
+			);
+			?>
 			<?php if ( isset( $_GET['saved'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
 				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Support contact saved.', 'flexo-booking' ); ?></p></div>
 			<?php endif; ?>

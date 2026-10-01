@@ -97,12 +97,17 @@ class Flexo_Booking_Rate_Plans_Admin {
 		$missing   = array_diff( array_keys( Flexo_Booking_Rate_Plans::presets() ), wp_list_pluck( $plans, 'preset' ) );
 		?>
 		<div class="wrap flexo-admin flexo-plans">
-			<?php Flexo_Booking_Admin::section_nav( 'rooms', 'flexo-booking-rate-plans' ); ?>
-			<h1 class="wp-heading-inline"><?php esc_html_e( 'Rates', 'flexo-booking' ); ?></h1>
-			<a class="page-title-action" href="<?php echo esc_url( self::page_url( array( 'add' => 1 ) ) . '#flexo-plan-form' ); ?>"><?php esc_html_e( 'Add rate plan', 'flexo-booking' ); ?></a>
-			<hr class="wp-header-end">
-			<p class="description"><?php esc_html_e( 'Rate plans are the different ways you sell a room – for example with breakfast, half board, or a cheaper non-refundable price. Create only the combinations you really sell, then choose which rooms offer them. Rooms without a rate plan are booked at their normal price.', 'flexo-booking' ); ?></p>
-			<p class="description"><?php esc_html_e( 'Guests choose a plan after choosing a room. If a room offers only one plan, it is used automatically.', 'flexo-booking' ); ?></p>
+			<?php
+			Flexo_Booking_Admin_UI::page_head(
+				array(
+					'title'   => __( 'Rooms & prices', 'flexo-booking' ),
+					'icon'    => 'bed',
+					'intro'   => esc_html__( 'Rate plans are the different ways you sell a room – for example with breakfast, half board, or a cheaper non-refundable price. Create only the combinations you really sell, then choose which rooms offer them. Rooms without a rate plan are booked at their normal price.', 'flexo-booking' ) . ' ' . esc_html__( 'Guests choose a plan after choosing a room. If a room offers only one plan, it is used automatically.', 'flexo-booking' ),
+					'actions' => array( array( 'label' => __( 'Add rate plan', 'flexo-booking' ), 'url' => self::page_url( array( 'add' => 1 ) ) . '#flexo-plan-form', 'icon' => 'plus', 'primary' => true ) ),
+					'tabs'    => array( 'rooms', 'flexo-booking-rate-plans' ),
+				)
+			);
+			?>
 			<?php Flexo_Booking_Seasons_Admin::notices(); ?>
 
 			<table class="widefat striped flexo-plans-table">

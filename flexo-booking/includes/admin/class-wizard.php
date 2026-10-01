@@ -362,7 +362,15 @@ class Flexo_Booking_Wizard {
 		}
 		?>
 		<div class="wrap flexo-admin flexo-wizard">
-			<h1><?php esc_html_e( 'Set up your booking system', 'flexo-booking' ); ?></h1>
+			<?php
+			Flexo_Booking_Admin_UI::page_head(
+				array(
+					'title' => __( 'Set up your booking system', 'flexo-booking' ),
+					'icon'  => 'sparkle',
+					'intro' => esc_html__( 'A few short steps from an empty site to your first test booking. You can skip any step and come back later.', 'flexo-booking' ),
+				)
+			);
+			?>
 			<?php Flexo_Booking_Admin::notices(); ?>
 			<?php if ( isset( $_GET['flexo_msg'] ) && 'test_sent' === $_GET['flexo_msg'] ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
 				<div class="notice notice-success"><p><?php esc_html_e( 'Test email sent. Check your inbox (and the spam folder).', 'flexo-booking' ); ?></p></div>

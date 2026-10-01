@@ -1,0 +1,1726 @@
+/**
+ * Flexo Booking – admin design system.
+ *
+ * Loaded only on the plugin's own admin screens, and every rule is scoped
+ * to the body class "flexo-admin-ui" (set by Flexo_Booking_Admin_UI), so the
+ * rest of the WordPress admin never changes. The font is bundled with the
+ * plugin (Inter, OFL, Latin + Cyrillic) and never loaded from Google.
+ *
+ * Contents: 1 fonts · 2 tokens · 3 canvas & type · 4 app bar · 5 page header
+ * · 6 tabs · 7 buttons · 8 form controls · 9 cards & forms · 10 tables ·
+ * 11 notices · 12 badges · 13 empty states · 14 dialog · 15 room editor ·
+ * 16 footer · 17 small screens
+ */
+
+/* 1 · Fonts ---------------------------------------------------------- */
+
+@font-face {
+	font-family: "Flexo UI";
+	font-style: normal;
+	font-weight: 100 900;
+	font-display: swap;
+	src: url("../fonts/inter/inter-latin-wght-normal.woff2") format("woff2");
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+	font-family: "Flexo UI";
+	font-style: normal;
+	font-weight: 100 900;
+	font-display: swap;
+	src: url("../fonts/inter/inter-latin-ext-wght-normal.woff2") format("woff2");
+	unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+	font-family: "Flexo UI";
+	font-style: normal;
+	font-weight: 100 900;
+	font-display: swap;
+	src: url("../fonts/inter/inter-cyrillic-wght-normal.woff2") format("woff2");
+	unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+/* 2 · Tokens --------------------------------------------------------- */
+
+body.flexo-admin-ui {
+	--fx-font: "Flexo UI", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+	--fx-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+	--fx-bg: #f3f5f7;
+	--fx-surface: #fff;
+	--fx-surface-2: #f8fafb;
+	--fx-surface-3: #eef2f4;
+	--fx-border: #e2e7eb;
+	--fx-border-strong: #cdd5dc;
+
+	--fx-text: #0f1d2a;
+	--fx-text-2: #344453;
+	--fx-muted: #5c6b7a;
+
+	--fx-primary: #0f6e6a;
+	--fx-primary-hover: #0a5753;
+	--fx-primary-soft: #e6f3f1;
+	--fx-primary-soft-2: #cde6e2;
+	--fx-ring: rgba(15, 110, 106, 0.28);
+
+	--fx-success: #0f7a4f;
+	--fx-success-soft: #e5f6ed;
+	--fx-success-line: #a6dcc0;
+	--fx-warning: #8a5100;
+	--fx-warning-soft: #fff5e3;
+	--fx-warning-line: #f3cf8e;
+	--fx-danger: #b42330;
+	--fx-danger-soft: #fdeced;
+	--fx-danger-line: #f3bcc1;
+	--fx-info: #1f5aa6;
+	--fx-info-soft: #ebf2fc;
+	--fx-info-line: #b7cff0;
+	--fx-violet: #5b3f9a;
+	--fx-violet-soft: #f1ecfa;
+
+	--fx-radius: 14px;
+	--fx-radius-md: 10px;
+	--fx-radius-sm: 8px;
+	--fx-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+	--fx-shadow-md: 0 4px 12px -2px rgba(16, 24, 40, 0.08), 0 2px 4px -2px rgba(16, 24, 40, 0.05);
+	--fx-shadow-lg: 0 18px 40px -12px rgba(16, 24, 40, 0.22);
+
+	background: var(--fx-bg);
+}
+
+/* WordPress 6.6+ colours its own controls with these; only inside the plugin's content. */
+.flexo-admin-ui #wpbody-content,
+.flexo-admin-ui .flexo-appbar,
+.flexo-admin-ui .flexo-dialog {
+	--wp-admin-theme-color: #0f6e6a;
+	--wp-admin-theme-color--rgb: 15, 110, 106;
+	--wp-admin-theme-color-darker-10: #0a5753;
+	--wp-admin-theme-color-darker-10--rgb: 10, 87, 83;
+	--wp-admin-theme-color-darker-20: #08443f;
+	--wp-admin-theme-color-darker-20--rgb: 8, 68, 63;
+}
+
+/* 3 · Canvas and type ------------------------------------------------ */
+
+.flexo-admin-ui #wpbody-content,
+.flexo-admin-ui .flexo-appbar,
+.flexo-admin-ui #wpfooter,
+.flexo-admin-ui .flexo-dialog {
+	font-family: var(--fx-font);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	font-feature-settings: "cv11", "ss01";
+}
+
+.flexo-admin-ui .wrap {
+	margin: 28px 32px 0 12px;
+	max-width: 1360px;
+	color: var(--fx-text);
+	font-size: 14px;
+	line-height: 1.55;
+}
+
+.flexo-admin-ui .wrap a {
+	color: var(--fx-primary);
+	text-underline-offset: 2px;
+}
+
+.flexo-admin-ui .wrap a:hover {
+	color: var(--fx-primary-hover);
+}
+
+.flexo-admin-ui .wrap a:focus {
+	box-shadow: 0 0 0 3px var(--fx-ring);
+	outline: 2px solid transparent;
+	border-radius: 4px;
+}
+
+.flexo-admin-ui .wrap h2 {
+	margin: 32px 0 12px;
+	font-size: 17px;
+	font-weight: 650;
+	line-height: 1.35;
+	letter-spacing: -0.01em;
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .wrap h3 {
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .wrap p,
+.flexo-admin-ui .wrap li,
+.flexo-admin-ui .wrap td,
+.flexo-admin-ui .wrap th,
+.flexo-admin-ui .wrap label {
+	font-size: 14px;
+}
+
+.flexo-admin-ui .wrap .description,
+.flexo-admin-ui .wrap p.description,
+.flexo-admin-ui .wrap .flexo-muted {
+	color: var(--fx-muted);
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.flexo-admin-ui .wrap code {
+	padding: 2px 7px;
+	border: 1px solid var(--fx-border);
+	border-radius: 6px;
+	background: var(--fx-surface-2);
+	color: var(--fx-text-2);
+	font-family: var(--fx-mono);
+	font-size: 12.5px;
+}
+
+.flexo-admin-ui .wrap hr:not(.wp-header-end) {
+	border: 0;
+	border-top: 1px solid var(--fx-border);
+	margin: 24px 0;
+}
+
+.flexo-admin-ui .flexo-icon {
+	flex: 0 0 auto;
+	width: 20px;
+	height: 20px;
+}
+
+/* 4 · App bar -------------------------------------------------------- */
+
+.flexo-appbar {
+	margin-left: -20px;
+	padding: 0 32px;
+	background: var(--fx-surface);
+	border-bottom: 1px solid var(--fx-border);
+	box-shadow: 0 1px 0 rgba(16, 24, 40, 0.02);
+	color: var(--fx-text);
+}
+
+.flexo-appbar__row {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	min-height: 68px;
+}
+
+.flexo-appbar__brand {
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+	min-width: 0;
+	color: var(--fx-text);
+	text-decoration: none;
+}
+
+.flexo-appbar__brand:hover,
+.flexo-appbar__brand:focus {
+	color: var(--fx-text);
+}
+
+.flexo-appbar__brand:focus {
+	box-shadow: 0 0 0 3px var(--fx-ring);
+	outline: 2px solid transparent;
+	border-radius: 12px;
+}
+
+.flexo-appbar__logo {
+	display: grid;
+	place-items: center;
+	flex: 0 0 auto;
+	width: 38px;
+	height: 38px;
+	border-radius: 11px;
+	background: linear-gradient(140deg, #16867f 0%, #0f6e6a 45%, #0a4f4b 100%);
+	color: #fff;
+	box-shadow: 0 1px 2px rgba(10, 79, 75, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.flexo-appbar__logo .flexo-icon {
+	width: 21px;
+	height: 21px;
+}
+
+.flexo-appbar__titles {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	line-height: 1.2;
+}
+
+.flexo-appbar__product {
+	font-size: 15px;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+}
+
+.flexo-appbar__site {
+	max-width: 220px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: var(--fx-muted);
+	font-size: 12px;
+}
+
+.flexo-appbar__search {
+	position: relative;
+	flex: 1 1 280px;
+	max-width: 440px;
+	margin: 0 0 0 12px;
+}
+
+.flexo-appbar__search-icon {
+	position: absolute;
+	top: 50%;
+	left: 12px;
+	width: 18px;
+	height: 18px;
+	color: var(--fx-muted);
+	transform: translateY(-50%);
+	pointer-events: none;
+}
+
+.flexo-admin-ui .flexo-appbar__search input[type="search"] {
+	width: 100%;
+	height: 40px;
+	min-height: 40px;
+	margin: 0;
+	padding: 0 14px 0 40px;
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-surface-2);
+	color: var(--fx-text);
+	font-family: inherit;
+	font-size: 14px;
+	box-shadow: none;
+}
+
+.flexo-admin-ui .flexo-appbar__search input[type="search"]:focus {
+	border-color: var(--fx-primary);
+	background: var(--fx-surface);
+	box-shadow: 0 0 0 3px var(--fx-ring);
+	outline: 2px solid transparent;
+}
+
+.flexo-appbar__actions {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin-left: auto;
+}
+
+.flexo-appbar__icon {
+	position: relative;
+	display: grid;
+	place-items: center;
+	width: 40px;
+	height: 40px;
+	border-radius: var(--fx-radius-md);
+	color: var(--fx-text-2);
+	text-decoration: none;
+	transition: background 0.15s, color 0.15s;
+}
+
+.flexo-appbar__icon:hover,
+.flexo-appbar__icon:focus {
+	background: var(--fx-surface-3);
+	color: var(--fx-text);
+}
+
+.flexo-appbar__icon:focus {
+	box-shadow: 0 0 0 3px var(--fx-ring);
+	outline: 2px solid transparent;
+}
+
+.flexo-appbar__badge {
+	position: absolute;
+	top: 3px;
+	right: 2px;
+	min-width: 18px;
+	height: 18px;
+	padding: 0 5px;
+	box-sizing: border-box;
+	border: 2px solid var(--fx-surface);
+	border-radius: 9px;
+	background: var(--fx-danger);
+	color: #fff;
+	font-size: 10.5px;
+	font-weight: 700;
+	line-height: 14px;
+	text-align: center;
+}
+
+.flexo-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	height: 40px;
+	padding: 0 16px;
+	border: 1px solid transparent;
+	border-radius: var(--fx-radius-md);
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1;
+	text-decoration: none;
+	white-space: nowrap;
+	transition: background 0.15s, box-shadow 0.15s;
+}
+
+.flexo-btn--primary,
+.flexo-btn--primary:visited {
+	background: var(--fx-primary);
+	color: #fff;
+	box-shadow: 0 1px 2px rgba(10, 79, 75, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.flexo-btn--primary:hover,
+.flexo-btn--primary:focus {
+	background: var(--fx-primary-hover);
+	color: #fff;
+}
+
+.flexo-btn:focus {
+	box-shadow: 0 0 0 3px var(--fx-ring);
+	outline: 2px solid transparent;
+}
+
+.flexo-btn .flexo-icon {
+	width: 18px;
+	height: 18px;
+}
+
+/* Section menu inside the app bar – only on small screens, where the WordPress menu is folded away. */
+.flexo-appbar__nav {
+	display: none;
+}
+
+/* 5 · Page header ---------------------------------------------------- */
+
+.flexo-page-head {
+	margin: 0 0 24px;
+}
+
+.flexo-admin-ui .wrap .flexo-page-head__back {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin: 0 0 12px;
+	color: var(--fx-muted);
+	font-size: 13px;
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.flexo-admin-ui .wrap .flexo-page-head__back:hover {
+	color: var(--fx-text);
+}
+
+.flexo-page-head__back .flexo-icon {
+	width: 16px;
+	height: 16px;
+}
+
+.flexo-page-head__row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px 24px;
+}
+
+.flexo-page-head__main {
+	display: flex;
+	align-items: flex-start;
+	gap: 16px;
+	flex: 1 1 420px;
+	min-width: 0;
+}
+
+.flexo-page-head__icon {
+	display: grid;
+	place-items: center;
+	flex: 0 0 auto;
+	width: 48px;
+	height: 48px;
+	border-radius: var(--fx-radius);
+	background: var(--fx-surface);
+	border: 1px solid var(--fx-border);
+	box-shadow: var(--fx-shadow);
+	color: var(--fx-primary);
+}
+
+.flexo-page-head__icon .flexo-icon {
+	width: 24px;
+	height: 24px;
+}
+
+.flexo-page-head__text {
+	min-width: 0;
+}
+
+.flexo-admin-ui .wrap h1.flexo-page-head__title {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 12px;
+	margin: 0;
+	padding: 2px 0 0;
+	color: var(--fx-text);
+	font-size: 26px;
+	font-weight: 700;
+	line-height: 1.2;
+	letter-spacing: -0.02em;
+}
+
+.flexo-admin-ui .wrap .flexo-page-head__intro {
+	margin: 6px 0 0;
+	max-width: 760px;
+	color: var(--fx-muted);
+	font-size: 14.5px;
+}
+
+.flexo-page-head__actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	padding-top: 4px;
+}
+
+/* 6 · Section tabs --------------------------------------------------- */
+
+.flexo-admin-ui .wrap .flexo-section-nav,
+.flexo-admin-ui .flexo-section-nav-wrap .flexo-section-nav {
+	display: flex;
+	gap: 4px;
+	margin: 22px 0 0;
+	padding: 0;
+	border-bottom: 1px solid var(--fx-border);
+	overflow-x: auto;
+	scrollbar-width: none;
+}
+
+.flexo-admin-ui .flexo-section-nav::-webkit-scrollbar {
+	display: none;
+}
+
+.flexo-admin-ui .wrap .flexo-section-nav::after,
+.flexo-admin-ui .flexo-section-nav-wrap .flexo-section-nav::after {
+	display: none;
+}
+
+.flexo-admin-ui .wrap .flexo-section-nav .nav-tab,
+.flexo-admin-ui .flexo-section-nav-wrap .nav-tab {
+	float: none;
+	flex: 0 0 auto;
+	margin: 0 0 -1px;
+	padding: 10px 14px 11px;
+	border: 0;
+	border-bottom: 2px solid transparent;
+	background: transparent;
+	color: var(--fx-muted);
+	font-size: 14px;
+	font-weight: 550;
+	line-height: 1.3;
+	white-space: nowrap;
+	text-decoration: none;
+	transition: color 0.15s, border-color 0.15s;
+}
+
+.flexo-admin-ui .wrap .flexo-section-nav .nav-tab:hover,
+.flexo-admin-ui .flexo-section-nav-wrap .nav-tab:hover {
+	color: var(--fx-text);
+	border-bottom-color: var(--fx-border-strong);
+}
+
+.flexo-admin-ui .wrap .flexo-section-nav .nav-tab-active,
+.flexo-admin-ui .wrap .flexo-section-nav .nav-tab-active:hover,
+.flexo-admin-ui .flexo-section-nav-wrap .nav-tab-active,
+.flexo-admin-ui .flexo-section-nav-wrap .nav-tab-active:hover {
+	background: transparent;
+	color: var(--fx-primary);
+	border-bottom-color: var(--fx-primary);
+}
+
+.flexo-admin-ui .wrap .flexo-section-nav .nav-tab:focus,
+.flexo-admin-ui .flexo-section-nav-wrap .nav-tab:focus {
+	box-shadow: inset 0 0 0 2px var(--fx-ring);
+	outline: 2px solid transparent;
+	border-radius: 6px 6px 0 0;
+}
+
+/* 7 · Buttons -------------------------------------------------------- */
+
+.flexo-admin-ui .wrap .button,
+.flexo-admin-ui .flexo-dialog .button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	min-height: 38px;
+	margin: 0;
+	padding: 0 14px;
+	border: 1px solid var(--fx-border-strong);
+	border-radius: var(--fx-radius-sm);
+	background: var(--fx-surface);
+	color: var(--fx-text);
+	font-family: inherit;
+	font-size: 13.5px;
+	font-weight: 600;
+	line-height: 1.2;
+	text-decoration: none;
+	text-shadow: none;
+	vertical-align: middle;
+	white-space: nowrap;
+	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+	transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, color 0.15s;
+}
+
+.flexo-admin-ui .wrap input.button,
+.flexo-admin-ui .wrap button.button {
+	display: inline-block;
+}
+
+.flexo-admin-ui .wrap .button:hover,
+.flexo-admin-ui .flexo-dialog .button:hover {
+	background: var(--fx-surface-2);
+	border-color: #b6c0c9;
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .wrap .button:focus,
+.flexo-admin-ui .flexo-dialog .button:focus {
+	border-color: var(--fx-primary);
+	box-shadow: 0 0 0 3px var(--fx-ring);
+	outline: 2px solid transparent;
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .wrap .button:active {
+	background: var(--fx-surface-3);
+	transform: none;
+}
+
+.flexo-admin-ui .wrap .button .flexo-icon {
+	width: 18px;
+	height: 18px;
+	margin-left: -2px;
+}
+
+.flexo-admin-ui .wrap .button-primary,
+.flexo-admin-ui .flexo-dialog .button-primary {
+	border-color: var(--fx-primary);
+	background: var(--fx-primary);
+	color: #fff;
+	box-shadow: 0 1px 2px rgba(10, 79, 75, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.flexo-admin-ui .wrap .button-primary:hover,
+.flexo-admin-ui .wrap .button-primary:focus,
+.flexo-admin-ui .flexo-dialog .button-primary:hover,
+.flexo-admin-ui .flexo-dialog .button-primary:focus {
+	border-color: var(--fx-primary-hover);
+	background: var(--fx-primary-hover);
+	color: #fff;
+}
+
+.flexo-admin-ui .wrap .button-primary:focus,
+.flexo-admin-ui .flexo-dialog .button-primary:focus {
+	box-shadow: 0 0 0 3px var(--fx-ring);
+}
+
+.flexo-admin-ui .wrap .button-small {
+	min-height: 32px;
+	padding: 0 10px;
+	font-size: 12.5px;
+}
+
+.flexo-admin-ui .wrap .button-hero {
+	min-height: 46px;
+	padding: 0 22px;
+	font-size: 15px;
+}
+
+.flexo-admin-ui .wrap .button-link-delete,
+.flexo-admin-ui .wrap .button.flexo-danger,
+.flexo-admin-ui .flexo-dialog .button.flexo-danger {
+	color: var(--fx-danger);
+	border-color: var(--fx-danger-line);
+	background: var(--fx-surface);
+}
+
+.flexo-admin-ui .wrap .button-link-delete:hover,
+.flexo-admin-ui .wrap .button-link-delete:focus,
+.flexo-admin-ui .wrap .button.flexo-danger:hover {
+	color: #fff;
+	border-color: var(--fx-danger);
+	background: var(--fx-danger);
+}
+
+.flexo-admin-ui .wrap .button[disabled],
+.flexo-admin-ui .wrap .button:disabled,
+.flexo-admin-ui .wrap .button.disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+	box-shadow: none;
+}
+
+/* Page title actions keep WordPress's class for compatibility, without its offsets. */
+.flexo-admin-ui .wrap .page-title-action {
+	position: static;
+	top: auto;
+	margin: 0;
+}
+
+/* The editor's own small toolbar buttons stay small. */
+.flexo-admin-ui .wrap .quicktags-toolbar .button,
+.flexo-admin-ui .wrap .wp-editor-tabs .button {
+	min-height: 26px;
+	padding: 2px 8px;
+	font-size: 12px;
+	box-shadow: none;
+}
+
+/* 8 · Form controls -------------------------------------------------- */
+
+.flexo-admin-ui .wrap input[type="text"],
+.flexo-admin-ui .wrap input:not([type]),
+.flexo-admin-ui .wrap input[type="email"],
+.flexo-admin-ui .wrap input[type="url"],
+.flexo-admin-ui .wrap input[type="tel"],
+.flexo-admin-ui .wrap input[type="number"],
+.flexo-admin-ui .wrap input[type="search"],
+.flexo-admin-ui .wrap input[type="password"],
+.flexo-admin-ui .wrap input[type="date"],
+.flexo-admin-ui .wrap input[type="time"],
+.flexo-admin-ui .wrap select,
+.flexo-admin-ui .wrap textarea {
+	min-height: 40px;
+	padding: 0 12px;
+	border: 1px solid var(--fx-border-strong);
+	border-radius: var(--fx-radius-sm);
+	background-color: var(--fx-surface);
+	color: var(--fx-text);
+	font-family: inherit;
+	font-size: 14px;
+	line-height: 1.4;
+	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+	transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.flexo-admin-ui .wrap select {
+	padding-right: 32px;
+}
+
+.flexo-admin-ui .wrap textarea {
+	padding: 10px 12px;
+	line-height: 1.55;
+}
+
+.flexo-admin-ui .wrap input[type="text"]:hover,
+.flexo-admin-ui .wrap input:not([type]):hover,
+.flexo-admin-ui .wrap input[type="email"]:hover,
+.flexo-admin-ui .wrap input[type="url"]:hover,
+.flexo-admin-ui .wrap input[type="tel"]:hover,
+.flexo-admin-ui .wrap input[type="number"]:hover,
+.flexo-admin-ui .wrap input[type="search"]:hover,
+.flexo-admin-ui .wrap input[type="password"]:hover,
+.flexo-admin-ui .wrap input[type="date"]:hover,
+.flexo-admin-ui .wrap input[type="time"]:hover,
+.flexo-admin-ui .wrap select:hover,
+.flexo-admin-ui .wrap textarea:hover {
+	border-color: #b6c0c9;
+}
+
+.flexo-admin-ui .wrap input[type="text"]:focus,
+.flexo-admin-ui .wrap input:not([type]):focus,
+.flexo-admin-ui .wrap input[type="email"]:focus,
+.flexo-admin-ui .wrap input[type="url"]:focus,
+.flexo-admin-ui .wrap input[type="tel"]:focus,
+.flexo-admin-ui .wrap input[type="number"]:focus,
+.flexo-admin-ui .wrap input[type="search"]:focus,
+.flexo-admin-ui .wrap input[type="password"]:focus,
+.flexo-admin-ui .wrap input[type="date"]:focus,
+.flexo-admin-ui .wrap input[type="time"]:focus,
+.flexo-admin-ui .wrap select:focus,
+.flexo-admin-ui .wrap textarea:focus {
+	border-color: var(--fx-primary);
+	box-shadow: 0 0 0 3px var(--fx-ring);
+	outline: 2px solid transparent;
+}
+
+.flexo-admin-ui .wrap input::placeholder,
+.flexo-admin-ui .wrap textarea::placeholder {
+	color: #8a97a4;
+}
+
+.flexo-admin-ui .wrap input.small-text {
+	width: 88px;
+	padding: 0 10px;
+}
+
+.flexo-admin-ui .wrap input.tiny-text {
+	width: 64px;
+	padding: 0 8px;
+}
+
+.flexo-admin-ui .wrap input[type="file"] {
+	color: var(--fx-muted);
+	font-family: inherit;
+	font-size: 13.5px;
+}
+
+.flexo-admin-ui .wrap input[type="file"]::file-selector-button {
+	margin-right: 12px;
+	padding: 9px 14px;
+	border: 1px solid var(--fx-border-strong);
+	border-radius: var(--fx-radius-sm);
+	background: var(--fx-surface);
+	color: var(--fx-text);
+	font-family: inherit;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.flexo-admin-ui .wrap input[readonly] {
+	background-color: var(--fx-surface-2);
+	color: var(--fx-text-2);
+}
+
+.flexo-admin-ui .wrap input[type="checkbox"],
+.flexo-admin-ui .wrap input[type="radio"],
+.flexo-admin-ui .flexo-dialog input[type="checkbox"] {
+	width: 18px;
+	min-width: 18px;
+	height: 18px;
+	border: 1.5px solid #9aa6b2;
+	background: var(--fx-surface);
+	box-shadow: none;
+	transition: background 0.12s, border-color 0.12s;
+}
+
+.flexo-admin-ui .wrap input[type="checkbox"] {
+	border-radius: 5px;
+}
+
+.flexo-admin-ui .wrap input[type="checkbox"]:hover,
+.flexo-admin-ui .wrap input[type="radio"]:hover {
+	border-color: var(--fx-primary);
+}
+
+.flexo-admin-ui .wrap input[type="checkbox"]:focus,
+.flexo-admin-ui .wrap input[type="radio"]:focus {
+	border-color: var(--fx-primary);
+	box-shadow: 0 0 0 3px var(--fx-ring);
+	outline: 2px solid transparent;
+}
+
+.flexo-admin-ui .wrap input[type="checkbox"]:checked {
+	border-color: var(--fx-primary);
+	background: var(--fx-primary);
+}
+
+.flexo-admin-ui .wrap input[type="checkbox"]:checked::before {
+	content: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2020%2020%27%3E%3Cpath%20d%3D%27M14.83%204.89l1.34.94-5.81%208.38H9.02L5.78%209.67l1.34-1.25%202.57%202.4z%27%20fill%3D%27%23ffffff%27%2F%3E%3C%2Fsvg%3E");
+	float: left;
+	display: inline-block;
+	width: 21px;
+	height: 21px;
+	margin: -3px 0 0 -3px;
+}
+
+.flexo-admin-ui .wrap input[type="radio"]:checked {
+	border-color: var(--fx-primary);
+	background: var(--fx-surface);
+}
+
+.flexo-admin-ui .wrap input[type="radio"]:checked::before {
+	content: "";
+	float: none;
+	display: block;
+	width: 8px;
+	height: 8px;
+	margin: 3.5px auto 0;
+	border-radius: 50%;
+	background: var(--fx-primary);
+}
+
+/* On/off switch: a real checkbox, visually a switch. */
+.flexo-switch {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	min-height: 28px;
+	cursor: pointer;
+	user-select: none;
+}
+
+.flexo-admin-ui .wrap .flexo-switch input[type="checkbox"] {
+	position: absolute;
+	z-index: 1;
+	opacity: 0;
+	width: 40px;
+	height: 24px;
+	margin: 0;
+	cursor: pointer;
+}
+
+.flexo-switch__track {
+	position: relative;
+	flex: 0 0 auto;
+	width: 40px;
+	height: 24px;
+	border-radius: 12px;
+	background: #c3ccd4;
+	transition: background 0.18s;
+}
+
+.flexo-switch__track::after {
+	content: "";
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: #fff;
+	box-shadow: 0 1px 3px rgba(16, 24, 40, 0.25);
+	transition: transform 0.18s;
+}
+
+.flexo-switch input:checked + .flexo-switch__track {
+	background: var(--fx-primary);
+}
+
+.flexo-switch input:checked + .flexo-switch__track::after {
+	transform: translateX(16px);
+}
+
+.flexo-switch input:focus-visible + .flexo-switch__track {
+	box-shadow: 0 0 0 3px var(--fx-ring);
+}
+
+.flexo-switch input:disabled + .flexo-switch__track {
+	opacity: 0.5;
+}
+
+.flexo-switch__label {
+	color: var(--fx-text);
+	font-size: 14px;
+	font-weight: 500;
+}
+
+/* 9 · Cards and settings forms --------------------------------------- */
+
+.flexo-card,
+.flexo-admin-ui .wrap .flexo-tools-card {
+	margin: 0 0 20px;
+	padding: 22px 24px;
+	background: var(--fx-surface);
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius);
+	box-shadow: var(--fx-shadow);
+	box-sizing: border-box;
+}
+
+.flexo-admin-ui .wrap .flexo-card > h2:first-child,
+.flexo-admin-ui .wrap .flexo-tools-card > h2:first-child,
+.flexo-admin-ui .wrap .flexo-card__head h2 {
+	margin-top: 0;
+}
+
+.flexo-card__head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px 16px;
+	margin: 0 0 14px;
+}
+
+.flexo-admin-ui .wrap .flexo-card__head h2 {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	margin: 0;
+	font-size: 16px;
+}
+
+.flexo-card__head h2 .flexo-icon {
+	color: var(--fx-primary);
+}
+
+/* Settings: each table of fields is a card. */
+.flexo-admin-ui .wrap .form-table {
+	margin: 12px 0 28px;
+	background: var(--fx-surface);
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius);
+	box-shadow: var(--fx-shadow);
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+.flexo-admin-ui .wrap .form-table > tbody > tr > th,
+.flexo-admin-ui .wrap .form-table > tr > th {
+	width: 230px;
+	padding: 22px 24px;
+	color: var(--fx-text);
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.4;
+	vertical-align: top;
+}
+
+.flexo-admin-ui .wrap .form-table > tbody > tr > td,
+.flexo-admin-ui .wrap .form-table > tr > td {
+	padding: 16px 24px 16px 0;
+	vertical-align: top;
+}
+
+.flexo-admin-ui .wrap .form-table > tbody > tr + tr > th,
+.flexo-admin-ui .wrap .form-table > tbody > tr + tr > td {
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .wrap .form-table td p {
+	margin-top: 6px;
+}
+
+.flexo-admin-ui .wrap .form-table td label {
+	line-height: 1.6;
+}
+
+/* Tables of fields inside a card don't get a second card. */
+.flexo-admin-ui .wrap .flexo-tools-card .form-table,
+.flexo-admin-ui .wrap .flexo-card .form-table,
+.flexo-admin-ui .wrap .postbox .form-table,
+.flexo-admin-ui .wrap .flexo-dialog .form-table {
+	margin: 0;
+	background: none;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+}
+
+.flexo-admin-ui .wrap .flexo-tools-card .form-table > tbody > tr > th,
+.flexo-admin-ui .wrap .flexo-card .form-table > tbody > tr > th,
+.flexo-admin-ui .wrap .postbox .form-table > tbody > tr > th {
+	width: 200px;
+	padding: 16px 20px 16px 0;
+}
+
+.flexo-admin-ui .wrap .flexo-tools-card .form-table > tbody > tr > td,
+.flexo-admin-ui .wrap .flexo-card .form-table > tbody > tr > td,
+.flexo-admin-ui .wrap .postbox .form-table > tbody > tr > td {
+	padding: 12px 0;
+}
+
+/* The save button of long forms stays in reach. */
+.flexo-admin-ui .wrap form p.submit {
+	position: sticky;
+	bottom: 0;
+	z-index: 15;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+	margin: 24px 0 0;
+	padding: 14px 18px;
+	background: rgba(255, 255, 255, 0.94);
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius);
+	box-shadow: var(--fx-shadow-lg);
+	-webkit-backdrop-filter: saturate(1.4) blur(8px);
+	backdrop-filter: saturate(1.4) blur(8px);
+}
+
+.flexo-admin-ui .wrap form p.submit .button-primary {
+	min-height: 40px;
+	padding: 0 20px;
+}
+
+.flexo-admin-ui .wrap .flexo-tools-card form p.submit,
+.flexo-admin-ui .wrap .flexo-card form p.submit,
+.flexo-admin-ui .wrap .flexo-dialog form p.submit {
+	position: static;
+	padding: 0;
+	background: none;
+	border: 0;
+	box-shadow: none;
+	-webkit-backdrop-filter: none;
+	backdrop-filter: none;
+}
+
+/* 10 · Tables -------------------------------------------------------- */
+
+.flexo-admin-ui .wrap table.widefat {
+	margin-bottom: 20px;
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius);
+	border-collapse: separate;
+	border-spacing: 0;
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow);
+	overflow: hidden;
+}
+
+.flexo-admin-ui .wrap table.widefat thead th,
+.flexo-admin-ui .wrap table.widefat thead td {
+	padding: 11px 14px;
+	border-bottom: 1px solid var(--fx-border);
+	background: var(--fx-surface-2);
+	color: var(--fx-muted);
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	line-height: 1.4;
+}
+
+.flexo-admin-ui .wrap table.widefat thead th a,
+.flexo-admin-ui .wrap table.widefat thead th a span {
+	color: var(--fx-muted);
+}
+
+.flexo-admin-ui .wrap table.widefat tbody td,
+.flexo-admin-ui .wrap table.widefat tbody th {
+	padding: 14px;
+	color: var(--fx-text);
+	font-size: 13.5px;
+	vertical-align: top;
+}
+
+.flexo-admin-ui .wrap table.widefat tbody tr + tr > td,
+.flexo-admin-ui .wrap table.widefat tbody tr + tr > th {
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .wrap table.widefat tfoot th,
+.flexo-admin-ui .wrap table.widefat tfoot td {
+	padding: 12px 14px;
+	border-top: 1px solid var(--fx-border);
+	background: var(--fx-surface-2);
+}
+
+.flexo-admin-ui .wrap .striped > tbody > :nth-child(odd),
+.flexo-admin-ui .wrap .alternate {
+	background-color: transparent;
+}
+
+.flexo-admin-ui .wrap table.widefat > tbody > tr:hover {
+	background-color: #fafbfc;
+}
+
+.flexo-admin-ui .wrap table.widefat td .row-title,
+.flexo-admin-ui .wrap table.widefat td strong a {
+	color: var(--fx-text);
+	font-weight: 650;
+	text-decoration: none;
+}
+
+.flexo-admin-ui .wrap table.widefat td .row-title:hover,
+.flexo-admin-ui .wrap table.widefat td strong a:hover {
+	color: var(--fx-primary);
+}
+
+/* The repeated column headings under a list are not needed. */
+.flexo-admin-ui .wrap table.wp-list-table tfoot {
+	display: none;
+}
+
+.flexo-admin-ui .wrap .tablenav {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	height: auto;
+	margin: 12px 0;
+	padding: 0;
+}
+
+.flexo-admin-ui .wrap .tablenav .actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	padding: 0;
+	overflow: visible;
+}
+
+.flexo-admin-ui .wrap .tablenav .actions select {
+	margin: 0;
+}
+
+.flexo-admin-ui .wrap .tablenav .tablenav-pages {
+	margin: 0 0 0 auto;
+	color: var(--fx-muted);
+}
+
+.flexo-admin-ui .wrap .tablenav.bottom {
+	display: none;
+}
+
+.flexo-admin-ui .wrap .subsubsub {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	margin: 0 0 8px;
+	color: transparent;
+	font-size: 13px;
+}
+
+.flexo-admin-ui .wrap .subsubsub li {
+	color: transparent;
+}
+
+.flexo-admin-ui .wrap .subsubsub a {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 5px 10px;
+	border-radius: 999px;
+	color: var(--fx-muted);
+	font-weight: 550;
+	text-decoration: none;
+}
+
+.flexo-admin-ui .wrap .subsubsub a .count {
+	color: inherit;
+	font-weight: 500;
+	opacity: 0.8;
+}
+
+.flexo-admin-ui .wrap .subsubsub a.current,
+.flexo-admin-ui .wrap .subsubsub a:hover {
+	background: var(--fx-surface);
+	color: var(--fx-text);
+	box-shadow: var(--fx-shadow);
+}
+
+.flexo-admin-ui .wrap p.search-box {
+	display: flex;
+	gap: 8px;
+	margin: 0 0 8px;
+}
+
+/* 11 · Notices ------------------------------------------------------- */
+
+.flexo-admin-ui #wpbody-content .notice,
+.flexo-admin-ui #wpbody-content div.updated,
+.flexo-admin-ui #wpbody-content div.error {
+	margin: 0 0 16px;
+	padding: 12px 18px;
+	border: 1px solid var(--fx-info-line);
+	border-left: 4px solid var(--fx-info);
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-info-soft);
+	box-shadow: none;
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .wrap .flexo-tools-card .notice,
+.flexo-admin-ui .wrap .flexo-card .notice {
+	margin: 12px 0;
+}
+
+.flexo-admin-ui #wpbody-content .notice p,
+.flexo-admin-ui #wpbody-content div.updated p,
+.flexo-admin-ui #wpbody-content div.error p {
+	margin: 4px 0;
+	padding: 0;
+	font-size: 13.5px;
+	line-height: 1.55;
+}
+
+.flexo-admin-ui #wpbody-content .notice-success,
+.flexo-admin-ui #wpbody-content div.updated {
+	border-color: var(--fx-success-line);
+	border-left-color: var(--fx-success);
+	background: var(--fx-success-soft);
+}
+
+.flexo-admin-ui #wpbody-content .notice-warning {
+	border-color: var(--fx-warning-line);
+	border-left-color: #d98a0b;
+	background: var(--fx-warning-soft);
+}
+
+.flexo-admin-ui #wpbody-content .notice-error,
+.flexo-admin-ui #wpbody-content div.error {
+	border-color: var(--fx-danger-line);
+	border-left-color: var(--fx-danger);
+	background: var(--fx-danger-soft);
+}
+
+.flexo-admin-ui #wpbody-content .flexo-notice-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin-top: 10px;
+}
+
+.flexo-admin-ui #wpbody-content .flexo-notice-actions .button {
+	display: inline-flex;
+	align-items: center;
+	min-height: 32px;
+	padding: 0 12px;
+	border-radius: var(--fx-radius-sm);
+	font-weight: 600;
+}
+
+.flexo-admin-ui #wpbody-content .flexo-notice-dismiss {
+	margin-left: 4px;
+	color: var(--fx-muted);
+	font-size: 13px;
+}
+
+.flexo-admin-ui #wpbody-content .notice-dismiss {
+	top: 6px;
+	right: 6px;
+}
+
+/* 12 · Status and badges --------------------------------------------- */
+
+.flexo-admin-ui .flexo-status,
+.flexo-admin-ui .flexo-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 3px 10px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.45;
+	white-space: nowrap;
+	vertical-align: middle;
+}
+
+.flexo-admin-ui .flexo-status::before {
+	content: "";
+	flex: 0 0 auto;
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: currentColor;
+}
+
+/* 13 · Empty states -------------------------------------------------- */
+
+.flexo-blank {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	padding: 40px 24px;
+	text-align: center;
+}
+
+.flexo-blank__icon {
+	display: grid;
+	place-items: center;
+	width: 56px;
+	height: 56px;
+	margin-bottom: 6px;
+	border-radius: 16px;
+	background: var(--fx-primary-soft);
+	color: var(--fx-primary);
+}
+
+.flexo-blank__icon .flexo-icon {
+	width: 26px;
+	height: 26px;
+}
+
+.flexo-admin-ui .wrap .flexo-blank h2,
+.flexo-admin-ui .wrap .flexo-blank h3 {
+	margin: 0;
+	font-size: 16px;
+}
+
+.flexo-admin-ui .wrap .flexo-blank p {
+	max-width: 460px;
+	margin: 0;
+	color: var(--fx-muted);
+}
+
+.flexo-blank__actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 8px;
+	margin-top: 12px;
+}
+
+/* 14 · Dialog -------------------------------------------------------- */
+
+.flexo-admin-ui .flexo-dialog {
+	max-width: 460px;
+	padding: 24px;
+	border: 1px solid var(--fx-border);
+	border-radius: 16px;
+	box-shadow: var(--fx-shadow-lg);
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .flexo-dialog::backdrop {
+	background: rgba(15, 29, 42, 0.45);
+	-webkit-backdrop-filter: blur(2px);
+	backdrop-filter: blur(2px);
+}
+
+.flexo-admin-ui .flexo-dialog h2 {
+	margin: 0 0 8px;
+	font-size: 18px;
+	font-weight: 700;
+}
+
+.flexo-admin-ui .flexo-dialog p {
+	margin: 0 0 20px;
+	color: var(--fx-text-2);
+	font-size: 14px;
+	line-height: 1.55;
+}
+
+/* 15 · Room editor (WordPress post screen) --------------------------- */
+
+/* The room list shows the section header instead of WordPress's own title. */
+.flexo-admin-ui.edit-php .wrap.flexo-rooms-head {
+	margin-bottom: 0;
+}
+
+.flexo-admin-ui.edit-php .flexo-rooms-head + .wrap {
+	margin-top: 0;
+}
+
+.flexo-admin-ui.edit-php .flexo-rooms-head + .wrap > .wp-heading-inline,
+.flexo-admin-ui.edit-php .flexo-rooms-head + .wrap > .wp-heading-inline + .page-title-action {
+	display: none;
+}
+
+.flexo-admin-ui .wrap > h1.wp-heading-inline {
+	margin: 0 12px 0 0;
+	padding: 0;
+	color: var(--fx-text);
+	font-size: 26px;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	vertical-align: middle;
+}
+
+.flexo-admin-ui .wrap > .wp-heading-inline + .page-title-action {
+	vertical-align: middle;
+}
+
+.flexo-admin-ui #poststuff {
+	padding-top: 18px;
+}
+
+.flexo-admin-ui #poststuff .postbox {
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius);
+	box-shadow: var(--fx-shadow);
+	overflow: hidden;
+}
+
+.flexo-admin-ui #poststuff .postbox-header {
+	border-bottom: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui #poststuff .postbox-header h2.hndle {
+	padding: 14px 20px;
+	color: var(--fx-text);
+	font-size: 15px;
+	font-weight: 650;
+}
+
+.flexo-admin-ui #poststuff .postbox .inside {
+	margin: 0;
+	padding: 6px 20px 16px;
+}
+
+.flexo-admin-ui #titlediv #title {
+	height: 52px;
+	padding: 0 16px;
+	border: 1px solid var(--fx-border-strong);
+	border-radius: var(--fx-radius-md);
+	font-size: 20px;
+	font-weight: 600;
+	box-shadow: var(--fx-shadow);
+}
+
+.flexo-admin-ui #titlediv #title:focus {
+	border-color: var(--fx-primary);
+	box-shadow: 0 0 0 3px var(--fx-ring);
+}
+
+.flexo-admin-ui #postdivrich {
+	border-radius: var(--fx-radius);
+	overflow: hidden;
+}
+
+.flexo-admin-ui #post-status-info {
+	border-radius: 0 0 var(--fx-radius) var(--fx-radius);
+}
+
+/* Screen options (room list and editor) sit in their own row, not over the header. */
+.flexo-admin-ui #screen-meta-links {
+	float: none;
+	display: flex;
+	justify-content: flex-end;
+	margin: 12px 32px -16px 0;
+}
+
+.flexo-admin-ui #screen-meta-links .show-settings {
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-sm);
+	background: var(--fx-surface);
+	color: var(--fx-text-2);
+	font-family: var(--fx-font);
+	box-shadow: var(--fx-shadow);
+}
+
+.flexo-admin-ui #screen-meta {
+	margin: 12px 32px 0 12px;
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius);
+	box-shadow: var(--fx-shadow);
+}
+
+/* 16 · Footer -------------------------------------------------------- */
+
+.flexo-admin-ui #wpfooter {
+	padding: 18px 32px 18px 12px;
+	color: var(--fx-muted);
+	font-size: 12.5px;
+}
+
+.flexo-admin-ui #wpfooter a {
+	color: var(--fx-muted);
+}
+
+.flexo-admin-ui #wpfooter a:hover {
+	color: var(--fx-primary);
+}
+
+.flexo-admin-ui #footer-left {
+	font-style: normal;
+}
+
+/* 17 · Small screens ------------------------------------------------- */
+
+@media (max-width: 960px) {
+	.flexo-appbar__site {
+		display: none;
+	}
+}
+
+@media (max-width: 782px) {
+	.flexo-appbar {
+		margin-left: -10px;
+		padding: 0 14px;
+	}
+
+	.flexo-appbar__row {
+		flex-wrap: wrap;
+		gap: 10px 8px;
+		min-height: 0;
+		padding: 10px 0;
+	}
+
+	.flexo-appbar__titles {
+		display: none;
+	}
+
+	.flexo-appbar__search {
+		order: 3;
+		flex: 1 1 100%;
+		max-width: none;
+		margin: 0;
+	}
+
+	.flexo-admin-ui .flexo-appbar__search input[type="search"] {
+		height: 44px;
+		font-size: 16px;
+	}
+
+	.flexo-appbar__icon {
+		width: 44px;
+		height: 44px;
+	}
+
+	.flexo-btn {
+		height: 44px;
+	}
+
+	.flexo-appbar__nav {
+		display: flex;
+		gap: 6px;
+		margin: 0 -14px;
+		padding: 0 14px 12px;
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+
+	.flexo-appbar__nav::-webkit-scrollbar {
+		display: none;
+	}
+
+	.flexo-appbar__nav a {
+		display: inline-flex;
+		flex: 0 0 auto;
+		align-items: center;
+		gap: 6px;
+		min-height: 40px;
+		padding: 0 14px;
+		border: 1px solid var(--fx-border);
+		border-radius: 999px;
+		background: var(--fx-surface);
+		color: var(--fx-text-2);
+		font-size: 14px;
+		font-weight: 550;
+		text-decoration: none;
+		white-space: nowrap;
+	}
+
+	.flexo-appbar__nav a .flexo-icon {
+		width: 18px;
+		height: 18px;
+	}
+
+	.flexo-appbar__nav a.is-current {
+		border-color: var(--fx-primary);
+		background: var(--fx-primary-soft);
+		color: var(--fx-primary);
+	}
+
+	.flexo-admin-ui .wrap {
+		margin: 18px 12px 0 2px;
+	}
+
+	.flexo-page-head__icon {
+		display: none;
+	}
+
+	.flexo-admin-ui .wrap h1.flexo-page-head__title,
+	.flexo-admin-ui .wrap > h1.wp-heading-inline {
+		font-size: 23px;
+	}
+
+	.flexo-page-head__actions {
+		width: 100%;
+	}
+
+	.flexo-admin-ui .wrap .button {
+		min-height: 44px;
+	}
+
+	.flexo-admin-ui .wrap .button-small {
+		min-height: 40px;
+	}
+
+	.flexo-admin-ui .wrap input[type="text"],
+.flexo-admin-ui .wrap input:not([type]),
+	.flexo-admin-ui .wrap input[type="email"],
+	.flexo-admin-ui .wrap input[type="url"],
+	.flexo-admin-ui .wrap input[type="tel"],
+	.flexo-admin-ui .wrap input[type="number"],
+	.flexo-admin-ui .wrap input[type="search"],
+	.flexo-admin-ui .wrap input[type="password"],
+	.flexo-admin-ui .wrap input[type="date"],
+	.flexo-admin-ui .wrap input[type="time"],
+	.flexo-admin-ui .wrap select,
+	.flexo-admin-ui .wrap textarea {
+		min-height: 44px;
+		font-size: 16px;
+	}
+
+	.flexo-admin-ui .wrap .form-table > tbody > tr > th,
+	.flexo-admin-ui .wrap .form-table > tbody > tr > td {
+		display: block;
+		width: auto;
+	}
+
+	.flexo-admin-ui .wrap .form-table > tbody > tr > th {
+		padding: 16px 16px 4px;
+	}
+
+	.flexo-admin-ui .wrap .form-table > tbody > tr > td {
+		padding: 4px 16px 16px;
+	}
+
+	.flexo-admin-ui .wrap .form-table > tbody > tr + tr > td {
+		border-top: 0;
+	}
+
+	.flexo-admin-ui .wrap .flexo-tools-card .form-table > tbody > tr > th,
+	.flexo-admin-ui .wrap .flexo-card .form-table > tbody > tr > th,
+	.flexo-admin-ui .wrap .postbox .form-table > tbody > tr > th {
+		padding: 12px 0 4px;
+	}
+
+	.flexo-admin-ui .wrap .flexo-tools-card .form-table > tbody > tr > td,
+	.flexo-admin-ui .wrap .flexo-card .form-table > tbody > tr > td,
+	.flexo-admin-ui .wrap .postbox .form-table > tbody > tr > td {
+		padding: 4px 0 12px;
+	}
+
+	.flexo-card,
+	.flexo-admin-ui .wrap .flexo-tools-card {
+		padding: 18px 16px;
+	}
+
+	.flexo-admin-ui .wrap form p.submit {
+		margin: 20px -2px 0;
+		padding: 12px;
+		border-radius: 12px;
+	}
+
+	.flexo-admin-ui .wrap form p.submit .button-primary {
+		flex: 1 1 auto;
+	}
+
+	.flexo-admin-ui #wpfooter {
+		padding: 16px 12px;
+	}
+}
+
+@media (max-width: 600px) {
+	/* WordPress keeps its toolbar's space on #wpbody here; the app bar comes first
+	   (padding, not margin, so the space doesn't collapse into the page). */
+	.flexo-admin-ui .flexo-appbar {
+		padding-top: 46px;
+	}
+
+	.flexo-admin-ui #wpbody {
+		padding-top: 0;
+	}
+
+	.flexo-appbar__new span {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+	}
+
+	.flexo-appbar__new {
+		width: 44px;
+		padding: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.flexo-admin-ui .wrap *,
+	.flexo-appbar * {
+		transition: none;
+	}
+}

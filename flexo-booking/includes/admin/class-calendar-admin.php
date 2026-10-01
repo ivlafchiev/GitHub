@@ -485,9 +485,16 @@ class Flexo_Booking_Calendar_Admin {
 		$count = count( $data['days'] );
 		?>
 		<div class="wrap flexo-admin flexo-calendar-page">
-			<h1 class="wp-heading-inline"><?php esc_html_e( 'Booking calendar', 'flexo-booking' ); ?></h1>
-			<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . Flexo_Booking_Admin::MENU_SLUG . '-new' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add booking', 'flexo-booking' ); ?></a>
-			<hr class="wp-header-end">
+			<?php
+			Flexo_Booking_Admin_UI::page_head(
+				array(
+					'title'   => __( 'Booking calendar', 'flexo-booking' ),
+					'icon'    => 'calendar',
+					'intro'   => esc_html__( 'Every room, every night – click a booking for its details, or an empty day to add one.', 'flexo-booking' ),
+					'actions' => array( array( 'label' => __( 'Add booking', 'flexo-booking' ), 'url' => admin_url( 'admin.php?page=' . Flexo_Booking_Admin::MENU_SLUG . '-new' ), 'icon' => 'plus', 'primary' => true ) ),
+				)
+			);
+			?>
 
 			<div class="fbc-today" aria-label="<?php esc_attr_e( 'Today', 'flexo-booking' ); ?>">
 				<?php
@@ -608,7 +615,7 @@ class Flexo_Booking_Calendar_Admin {
 					<li><span class="fbc-swatch fbc-item--pending_payment">💳</span> <?php esc_html_e( 'Held while the guest pays by card', 'flexo-booking' ); ?></li>
 				<?php endif; ?>
 				<?php if ( Flexo_Booking_Features::is_enabled( 'bank_transfer' ) ) : ?>
-					<li><span class="fbc-swatch fbc-item--awaiting_payment">🏦</span> <?php esc_html_e( 'Awaiting bank transfer', 'flexo-booking' ); ?></li>
+					<li><span class="fbc-swatch fbc-item--awaiting_payment">🏦</span> <?php esc_html_e( 'Waiting for bank transfer', 'flexo-booking' ); ?></li>
 				<?php endif; ?>
 				<li><span class="fbc-swatch fbc-item--confirmed">✎</span> <?php esc_html_e( 'Added by staff', 'flexo-booking' ); ?></li>
 				<li><span class="fbc-swatch fbc-item--blocked">⛔</span> <?php esc_html_e( 'Blocked by staff', 'flexo-booking' ); ?></li>

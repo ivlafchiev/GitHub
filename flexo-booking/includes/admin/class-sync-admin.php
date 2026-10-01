@@ -132,8 +132,17 @@ class Flexo_Booking_Sync_Admin {
 		$next     = wp_next_scheduled( Flexo_Booking_ICal::CRON_HOOK );
 		?>
 		<div class="wrap flexo-admin flexo-sync">
-			<?php Flexo_Booking_Admin::section_nav( 'rooms', 'flexo-booking-sync' ); ?>
-			<h1><?php esc_html_e( 'Calendar Sync', 'flexo-booking' ); ?> <?php echo Flexo_Booking_Help::link( 'sync' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in link(). ?></h1>
+			<?php
+			Flexo_Booking_Admin_UI::page_head(
+				array(
+					'title' => __( 'Rooms & prices', 'flexo-booking' ),
+					'icon'  => 'bed',
+					'intro' => esc_html__( 'Keep availability in sync with Booking.com, Airbnb and other sites that use iCal links.', 'flexo-booking' ),
+					'help'  => 'sync',
+					'tabs'  => array( 'rooms', 'flexo-booking-sync' ),
+				)
+			);
+			?>
 			<?php Flexo_Booking_Seasons_Admin::notices(); ?>
 
 			<div class="flexo-tools-card flexo-sync-help">

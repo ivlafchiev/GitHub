@@ -130,6 +130,15 @@ class Flexo_Booking_Emails {
 		if ( 'test' === $type ) {
 			return __( 'Test email', 'flexo-booking' );
 		}
+		// Day 6 messages to the hotel that have no on/off setting.
+		$extra = array(
+			'hotel_enquiry'       => __( 'Enquiry', 'flexo-booking' ),
+			'hotel_guest_request' => __( 'Change or cancellation request', 'flexo-booking' ),
+		);
+		if ( isset( $extra[ $type ] ) ) {
+			/* translators: %s: email type */
+			return sprintf( __( 'To the hotel: %s', 'flexo-booking' ), $extra[ $type ] );
+		}
 		if ( 0 === strpos( $type, 'hotel_' ) ) {
 			$types = self::hotel_types();
 			$key   = substr( $type, 6 );
@@ -643,7 +652,7 @@ class Flexo_Booking_Emails {
 	}
 
 	/**
-	 * Logo for emails: the one set under Settings → Emails, else the site logo.
+	 * Logo for emails: the one set under Appearance (formerly Settings → Emails), else the site logo.
 	 */
 	public static function logo_url() {
 		$logo = (string) Flexo_Booking_Settings::get( 'email_logo' );
@@ -798,8 +807,13 @@ class Flexo_Booking_Emails {
 		}
 		$dismiss = wp_nonce_url( admin_url( 'admin-post.php?action=flexo_booking_dismiss_smtp' ), 'flexo_booking_dismiss_smtp' );
 		echo '<div class="notice notice-warning flexo-smtp-notice"><p><strong>' . esc_html__( 'Booking emails may land in spam.', 'flexo-booking' ) . '</strong> ';
-		esc_html_e( 'This website sends email without a mail server login (SMTP). Many email providers then treat booking confirmations as spam or drop them. Install an SMTP plugin such as "WP Mail SMTP" or "FluentSMTP" and connect it to the hotel\'s email account, then use "Send test email" under Bookings → Settings → Emails.', 'flexo-booking' );
-		echo ' <a href="' . esc_url( $dismiss ) . '">' . esc_html__( 'Hide this message', 'flexo-booking' ) . '</a></p></div>';
+		esc_html_e( 'This website sends email without a mail server login (SMTP), so many providers treat booking confirmations as spam. Connect an SMTP plugin such as "WP Mail SMTP" or "FluentSMTP" to the hotel\'s email account, then send a test email.', 'flexo-booking' );
+		echo '</p><p class="flexo-notice-actions">';
+		if ( current_user_can( 'install_plugins' ) ) {
+			echo '<a class="button button-small" href="' . esc_url( admin_url( 'plugin-install.php?s=SMTP&tab=search&type=term' ) ) . '">' . esc_html__( 'Install an SMTP plugin', 'flexo-booking' ) . '</a> ';
+		}
+		echo '<a class="button button-small" href="' . esc_url( admin_url( 'admin.php?page=' . Flexo_Booking_Admin::MENU_SLUG . '-emails#flexo-test-email' ) ) . '">' . esc_html__( 'Send a test email', 'flexo-booking' ) . '</a> ';
+		echo '<a class="flexo-notice-dismiss" href="' . esc_url( $dismiss ) . '">' . esc_html__( 'Hide this message', 'flexo-booking' ) . '</a></p></div>';
 	}
 
 	public static function handle_dismiss_smtp() {
