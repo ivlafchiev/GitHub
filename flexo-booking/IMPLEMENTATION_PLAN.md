@@ -1482,3 +1482,66 @@ field toggles, ordering; slug and base changes; Polylang; schema
 validity and no duplicates with the SEO stand-ins; phones at 360/390/768;
 Import/Export to a fresh site with room content; full regression of
 Days 1–6.
+
+### 17.10 Revision after your answer: Elementor Pro only
+
+Your answer: the plugin will only run with **Elementor Pro** (no free
+version), and a **single room template already exists** in Theme Builder.
+What it needs is each room's information fetched dynamically: name,
+description, amenities, gallery, capacity, room type, size and the rest.
+
+Changes to the plan:
+
+1. **First part = what your template needs.** Part 1 of the work is now:
+   the room fields (A), the public post type with room URLs (so the
+   template's condition *Rooms* applies), and the **dynamic tags** for every
+   field (B), tested inside a Theme Builder single template. Your existing
+   template then only needs each widget pointed at the matching tag.
+2. **New field "Room type"** (e.g. Double room, Suite, Apartment, Studio,
+   Family room) as a **taxonomy** `flexo_room_type`: one or more types per
+   room, a "Room type" dynamic tag, and usable by Pro's Loop Grid query and
+   Taxonomy Filter (e.g. "show only suites"). Translatable with
+   Polylang/WPML. Rooms without a type simply show nothing there.
+3. **Fields and tags your template can use** (all for "the current room"
+   automatically):
+
+   | Template element | Tag | Typical widget |
+   |---|---|---|
+   | Room name | Room name | Heading |
+   | Room type | Room type | Heading / Text Editor |
+   | Short description | Short description | Text Editor |
+   | Full description | Full description | Text Editor |
+   | Gallery (featured photo + gallery, in your order) | Room gallery | Gallery, Image Carousel |
+   | Main photo | Room featured image | Image, section background |
+   | Capacity | Max guests / Max adults / Max children (text or "Up to 4 guests (max. 2 adults)") | Heading, Text Editor, Icon List item |
+   | Size | Room size ("24 m²" or number only) | Heading, Icon List item |
+   | Beds, view | Beds, View | Heading, Icon List item |
+   | Amenities | Amenities (list with icons, comma list, or *n*-th amenity) + **Room amenities** widget (icon list filled automatically) | Text Editor, Icon List, widget |
+   | "From" price | From price (with currency, per night) | Heading, Button text |
+   | Links | Room page URL, Room booking link | Button, any link |
+   | Availability | **Room booking box** widget (dates, guests, live price, Book now) | widget |
+
+4. **Dropped (not needed without free Elementor):** the free-Elementor
+   fallback widgets (gallery, facts, description, price), the optional
+   "room page layout" (Q5 → no) and the Rooms list widget/shortcode – room
+   lists are built with Pro's Loop Grid / Loop Carousel. Kept: the Room
+   booking box and Room amenities widgets (your template needs them), the
+   `[flexo_room_booking]` and `[flexo_room_field]` shortcodes for plain
+   text areas, and a **simple default room page** only as a safety net
+   when no Theme Builder template matches a room (e.g. before the
+   template's condition is set).
+5. **Testing needs Elementor Pro here.** I still need the Elementor Pro
+   zip to test inside the real Pro editor and Theme Builder. It would also
+   help to have your single room template exported (Templates → Theme
+   Builder → ⋮ → Export), so I can import it on the test site and connect
+   each widget to the right tag exactly as you built it.
+6. Questions Q1–Q4, Q6 and Q7 (§17.8): unless you say otherwise I follow
+   the proposals there.
+
+Revised order of work: (1) room fields incl. room type, public post type,
+URLs, room editor, dynamic tags, Room amenities widget – tested in a
+Theme Builder single template; (2) Room booking box widget + "from" price;
+(3) Loop Grid/Carousel support (hidden rooms, order, live availability
+tag), starter templates; (4) links/copy buttons, old slugs, demo rooms,
+Import/Export, Polylang/WPML, schema/SEO; (5) language pass, tests,
+README, zip 1.8.0. One commit per part.
