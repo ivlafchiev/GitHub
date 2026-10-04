@@ -12,3 +12,7 @@ node_modules/
 .DS_Store
 # Build output
 dist/
+
+# Elementor Pro (licensed; used only on local test sites, never committed)
+elementor-pro*.zip
+**/elementor-pro/

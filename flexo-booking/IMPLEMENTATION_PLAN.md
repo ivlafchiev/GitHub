@@ -1,6 +1,6 @@
-# Flexo Booking: implementation plan (Days 1–6)
+# Flexo Booking: implementation plan (Days 1–7)
 
-Status: **All six days done (1.6.0); admin redesign done (1.7.0, §16).** Day 1 (1.1.0) is in §9, Day 2
+Status: **All six days done (1.6.0); admin redesign done (1.7.0, §16); Day 7 planned (§17, waiting for approval).** Day 1 (1.1.0) is in §9, Day 2
 (1.2.0) in §10, Day 3 (1.3.0) in §11, Day 4 (1.4.0) in §12 and Day 5 (1.5.0)
 in §13, each with what was built, the deviations and the test results. §14
 is the status after Day 5. §15 is Day 6 (1.6.0, usability and appearance,
@@ -26,6 +26,7 @@ Contents:
 14. Status after Day 5
 15. Day 6 status, deviations and test results
 16. Admin redesign (1.7.0)
+17. Day 7 plan: dynamic room pages, room listings and availability buttons
 
 ---
 
@@ -1123,3 +1124,361 @@ no Google fonts, BG/EN texts. No database change (DB version stays 7).
 | Upgrade 1.6.0 → 1.7.0 (`upgrade-verify.php`) | 27/27, DB 7, no migration error |
 | Visual check of every admin screen at 1440 px and the main ones at 390 px, in English and Bulgarian | done; fixed during the check: app bar under the WordPress toolbar on phones (collapsing margin), filter search box height on phones, detail tables on phones, untyped inputs, narrow small inputs, empty email table on bookings without emails |
 
+---
+
+## 17. Day 7 plan: dynamic room pages, room listings and availability buttons
+
+**Status: plan only – waiting for approval (with the questions in §17.8) before any code.**
+Target: **1.8.0, migration 8.** Goal: the plugin is the single source of
+truth for rooms; listings, room pages, "from" prices, availability and
+booking all read the same room data.
+
+### 17.1 How rooms are stored today, and what must change
+
+Rooms are **already a custom post type**, `flexo_room`, since 1.0.0. There is
+no custom table and no option holding rooms, so **no data has to move**.
+Today the post type is registered as *private*:
+
+| Today | Value |
+|---|---|
+| `public`, `publicly_queryable`, `show_in_rest`, rewrite | `false` – rooms have no URL |
+| `show_ui`, menu | yes, under **Bookings → Rooms & prices** |
+| `supports` | title, editor, excerpt, thumbnail, page-attributes |
+| Capabilities | own `flexo_room` / `flexo_rooms` (Day 6 roles) |
+
+Room data and where it lives:
+
+| Data | Stored in |
+|---|---|
+| Name, description, short text, photo, order, slug | `post_title`, `post_content`, `post_excerpt`, `_thumbnail_id`, `menu_order`, `post_name` |
+| Price, weekend price, max guests, max adults, identical rooms, minimum nights, size, beds, amenities | post meta `_flexo_price`, `_flexo_weekend_price`, `_flexo_capacity`, `_flexo_max_adults`, `_flexo_units`, `_flexo_min_nights`, `_flexo_size`, `_flexo_beds`, `_flexo_amenities` |
+| Rates offered (+ room amounts), child prices, iCal export token | post meta `_flexo_rate_plans`, `_flexo_child_rules`, `_flexo_ical_token` |
+
+Other data points at rooms **by post ID** – bookings, seasons, closed dates
+(0 = whole property), calendar connections and imported calendar events
+(`room_id` columns), promo-code room limits (`room_ids` list) and the iCal
+export address `/wp-json/flexo-booking/v1/ical/{id}.ics`. Links and
+templates point at rooms **by slug** – `/booking/?room=deluxe-double`,
+`[flexo_booking room="…"]`, the Elementor widget and the "Room booking
+link" tag, and Import/Export matching. Because the IDs and slugs stay the
+same, all of these keep working untouched.
+
+What has to change:
+1. **Register the post type as public** – `public`, `publicly_queryable`,
+   `show_in_nav_menus` (Elementor Pro lists post types for Theme Builder
+   conditions and Loop Grid sources from these), rewrite with the
+   configurable base and `has_archive` off (§17.5). Rooms are **not** made
+   editable with Elementor one by one (Elementor would overwrite the
+   description, which lives in `post_content`); their layout comes from a
+   Theme Builder template or the default room page. The room editor stays
+   the classic screen (`show_in_rest` stays off; Elementor does not need
+   it).
+2. **Room pages**: routing, the default room page, the hidden/demo rules.
+3. **New content meta** (§17.3) and a cached "from" price.
+4. **Context**: one helper that knows "the current room" in a room page,
+   a Theme Builder template, a Loop item, the Elementor editor or a
+   shortcode attribute.
+
+### 17.2 Migration and compatibility (`migrate_8_day7`)
+
+| Area | What happens |
+|---|---|
+| Room posts | Untouched: same IDs, slugs, status, dates. |
+| New fields | Written only when the hotel fills them. Empty = sensible fallback (short description → first words of the description; gallery → featured image; no image → neutral placeholder). Hidden and demo flags are stored only when set, so every existing room stays visible. |
+| Feature switch | New feature **Room pages** (`room_pages`). On for new installs; on upgraded sites it starts **off**, so nothing new becomes public until the hotel switches it on (Q1). While off, rooms stay exactly as private as today. |
+| Rewrite rules | The migration, the feature switch and a change of the room URL base only set a "flush needed" flag; the next request flushes once (soft flush) after the post type is registered. Never on every load. |
+| Seasons, closed dates, rates, child prices, promo limits, iCal feeds and tokens, bookings, CSV | Unchanged – same room IDs. |
+| Booking links `?room=slug` | Unchanged; a room found by an **old slug** (WordPress keeps `_wp_old_slug`) still opens the right room. |
+| Room page URLs | Old slugs redirect (WordPress core for public post types); an old **base path** (e.g. `/rooms/` → `/stai/`) redirects too (previous bases kept in an option). |
+| Polylang / WPML | When rooms become translatable, existing rooms are assigned the default language (§17.4 g, Q6). |
+| Import/Export | Export schema 4 adds the room content (§17.6 J). Files from 1.0–1.7 import as before. |
+| Elementor | The booking form widget, `[flexo_booking]` and the "Room booking link" tag keep their settings. The tag's empty choice becomes **"Current room (automatic)"** – on ordinary pages there is no current room, so it still means "guest chooses", as today. |
+| Tests | Upgrade fixtures from 1.0.0, 1.5.0 and 1.7.0 (bookings, seasons, rates, iCal connections, promo limits, links) verified after migration 8. |
+
+### 17.3 Data model for room content (section A)
+
+| Field (hotel language) | Storage | Notes |
+|---|---|---|
+| Public name | `post_title` (existing) | One name everywhere: website, booking form, emails, admin. |
+| Short description (cards) | `post_excerpt` (existing) | Already used by the booking form's room cards. Fallback: first 25 words of the full description. |
+| Full description | `post_content` (existing) | Rich text editor. |
+| Featured image | `_thumbnail_id` (existing) | |
+| Gallery | `_flexo_gallery` (new): ordered attachment IDs | Media library, drag to reorder; deleted images are skipped. |
+| Size (m²), beds | `_flexo_size`, `_flexo_beds` (existing) | |
+| View | `_flexo_view` (new, text ≤ 100) | Optional, e.g. "Sea view". |
+| Max guests / max adults | `_flexo_capacity`, `_flexo_max_adults` (existing) | **Max children is not a new field**: max guests − 1 (one adult must stay), capped by the Booking rules' children limit. |
+| Identical rooms, minimum nights, prices, rates, child prices | existing | Unchanged. |
+| Amenities | `_flexo_amenities` (existing keys) | Each predefined amenity gets an icon (bundled inline SVG, no icon font, no CDN). |
+| Custom amenities | `_flexo_amenities_custom` (new): list of texts | Up to 20, ≤ 60 characters each, Cyrillic-safe; shown with a generic check icon. |
+| Display order | `menu_order` (existing "Order") | Used by listings, Loop Grid ("Order by: Menu order") and the booking form. |
+| Show on website | `_flexo_hidden` = 1 only when hidden (new) | Hidden rooms stay bookable (staff, links with the slug), but get no public page and are left out of listings and sitemaps. |
+| Demo room | `_flexo_demo` = 1 (new) | §17.6 J. |
+| URL slug | `post_name` (existing) | Edited in the room screen; old slugs keep working. |
+| SEO title / description | `_flexo_seo_title`, `_flexo_seo_description` (new) | Shown and output **only when Yoast SEO and Rank Math are not active**; with them, their own box is used and nothing is duplicated. |
+| "From" price (cache) | `_flexo_from_price` (new) | §17.6 G. |
+
+New settings (**Settings → Room pages** tab, shown when the feature is on):
+room URL base (default `rooms`; a BG site can use e.g. `stai`), the
+"All rooms" page (path, auto-detected – §17.5), "from" price (per night /
+hidden), sticky availability bar on phones (on/off), and which parts the
+default room page shows (gallery, facts, amenities, rates, booking box).
+
+**Room editor** (Day 6 standards, still the WordPress room screen so
+Polylang/WPML/Yoast boxes keep working): the default meta boxes (Excerpt,
+Post attributes, Featured image) are replaced by cards in hotel language –
+*Basics* (name, short description, full description), *Photos* (featured
+image + gallery, drag to reorder), *Room facts* (size, beds, view, max
+guests, max adults, identical rooms, minimum nights), *Prices* (existing:
+price, weekend price, rates, child prices, seasons summary), *Amenities*
+(icon checklist + custom amenities), *On the website* (show on website,
+display order, room page link and booking link with **Copy** buttons),
+*Search engines* (slug, SEO title/description, or a note pointing to
+Yoast/Rank Math).
+
+### 17.4 Elementor Pro path and the fallback without Pro
+
+**a. Post type for Pro.** Public + `show_in_nav_menus` makes **Rooms**
+appear in Theme Builder (Single → Rooms → All / specific rooms) and as a
+Loop Grid / Loop Carousel query source. Ordering uses Pro's own
+"Menu order" option = the room's display order.
+
+**b. Current room.** One helper, used by every tag, widget and shortcode:
+explicit room setting/attribute → the post being rendered when it is a
+room (Loop item, Theme Builder single, room page) → the queried room →
+Elementor's preview post for the template → in the editor only, the first
+room as sample data. Outside rooms with no setting, room tags return
+empty values (no PHP notices, no broken markup).
+
+**c. Dynamic tags** (group "Flexo Booking"), each with an optional manual
+room selector ("Current room" by default):
+
+| Tag | Elementor category | Use in |
+|---|---|---|
+| Room name, Short description, Full description, View, Beds | Text | Heading, Text Editor |
+| Size, Max guests, Max adults, Max children | Text + Number | Heading, Text Editor, Counter |
+| Amenities | Text (HTML list with icons / comma list / *n*-th amenity) | Text Editor; Icon List items via "*n*-th amenity" |
+| "From" price | Text (formatted with currency; empty when hidden or unknown) | Heading, Button text |
+| Featured image | Image | Image, backgrounds |
+| Gallery | Gallery (featured + gallery, in order) | Gallery, Image Carousel |
+| Room page URL | URL | Button, any link |
+| Room booking link | URL (current room automatic; booking page path from Settings → Hotel, overridable; optional dates/guests from the page address) | Button, any link |
+
+The amenities icon list is best done with the **Room amenities** widget
+(an Icon List repeater cannot be filled by one tag).
+
+Free Elementor lists tags registered by plugins in its dynamic-tag picker
+(checked in the Elementor 4.4 source), so all these tags also work
+**without Pro**; only Theme Builder and Loop Grid/Carousel need Pro.
+
+**d. Theme Builder.** If a published single template with a condition
+matching the room exists, Pro renders it. The plugin's default room page
+only takes over when Pro is inactive or no template matches (checked
+through Pro's conditions manager, not only filter priority).
+
+**e. Loop Grid / Loop Carousel.** Normal Pro queries with source "Rooms".
+Hidden and demo rooms are removed from **front-end** room queries in
+`pre_get_posts`; the booking engine's own queries set a flag so they still
+see hidden rooms (they must stay bookable). Each Loop item renders with
+its room as the current post, so every tag shows that room's data.
+
+**f. Starter templates** in `assets/elementor/`: a Theme Builder **single
+room** template and a **Loop item room card**, built only with dynamic tags
+and the plugin's widgets, no fixed colours or fonts (they inherit the
+kit's global styles). They can be imported under *Templates → Import*;
+with Pro active, a button on the Rooms screen installs them in one click
+(the single template gets the condition *Rooms*). Built and checked in the
+real Pro editor if Pro is available (§17.7).
+
+**g. Multilingual.** Rooms become translatable post types in Polylang and
+WPML. A translation is a separate post holding only texts (name,
+descriptions, view, custom amenities, SEO, slug). **The booking engine
+always works on the default-language room** (prices, units, seasons,
+bookings, iCal), so translations never become extra rooms in the booking
+form or double the inventory. Room names shown to a guest use the
+translation in the guest's language. WPML gets a `wpml-config.xml`
+(booking fields copied, texts translated). Polylang is tested; WPML is
+not (paid plugin).
+
+**h. Without Pro (free Elementor, or Pro licence lapsed).**
+- **Default room page** used whenever no Theme Builder template applies:
+  classic themes get a plugin template (`get_header()` + room page +
+  `get_footer()`, overridable as `flexo-booking/single-room.php` in the
+  theme); block themes get a plugin-registered block template (header and
+  footer template parts around the room page). Elementor Pro header/footer
+  templates still apply around it.
+- **Widgets that work in free Elementor**: Rooms list, Room booking box,
+  Room gallery, Room facts, Room amenities, Room description, Room price –
+  each auto-detects the current room or lets you pick one.
+- **Shortcodes**: `[flexo_rooms]`, `[flexo_room_booking]`, `[flexo_room]`
+  (whole default room page), `[flexo_room_gallery]`, `[flexo_room_facts]`,
+  `[flexo_room_amenities]`, `[flexo_room_description]`,
+  `[flexo_room_price]`, `[flexo_room_field field="size"]`,
+  `[flexo_room_link type="booking|page"]` – all with an optional `room=""`.
+- **Optional "room page layout"** (Q5): a normal page designed once in free
+  Elementor with these widgets, used as the layout for every room – the
+  no-Pro equivalent of a Theme Builder single template.
+- Deactivating Pro: room pages fall back to the layout page or the default
+  page; buttons using the plugin's tags keep working; Loop Grid sections
+  disappear (they are Pro widgets) – documented, with `[flexo_rooms]` as the
+  replacement.
+
+### 17.5 Room pages (section D)
+
+- **URLs**: `/{base}/{slug}/`, base from settings (default `rooms`),
+  path-based so they survive moving the site. No post-type archive at the
+  base: most templates already have a "Rooms" page at `/rooms/` and an
+  archive would hide it. The **All rooms page** is that page (auto-detected:
+  a page containing `[flexo_rooms]`, the Rooms list widget or a Loop Grid
+  with source Rooms, else a page at the base path); the Room pages tab
+  offers **Create the rooms page** when none exists.
+- **Clashes**: if a static page exists at `/{base}/{slug}/` (old template
+  child pages) and no room has that slug, the static page is still served;
+  Health warns about such pages.
+- **Default room page**: gallery, name, key facts (size, beds, guests),
+  description, amenities, "from" price, booking box (F), rates summary
+  (meals + cancellation line, Day 6 style), cancellation info, link back
+  to all rooms. Uses the booking form's CSS and the Appearance settings
+  (Match my website / Custom), responsive, Day 6 accessibility rules.
+- **Hidden rooms**: 404 (not a redirect – documented), `noindex`, left out
+  of the WordPress sitemap and of Yoast/Rank Math sitemaps. Demo rooms:
+  visible only to logged-in staff (Q7).
+- **Structured data**: JSON-LD `HotelRoom` with `Offer` (from price,
+  currency), occupancy, bed, floor size, amenities, `containedInPlace` the
+  hotel (name, address, phone from Settings → Hotel). Without an SEO plugin
+  it is printed on its own; with **Yoast** or **Rank Math** it is added to
+  their schema graph through their filters instead (one graph, no second
+  WebPage), and skipped if Rank Math already has a HotelRoom/Product schema
+  on that room.
+- **SEO title/description**: output only without Yoast/Rank Math.
+
+### 17.6 Listings, booking box, "from" price, links, templates (E–J)
+
+**E. Room listings.** Rooms list widget and `[flexo_rooms]`: grid or list,
+columns per device, all / selected rooms, order (display order, name,
+price), fields to show (image, name, short description, facts, amenity
+icons, from price, buttons), button texts. Cards: **View room** → room
+page (hidden when room pages are off); **Check availability / Book now** →
+booking page with the room preselected. Optional live availability: when
+the page address carries dates (search bar set to "this page"), a small
+script asks the existing `/availability` endpoint **once** and fills each
+card (Rooms list cards and Loop items via an "Availability for chosen
+dates" tag); cached pages keep working because the HTML stays the same.
+
+**F. Booking box.** Compact form (Day 6 date picker, guests) bound to the
+room; checks the existing `/availability` endpoint with `room=` (the same
+code as the booking flow, so totals match); shows availability and the
+total; **Book now** opens the booking page with room, dates, guests (and
+the rate when the room has only one), and Day 6's prefill skips the
+answered steps. Unavailable → nearby dates and other rooms (Day 6
+`/alternatives`). On room pages, in Theme Builder templates, as a widget
+and as `[flexo_room_booking room=""]`. Optional sticky "Check
+availability" bar on phones.
+
+**G. "From" price – definition.** The lowest **average price per night** a
+guest can actually get for the room in the next 12 months: for every
+arrival day that is not in a closed period and allows arrival, a stay of
+the room's minimum length is quoted by the real pricing service (seasons,
+weekend prices, base price) for **2 adults** (or the room's maximum if
+lower) with the **base rate** (the first rate the room offers; none if it
+offers none). Tourist tax and promo codes are not included (shown in the
+booking flow). Availability is not considered (a "from" price describes
+the room type). Because every candidate is a real quote, the booking flow
+will honour it. A cheap scan finds the candidates; the best ones are
+confirmed with the real quote. Cached per room (`_flexo_from_price`),
+recalculated in the background when a room, season, closed date, rate,
+child price or currency setting changes, and daily (the 12-month window
+moves). Setting: show per night, or hide.
+
+**I. Linking buttons.** Elementor: Link → dynamic tag **Room booking link**.
+Plain links: `/booking/?room=deluxe-double` with optional
+`&check_in=2026-07-01&check_out=2026-07-04&adults=2&children=1&children_ages=5`
+(documented); room page `/rooms/deluxe-double/`. Old slugs keep working
+for both. Each room has **Copy booking link** and **Copy room page link**
+(room editor and Rooms list).
+
+**J. Templates, moving sites, demo rooms.**
+- README guide: converting a template's static room sections to Loop Grid
+  room list + Theme Builder single room + dynamic booking buttons (with and
+  without Pro).
+- Import/Export (schema 4): content fields, gallery (image URLs + alt
+  texts), view, custom amenities, SEO, hidden flag, display order. With
+  "Download room images" ticked, featured and gallery images are
+  re-downloaded; otherwise rooms show the placeholder and the room screen
+  offers **Download missing images** later. Missing images never cause
+  errors.
+- **Create demo rooms** (Rooms screen): 3 rooms with placeholder texts and
+  bundled neutral placeholder images, marked *Demo* everywhere in the
+  admin, visible only to logged-in staff on the website, **never
+  bookable** (the booking engine skips demo rooms) until the hotel edits
+  the room and switches off "Demo room". **Remove demo rooms** deletes them
+  in one click (refused for any room that has bookings).
+
+### 17.7 Risks and how they are handled
+
+| Risk | Handling |
+|---|---|
+| **Elementor Pro is not in this environment** (the brief's zip path was not filled in; downloads from wordpress.org/GitHub are blocked here) | Please send the zip path (Q8). Without it: the post-type settings, tags, widgets and shortcodes are tested with **free Elementor** (rendering, programmatically built pages and loops), and these Pro parts stay **untested in the real Pro editor**: Theme Builder conditions UI, Single template rendering, Loop Grid/Carousel with source Rooms, Pro's Menu-order ordering, starter-template import into Pro. |
+| Pro installed but not licence-activated | Elementor shows "Connect & Activate" for some Pro features without a licence; if that blocks Theme Builder here, I'll say exactly which steps could not be run. |
+| Free Elementor's editor can't be opened here (the test copy is a source checkout without built editor files; building needs Node 24) | I'll try building it from source; if that fails, editor UI checks (tag picker, widget panels) are done in your Pro editor and listed as untested. |
+| Public URLs on upgraded sites clash with existing pages or appear in search engines unexpectedly | Room pages feature off after upgrade (Q1); static child pages still served; Health warning; no archive at the base. |
+| Hidden rooms disappearing from the booking engine | Hiding only applies to front-end listing queries; engine queries are flagged; tests cover staff booking and links for hidden rooms. |
+| Translations becoming extra rooms or doubling inventory | Engine uses the default-language room only; Polylang tests for the booking form, availability, calendar and iCal with translated rooms. |
+| "From" price showing a price the booking flow won't give | Every value comes from a real quote of a bookable stay; recalculated on every price change; hidden when no valid value. |
+| Cost of calculating "from" prices (365 quotes per room) | Background job (WP-Cron single event), cheap scan + few real quotes, cache; never on a guest's request. |
+| Duplicate SEO output / schema with Yoast or Rank Math | Our SEO fields and schema step aside or join their graph. Yoast and Rank Math cannot be downloaded here – tested with stand-ins that mimic their hooks; must be checked on a real site. |
+| Theme compatibility of the default room page | Classic themes (Hello, Twenty Twenty-One) and a block theme (Twenty Twenty-Five) tested; theme override file documented. |
+| Rewrite rules | Flush only on activation, migration, base change or feature switch (flag + one flush). |
+| Starter templates breaking with future Elementor versions | Built with the installed Pro version, only core widgets + plugin widgets + dynamic tags, no custom CSS; versions documented. |
+| Scope | Delivered in parts, each tested and committed (§17.9). |
+
+### 17.8 Questions for approval
+
+- **Q1 – Room pages after upgrade.** New feature "Room pages": on for new
+  sites, **off on upgraded sites** until the hotel switches it on (avoids
+  sudden public URLs and clashes with existing static room pages). OK?
+- **Q2 – "All rooms" URL.** No automatic archive at `/rooms/`; the All
+  rooms page is the hotel's own page (auto-detected or created with one
+  click). OK?
+- **Q3 – Hidden rooms.** Public page → **404** (with `noindex`), not a
+  redirect. OK?
+- **Q4 – "From" price.** Definition in §17.6 G (minimum-length stay,
+  2 adults, first rate, without tourist tax and promo codes, availability
+  ignored, closed periods excluded). OK?
+- **Q5 – Room page layout without Pro.** Add the optional "room page
+  layout" (a page designed once in free Elementor, used for every room)?
+  Or keep only the built-in default page?
+- **Q6 – Multilingual model.** Rooms become translatable; translations
+  hold texts only and the engine uses the default-language room. OK?
+- **Q7 – Demo rooms** visible only to logged-in staff on the website and
+  never bookable until edited. OK?
+- **Q8 – Elementor Pro zip.** The brief's path was left as `[PATH TO ZIP]`
+  and no zip is on this machine. Please upload it (and, if you want them
+  tested for real, Yoast SEO and Rank Math zips – their downloads are
+  blocked here). Is testing Pro without licence activation acceptable?
+
+### 17.9 Order of work and tests
+
+1. Post type, migration 8, feature + settings, routing (URLs, hidden,
+   old slugs/bases), room editor (A) – commit.
+2. Default room page, booking box, "from" price, schema/SEO (D, F, G) –
+   commit.
+3. Rooms list widget/shortcode, fallback widgets and shortcodes, live
+   availability (E, H) – commit.
+4. Dynamic tags, Theme Builder/Loop support, starter templates (B, C) –
+   commit.
+5. Links/copy buttons, demo rooms, Import/Export, Polylang/WPML (I, J) –
+   commit.
+6. Language pass (EN/BG), tests, regression, docs (README guides listed in
+   the brief), zip 1.8.0.
+
+Tests (`tests/test-day7.php`, `tests/e2e/day7.js`): migration from 1.0.0 /
+1.5.0 / 1.7.0 fixtures; old booking links and slugs; Pro tests listed in
+the brief if Pro is available (else marked untested); default room page
+on a classic theme, a block theme and with free Elementor; fallback
+widgets and shortcodes auto-detecting the room; Pro deactivation; booking
+box totals equal the booking flow, step skipping, alternatives; "from"
+price with seasons, closed periods and price changes; Rooms list layouts,
+field toggles, ordering; slug and base changes; Polylang; schema
+validity and no duplicates with the SEO stand-ins; phones at 360/390/768;
+Import/Export to a fresh site with room content; full regression of
+Days 1–6.
