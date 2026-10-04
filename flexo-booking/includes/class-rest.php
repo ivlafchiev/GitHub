@@ -349,7 +349,7 @@ class Flexo_Booking_Rest {
 
 	public static function rooms() {
 		$rooms = array();
-		foreach ( Flexo_Booking_Rooms::all() as $post ) {
+		foreach ( Flexo_Booking_Rooms::bookable() as $post ) {
 			$room = Flexo_Booking_Rooms::to_array( $post );
 			if ( $room['units'] < 1 ) {
 				continue;

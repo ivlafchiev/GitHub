@@ -19,7 +19,7 @@ class Flexo_Booking_Migrations {
 
 	const OPTION       = 'flexo_booking_db_version';
 	const ERROR_OPTION = 'flexo_booking_migration_error';
-	const LATEST       = 7;
+	const LATEST       = 8;
 
 	/**
 	 * @return array Version => method name.
@@ -33,6 +33,7 @@ class Flexo_Booking_Migrations {
 			5 => 'migrate_5_day4',
 			6 => 'migrate_6_day5',
 			7 => 'migrate_7_day6',
+			8 => 'migrate_8_day7',
 		);
 	}
 
@@ -222,6 +223,22 @@ class Flexo_Booking_Migrations {
 		if ( is_array( $enabled ) && ! in_array( 'custom_appearance', $enabled, true ) ) {
 			$enabled[] = 'custom_appearance';
 			update_option( Flexo_Booking_Features::ENABLED_OPTION, $enabled );
+		}
+		return true;
+	}
+
+	/**
+	 * Day 7 (1.8.0): rooms get public pages (/rooms/{slug}/) and content
+	 * (gallery, amenities with icons, details, room types). Room posts keep
+	 * their IDs and slugs, so bookings, seasons, closed dates, rates, promo
+	 * limits, calendar feeds and ?room= links are untouched. Amenities ticked
+	 * before are read as ready-made amenities with icons. Every room stays
+	 * on the website (nothing is hidden until the hotel says so).
+	 */
+	private static function migrate_8_day7() {
+		// The room rules are added on the next request, once the post type is registered.
+		if ( class_exists( 'Flexo_Booking_Room_Pages' ) ) {
+			Flexo_Booking_Room_Pages::schedule_flush();
 		}
 		return true;
 	}

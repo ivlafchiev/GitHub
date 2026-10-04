@@ -1865,3 +1865,23 @@ body.flexo-advanced-on .flexo-settings tr.flexo-advanced {
 		top: 0;
 	}
 }
+
+/* Settings → Room pages: the address with the editable base (Day 7). */
+.flexo-url-field {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 2px;
+	max-width: 100%;
+}
+
+.flexo-admin-ui .wrap .flexo-url-field input[type="text"] {
+	width: 11em;
+	min-width: 0;
+}
+
+.flexo-url-field__home,
+.flexo-url-field__rest {
+	color: var(--fx-muted, #50575e);
+	overflow-wrap: anywhere;
+}

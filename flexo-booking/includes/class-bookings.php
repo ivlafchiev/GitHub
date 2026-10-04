@@ -141,10 +141,11 @@ class Flexo_Booking_Bookings {
 		}
 
 		if ( $room_id_or_slug ) {
+			// A named room is offered even when it is not shown on the website.
 			$post  = Flexo_Booking_Rooms::find( $room_id_or_slug );
-			$posts = $post ? array( $post ) : array();
+			$posts = $post && ! Flexo_Booking_Room_Content::is_demo( $post->ID ) ? array( $post ) : array();
 		} else {
-			$posts = Flexo_Booking_Rooms::all();
+			$posts = Flexo_Booking_Rooms::bookable();
 		}
 
 		if ( Flexo_Booking_Seasons::enabled() ) {
@@ -213,7 +214,7 @@ class Flexo_Booking_Bookings {
 				'capacity'                => $room['capacity'],
 				'size'                    => $room['size'],
 				'beds'                    => $room['beds'],
-				'amenities'               => Flexo_Booking_Rooms::amenity_labels( $room['amenities'] ),
+				'amenities'               => wp_list_pluck( Flexo_Booking_Room_Content::amenities( $room['id'] ), 'label' ),
 				'max_adults'              => Flexo_Booking_Children::enabled() ? $room['max_adults'] : 0,
 				'available'               => '' === $reason,
 				'reason'                  => $reason,
@@ -320,6 +321,9 @@ class Flexo_Booking_Bookings {
 		$post = Flexo_Booking_Rooms::find( isset( $data['room'] ) ? $data['room'] : 0 );
 		if ( ! $post ) {
 			return new WP_Error( 'flexo_invalid_room', __( 'Please choose a room.', 'flexo-booking' ) );
+		}
+		if ( Flexo_Booking_Room_Content::is_demo( $post->ID ) ) {
+			return new WP_Error( 'flexo_demo_room', __( 'This is a demo room and cannot be booked. Edit the room and switch off "Demo room" to take bookings.', 'flexo-booking' ) );
 		}
 		$room = Flexo_Booking_Rooms::to_array( $post );
 

@@ -358,9 +358,12 @@ class Flexo_Booking_Guest {
 	 * @return array[]
 	 */
 	private static function fitting_rooms( $room, $adults, $children ) {
-		$posts = $room ? array_filter( array( Flexo_Booking_Rooms::find( $room ) ) ) : Flexo_Booking_Rooms::all();
+		$posts = $room ? array_filter( array( Flexo_Booking_Rooms::find( $room ) ) ) : Flexo_Booking_Rooms::bookable();
 		$out   = array();
 		foreach ( $posts as $post ) {
+			if ( Flexo_Booking_Room_Content::is_demo( $post->ID ) ) {
+				continue;
+			}
 			$data = Flexo_Booking_Rooms::to_array( $post );
 			if ( $data['units'] > 0 && '' === Flexo_Booking_Bookings::capacity_error( $data, $adults, $children ) ) {
 				$out[] = $data;

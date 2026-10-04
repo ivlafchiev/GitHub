@@ -3,7 +3,7 @@
  * Plugin Name:       Flexo Booking
  * Plugin URI:        https://github.com/ivlafchiev/GitHub
  * Description:       Room & accommodation booking system for FlexoHotels websites. Works with any theme via the [flexo_booking] shortcode and ships a native Elementor widget. Settings and rooms can be exported/imported between sites.
- * Version:           1.7.0
+ * Version:           1.8.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            FlexoHotels
@@ -18,8 +18,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'FLEXO_BOOKING_VERSION', '1.7.0' );
-define( 'FLEXO_BOOKING_DB_VERSION', '7' ); // Kept for compatibility; see Flexo_Booking_Migrations::LATEST.
+define( 'FLEXO_BOOKING_VERSION', '1.8.0' );
+define( 'FLEXO_BOOKING_DB_VERSION', '8' ); // Kept for compatibility; see Flexo_Booking_Migrations::LATEST.
 define( 'FLEXO_BOOKING_FILE', __FILE__ );
 define( 'FLEXO_BOOKING_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FLEXO_BOOKING_URL', plugin_dir_url( __FILE__ ) );
@@ -33,6 +33,10 @@ require_once FLEXO_BOOKING_DIR . 'includes/class-settings.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-money.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-dates.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-rooms.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-room-icons.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-room-content.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-room-pages.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-room-render.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-seasons.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-closures.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-inventory.php';
@@ -72,6 +76,7 @@ require_once FLEXO_BOOKING_DIR . 'includes/admin/class-health.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-help.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-admin-ui.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-wizard.php';
+require_once FLEXO_BOOKING_DIR . 'includes/admin/class-room-editor.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-portability.php';
 require_once FLEXO_BOOKING_DIR . 'includes/elementor/class-elementor.php';
 
@@ -84,6 +89,9 @@ add_action(
 
 		Flexo_Booking_Install::maybe_upgrade();
 		Flexo_Booking_Rooms::init();
+		Flexo_Booking_Room_Content::init();
+		Flexo_Booking_Room_Pages::init();
+		Flexo_Booking_Room_Render::init();
 		Flexo_Booking_Emails::init();
 		Flexo_Booking_Payments::init();
 		Flexo_Booking_Privacy::init();
@@ -118,6 +126,7 @@ add_action(
 			Flexo_Booking_Today_Admin::init();
 			Flexo_Booking_Help::init();
 			Flexo_Booking_Wizard::init();
+			Flexo_Booking_Room_Editor::init();
 		}
 	}
 );

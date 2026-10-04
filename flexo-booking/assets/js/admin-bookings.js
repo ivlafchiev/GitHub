@@ -138,6 +138,38 @@
 		} );
 	}
 
+	/* ---- Copy a link (room screen, room list, room pages) ---- */
+	document.addEventListener( 'click', function ( e ) {
+		var btn = e.target.closest ? e.target.closest( '[data-flexo-copy-text]' ) : null;
+		if ( ! btn ) {
+			return;
+		}
+		e.preventDefault();
+		var text = btn.getAttribute( 'data-flexo-copy-text' );
+		var label = btn.getAttribute( 'data-flexo-label' ) || btn.textContent;
+		btn.setAttribute( 'data-flexo-label', label );
+		var done = function () {
+			btn.textContent = t.copied || 'Copied';
+			window.setTimeout( function () {
+				btn.textContent = label;
+			}, 1600 );
+		};
+		if ( navigator.clipboard && window.isSecureContext ) {
+			navigator.clipboard.writeText( text ).then( done );
+			return;
+		}
+		var area = document.createElement( 'textarea' );
+		area.value = text;
+		area.setAttribute( 'readonly', '' );
+		area.style.position = 'fixed';
+		area.style.opacity = '0';
+		document.body.appendChild( area );
+		area.select();
+		document.execCommand( 'copy' );
+		area.remove();
+		done();
+	} );
+
 	/* ---- Wizard: wait for the test booking ---- */
 	var wait = document.querySelector( '[data-flexo-wait-booking]' );
 	if ( wait && cfg.ajaxUrl ) {

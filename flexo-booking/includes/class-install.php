@@ -14,8 +14,10 @@ class Flexo_Booking_Install {
 
 	public static function activate() {
 		Flexo_Booking_Migrations::run();
+		Flexo_Booking_Room_Content::register_taxonomy();
 		Flexo_Booking_Rooms::register_post_type();
 		flush_rewrite_rules();
+		delete_option( Flexo_Booking_Room_Pages::FLUSH_OPTION );
 		Flexo_Booking_Roles::install();
 		Flexo_Booking_Wizard::on_activate();
 	}

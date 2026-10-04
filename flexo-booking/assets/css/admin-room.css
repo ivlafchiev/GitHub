@@ -1,0 +1,869 @@
+/**
+ * Room screen (Rooms & prices → a room). Loaded only there; everything is
+ * scoped to the room screen's body classes.
+ */
+
+.flexo-admin-ui.post-type-flexo_room .flexo-editor-label {
+	margin: 22px 0 8px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-editor-label h2 {
+	margin: 0;
+	padding: 0;
+	color: var(--fx-text);
+	font-size: 15px;
+	font-weight: 650;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-editor-label p {
+	margin: 2px 0 0;
+	color: var(--fx-muted);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-card-intro {
+	margin: 10px 0 12px;
+	color: var(--fx-muted);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-optional {
+	color: var(--fx-muted);
+	font-size: 12px;
+	font-weight: 400;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-muted {
+	color: var(--fx-muted);
+	font-weight: 400;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-count-line {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 4px 16px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-counter {
+	color: var(--fx-muted);
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-counter.is-over {
+	color: var(--fx-warning);
+}
+
+/* ---- Fields grid ---- */
+
+.flexo-admin-ui.post-type-flexo_room .flexo-fields {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 16px 20px;
+	margin: 12px 0 4px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin: 0;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-website .flexo-field {
+	margin: 16px 0 0;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-field > label {
+	color: var(--fx-text);
+	font-weight: 600;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-field > input[type="text"],
+.flexo-admin-ui.post-type-flexo_room .flexo-field > input[type="number"]:not(.small-text) {
+	width: 100%;
+	max-width: 100%;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-field .description {
+	margin: 0;
+	font-size: 12.5px;
+	line-height: 1.45;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-input-unit {
+	display: flex;
+	align-items: stretch;
+	max-width: 220px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .wrap .flexo-input-unit input {
+	flex: 1 1 auto;
+	min-width: 0;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-input-unit > span {
+	display: flex;
+	align-items: center;
+	padding: 0 12px;
+	border: 1px solid var(--fx-border-strong);
+	border-left: 0;
+	border-radius: 0 var(--fx-radius-sm) var(--fx-radius-sm) 0;
+	background: var(--fx-surface-2);
+	color: var(--fx-muted);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-subsection {
+	margin-top: 18px;
+	padding-top: 16px;
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-subsection--first {
+	margin-top: 8px;
+	padding-top: 0;
+	border-top: 0;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-subsection h4,
+.flexo-admin-ui.post-type-flexo_room .flexo-photos h4 {
+	margin: 0 0 10px;
+	color: var(--fx-text);
+	font-size: 13px;
+	font-weight: 650;
+}
+
+/* ---- Photos ---- */
+
+.flexo-admin-ui.post-type-flexo_room .flexo-photos {
+	display: grid;
+	grid-template-columns: minmax(200px, 260px) 1fr;
+	gap: 24px;
+	margin-top: 12px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-photo-slot {
+	position: relative;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-photo-slot__pick {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	aspect-ratio: 4 / 3;
+	padding: 0;
+	overflow: hidden;
+	border: 2px dashed var(--fx-border-strong);
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-surface-2);
+	color: var(--fx-primary);
+	font: inherit;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-photo-slot.has-photo .flexo-photo-slot__pick {
+	border-style: solid;
+	border-color: var(--fx-border);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-photo-slot__pick:focus-visible {
+	outline: 0;
+	box-shadow: 0 0 0 3px var(--fx-ring);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-photo-slot__pick img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-photo-slot__empty {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	padding: 12px;
+	text-align: center;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-photo-slot.has-photo .flexo-photo-slot__empty,
+.flexo-admin-ui.post-type-flexo_room .flexo-photo-slot:not(.has-photo) .flexo-photo-slot__remove {
+	display: none;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-photo-slot__remove {
+	margin-top: 6px;
+	color: var(--fx-danger);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-gallery {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+	gap: 10px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-gallery__item,
+.flexo-admin-ui.post-type-flexo_room .flexo-gallery__add,
+.flexo-admin-ui.post-type-flexo_room .flexo-gallery__placeholder {
+	position: relative;
+	aspect-ratio: 1;
+	margin: 0;
+	overflow: hidden;
+	border-radius: var(--fx-radius-sm);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-gallery__item {
+	border: 1px solid var(--fx-border);
+	background: var(--fx-surface-3);
+	cursor: grab;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-gallery__item img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-gallery__placeholder {
+	border: 2px dashed var(--fx-primary);
+	background: var(--fx-primary-soft);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-gallery__remove {
+	position: absolute;
+	top: 4px;
+	right: 4px;
+	width: 26px;
+	height: 26px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: rgba(15, 29, 42, 0.72);
+	color: #fff;
+	font-size: 18px;
+	line-height: 26px;
+	cursor: pointer;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-gallery__remove:hover,
+.flexo-admin-ui.post-type-flexo_room .flexo-gallery__remove:focus-visible {
+	background: var(--fx-danger);
+	outline: 0;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-gallery__add button {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	width: 100%;
+	height: 100%;
+	padding: 6px;
+	border: 2px dashed var(--fx-border-strong);
+	border-radius: var(--fx-radius-sm);
+	background: var(--fx-surface-2);
+	color: var(--fx-primary);
+	font: inherit;
+	font-size: 12.5px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-gallery__add button:hover,
+.flexo-admin-ui.post-type-flexo_room .flexo-photo-slot__pick:hover {
+	border-color: var(--fx-primary);
+	background: var(--fx-primary-soft);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-photos .description {
+	margin-top: 8px;
+}
+
+/* ---- Room types ---- */
+
+.flexo-admin-ui.post-type-flexo_room .flexo-type-list {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-check-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 12px;
+	border: 1px solid var(--fx-border-strong);
+	border-radius: 999px;
+	background: var(--fx-surface);
+	cursor: pointer;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-check-chip:has(input:checked) {
+	border-color: var(--fx-primary);
+	background: var(--fx-primary-soft);
+	color: var(--fx-primary-hover);
+	font-weight: 600;
+}
+
+.flexo-admin-ui.post-type-flexo_room .wrap .flexo-check-chip input[type="checkbox"] {
+	margin: 0;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-type-add {
+	display: inline-flex;
+	gap: 6px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .wrap .flexo-type-add input {
+	width: 200px;
+}
+
+/* ---- Sortable lists: amenities, details ---- */
+
+.flexo-admin-ui.post-type-flexo_room .flexo-sort-list {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-sort-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	padding: 6px 8px;
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-surface);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-sort-item:focus-within {
+	border-color: var(--fx-border-strong);
+	box-shadow: var(--fx-shadow);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-sort-placeholder {
+	height: 46px;
+	margin: 0;
+	border: 2px dashed var(--fx-primary);
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-primary-soft);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-drag {
+	display: inline-flex;
+	color: var(--fx-muted);
+	cursor: grab;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-drag svg {
+	width: 16px;
+	height: 16px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-icon-pick {
+	display: inline-flex;
+	flex: 0 0 auto;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	padding: 0;
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-sm);
+	background: var(--fx-primary-soft);
+	color: var(--fx-primary);
+	cursor: pointer;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-icon-pick:hover,
+.flexo-admin-ui.post-type-flexo_room .flexo-icon-pick:focus-visible {
+	border-color: var(--fx-primary);
+	outline: 0;
+	box-shadow: 0 0 0 3px var(--fx-ring);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-icon {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	flex: 0 0 auto;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-icon--mask {
+	background-color: currentColor;
+	-webkit-mask: var(--flexo-icon) center / contain no-repeat;
+	mask: var(--flexo-icon) center / contain no-repeat;
+}
+
+.flexo-admin-ui.post-type-flexo_room .wrap .flexo-sort-item input[type="text"] {
+	flex: 1 1 auto;
+	min-width: 0;
+	min-height: 36px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .wrap .flexo-detail .flexo-detail__label {
+	flex: 0 1 34%;
+	font-weight: 600;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-sort-item__moves {
+	display: inline-flex;
+	gap: 2px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-move,
+.flexo-admin-ui.post-type-flexo_room .flexo-remove {
+	width: 30px;
+	height: 30px;
+	padding: 0;
+	border: 0;
+	border-radius: var(--fx-radius-sm);
+	background: transparent;
+	color: var(--fx-muted);
+	font-size: 16px;
+	line-height: 30px;
+	cursor: pointer;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-remove {
+	font-size: 20px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-move:hover,
+.flexo-admin-ui.post-type-flexo_room .flexo-move:focus-visible {
+	background: var(--fx-surface-3);
+	color: var(--fx-text);
+	outline: 0;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-remove:hover,
+.flexo-admin-ui.post-type-flexo_room .flexo-remove:focus-visible {
+	background: var(--fx-danger-soft);
+	color: var(--fx-danger);
+	outline: 0;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-sort-item:first-child .flexo-move[data-flexo-move="-1"],
+.flexo-admin-ui.post-type-flexo_room .flexo-sort-item:last-child .flexo-move[data-flexo-move="1"] {
+	visibility: hidden;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-empty-note {
+	margin: 0;
+	padding: 14px 16px;
+	border: 1px dashed var(--fx-border-strong);
+	border-radius: var(--fx-radius-md);
+	color: var(--fx-muted);
+	text-align: center;
+}
+
+/* ---- Amenity chips ---- */
+
+.flexo-admin-ui.post-type-flexo_room .flexo-preset-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-preset-chip,
+.flexo-admin-ui.post-type-flexo_room .flexo-suggest-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 34px;
+	padding: 5px 12px 5px 10px;
+	border: 1px solid var(--fx-border-strong);
+	border-radius: 999px;
+	background: var(--fx-surface);
+	color: var(--fx-text-2);
+	font: inherit;
+	font-size: 13px;
+	cursor: pointer;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-suggest-chip {
+	min-height: 30px;
+	padding: 3px 12px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-preset-chip:hover,
+.flexo-admin-ui.post-type-flexo_room .flexo-suggest-chip:hover {
+	border-color: var(--fx-primary);
+	color: var(--fx-primary);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-preset-chip:focus-visible,
+.flexo-admin-ui.post-type-flexo_room .flexo-suggest-chip:focus-visible {
+	outline: 0;
+	box-shadow: 0 0 0 3px var(--fx-ring);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-preset-chip[aria-pressed="true"] {
+	border-color: var(--fx-primary);
+	background: var(--fx-primary);
+	color: #fff;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-preset-chip__icon {
+	width: 16px;
+	height: 16px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-own-add {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin-top: 16px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-own-add label {
+	font-weight: 600;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-own-add__row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-detail-add {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin: 12px 0 0;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-detail-add .button svg {
+	width: 16px;
+	height: 16px;
+	vertical-align: -3px;
+}
+
+/* ---- Search engines ---- */
+
+.flexo-admin-ui.post-type-flexo_room .flexo-seo {
+	display: grid;
+	grid-template-columns: 1fr minmax(240px, 380px);
+	gap: 24px;
+	margin-top: 12px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-seo__fields {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-seo__preview {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	align-self: start;
+	padding: 14px 16px;
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-surface-2);
+	font-family: Arial, sans-serif;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-seo__label {
+	color: var(--fx-muted);
+	font-family: var(--fx-font);
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-seo__url {
+	overflow: hidden;
+	color: #4d5156;
+	font-size: 12px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-seo__title {
+	color: #1a0dab;
+	font-size: 18px;
+	line-height: 1.3;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-seo__desc {
+	color: #4d5156;
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+/* ---- On the website (sidebar) ---- */
+
+.flexo-admin-ui.post-type-flexo_room .flexo-website .description {
+	margin: 6px 0 0;
+	font-size: 12.5px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-website__demo {
+	margin-top: 14px;
+	padding: 10px 12px;
+	border: 1px solid var(--fx-warning-line);
+	border-radius: var(--fx-radius-sm);
+	background: var(--fx-warning-soft);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-link-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+	margin-top: 14px;
+	padding-top: 12px;
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-link-row__label {
+	flex: 1 0 100%;
+	color: var(--fx-text);
+	font-weight: 600;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-link-row__url {
+	flex: 1 1 100%;
+	overflow-wrap: anywhere;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-link-row__actions {
+	display: inline-flex;
+	gap: 6px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-checklist {
+	margin-top: 14px;
+	padding-top: 12px;
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-checklist__head {
+	margin: 0 0 8px;
+	color: var(--fx-text);
+	font-weight: 600;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-checklist ul {
+	margin: 0;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-checklist li {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0 0 6px;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-checklist li svg {
+	width: 16px;
+	height: 16px;
+	flex: 0 0 auto;
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-checklist .is-done {
+	color: var(--fx-text-2);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-checklist .is-done svg {
+	color: var(--fx-success);
+}
+
+.flexo-admin-ui.post-type-flexo_room .flexo-checklist .is-missing {
+	color: var(--fx-muted);
+}
+
+/* ---- Icon picker ---- */
+
+.flexo-admin-ui .flexo-icon-dialog {
+	width: min(760px, calc(100vw - 32px));
+	max-height: min(640px, calc(100vh - 64px));
+	padding: 0;
+	border: 0;
+	border-radius: var(--fx-radius);
+	box-shadow: var(--fx-shadow-lg);
+	color: var(--fx-text);
+	font-family: var(--fx-font);
+}
+
+.flexo-admin-ui .flexo-icon-dialog::backdrop {
+	background: rgba(15, 29, 42, 0.45);
+}
+
+.flexo-admin-ui .flexo-icon-dialog__inner {
+	display: flex;
+	flex-direction: column;
+	max-height: inherit;
+}
+
+.flexo-admin-ui .flexo-icon-dialog__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 14px 20px;
+	border-bottom: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .flexo-icon-dialog__head h2 {
+	margin: 0;
+	font-size: 16px;
+}
+
+.flexo-admin-ui .flexo-icon-dialog__close {
+	width: 34px;
+	height: 34px;
+	padding: 0;
+	border: 0;
+	border-radius: var(--fx-radius-sm);
+	background: transparent;
+	color: var(--fx-muted);
+	font-size: 24px;
+	cursor: pointer;
+}
+
+.flexo-admin-ui .flexo-icon-dialog__close:hover {
+	background: var(--fx-surface-3);
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .flexo-icon-dialog__tools {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 12px;
+	padding: 12px 20px;
+	border-bottom: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .flexo-icon-dialog__tools input[type="search"] {
+	flex: 1 1 200px;
+	min-height: 36px;
+	padding: 0 12px;
+	border: 1px solid var(--fx-border-strong);
+	border-radius: var(--fx-radius-sm);
+}
+
+.flexo-admin-ui .flexo-icon-dialog__groups {
+	overflow-y: auto;
+	padding: 4px 20px 20px;
+}
+
+.flexo-admin-ui .flexo-icon-group h3 {
+	margin: 16px 0 8px;
+	color: var(--fx-muted);
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.flexo-admin-ui .flexo-icon-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+	gap: 6px;
+}
+
+.flexo-admin-ui .flexo-icon-choice {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	padding: 10px 4px 8px;
+	border: 1px solid transparent;
+	border-radius: var(--fx-radius-sm);
+	background: transparent;
+	color: var(--fx-text-2);
+	font: inherit;
+	font-size: 11.5px;
+	line-height: 1.25;
+	text-align: center;
+	cursor: pointer;
+}
+
+.flexo-admin-ui .flexo-icon-choice svg {
+	width: 24px;
+	height: 24px;
+	color: var(--fx-primary);
+}
+
+.flexo-admin-ui .flexo-icon-choice:hover,
+.flexo-admin-ui .flexo-icon-choice:focus-visible {
+	border-color: var(--fx-primary);
+	background: var(--fx-primary-soft);
+	outline: 0;
+}
+
+.flexo-admin-ui .flexo-icon-choice.is-current {
+	border-color: var(--fx-primary);
+	background: var(--fx-primary-soft-2);
+	font-weight: 600;
+}
+
+/* ---- Room list ---- */
+
+.flexo-admin-ui.edit-php.post-type-flexo_room .column-flexo_photo {
+	width: 72px;
+}
+
+.flexo-admin-ui.edit-php.post-type-flexo_room .flexo-room-thumb {
+	display: block;
+	width: 64px;
+	height: 48px;
+	overflow: hidden;
+	border-radius: var(--fx-radius-sm);
+	background: var(--fx-surface-3);
+	object-fit: cover;
+}
+
+/* ---- Phones and narrow screens ---- */
+
+@media (max-width: 782px) {
+	.flexo-admin-ui.post-type-flexo_room .flexo-photos,
+	.flexo-admin-ui.post-type-flexo_room .flexo-seo {
+		grid-template-columns: 1fr;
+	}
+
+	.flexo-admin-ui.post-type-flexo_room .flexo-sort-item {
+		flex-wrap: wrap;
+	}
+
+	.flexo-admin-ui.post-type-flexo_room .wrap .flexo-sort-item input[type="text"] {
+		flex: 1 1 calc(100% - 140px);
+	}
+
+	.flexo-admin-ui.post-type-flexo_room .wrap .flexo-detail .flexo-detail__label {
+		flex: 1 1 calc(100% - 140px);
+	}
+
+	.flexo-admin-ui.post-type-flexo_room .wrap .flexo-detail .flexo-detail__value {
+		flex: 1 1 100%;
+		order: 5;
+	}
+
+	.flexo-admin-ui.post-type-flexo_room .flexo-sort-item__moves {
+		display: none;
+	}
+
+	.flexo-admin-ui.post-type-flexo_room .wrap .flexo-type-add input {
+		width: 160px;
+	}
+}

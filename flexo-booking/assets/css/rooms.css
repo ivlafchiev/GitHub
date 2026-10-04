@@ -1,0 +1,424 @@
+/**
+ * Room content on the website: amenities and details lists, photo gallery
+ * (carousel / grid) and its lightbox. Loaded only where room content is
+ * shown. Everything inherits the site's fonts and colours; the Elementor
+ * widgets set the custom properties below.
+ */
+
+/* ---- Icon lists: amenities, facts and details ---- */
+
+.flexo-room-list {
+	--flexo-gap: 12px;
+	--flexo-columns: 2;
+	--flexo-align: flex-start;
+	--flexo-icon-size: 1.25em;
+	--flexo-icon-gap: 0.6em;
+	--flexo-icon-color: currentColor;
+	display: flex;
+	flex-direction: column;
+	gap: var(--flexo-gap);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.flexo-room-list--inline {
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: var(--flexo-align);
+	column-gap: calc(var(--flexo-gap) * 2);
+}
+
+.flexo-room-list--grid {
+	display: grid;
+	grid-template-columns: repeat(var(--flexo-columns), minmax(0, 1fr));
+}
+
+.flexo-room-list .flexo-room-list__item {
+	display: flex;
+	align-items: center;
+	gap: var(--flexo-icon-gap);
+	margin: 0;
+	padding: 0;
+	line-height: 1.4;
+}
+
+.flexo-room-list--list .flexo-room-list__item {
+	justify-content: var(--flexo-align);
+}
+
+.flexo-room-list__icon {
+	display: inline-flex;
+	flex: 0 0 auto;
+	align-items: center;
+	justify-content: center;
+	color: var(--flexo-icon-color);
+	font-size: var(--flexo-icon-size);
+	line-height: 1;
+}
+
+.flexo-room-list__icon .flexo-room-icon,
+.flexo-room-list__icon svg {
+	display: block;
+	width: var(--flexo-icon-size);
+	height: var(--flexo-icon-size);
+}
+
+.flexo-room-list__icon i {
+	font-size: var(--flexo-icon-size);
+}
+
+/* Uploaded SVG icons (Elementor icon control) take the icon colour. */
+.flexo-room-list__icon svg:not([fill="none"]) {
+	fill: currentColor;
+}
+
+.flexo-room-icon.flexo-icon--mask {
+	display: inline-block;
+	background-color: currentColor;
+	-webkit-mask: var(--flexo-icon) center / contain no-repeat;
+	mask: var(--flexo-icon) center / contain no-repeat;
+}
+
+.flexo-room-icon.flexo-icon--image {
+	object-fit: contain;
+}
+
+.flexo-room-list__text {
+	min-width: 0;
+}
+
+.flexo-room-details__label {
+	font-weight: 600;
+}
+
+.flexo-room-details--stacked .flexo-room-list__text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.flexo-room-details--stacked .flexo-room-details__label {
+	font-size: 0.85em;
+	font-weight: 400;
+	opacity: 0.75;
+}
+
+.flexo-room-details--stacked .flexo-room-details__value {
+	font-weight: 600;
+}
+
+.flexo-room-divider-yes .flexo-room-list--list .flexo-room-list__item + .flexo-room-list__item,
+.flexo-room-divider-yes .flexo-room-list--grid .flexo-room-list__item {
+	padding-top: var(--flexo-gap);
+	border-top: 1px solid var(--flexo-divider, rgba(0, 0, 0, 0.12));
+}
+
+.flexo-room-divider-yes .flexo-room-list--inline .flexo-room-list__item + .flexo-room-list__item {
+	padding-left: var(--flexo-gap);
+	border-left: 1px solid var(--flexo-divider, rgba(0, 0, 0, 0.12));
+}
+
+/* ---- Gallery ---- */
+
+.flexo-room-gallery {
+	--flexo-per-view: 3;
+	--flexo-gap: 16px;
+	--flexo-height: 260px;
+	--flexo-radius: 0px;
+	position: relative;
+}
+
+.flexo-room-gallery__track {
+	display: grid;
+	grid-auto-flow: column;
+	grid-auto-columns: calc((100% - (var(--flexo-per-view) - 1) * var(--flexo-gap)) / var(--flexo-per-view));
+	gap: var(--flexo-gap);
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scroll-behavior: smooth;
+	scroll-snap-type: x mandatory;
+	scrollbar-width: none;
+}
+
+.flexo-room-gallery__track::-webkit-scrollbar {
+	display: none;
+}
+
+.flexo-room-gallery__track:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 4px;
+}
+
+.flexo-room-gallery--grid .flexo-room-gallery__track {
+	grid-auto-flow: row;
+	grid-template-columns: repeat(var(--flexo-per-view), minmax(0, 1fr));
+	overflow: visible;
+}
+
+.flexo-room-gallery .flexo-room-gallery__slide {
+	height: var(--flexo-height);
+	margin: 0;
+	overflow: hidden;
+	border-radius: var(--flexo-radius);
+	scroll-snap-align: start;
+}
+
+.flexo-room-gallery .flexo-room-gallery__link {
+	display: block;
+	height: 100%;
+	cursor: zoom-in;
+}
+
+.flexo-room-gallery .flexo-room-gallery__img {
+	display: block;
+	width: 100%;
+	max-width: none;
+	height: 100%;
+	border-radius: inherit;
+	object-fit: cover;
+	transition: transform 0.4s ease;
+}
+
+.flexo-room-gallery .flexo-room-gallery__link:hover .flexo-room-gallery__img {
+	transform: scale(1.03);
+}
+
+.flexo-room-gallery--empty .flexo-room-gallery__img {
+	height: auto;
+	aspect-ratio: 3 / 2;
+	border-radius: var(--flexo-radius);
+}
+
+.flexo-room-gallery button.flexo-room-gallery__arrow {
+	position: absolute;
+	top: calc(var(--flexo-height) / 2);
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: var(--flexo-arrow-bg, rgba(255, 255, 255, 0.92));
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+	color: var(--flexo-arrow-color, #1d1f22);
+	line-height: 1;
+	text-transform: none;
+	cursor: pointer;
+	transform: translateY(-50%);
+	transition: opacity 0.2s ease;
+}
+
+.flexo-room-gallery button.flexo-room-gallery__arrow:hover,
+.flexo-room-gallery button.flexo-room-gallery__arrow:focus {
+	background: var(--flexo-arrow-bg, #fff);
+	color: var(--flexo-arrow-color, #1d1f22);
+}
+
+.flexo-room-gallery button.flexo-room-gallery__arrow:focus-visible {
+	outline: 2px solid var(--flexo-arrow-color, #1d1f22);
+	outline-offset: 2px;
+}
+
+.flexo-room-gallery button.flexo-room-gallery__arrow[disabled] {
+	opacity: 0;
+	pointer-events: none;
+}
+
+.flexo-room-gallery__arrow svg {
+	width: 22px;
+	height: 22px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 2.25;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.flexo-room-gallery__arrow--prev {
+	left: 12px;
+}
+
+.flexo-room-gallery__arrow--next {
+	right: 12px;
+}
+
+[dir="rtl"] .flexo-room-gallery__arrow svg {
+	transform: scaleX(-1);
+}
+
+.flexo-room-gallery__dots {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 2px;
+	margin-top: 10px;
+}
+
+.flexo-room-gallery__dots:empty {
+	display: none;
+}
+
+.flexo-room-gallery button.flexo-room-gallery__dot {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	cursor: pointer;
+}
+
+.flexo-room-gallery button.flexo-room-gallery__dot::before {
+	content: "";
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--flexo-dot, currentColor);
+	opacity: 0.3;
+	transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.flexo-room-gallery button.flexo-room-gallery__dot[aria-current="true"]::before {
+	opacity: 1;
+	transform: scale(1.25);
+}
+
+.flexo-room-gallery button.flexo-room-gallery__dot:focus-visible {
+	outline: 2px solid var(--flexo-dot, currentColor);
+	border-radius: 50%;
+}
+
+@media (hover: none) {
+	.flexo-room-gallery button.flexo-room-gallery__arrow {
+		display: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.flexo-room-gallery__track {
+		scroll-behavior: auto;
+	}
+
+	.flexo-room-gallery .flexo-room-gallery__img {
+		transition: none;
+	}
+}
+
+/* ---- Lightbox (pages without Elementor's own) ---- */
+
+.flexo-lightbox {
+	width: 100vw;
+	max-width: 100vw;
+	height: 100vh;
+	max-height: 100vh;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: rgba(10, 12, 14, 0.94);
+	color: #fff;
+}
+
+.flexo-lightbox::backdrop {
+	background: rgba(10, 12, 14, 0.94);
+}
+
+.flexo-lightbox__stage {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	padding: 56px 16px 64px;
+	box-sizing: border-box;
+	touch-action: pan-y;
+}
+
+.flexo-lightbox__img {
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: contain;
+}
+
+.flexo-lightbox__caption {
+	position: absolute;
+	right: 16px;
+	bottom: 16px;
+	left: 16px;
+	font-size: 14px;
+	text-align: center;
+	opacity: 0.85;
+}
+
+.flexo-lightbox button.flexo-lightbox__btn {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.12);
+	color: #fff;
+	font-size: 28px;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.flexo-lightbox button.flexo-lightbox__btn:hover,
+.flexo-lightbox button.flexo-lightbox__btn:focus-visible {
+	background: rgba(255, 255, 255, 0.25);
+	color: #fff;
+	outline: 0;
+}
+
+.flexo-lightbox__close {
+	top: 8px;
+	right: 8px;
+}
+
+.flexo-lightbox__prev,
+.flexo-lightbox__next {
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.flexo-lightbox__prev {
+	left: 8px;
+}
+
+.flexo-lightbox__next {
+	right: 8px;
+}
+
+.flexo-lightbox__count {
+	position: absolute;
+	top: 20px;
+	left: 20px;
+	font-size: 14px;
+	opacity: 0.8;
+}
+
+/* ---- Editor notes ---- */
+
+.flexo-room-note {
+	padding: 14px 16px;
+	border: 1px dashed rgba(0, 0, 0, 0.25);
+	border-radius: 6px;
+	color: #555;
+	font-size: 13px;
+	text-align: center;
+}

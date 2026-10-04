@@ -64,6 +64,9 @@ class Flexo_Booking_Settings {
 			'phone_country'                 => 'BG',
 			'picker_prices'                 => 0,
 			'booking_page'                  => '',
+			// Day 7: room pages.
+			'room_base'                     => 'rooms',
+			'rooms_page'                    => '',
 			'email_logo'                    => '',
 			'email_color'                   => '#1f6f5c',
 			'notify_new'                    => 1,
@@ -381,9 +384,14 @@ class Flexo_Booking_Settings {
 				case 'picker_prices':
 					$clean[ $key ] = empty( $value ) ? 0 : 1;
 					break;
+				case 'room_base':
+					$value         = sanitize_title( (string) $value );
+					$clean[ $key ] = '' === $value || in_array( $value, Flexo_Booking_Room_Pages::reserved_bases(), true ) ? $base[ $key ] : $value;
+					break;
 				case 'booking_page':
 				case 'thank_you_url':
 				case 'terms_url':
+				case 'rooms_page':
 					$clean[ $key ] = self::sanitize_path_or_url( $value );
 					break;
 				case 'check_in_time':
@@ -449,8 +457,9 @@ class Flexo_Booking_Settings {
 	 */
 	public static function tabs() {
 		$tabs = array(
-			'general' => __( 'Hotel', 'flexo-booking' ),
-			'rules'   => __( 'Booking rules', 'flexo-booking' ),
+			'general'    => __( 'Hotel', 'flexo-booking' ),
+			'rules'      => __( 'Booking rules', 'flexo-booking' ),
+			'room_pages' => __( 'Room pages', 'flexo-booking' ),
 		);
 		if ( Flexo_Booking_Payments::enabled() ) {
 			$tabs['payments'] = __( 'Payments', 'flexo-booking' );
@@ -564,6 +573,10 @@ class Flexo_Booking_Settings {
 
 			<form method="post" action="options.php">
 				<?php settings_fields( 'flexo_booking' ); ?>
+
+				<?php if ( 'room_pages' === $tab ) : ?>
+					<?php Flexo_Booking_Room_Pages::render_settings( $s, $name ); ?>
+				<?php endif; ?>
 
 				<?php if ( 'general' === $tab ) : ?>
 				<p class="flexo-tab-intro"><?php esc_html_e( 'How guests reach you, and the pages the booking form uses.', 'flexo-booking' ); ?></p>

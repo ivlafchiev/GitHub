@@ -54,18 +54,10 @@ class Flexo_Booking_Money {
 	 *                              from the current setting, the code is shown
 	 *                              instead of the symbol, so old bookings are
 	 *                              never re-labelled.
+	 * @param bool        $short    Whole amounts without decimals ("€95"), for room pages.
 	 */
-	public static function format( $amount, $currency = null ) {
-		$decimals = self::decimals();
-		$formats  = self::number_formats();
-		$preset   = Flexo_Booking_Settings::get( 'number_format' );
-		$preset   = isset( $formats[ $preset ] ) ? $preset : 'auto';
-
-		if ( 'auto' === $preset ) {
-			$number = number_format_i18n( (float) $amount, $decimals );
-		} else {
-			$number = number_format( (float) $amount, $decimals, $formats[ $preset ][0], $formats[ $preset ][1] );
-		}
+	public static function format( $amount, $currency = null, $short = false ) {
+		$number = self::format_number( $amount, $short );
 
 		$symbol = (string) Flexo_Booking_Settings::get( 'currency_symbol' );
 		if ( $currency && strtoupper( $currency ) !== strtoupper( self::currency() ) ) {
@@ -82,5 +74,25 @@ class Flexo_Booking_Money {
 			default:
 				return $number . ' ' . $symbol;
 		}
+	}
+
+	/**
+	 * The amount alone in the site's number format, e.g. "1 234,50".
+	 *
+	 * @param float $amount
+	 * @param bool  $short Whole amounts without decimals.
+	 */
+	public static function format_number( $amount, $short = false ) {
+		$decimals = self::decimals();
+		if ( $short && abs( (float) $amount - round( (float) $amount ) ) < 0.005 ) {
+			$decimals = 0;
+		}
+		$formats = self::number_formats();
+		$preset  = Flexo_Booking_Settings::get( 'number_format' );
+		$preset  = isset( $formats[ $preset ] ) ? $preset : 'auto';
+		if ( 'auto' === $preset ) {
+			return number_format_i18n( (float) $amount, $decimals );
+		}
+		return number_format( (float) $amount, $decimals, $formats[ $preset ][0], $formats[ $preset ][1] );
 	}
 }

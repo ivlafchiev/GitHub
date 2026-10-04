@@ -1,0 +1,358 @@
+<?php
+/**
+ * Day 7: room content and room pages. Migration 8, room fields (gallery,
+ * view, amenities with icons, more details, room types), hidden and demo
+ * rooms in the booking engine and in front-end queries, old slugs, room
+ * page addresses (base change, old bases, static pages at the same
+ * address), the room view used by tags and widgets, and the room editor's
+ * saving.
+ *
+ * Room page requests are made over HTTP to the site's own address, so the
+ * site must be served (php -S …) while this runs.
+ */
+require __DIR__ . '/lib.php';
+
+global $wpdb;
+$t7_saved_settings = get_option( Flexo_Booking_Settings::OPTION );
+$t7_saved_features = get_option( Flexo_Booking_Features::ENABLED_OPTION );
+// Put the settings back even if a check stops the script.
+register_shutdown_function(
+	static function () use ( $t7_saved_settings, $t7_saved_features ) {
+		update_option( Flexo_Booking_Settings::OPTION, $t7_saved_settings );
+		update_option( Flexo_Booking_Features::ENABLED_OPTION, $t7_saved_features );
+		delete_option( Flexo_Booking_Room_Pages::BASES_OPTION );
+	}
+);
+t_reset_inventory();
+wp_set_current_user( 0 );
+
+function t7_settings( array $values ) {
+	update_option( Flexo_Booking_Settings::OPTION, Flexo_Booking_Settings::sanitize( array_merge( Flexo_Booking_Settings::all(), $values ) ) );
+}
+
+/** Status code and final address of a front-end request (no redirects followed). */
+function t7_get( $path ) {
+	$response = wp_remote_get(
+		home_url( $path ),
+		array(
+			'redirection' => 0,
+			'timeout'     => 20,
+			'sslverify'   => false,
+		)
+	);
+	if ( is_wp_error( $response ) ) {
+		return array( 0, '', '' );
+	}
+	return array( (int) wp_remote_retrieve_response_code( $response ), (string) wp_remote_retrieve_header( $response, 'location' ), (string) wp_remote_retrieve_body( $response ) );
+}
+
+/** Flushes the rewrite rules the way the next request would. */
+function t7_flush() {
+	Flexo_Booking_Rooms::register_post_type();
+	flush_rewrite_rules( false );
+	delete_option( Flexo_Booking_Room_Pages::FLUSH_OPTION );
+}
+
+function t7_image( $name ) {
+	$file = wp_upload_dir()['path'] . '/' . $name . '.png';
+	// 1x1 transparent PNG.
+	file_put_contents( $file, base64_decode( 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=' ) );
+	$id = wp_insert_attachment(
+		array(
+			'post_mime_type' => 'image/png',
+			'post_title'     => $name,
+			'post_status'    => 'inherit',
+		),
+		$file
+	);
+	update_post_meta( $id, '_wp_attachment_metadata', array( 'width' => 1, 'height' => 1, 'file' => _wp_relative_upload_path( $file ) ) );
+	update_post_meta( $id, '_wp_attachment_image_alt', 'Alt ' . $name );
+	return $id;
+}
+
+t7_settings( array( 'room_base' => 'rooms', 'rooms_page' => '', 'booking_page' => '/booking/' ) );
+t7_flush();
+
+/* ---------------------------------------------------------------- */
+t_section( 'Migration 8' );
+t_eq( 8, Flexo_Booking_Migrations::LATEST, 'latest migration is 8' );
+t_eq( 8, Flexo_Booking_Migrations::current_version(), 'site is on migration 8' );
+$pt = get_post_type_object( Flexo_Booking_Rooms::POST_TYPE );
+t_ok( $pt->public && $pt->publicly_queryable && $pt->show_in_nav_menus, 'rooms are a public post type (Theme Builder / Loop Grid can use them)' );
+t_ok( false === $pt->has_archive, 'no archive at the room base (the hotel\'s own rooms page stays)' );
+t_ok( ! $pt->show_in_rest, 'room screen stays the classic editor' );
+t_ok( taxonomy_exists( Flexo_Booking_Room_Content::TAXONOMY ), 'room type taxonomy registered' );
+t_ok( is_object_in_taxonomy( Flexo_Booking_Rooms::POST_TYPE, Flexo_Booking_Room_Content::TAXONOMY ), 'room types belong to rooms' );
+
+// A room saved before 1.8.0: ticked amenity keys only.
+$old = t_room( 't7-old', 'T7 Old', array( 'price' => 80, 'capacity' => 2, 'units' => 1, 'amenities' => array( 'tv', 'wifi', 'sea_view' ) ) );
+delete_post_meta( $old, Flexo_Booking_Room_Content::AMENITY_ITEMS );
+$items = Flexo_Booking_Room_Content::amenities( $old );
+t_eq( array( 'wifi', 'sea_view', 'tv' ), wp_list_pluck( $items, 'key' ), 'old ticks read as ready-made amenities, in list order' );
+t_eq( array( 'wifi', 'waves', 'tv' ), wp_list_pluck( $items, 'icon' ), 'each gets its usual icon' );
+t_eq( 'Free Wi-Fi', $items[0]['label'], 'label from the ready-made list' );
+$search = Flexo_Booking_Bookings::search( t_day( 1 ), t_day( 3 ), 2, 0, 't7-old' );
+t_eq( array( 'Free Wi-Fi', 'Sea view', 'TV' ), $search['rooms'][0]['amenities'], 'booking form cards get the same amenities' );
+
+/* ---------------------------------------------------------------- */
+t_section( 'Room content: amenities, details, gallery, view, types' );
+$room = t_room( 't7-deluxe', 'T7 Deluxe', array( 'price' => 120, 'capacity' => 4, 'max_adults' => 2, 'units' => 2, 'size' => 32, 'beds' => '1 double bed + sofa bed' ) );
+Flexo_Booking_Room_Editor::save_amenities(
+	$room,
+	array(
+		array( 'key' => 'sea_view', 'label' => 'Sea view', 'icon' => '' ),
+		array( 'key' => '', 'label' => 'Rain shower with a view', 'icon' => 'shower' ),
+		array( 'key' => 'wifi', 'label' => 'Fast Wi-Fi (500 Mbit)', 'icon' => 'bogus-icon' ),
+		array( 'key' => '', 'label' => '  <b>Terrace</b> with hot tub ', 'icon' => 'media:999999' ),
+		array( 'key' => 'nope', 'label' => '', 'icon' => '' ),
+		array( 'key' => '', 'label' => 'rain shower with a view', 'icon' => '' ),
+		array( 'key' => 'sea_view', 'label' => '', 'icon' => '' ),
+	)
+);
+$items = Flexo_Booking_Room_Content::amenities( $room );
+t_eq( 4, count( $items ), 'unknown keys, empty and repeated amenities dropped' );
+t_eq( array( 'Sea view', 'Rain shower with a view', 'Fast Wi-Fi (500 Mbit)', 'Terrace with hot tub' ), wp_list_pluck( $items, 'label' ), 'own amenities and renamed ones kept in the owner\'s order, tags stripped' );
+t_eq( array( 'waves', 'shower', 'wifi', 'check' ), wp_list_pluck( $items, 'icon' ), 'unknown icons fall back to the usual icon' );
+$stored = get_post_meta( $room, Flexo_Booking_Room_Content::AMENITY_ITEMS, true );
+t_eq( '', $stored[0]['label'], 'unchanged ready-made name is not stored (follows the translation)' );
+t_eq( array( 'sea_view', 'wifi' ), get_post_meta( $room, '_flexo_amenities', true ), 'ready-made keys kept in step for older exports' );
+
+$details = Flexo_Booking_Room_Content::sanitize_details(
+	array(
+		array( 'icon' => 'layers', 'label' => 'Floor', 'value' => '2nd, with lift' ),
+		array( 'icon' => '', 'label' => '', 'value' => '' ),
+		array( 'icon' => 'x', 'label' => 'Bathroom', 'value' => '<script>x</script>Rain shower' ),
+	)
+);
+update_post_meta( $room, Flexo_Booking_Room_Content::DETAILS, $details );
+t_eq( 2, count( Flexo_Booking_Room_Content::details( $room ) ), 'empty detail rows dropped' );
+t_eq( 'Rain shower', Flexo_Booking_Room_Content::details( $room )[1]['value'], 'detail values are plain text' );
+t_eq( '', Flexo_Booking_Room_Content::details( $room )[1]['icon'], 'unknown detail icon dropped' );
+
+$img1 = t7_image( 't7-a' );
+$img2 = t7_image( 't7-b' );
+$img3 = t7_image( 't7-c' );
+set_post_thumbnail( $room, $img2 );
+update_post_meta( $room, Flexo_Booking_Room_Content::GALLERY, Flexo_Booking_Room_Content::sanitize_gallery( "{$img1},{$img2},999999,{$img3},{$img1}" ) );
+t_eq( array( $img1, $img2, $img3 ), get_post_meta( $room, Flexo_Booking_Room_Content::GALLERY, true ), 'gallery keeps order, drops missing and repeated images' );
+t_eq( array( $img2, $img1, $img3 ), Flexo_Booking_Room_Content::gallery( $room ), 'room gallery starts with the main photo, no duplicate' );
+wp_delete_attachment( $img3, true );
+t_eq( array( $img2, $img1 ), Flexo_Booking_Room_Content::gallery( $room ), 'deleted image skipped' );
+
+update_post_meta( $room, Flexo_Booking_Room_Content::VIEW, 'Sea view' );
+$suite = term_exists( 'T7 Suite', Flexo_Booking_Room_Content::TAXONOMY );
+$suite = $suite ? $suite : wp_insert_term( 'T7 Suite', Flexo_Booking_Room_Content::TAXONOMY );
+wp_set_object_terms( $room, array( (int) $suite['term_id'] ), Flexo_Booking_Room_Content::TAXONOMY );
+wp_update_post( array( 'ID' => $room, 'post_content' => "A bright room.\n\nWith a [flexo_t7_test] view.", 'post_excerpt' => 'Short and sweet.' ) );
+add_shortcode( 'flexo_t7_test', static function () {
+	return 'shortcode';
+} );
+
+Flexo_Booking_Features::set_enabled( array_merge( (array) Flexo_Booking_Features::stored_enabled(), array( 'children' ) ) );
+$view = Flexo_Booking_Room_Content::room( $room );
+t_eq( 'T7 Deluxe', $view['title'], 'view: name' );
+t_eq( array( 'T7 Suite' ), $view['types'], 'view: room type' );
+t_eq( 'Short and sweet.', $view['excerpt'], 'view: short description' );
+t_ok( false !== strpos( Flexo_Booking_Room_Content::description_html( $view ), '<p>With a shortcode view.</p>' ), 'full description: paragraphs and shortcodes' );
+t_eq( $img2, $view['image_id'], 'view: main photo' );
+t_eq( '32 m²', Flexo_Booking_Room_Content::size_text( $view ), 'size text' );
+t_eq( 'Up to 4 guests (max. 2 adults)', Flexo_Booking_Room_Content::guests_text( $view ), 'guests summary with an adult limit' );
+t_eq( '3', Flexo_Booking_Room_Content::guests_text( $view, 'max_children' ), 'max children = guests − 1 (one adult stays)' );
+t_eq( home_url( '/rooms/t7-deluxe/' ), $view['url'], 'room page address' );
+t_eq( home_url( '/booking/?room=t7-deluxe' ), $view['booking_url'], 'booking link uses the booking page from Settings' );
+t_eq( home_url( '/booking/?room=t7-deluxe&check_in=2026-07-01' ), Flexo_Booking_Room_Content::booking_url( 't7-deluxe', array( 'check_in' => '2026-07-01' ) ), 'booking link with dates' );
+$image = Flexo_Booking_Room_Content::image( $img1 );
+t_eq( 'Alt t7-a', $image['alt'], 'image alt text' );
+
+/* ---------------------------------------------------------------- */
+t_section( 'Current room' );
+t_eq( 0, Flexo_Booking_Room_Content::current_id(), 'outside a room: no current room' );
+t_eq( $room, Flexo_Booking_Room_Content::current_id( 't7-deluxe' ), 'named by slug' );
+t_eq( $room, Flexo_Booking_Room_Content::current_id( (string) $room ), 'named by ID' );
+t_eq( 0, Flexo_Booking_Room_Content::current_id( 'no-such-room' ), 'unknown slug: none' );
+$GLOBALS['post'] = get_post( $room );
+setup_postdata( $GLOBALS['post'] );
+t_eq( $room, Flexo_Booking_Room_Content::current_id(), 'inside a room (template, loop item): that room' );
+wp_reset_postdata();
+unset( $GLOBALS['post'] );
+
+/* ---------------------------------------------------------------- */
+t_section( 'Hidden and demo rooms' );
+$hidden = t_room( 't7-hidden', 'T7 Hidden', array( 'price' => 90, 'capacity' => 2, 'units' => 1 ) );
+update_post_meta( $hidden, Flexo_Booking_Room_Content::HIDDEN, '1' );
+$demo = t_room( 't7-demo', 'T7 Demo', array( 'price' => 70, 'capacity' => 2, 'units' => 1 ) );
+update_post_meta( $demo, Flexo_Booking_Room_Content::DEMO, '1' );
+
+$all = Flexo_Booking_Bookings::search( t_day( 1 ), t_day( 3 ), 2, 0 );
+$ids = wp_list_pluck( $all['rooms'], 'id' );
+t_ok( ! in_array( $hidden, $ids, true ), 'hidden room not offered when guests search all rooms' );
+t_ok( ! in_array( $demo, $ids, true ), 'demo room never offered' );
+t_ok( in_array( $room, $ids, true ), 'normal room offered' );
+$one = Flexo_Booking_Bookings::search( t_day( 1 ), t_day( 3 ), 2, 0, 't7-hidden' );
+t_ok( 1 === count( $one['rooms'] ) && $one['rooms'][0]['available'], 'hidden room still bookable through its link' );
+$one = Flexo_Booking_Bookings::search( t_day( 1 ), t_day( 3 ), 2, 0, 't7-demo' );
+t_eq( 0, count( $one['rooms'] ), 'demo room not offered even by its link' );
+$b = Flexo_Booking_Bookings::create( array_merge( t_guest(), array( 'room' => 't7-hidden', 'check_in' => t_day( 1 ), 'check_out' => t_day( 3 ) ) ) );
+t_ok( ! is_wp_error( $b ), 'hidden room can be booked' );
+$b = Flexo_Booking_Bookings::create( array_merge( t_guest(), array( 'room' => 't7-demo', 'check_in' => t_day( 1 ), 'check_out' => t_day( 3 ) ) ) );
+t_ok( is_wp_error( $b ) && 'flexo_demo_room' === $b->get_error_code(), 'demo room cannot be booked' );
+$b = Flexo_Booking_Bookings::create( array_merge( t_guest(), array( 'room' => 't7-demo', 'check_in' => t_day( 1 ), 'check_out' => t_day( 3 ), 'source' => 'admin' ) ) );
+t_ok( is_wp_error( $b ), 'demo room cannot be booked by staff either' );
+$rest = rest_do_request( new WP_REST_Request( 'GET', '/flexo-booking/v1/rooms' ) );
+$rids = wp_list_pluck( $rest->get_data(), 'id' );
+t_ok( ! in_array( $hidden, $rids, true ) && ! in_array( $demo, $rids, true ) && in_array( $room, $rids, true ), 'REST room list: hidden and demo rooms left out' );
+t_ok( in_array( $hidden, wp_list_pluck( Flexo_Booking_Rooms::all(), 'ID' ), true ), 'admin/engine list still has hidden rooms' );
+
+// Front-end queries (Loop Grid, search) as a guest.
+$q = new WP_Query( array( 'post_type' => Flexo_Booking_Rooms::POST_TYPE, 'posts_per_page' => -1, 'fields' => 'ids' ) );
+t_ok( ! in_array( $hidden, $q->posts, true ) && ! in_array( $demo, $q->posts, true ) && in_array( $room, $q->posts, true ), 'room lists for guests: hidden and demo left out' );
+$q = new WP_Query( array( 's' => 'T7', 'posts_per_page' => -1, 'fields' => 'ids' ) );
+t_ok( ! in_array( $hidden, $q->posts, true ) && in_array( $room, $q->posts, true ), 'site search: hidden room left out' );
+$q = new WP_Query( array( 'post_type' => Flexo_Booking_Rooms::POST_TYPE, 'post__not_in' => array( $room ), 'posts_per_page' => -1, 'fields' => 'ids' ) );
+t_ok( ! in_array( $room, $q->posts, true ) && ! in_array( $hidden, $q->posts, true ), 'existing exclusions kept (e.g. "other rooms" without the current one)' );
+$admin = get_users( array( 'role' => 'administrator', 'number' => 1 ) )[0];
+wp_set_current_user( $admin->ID );
+$q = new WP_Query( array( 'post_type' => Flexo_Booking_Rooms::POST_TYPE, 'posts_per_page' => -1, 'fields' => 'ids' ) );
+t_ok( in_array( $demo, $q->posts, true ) && ! in_array( $hidden, $q->posts, true ), 'staff see demo rooms in lists (to design with), hidden still out' );
+wp_set_current_user( 0 );
+$sitemap = apply_filters( 'wp_sitemaps_posts_query_args', array(), Flexo_Booking_Rooms::POST_TYPE );
+t_ok( in_array( $hidden, $sitemap['post__not_in'], true ) && in_array( $demo, $sitemap['post__not_in'], true ), 'sitemap leaves out hidden and demo rooms' );
+t_eq( '', Flexo_Booking_Room_Content::page_url( $hidden ), 'hidden room has no page address' );
+
+/* ---------------------------------------------------------------- */
+t_section( 'Room pages over HTTP' );
+list( $code, , $body ) = t7_get( '/rooms/t7-deluxe/' );
+if ( 0 === $code ) {
+	t_ok( false, 'site not reachable at ' . home_url() . ' – serve it while the tests run' );
+} else {
+	t_eq( 200, $code, 'room page answers' );
+	t_ok( false !== strpos( $body, 'T7 Deluxe' ), 'room page shows the room' );
+	list( $code ) = t7_get( '/rooms/t7-hidden/' );
+	t_eq( 404, $code, 'hidden room page: 404 for guests' );
+	list( $code ) = t7_get( '/rooms/t7-demo/' );
+	t_eq( 404, $code, 'demo room page: 404 for guests' );
+	list( $code ) = t7_get( '/rooms/no-such-room/' );
+	t_eq( 404, $code, 'unknown room: 404' );
+
+	// Old slug.
+	wp_update_post( array( 'ID' => $room, 'post_name' => 't7-deluxe-sea' ) );
+	list( $code, $location ) = t7_get( '/rooms/t7-deluxe/' );
+	t_ok( 301 === $code && false !== strpos( $location, '/rooms/t7-deluxe-sea/' ), 'old room slug redirects to the new page' );
+	t_eq( $room, Flexo_Booking_Rooms::find( 't7-deluxe' ) ? Flexo_Booking_Rooms::find( 't7-deluxe' )->ID : 0, 'booking links with the old slug find the room' );
+	$s = Flexo_Booking_Bookings::search( t_day( 1 ), t_day( 3 ), 2, 0, 't7-deluxe' );
+	t_eq( $room, $s['rooms'][0]['id'], 'search with the old slug offers the room' );
+
+	// A static page at /rooms/<slug>/ with no room of that slug is still served.
+	$parent = wp_insert_post( array( 'post_type' => 'page', 'post_title' => 'Rooms', 'post_name' => 'rooms', 'post_status' => 'publish' ) );
+	$child  = wp_insert_post( array( 'post_type' => 'page', 'post_title' => 'T7 Old Static', 'post_name' => 't7-static', 'post_parent' => $parent, 'post_status' => 'publish', 'post_content' => 'static page body' ) );
+	list( $code, , $body ) = t7_get( '/rooms/t7-static/' );
+	t_ok( 200 === $code && false !== strpos( $body, 'static page body' ), 'static page under the room base still served' );
+	list( $code ) = t7_get( '/rooms/' );
+	t_eq( 200, $code, 'the hotel\'s own /rooms/ page still served (no archive)' );
+	delete_transient( Flexo_Booking_Room_Pages::PAGE_CACHE );
+	t_eq( get_permalink( $parent ), Flexo_Booking_Room_Pages::rooms_page_url(), 'All rooms page found automatically at /rooms/' );
+
+	// Change the base: new addresses work, old ones redirect.
+	t7_settings( array( 'room_base' => 'stai' ) );
+	t_ok( (bool) get_option( Flexo_Booking_Room_Pages::FLUSH_OPTION ), 'base change asks for one rewrite flush' );
+	t_eq( array( 'rooms' ), get_option( Flexo_Booking_Room_Pages::BASES_OPTION ), 'old base remembered' );
+	list( $code ) = t7_get( '/' ); // The next request flushes.
+	wp_cache_flush();
+	t_ok( ! get_option( Flexo_Booking_Room_Pages::FLUSH_OPTION ), 'flushed once on the next request' );
+	list( $code ) = t7_get( '/stai/t7-deluxe-sea/' );
+	t_eq( 200, $code, 'room page at the new base' );
+	list( $code, $location ) = t7_get( '/rooms/t7-deluxe-sea/' );
+	t_ok( 301 === $code && false !== strpos( $location, '/stai/t7-deluxe-sea/' ), 'old base redirects to the new address' );
+	list( $code ) = t7_get( '/rooms/t7-hidden/' );
+	t_eq( 404, $code, 'old base does not reveal hidden rooms' );
+	t7_settings( array( 'room_base' => 'wp-admin' ) );
+	t_eq( 'stai', Flexo_Booking_Room_Pages::base(), 'reserved base refused' );
+	t7_settings( array( 'room_base' => 'rooms' ) );
+	t_eq( array( 'stai' ), array_values( get_option( Flexo_Booking_Room_Pages::BASES_OPTION ) ), 'back to the first base: list keeps only other bases' );
+	t7_get( '/' );
+	list( $code ) = t7_get( '/rooms/t7-deluxe-sea/' );
+	t_eq( 200, $code, 'room page back at /rooms/' );
+
+	// Rules missing (e.g. files copied over without activation) are added back.
+	update_option( 'rewrite_rules', array( 'foo/?$' => 'index.php' ) );
+	t7_get( '/' );
+	list( $code ) = t7_get( '/rooms/t7-deluxe-sea/' );
+	t_eq( 200, $code, 'missing room rules are restored on the next request' );
+
+	wp_delete_post( $child, true );
+	wp_delete_post( $parent, true );
+}
+
+/* ---------------------------------------------------------------- */
+t_section( 'Room editor saving' );
+wp_set_current_user( $admin->ID );
+$_POST = array(
+	'flexo_room_nonce'      => wp_create_nonce( 'flexo_room_meta' ),
+	'flexo_room_cards'      => array( 'summary', 'photos', 'facts', 'amenities', 'details', 'prices', 'website', 'seo' ),
+	'_flexo_price'          => '150',
+	'_flexo_capacity'       => '3',
+	'_flexo_units'          => '2',
+	'_flexo_size'           => '28',
+	'_flexo_beds'           => '2 single beds',
+	'flexo_view'            => 'Garden view',
+	'flexo_main_photo'      => (string) $img1,
+	'flexo_gallery'         => (string) $img2,
+	'flexo_room_types'      => array( (string) $suite['term_id'] ),
+	'flexo_new_room_types'  => array( 'T7 Family room', '' ),
+	'flexo_amenity_key'     => array( 'wifi', '' ),
+	'flexo_amenity_label'   => array( 'Free Wi-Fi', 'Hammock' ),
+	'flexo_amenity_icon'    => array( '', 'trees' ),
+	'flexo_detail_label'    => array( 'Floor' ),
+	'flexo_detail_value'    => array( 'Ground' ),
+	'flexo_detail_icon'     => array( 'layers' ),
+	'flexo_seo_title'       => 'Garden room in Sozopol',
+	'flexo_seo_description' => 'Quiet garden room.',
+);
+Flexo_Booking_Rooms::save_meta( $room, get_post( $room ) );
+$r = Flexo_Booking_Room_Content::room( $room );
+t_eq( 150.0, $r['price'], 'price saved' );
+t_eq( 'Garden view', $r['view'], 'view saved' );
+t_eq( $img1, (int) get_post_thumbnail_id( $room ), 'main photo saved (whatever the theme supports)' );
+t_eq( array( $img1, $img2 ), $r['gallery'], 'gallery saved' );
+t_eq( array( 'T7 Family room', 'T7 Suite' ), $r['types'], 'room types saved, new type created' );
+t_eq( array( 'Free Wi-Fi', 'Hammock' ), wp_list_pluck( $r['amenity_list'], 'label' ), 'amenities saved' );
+t_eq( 'trees', $r['amenity_list'][1]['icon'], 'own amenity icon saved' );
+t_eq( 'Ground', $r['details'][0]['value'], 'details saved' );
+t_eq( 'Garden room in Sozopol', get_post_meta( $room, Flexo_Booking_Room_Content::SEO_TITLE, true ), 'SEO title saved' );
+t_ok( Flexo_Booking_Room_Content::is_hidden( $room ), 'switch "Show on the website" off (not sent) hides the room' );
+$_POST['flexo_show'] = '1';
+unset( $_POST['flexo_seo_title'] );
+$_POST['flexo_room_cards'] = array( 'website' );
+Flexo_Booking_Rooms::save_meta( $room, get_post( $room ) );
+t_ok( ! Flexo_Booking_Room_Content::is_hidden( $room ), 'switch on: shown again' );
+t_eq( 'Garden room in Sozopol', get_post_meta( $room, Flexo_Booking_Room_Content::SEO_TITLE, true ), 'cards not on the screen keep their values' );
+t_eq( 'Ground', Flexo_Booking_Room_Content::details( $room )[0]['value'], 'details kept when their card was not sent' );
+t_eq( 150.0, Flexo_Booking_Rooms::to_array( get_post( $room ) )['price'], 'price kept when sent again' );
+$_POST = array(
+	'flexo_room_nonce' => 'wrong',
+	'flexo_room_cards' => array( 'website' ),
+);
+Flexo_Booking_Rooms::save_meta( $room, get_post( $room ) );
+t_ok( ! Flexo_Booking_Room_Content::is_hidden( $room ), 'bad nonce: nothing saved' );
+$_POST = array();
+wp_set_current_user( 0 );
+
+/* ---------------------------------------------------------------- */
+foreach ( array( $old, $room, $hidden, $demo ) as $id ) {
+	wp_delete_post( $id, true );
+}
+foreach ( array( $img1, $img2 ) as $id ) {
+	wp_delete_attachment( $id, true );
+}
+foreach ( get_terms( array( 'taxonomy' => Flexo_Booking_Room_Content::TAXONOMY, 'hide_empty' => false ) ) as $term ) {
+	if ( 0 === strpos( $term->name, 'T7 ' ) ) {
+		wp_delete_term( $term->term_id, Flexo_Booking_Room_Content::TAXONOMY );
+	}
+}
+delete_option( Flexo_Booking_Room_Pages::BASES_OPTION );
+update_option( Flexo_Booking_Settings::OPTION, $t7_saved_settings );
+update_option( Flexo_Booking_Features::ENABLED_OPTION, $t7_saved_features );
+Flexo_Booking_Features::reset_cache();
+t7_flush();
+t_reset_inventory();
+t_done();
