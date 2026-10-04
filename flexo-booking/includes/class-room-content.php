@@ -471,6 +471,36 @@ class Flexo_Booking_Room_Content {
 	}
 
 	/**
+	 * Dates and guests from the current address (?check_in=…&adults=…),
+	 * checked so only valid values are passed on.
+	 */
+	public static function search_args() {
+		$args = array();
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only values passed on in a link.
+		foreach ( array( 'check_in', 'check_out' ) as $key ) {
+			if ( isset( $_GET[ $key ] ) ) {
+				$date = Flexo_Booking_Dates::parse( sanitize_text_field( wp_unslash( $_GET[ $key ] ) ) );
+				if ( $date ) {
+					$args[ $key ] = $date;
+				}
+			}
+		}
+		foreach ( array( 'adults', 'children' ) as $key ) {
+			if ( isset( $_GET[ $key ] ) && '' !== $_GET[ $key ] ) {
+				$args[ $key ] = min( 99, absint( $_GET[ $key ] ) );
+			}
+		}
+		if ( isset( $_GET['children_ages'] ) ) {
+			$ages = preg_replace( '/[^0-9,]/', '', sanitize_text_field( wp_unslash( $_GET['children_ages'] ) ) );
+			if ( '' !== $ages ) {
+				$args['children_ages'] = substr( $ages, 0, 60 );
+			}
+		}
+		// phpcs:enable
+		return $args;
+	}
+
+	/**
 	 * The full description as HTML (paragraphs, shortcodes, responsive images).
 	 */
 	public static function description_html( array $room ) {

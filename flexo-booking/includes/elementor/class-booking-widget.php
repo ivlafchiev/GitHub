@@ -105,6 +105,13 @@ class Flexo_Booking_Elementor_Widget extends Widget_Base {
 
 		$this->end_controls_section();
 
+		$this->register_style_controls();
+	}
+
+	/**
+	 * Colours, spacing and typography (also used by the Room booking box).
+	 */
+	protected function register_style_controls() {
 		$this->start_controls_section(
 			'section_style_colors',
 			array(

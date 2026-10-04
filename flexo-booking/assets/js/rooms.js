@@ -223,6 +223,35 @@
 		dialog.querySelector( '.flexo-lightbox__close' ).focus();
 	} );
 
+	/* ---- "Check availability" bar on phones ---- */
+	function phoneBar() {
+		var bar = document.querySelector( '[data-flexo-room-bar]' );
+		if ( ! bar ) {
+			return;
+		}
+		var box = document.querySelector( '[data-flexo-booking-box]' );
+		bar.hidden = false;
+		document.body.classList.add( 'flexo-has-room-bar' );
+		if ( box ) {
+			// Go to the booking box on this page instead of leaving it.
+			bar.querySelector( 'a' ).addEventListener( 'click', function ( e ) {
+				e.preventDefault();
+				box.scrollIntoView( { behavior: reduced ? 'auto' : 'smooth', block: 'start' } );
+				var first = box.querySelector( '.fb-date' ) || box.querySelector( 'input[name="check_in"]' );
+				if ( first ) {
+					window.setTimeout( function () {
+						first.focus( { preventScroll: true } );
+					}, reduced ? 0 : 450 );
+				}
+			} );
+			if ( 'IntersectionObserver' in window ) {
+				new IntersectionObserver( function ( entries ) {
+					bar.classList.toggle( 'is-away', entries[ 0 ].isIntersecting );
+				} ).observe( box );
+			}
+		}
+	}
+
 	/* ---- Start ---- */
 	function init( scope ) {
 		Array.prototype.forEach.call( ( scope || document ).querySelectorAll( '[data-flexo-carousel]' ), carousel );
@@ -230,9 +259,11 @@
 	if ( 'loading' === document.readyState ) {
 		document.addEventListener( 'DOMContentLoaded', function () {
 			init();
+			phoneBar();
 		} );
 	} else {
 		init();
+		phoneBar();
 	}
 	// Elementor editor: widgets are re-rendered while the page is edited.
 	function hookElementor() {

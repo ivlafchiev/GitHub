@@ -161,6 +161,7 @@ class Flexo_Booking_Rate_Plans {
 
 	public static function flush_cache() {
 		self::$cache = null;
+		do_action( 'flexo_booking_prices_changed' );
 	}
 
 	/**

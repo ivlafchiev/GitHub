@@ -90,6 +90,7 @@ class Flexo_Booking_Closures {
 
 	public static function flush_cache() {
 		self::$cache = array();
+		do_action( 'flexo_booking_prices_changed' );
 	}
 
 	/**

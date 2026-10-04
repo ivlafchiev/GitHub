@@ -15,6 +15,17 @@ class Flexo_Booking_Frontend {
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'register_assets' ) );
 		add_shortcode( 'flexo_booking', array( __CLASS__, 'shortcode' ) );
+		add_shortcode( 'flexo_room_booking', array( __CLASS__, 'room_box_shortcode' ) );
+	}
+
+	/**
+	 * [flexo_room_booking room="deluxe-double"]: the room booking box. Without
+	 * a room it uses the room of the page (room page, room template).
+	 */
+	public static function room_box_shortcode( $atts ) {
+		$atts           = is_array( $atts ) ? $atts : array();
+		$atts['layout'] = 'box';
+		return self::render( $atts );
 	}
 
 	/**
@@ -63,6 +74,11 @@ class Flexo_Booking_Frontend {
 				) : false,
 				'i18n'      => array_merge( self::texts(), array(
 					'checking'     => __( 'Checking availability…', 'flexo-booking' ),
+					// Day 7: room booking box.
+					'boxAvailable'  => __( 'Available for your dates', 'flexo-booking' ),
+					'boxUnavailable' => __( 'Not available for these dates.', 'flexo-booking' ),
+					'boxOtherRooms' => __( 'See other rooms for these dates', 'flexo-booking' ),
+					'bookNow'       => __( 'Book now', 'flexo-booking' ),
 					'noRooms'      => __( 'No rooms are available for these dates. Please try different dates.', 'flexo-booking' ),
 					'showAll'      => __( 'Show other rooms', 'flexo-booking' ),
 					'select'       => __( 'Select', 'flexo-booking' ),
@@ -312,29 +328,42 @@ class Flexo_Booking_Frontend {
 
 	/**
 	 * @param array $atts {
-	 *     @type string $layout       "full" (complete booking flow) or "search" (compact bar that sends visitors to the booking page).
-	 *     @type string $room         Room slug or ID to preselect.
-	 *     @type string $booking_page Path or URL of the booking page, used by the "search" layout.
+	 *     @type string $layout       "full" (complete booking flow), "search" (compact bar that sends visitors to the booking page)
+	 *                                or "box" (one room's booking box: availability, total and "Book now").
+	 *     @type string $room         Room slug or ID to preselect. The box uses the room of the page when empty.
+	 *     @type string $booking_page Path or URL of the booking page, used by the "search" and "box" layouts
+	 *                                (the box uses the booking page from the settings when empty).
 	 *     @type string $title        Optional heading.
 	 *     @type string $button_text  Text of the search button.
+	 *     @type string $book_text    Box: text of the "Book now" button.
+	 *     @type string $show_price   Box: "yes" shows the "from" price.
 	 * }
 	 */
 	public static function render( array $atts ) {
-		$atts = shortcode_atts(
+		$is_box = isset( $atts['layout'] ) && 'box' === $atts['layout'];
+		$atts   = shortcode_atts(
 			array(
 				'layout'       => 'full',
 				'room'         => '',
-				'booking_page' => '/booking/',
+				'booking_page' => $is_box ? '' : '/booking/',
 				'title'        => '',
 				'button_text'  => '',
+				'book_text'    => '',
+				'show_price'   => 'yes',
 			),
 			$atts,
-			'flexo_booking'
+			$is_box ? 'flexo_room_booking' : 'flexo_booking'
 		);
 
-		$atts['layout'] = 'search' === $atts['layout'] ? 'search' : 'full';
+		$atts['layout'] = in_array( $atts['layout'], array( 'search', 'box' ), true ) ? $atts['layout'] : 'full';
 		if ( '' === $atts['button_text'] ) {
 			$atts['button_text'] = 'search' === $atts['layout'] ? __( 'Search', 'flexo-booking' ) : __( 'Check availability', 'flexo-booking' );
+		}
+		if ( '' === $atts['book_text'] ) {
+			$atts['book_text'] = __( 'Book now', 'flexo-booking' );
+		}
+		if ( $is_box ) {
+			return self::render_box( $atts );
 		}
 
 		// Values passed from a search bar or a "Book now" link.
@@ -399,6 +428,76 @@ class Flexo_Booking_Frontend {
 			}
 		}
 		return $html;
+	}
+
+	/**
+	 * The room booking box (layout "box").
+	 */
+	private static function render_box( array $atts ) {
+		$room_id = Flexo_Booking_Room_Content::current_id( $atts['room'] );
+		$post    = $room_id ? get_post( $room_id ) : null;
+		if ( ! $post || 'publish' !== $post->post_status ) {
+			if ( class_exists( 'Flexo_Booking_Elementor' ) && Flexo_Booking_Elementor::is_editing() ) {
+				return '<div class="flexo-room-note">' . esc_html__( 'Room booking box: no room here. Use it in your room template, or choose a room.', 'flexo-booking' ) . '</div>';
+			}
+			return '';
+		}
+		if ( Flexo_Booking_Room_Content::is_demo( $post->ID ) ) {
+			return '<div class="flexo-room-note">' . esc_html__( 'This is a demo room: it cannot be booked.', 'flexo-booking' ) . '</div>';
+		}
+		$room     = Flexo_Booking_Rooms::to_array( $post );
+		$settings = Flexo_Booking_Settings::all();
+		$tz       = wp_timezone();
+		$today    = new DateTimeImmutable( 'today', $tz );
+		// Dates and guests from a search ("?check_in=…&adults=…") are filled in and checked at once.
+		$args    = Flexo_Booking_Room_Content::search_args();
+		$prefill = array(
+			'check_in'  => isset( $args['check_in'] ) ? $args['check_in'] : '',
+			'check_out' => isset( $args['check_out'] ) ? $args['check_out'] : '',
+			'adults'    => isset( $args['adults'] ) ? max( 1, (int) $args['adults'] ) : min( 2, $room['capacity'] ),
+			'children'  => isset( $args['children'] ) ? (int) $args['children'] : 0,
+			'ages'      => array(),
+		);
+		if ( Flexo_Booking_Children::enabled() && isset( $args['children_ages'] ) ) {
+			$ages            = Flexo_Booking_Children::parse_ages( $args['children_ages'] );
+			$prefill['ages'] = is_wp_error( $ages ) ? array() : $ages;
+		}
+		$max_adults = $room['capacity'];
+		if ( Flexo_Booking_Children::enabled() && $room['max_adults'] > 0 ) {
+			$max_adults = min( $max_adults, $room['max_adults'] );
+		}
+		$max_adults = max( 1, min( $max_adults, (int) $settings['max_adults'] ) );
+		$max_kids   = max( 0, min( (int) $settings['max_children'], $room['capacity'] - 1 ) );
+		$from       = '';
+		if ( 'yes' === $atts['show_price'] && Flexo_Booking_Room_Prices::shown() ) {
+			$price = Flexo_Booking_Room_Prices::get( $room['id'] );
+			$from  = $price ? Flexo_Booking_Money::format( $price['amount'], null, true ) : '';
+		}
+		$page = trim( (string) $atts['booking_page'] );
+		$vars = array(
+			'atts'        => $atts,
+			'settings'    => $settings,
+			'prefill'     => $prefill,
+			'room'        => $room,
+			'uid'         => 'fb-' . wp_unique_id(),
+			'min_date'    => $today->format( 'Y-m-d' ),
+			'max_date'    => $today->modify( '+' . (int) $settings['max_advance_days'] . ' days' )->format( 'Y-m-d' ),
+			'booking_url' => Flexo_Booking_Room_Content::booking_url( '', array(), $page ),
+			'autosearch'  => '' !== $prefill['check_in'] && '' !== $prefill['check_out'],
+			'ask_ages'    => Flexo_Booking_Children::enabled() && $max_kids > 0,
+			'from'        => $from,
+			'max_adults'  => $max_adults,
+			'max_kids'    => $max_kids,
+		);
+
+		wp_enqueue_style( 'flexo-booking' );
+		self::appearance();
+		wp_enqueue_script( 'flexo-booking' );
+		self::localize();
+
+		ob_start();
+		self::load_template( 'room-booking-box.php', $vars );
+		return ob_get_clean();
 	}
 
 	/**

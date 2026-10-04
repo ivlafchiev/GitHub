@@ -338,6 +338,135 @@ $_POST = array();
 wp_set_current_user( 0 );
 
 /* ---------------------------------------------------------------- */
+t_section( '"From" price' );
+Flexo_Booking_Features::set_enabled( array_merge( (array) Flexo_Booking_Features::stored_enabled(), array( 'seasonal_pricing', 'rate_plans', 'tourist_tax' ) ) );
+Flexo_Booking_Features::reset_cache();
+t7_settings( array( 'min_nights' => 1, 'max_advance_days' => 365, 'tourist_tax_amount' => 2, 'room_price_display' => 'from' ) );
+$fp = t_room( 't7-from', 'T7 From', array( 'price' => 100, 'weekend_price' => 150, 'capacity' => 3, 'units' => 1, 'min_nights' => 2 ) );
+$from = Flexo_Booking_Room_Prices::get( $fp );
+t_eq( 100.0, (float) $from['amount'], 'weekday stays at the normal price (weekend nights cost more)' );
+t_eq( 2, $from['nights'], 'stay of the room\'s minimum length' );
+$low = Flexo_Booking_Seasons::save( array( 'room_id' => $fp, 'name' => 'T7 Low', 'date_from' => t_day( 21 ), 'date_to' => t_day( 27 ), 'price' => 70, 'weekend_price' => '' ) );
+t_ok( ! is_wp_error( $low ), 'low season saved' );
+t_eq( 70.0, (float) Flexo_Booking_Room_Prices::get( $fp )['amount'], 'season change updates the "from" price at once (low season 70)' );
+t_ok( $low && Flexo_Booking_Room_Prices::get( $fp )['check_in'] >= t_day( 21 ), 'cheapest arrival is in the low season' );
+$closed = Flexo_Booking_Closures::save( array( 'room_id' => $fp, 'date_from' => t_day( 21 ), 'date_to' => t_day( 27 ), 'reason' => 'T7' ) );
+t_eq( 100.0, (float) Flexo_Booking_Room_Prices::get( $fp )['amount'], 'closed dates are skipped' );
+Flexo_Booking_Closures::delete( $closed );
+Flexo_Booking_Seasons::save( array( 'room_id' => $fp, 'name' => 'T7 Low', 'date_from' => t_day( 21 ), 'date_to' => t_day( 27 ), 'price' => 70, 'weekend_price' => '', 'min_nights' => 7 ), $low );
+$from = Flexo_Booking_Room_Prices::get( $fp );
+t_eq( 7, $from['nights'], 'season\'s own minimum stay used for its arrival days' );
+t_eq( 70.0, (float) $from['amount'], 'a whole week in the low season still averages 70' );
+$plan = Flexo_Booking_Rate_Plans::save( array( 'name' => 'T7 Breakfast', 'adjustment_type' => 'per_night', 'adjustment_value' => 12, 'active' => 1 ) );
+Flexo_Booking_Rate_Plans::set_room_assignments( $fp, array( $plan => null ) );
+t_eq( 82.0, (float) Flexo_Booking_Room_Prices::get( $fp )['amount'], 'the room\'s first rate is included (+12 per night)' );
+$quote = Flexo_Booking_Pricing::quote( array( 'room' => $fp, 'check_in' => Flexo_Booking_Room_Prices::get( $fp )['check_in'], 'check_out' => Flexo_Booking_Dates::add_days( Flexo_Booking_Room_Prices::get( $fp )['check_in'], 7 ), 'adults' => 2 ) );
+t_ok( $quote['tax_total'] > 0 && abs( $quote['subtotal'] / 7 - 82 ) < 0.01, 'tourist tax not in the "from" price; the booking flow quotes the same room price' );
+update_post_meta( $fp, '_flexo_price', 60 );
+Flexo_Booking_Seasons::delete( $low );
+t_eq( 72.0, (float) Flexo_Booking_Room_Prices::get( $fp )['amount'], 'price change updates it (60 + 12)' );
+update_post_meta( $fp, '_flexo_units', 0 );
+t_eq( null, Flexo_Booking_Room_Prices::get( $fp ), 'room taking no bookings: no "from" price' );
+update_post_meta( $fp, '_flexo_units', 1 );
+Flexo_Booking_Room_Prices::get( $fp );
+$cached = get_post_meta( $fp, Flexo_Booking_Room_Prices::META, true );
+t_ok( is_array( $cached ) && wp_date( 'Y-m-d' ) === $cached['computed'], 'cached per room for the day' );
+t_ok( (bool) wp_next_scheduled( Flexo_Booking_Room_Prices::EVENT ), 'daily refresh scheduled' );
+t_ok( false !== strpos( Flexo_Booking_Room_Prices::from_text( $fp ), '72' ) && false === strpos( Flexo_Booking_Room_Prices::from_text( $fp ), '72.00' ), '"from" text, whole amount without decimals' );
+t7_settings( array( 'room_price_display' => 'none' ) );
+t_eq( '', Flexo_Booking_Room_Prices::from_text( $fp ), 'prices hidden in the settings: no "from" text' );
+t7_settings( array( 'room_price_display' => 'from' ) );
+Flexo_Booking_Rate_Plans::delete( $plan );
+t_eq( 60.0, (float) Flexo_Booking_Room_Prices::get( $fp )['amount'], 'rate deleted: back to the room price' );
+
+/* ---------------------------------------------------------------- */
+t_section( 'Room booking box' );
+$html = do_shortcode( '[flexo_room_booking room="t7-from"]' );
+t_ok( false !== strpos( $html, 'data-flexo-booking-box' ) && false !== strpos( $html, 'data-room="t7-from"' ), 'shortcode renders the box for the room' );
+t_ok( false !== strpos( $html, 'fb-box__from-price' ), 'box shows the "from" price' );
+t_ok( false !== strpos( $html, 'action="' . home_url( '/booking/' ) . '"' ), 'without JavaScript the form opens the booking page' );
+t_eq( 3, substr_count( preg_replace( '/.*name="adults">(.*?)<\/select>.*/s', '$1', $html ), '<option' ), 'adults limited to the room\'s guests' );
+t_eq( '', do_shortcode( '[flexo_room_booking]' ), 'no room on the page: nothing shown' );
+$GLOBALS['post'] = get_post( $fp );
+setup_postdata( $GLOBALS['post'] );
+t_ok( false !== strpos( do_shortcode( '[flexo_room_booking]' ), 'data-room="t7-from"' ), 'inside a room: the current room' );
+wp_reset_postdata();
+unset( $GLOBALS['post'] );
+$_GET = array( 'check_in' => t_day( 10 ), 'check_out' => t_day( 12 ), 'adults' => '2' );
+$html = do_shortcode( '[flexo_room_booking room="t7-from" show_price="no" button_text="Check" book_text="Reserve"]' );
+t_ok( false !== strpos( $html, 'data-autosearch="1"' ) && false !== strpos( $html, 'value="' . t_day( 10 ) . '"' ), 'dates from a search are filled in and checked at once' );
+t_ok( false === strpos( $html, 'fb-box__from' ) && false !== strpos( $html, '>Check</button>' ) && false !== strpos( $html, 'data-book-text="Reserve"' ), 'price switch and button texts' );
+$_GET = array();
+update_post_meta( $fp, Flexo_Booking_Room_Content::DEMO, '1' );
+t_ok( false !== strpos( do_shortcode( '[flexo_room_booking room="t7-from"]' ), 'demo room' ), 'demo room: box says it cannot be booked' );
+delete_post_meta( $fp, Flexo_Booking_Room_Content::DEMO );
+$full = Flexo_Booking_Bookings::search( t_day( 10 ), t_day( 12 ), 2, 0, 't7-from' );
+t_ok( $full['rooms'][0]['available'], 'the box asks the same availability service as the booking form' );
+t_eq( '', Flexo_Booking_Room_Render::field_shortcode( array( 'field' => 'nope', 'room' => 't7-from' ) ), '[flexo_room_field] ignores unknown fields' );
+t_eq( 'T7 From', do_shortcode( '[flexo_room_field field="name" room="t7-from"]' ), '[flexo_room_field] name' );
+t_ok( false !== strpos( do_shortcode( '[flexo_room_field field="from_price" room="t7-from"]' ), '60' ), '[flexo_room_field] from price' );
+
+/* ---------------------------------------------------------------- */
+t_section( 'Default room page and search engines over HTTP' );
+wp_update_post( array( 'ID' => $fp, 'post_excerpt' => 'A quiet room.', 'post_content' => 'Long text.' ) );
+update_post_meta( $fp, Flexo_Booking_Room_Content::SEO_DESCRIPTION, 'Quiet room in the old town.' );
+update_post_meta( $fp, Flexo_Booking_Room_Content::SEO_TITLE, 'T7 From – quiet room' );
+t7_settings( array( 'room_sticky_bar' => 1 ) );
+list( $code, , $body ) = t7_get( '/rooms/t7-from/' );
+if ( 200 === $code ) {
+	t_ok( false !== strpos( $body, 'class="flexo-room-page"' ), 'block theme: default room page (Single room template)' );
+	t_ok( false !== strpos( $body, 'data-flexo-booking-box' ), 'room page has the booking box' );
+	t_ok( false !== strpos( $body, 'data-flexo-room-bar' ), 'phone bar on room pages' );
+	t_ok( false !== strpos( $body, '<title>T7 From – quiet room</title>' ) || false !== strpos( $body, '<title>T7 From &#8211; quiet room</title>' ), 'SEO title' );
+	t_ok( false !== strpos( $body, '<meta name="description" content="Quiet room in the old town.">' ), 'SEO description' );
+	t_eq( 1, substr_count( $body, 'application/ld+json' ), 'one structured data block' );
+	preg_match( '#<script type="application/ld\+json">(.*?)</script>#s', $body, $m );
+	$ld    = isset( $m[1] ) ? json_decode( $m[1], true ) : null;
+	$types = $ld ? wp_list_pluck( $ld['@graph'], '@type' ) : array();
+	t_eq( array( 'HotelRoom', 'Hotel', 'Offer' ), $types, 'schema: HotelRoom in a Hotel, with an Offer' );
+	t_eq( 60.0, $ld ? (float) $ld['@graph'][2]['priceSpecification']['price'] : 0.0, 'offer price = "from" price' );
+	t_eq( 3, $ld ? $ld['@graph'][0]['occupancy']['maxValue'] : 0, 'occupancy' );
+	t7_settings( array( 'room_sticky_bar' => 0 ) );
+	list( , , $body ) = t7_get( '/rooms/t7-from/' );
+	t_ok( false === strpos( $body, 'data-flexo-room-bar' ), 'phone bar can be switched off' );
+
+	// Classic theme: the plugin's template with the theme's header and footer.
+	$theme = get_stylesheet();
+	if ( wp_get_theme( 'twentytwentyone' )->exists() ) {
+		switch_theme( 'twentytwentyone' );
+		list( $code, , $body ) = t7_get( '/rooms/t7-from/' );
+		t_ok( 200 === $code && false !== strpos( $body, 'class="flexo-room-page"' ) && false !== strpos( $body, 'site-header' ), 'classic theme: room page inside the theme\'s header and footer' );
+		t_eq( 1, substr_count( $body, '<h1' ), 'classic theme: one main heading' );
+		switch_theme( $theme );
+	}
+}
+
+// Yoast SEO / Rank Math stand-ins: their own titles and descriptions, our room joins their graph.
+$GLOBALS['wp_query']     = new WP_Query( array( 'p' => $fp, 'post_type' => Flexo_Booking_Rooms::POST_TYPE ) );
+$GLOBALS['wp_the_query'] = $GLOBALS['wp_query'];
+$graph = apply_filters( 'wpseo_schema_graph', array( array( '@type' => 'WebPage', '@id' => 'x#webpage' ) ), null );
+t_eq( array( 'WebPage', 'HotelRoom', 'Hotel', 'Offer' ), wp_list_pluck( $graph, '@type' ), 'Yoast: room added to Yoast\'s graph' );
+$graph = apply_filters( 'wpseo_schema_graph', array( array( '@type' => array( 'HotelRoom', 'Product' ) ) ), null );
+t_eq( 1, count( $graph ), 'Yoast: no second HotelRoom' );
+$rm = apply_filters( 'rank_math/json_ld', array( 'WebPage' => array( '@type' => 'WebPage' ) ), null );
+t_eq( 4, count( $rm ), 'Rank Math: room added to Rank Math\'s data' );
+$rm = apply_filters( 'rank_math/json_ld', array( 'richSnippet' => array( '@type' => 'Product' ) ), null );
+t_eq( 1, count( $rm ), 'Rank Math: a Product schema set on the room is kept, nothing added' );
+update_post_meta( $hidden, Flexo_Booking_Room_Content::HIDDEN, '1' );
+t_ok( in_array( $hidden, apply_filters( 'wpseo_exclude_from_sitemap_by_post_ids', array() ), true ), 'Yoast sitemap: hidden room left out' );
+t_eq( false, apply_filters( 'rank_math/sitemap/entry', array( 'loc' => 'x' ), 'post', get_post( $hidden ) ), 'Rank Math sitemap: hidden room left out' );
+if ( ! defined( 'WPSEO_VERSION' ) ) {
+	define( 'WPSEO_VERSION', 'stand-in' );
+}
+ob_start();
+Flexo_Booking_Room_SEO::head();
+$head = ob_get_clean();
+t_eq( '', $head, 'with an SEO plugin: no own description or schema (no duplicates)' );
+t_eq( 'Theme title', Flexo_Booking_Room_SEO::title( 'Theme title' ), 'with an SEO plugin: its title is kept' );
+wp_reset_query();
+wp_delete_post( $fp, true );
+
+/* ---------------------------------------------------------------- */
 foreach ( array( $old, $room, $hidden, $demo ) as $id ) {
 	wp_delete_post( $id, true );
 }

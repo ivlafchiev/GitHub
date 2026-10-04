@@ -24,6 +24,9 @@ class Flexo_Booking_Room_Render {
 
 	public static function init() {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'register_assets' ), 5 );
+		add_action( 'wp_footer', array( __CLASS__, 'phone_bar' ) );
+		add_shortcode( 'flexo_room', array( __CLASS__, 'room_shortcode' ) );
+		add_shortcode( 'flexo_room_field', array( __CLASS__, 'field_shortcode' ) );
 	}
 
 	public static function register_assets() {
@@ -302,4 +305,188 @@ class Flexo_Booking_Room_Render {
 		}
 		return $out . '</div>';
 	}
+
+	/* ------------------------------------------------------------------ *
+	 * Default room page
+	 * ------------------------------------------------------------------ */
+
+	/**
+	 * The whole room page: name, facts, photos, description, amenities,
+	 * details, rates and the booking box. Used when no Elementor Pro single
+	 * template is set for rooms, and by [flexo_room].
+	 *
+	 * @param array $room Room view.
+	 */
+	public static function page( array $room ) {
+		self::enqueue( true );
+		$rooms_page = Flexo_Booking_Room_Pages::rooms_page_url();
+		$facts      = self::details(
+			$room,
+			array(
+				'facts'         => array( 'size', 'guests', 'beds', 'view' ),
+				'more'          => false,
+				'layout'        => 'inline',
+				'show'          => 'value',
+				'guests_format' => 'summary',
+			)
+		);
+		$from = Flexo_Booking_Room_Prices::from_text( $room['id'] );
+
+		$out  = '<article class="flexo-room-page" id="flexo-room-' . (int) $room['id'] . '">';
+		$out .= $rooms_page ? '<p class="flexo-room-page__back"><a href="' . esc_url( $rooms_page ) . '">' . esc_html__( '← All rooms', 'flexo-booking' ) . '</a></p>' : '';
+		$out .= '<header class="flexo-room-page__head">';
+		$out .= $room['types'] ? '<p class="flexo-room-page__type">' . esc_html( implode( ', ', $room['types'] ) ) . '</p>' : '';
+		$out .= '<h1 class="flexo-room-page__title">' . esc_html( $room['title'] ) . '</h1>';
+		$out .= '' !== $from ? '<p class="flexo-room-page__price">' . esc_html( $from ) . ' <span>' . esc_html__( 'per night', 'flexo-booking' ) . '</span></p>' : '';
+		$out .= $facts;
+		$out .= '</header>';
+		$out .= self::gallery(
+			$room,
+			array(
+				'layout'   => 'carousel',
+				'lightbox' => 'flexo',
+			)
+		);
+		$out .= '<div class="flexo-room-page__layout"><div class="flexo-room-page__main">';
+
+		$description = Flexo_Booking_Room_Content::description_html( $room );
+		$out        .= '' !== $description ? '<div class="flexo-room-page__description">' . $description . '</div>' : ( '' !== $room['excerpt'] ? '<p class="flexo-room-page__description">' . esc_html( $room['excerpt'] ) . '</p>' : '' );
+
+		$amenities = self::amenities( $room['amenity_list'], array( 'layout' => 'grid' ) );
+		if ( '' !== $amenities ) {
+			$out .= '<section class="flexo-room-page__section"><h2>' . esc_html__( 'Amenities', 'flexo-booking' ) . '</h2>' . $amenities . '</section>';
+		}
+		$details = self::details(
+			$room,
+			array(
+				'facts'  => array(),
+				'more'   => true,
+				'layout' => 'grid',
+				'show'   => 'stacked',
+			)
+		);
+		if ( '' !== $details ) {
+			$out .= '<section class="flexo-room-page__section"><h2>' . esc_html__( 'Good to know', 'flexo-booking' ) . '</h2>' . $details . '</section>';
+		}
+		$out .= self::rates( $room );
+		$out .= '</div><aside class="flexo-room-page__aside" id="flexo-room-book">';
+		$out .= Flexo_Booking_Frontend::render(
+			array(
+				'layout' => 'box',
+				'room'   => (string) $room['id'],
+			)
+		);
+		$out .= '</aside></div></article>';
+		return $out;
+	}
+
+	/**
+	 * Rates the room offers (meals and cancellation), when rate plans are on.
+	 */
+	private static function rates( array $room ) {
+		if ( ! Flexo_Booking_Rate_Plans::enabled() ) {
+			return '';
+		}
+		$plans = Flexo_Booking_Rate_Plans::for_room( $room['id'] );
+		if ( ! $plans ) {
+			return '';
+		}
+		$out = '<section class="flexo-room-page__section"><h2>' . esc_html__( 'Rates', 'flexo-booking' ) . '</h2><ul class="flexo-room-rates">';
+		foreach ( $plans as $plan ) {
+			$out  .= '<li class="flexo-room-rates__item"><strong>' . esc_html( $plan['name'] ) . '</strong>';
+			$meals = '' !== $plan['meals'] ? Flexo_Booking_Rate_Plans::meals_label( $plan['meals'] ) : '';
+			$terms = array_filter( array( $meals, Flexo_Booking_Rate_Plans::refundable_label( $plan['refundable'] ) ) );
+			$out  .= $terms ? '<span class="flexo-room-rates__terms">' . esc_html( implode( ' · ', $terms ) ) . '</span>' : '';
+			$out  .= '' !== $plan['description'] ? '<span class="flexo-room-rates__text">' . esc_html( $plan['description'] ) . '</span>' : '';
+			$out  .= '' !== $plan['cancellation_policy'] ? '<span class="flexo-room-rates__text">' . esc_html( $plan['cancellation_policy'] ) . '</span>' : '';
+			$out  .= '</li>';
+		}
+		return $out . '</ul></section>';
+	}
+
+	/**
+	 * [flexo_room room="…"]: the whole room page (default: the room of the page).
+	 */
+	public static function room_shortcode( $atts ) {
+		$atts = shortcode_atts( array( 'room' => '' ), is_array( $atts ) ? $atts : array(), 'flexo_room' );
+		$room = Flexo_Booking_Room_Content::room( Flexo_Booking_Room_Content::current_id( $atts['room'] ) );
+		return $room ? self::page( $room ) : '';
+	}
+
+	/**
+	 * [flexo_room_field field="size" room="…"]: one room value as text, for
+	 * places without dynamic tags.
+	 */
+	public static function field_shortcode( $atts ) {
+		$atts = shortcode_atts(
+			array(
+				'field' => 'name',
+				'room'  => '',
+			),
+			is_array( $atts ) ? $atts : array(),
+			'flexo_room_field'
+		);
+		$room = Flexo_Booking_Room_Content::room( Flexo_Booking_Room_Content::current_id( $atts['room'] ) );
+		if ( ! $room ) {
+			return '';
+		}
+		switch ( sanitize_key( $atts['field'] ) ) {
+			case 'name':
+				return esc_html( $room['title'] );
+			case 'type':
+				return esc_html( implode( ', ', $room['types'] ) );
+			case 'excerpt':
+				return esc_html( $room['excerpt'] );
+			case 'description':
+				return Flexo_Booking_Room_Content::description_html( $room );
+			case 'size':
+				return esc_html( Flexo_Booking_Room_Content::size_text( $room ) );
+			case 'guests':
+				return esc_html( Flexo_Booking_Room_Content::guests_text( $room ) );
+			case 'beds':
+				return esc_html( $room['beds'] );
+			case 'view':
+				return esc_html( $room['view'] );
+			case 'price':
+				return $room['price'] > 0 ? esc_html( Flexo_Booking_Money::format( $room['price'], null, true ) ) : '';
+			case 'from_price':
+				return esc_html( Flexo_Booking_Room_Prices::from_text( $room['id'], true ) );
+			case 'amenities':
+				self::enqueue();
+				return self::amenities( $room['amenity_list'] );
+			case 'url':
+				return esc_url( $room['url'] );
+			case 'booking_url':
+				return esc_url( $room['booking_url'] );
+		}
+		return '';
+	}
+
+	/* ------------------------------------------------------------------ *
+	 * "Check availability" bar on phones
+	 * ------------------------------------------------------------------ */
+
+	/**
+	 * A bar at the bottom of room pages on phones with the "from" price and
+	 * a button to the booking box (or the booking page when the template
+	 * has no box). Hidden while the booking box is on screen.
+	 */
+	public static function phone_bar() {
+		if ( ! is_singular( Flexo_Booking_Rooms::POST_TYPE ) || ! Flexo_Booking_Settings::get( 'room_sticky_bar' ) ) {
+			return;
+		}
+		$room = Flexo_Booking_Room_Content::room( get_queried_object_id() );
+		if ( ! $room || $room['demo'] || $room['units'] < 1 ) {
+			return;
+		}
+		self::enqueue( true );
+		$from = Flexo_Booking_Room_Prices::from_text( $room['id'] );
+		echo '<div class="flexo-room-bar" data-flexo-room-bar hidden>';
+		echo '<span class="flexo-room-bar__text"><span class="flexo-room-bar__name">' . esc_html( $room['title'] ) . '</span>';
+		if ( '' !== $from ) {
+			echo '<span class="flexo-room-bar__price">' . esc_html( $from ) . ' <small>' . esc_html__( 'per night', 'flexo-booking' ) . '</small></span>';
+		}
+		echo '</span><a class="flexo-room-bar__button" href="' . esc_url( $room['booking_url'] ) . '">' . esc_html__( 'Check availability', 'flexo-booking' ) . '</a></div>';
+	}
 }
+

@@ -3146,8 +3146,266 @@
 		} );
 	}
 
+	/**
+	 * Room booking box: one room, dates and guests → availability and total
+	 * → "Book now" opens the booking page with everything chosen (Day 6's
+	 * form then goes straight to the room's rates or the guest details).
+	 */
+	function RoomBox( node ) {
+		var self = this;
+		this.root = node;
+		this.form = node.querySelector( '.fb-search' );
+		this.result = node.querySelector( '[data-fb-box-result]' );
+		this.room = node.getAttribute( 'data-room' ) || '';
+		this.bookingUrl = node.getAttribute( 'data-booking-url' ) || '';
+		this.bookText = node.getAttribute( 'data-book-text' ) || t.bookNow;
+		this.locale = node.getAttribute( 'data-locale' ) || '';
+		this.picker = new DatePicker( this.form, {
+			locale: this.locale,
+			dateFormat: node.getAttribute( 'data-date-format' ) || '',
+			room: function () {
+				return self.room;
+			},
+			guests: function () {
+				var v = self.values();
+				return { adults: v.adults, children: v.children };
+			},
+			onChange: function () {
+				self.clear();
+			},
+		} );
+		if ( ! this.picker.enhanced ) {
+			bindDates( this.form );
+		}
+		bindAges( this.form );
+		if ( ! window.fetch ) {
+			return; // The form opens the booking page instead.
+		}
+		this.form.addEventListener( 'submit', function ( e ) {
+			e.preventDefault();
+			self.check( true );
+		} );
+		this.form.addEventListener( 'change', function ( e ) {
+			if ( 'adults' === e.target.name || 'children' === e.target.name ) {
+				if ( self.picker.enhanced ) {
+					self.picker.reset();
+				}
+				self.clear();
+			}
+		} );
+		if ( '1' === node.getAttribute( 'data-autosearch' ) ) {
+			this.check( false );
+		}
+	}
+
+	RoomBox.prototype.values = function () {
+		var f = this.form;
+		var get = function ( name, def ) {
+			var field = f.querySelector( '[name="' + name + '"]' );
+			return field && field.value !== '' ? field.value : def;
+		};
+		var ages = [];
+		f.querySelectorAll( '[name="children_ages[]"]' ).forEach( function ( sel ) {
+			ages.push( sel.value );
+		} );
+		return {
+			check_in: get( 'check_in', '' ),
+			check_out: get( 'check_out', '' ),
+			adults: get( 'adults', '2' ),
+			children: get( 'children', '0' ),
+			ages: ages,
+		};
+	};
+
+	RoomBox.prototype.clear = function () {
+		this.result.innerHTML = '';
+		this.root.classList.remove( 'is-checked' );
+	};
+
+	RoomBox.prototype.message = function ( text, isError ) {
+		this.result.innerHTML = '';
+		var p = el( 'p', 'fb-box__status' + ( isError ? ' is-no' : '' ), text );
+		if ( isError ) {
+			p.setAttribute( 'role', 'alert' );
+		}
+		this.result.appendChild( p );
+	};
+
+	/** Booking page address with the room, dates and guests. */
+	RoomBox.prototype.bookUrl = function ( v, withRoom ) {
+		var url = new URL( this.bookingUrl, window.location.href );
+		if ( withRoom ) {
+			url.searchParams.set( 'room', this.room );
+		}
+		url.searchParams.set( 'check_in', v.check_in );
+		url.searchParams.set( 'check_out', v.check_out );
+		url.searchParams.set( 'adults', v.adults );
+		if ( parseInt( v.children, 10 ) > 0 ) {
+			url.searchParams.set( 'children', v.children );
+			if ( v.ages.length ) {
+				url.searchParams.set( 'children_ages', v.ages.join( ',' ) );
+			}
+		}
+		return url.toString();
+	};
+
+	RoomBox.prototype.guestsText = function ( v ) {
+		var a = parseInt( v.adults, 10 ) || 1;
+		var c = parseInt( v.children, 10 ) || 0;
+		var text = fmt( a === 1 ? t.adult : t.adults, a );
+		if ( c > 0 ) {
+			text += ', ' + fmt( c === 1 ? t.child : t.childrenN, c );
+		}
+		return text;
+	};
+
+	RoomBox.prototype.check = function ( focus ) {
+		var self = this;
+		var v = this.values();
+		if ( ! v.check_in || ! v.check_out ) {
+			if ( ! focus ) {
+				return;
+			}
+			if ( this.picker.enhanced ) {
+				var which = v.check_in ? 'out' : 'in';
+				setError( this.picker.buttons[ which ], t.datesMissing );
+				this.picker.open( which );
+			} else {
+				this.message( t.datesMissing, true );
+			}
+			return;
+		}
+		if ( v.check_out <= v.check_in ) {
+			this.message( t.datesInvalid, true );
+			return;
+		}
+		var invalid = null;
+		this.form.querySelectorAll( '[name="children_ages[]"]' ).forEach( function ( sel ) {
+			var msg = checkField( sel );
+			setError( sel, msg );
+			invalid = invalid || ( msg ? sel : null );
+		} );
+		if ( invalid ) {
+			focusEl( invalid );
+			return;
+		}
+		var params = { check_in: v.check_in, check_out: v.check_out, adults: v.adults, children: v.children, room: this.room };
+		if ( v.ages.length ) {
+			params.children_ages = v.ages.join( ',' );
+		}
+		if ( this.locale ) {
+			params.locale = this.locale;
+		}
+		this.root.classList.add( 'is-loading' );
+		this.message( t.checking );
+		request( apiUrl( 'availability', params ) )
+			.then( function ( data ) {
+				var room = ( data.rooms || [] )[ 0 ];
+				if ( ! room ) {
+					self.message( data.notice || t.noRooms, true );
+					return;
+				}
+				self.render( data, room, v, focus );
+				track( {
+					event: 'search',
+					search_term: data.check_in + ' – ' + data.check_out,
+					check_in: data.check_in,
+					check_out: data.check_out,
+					nights: data.nights,
+					adults: parseInt( v.adults, 10 ),
+					children: parseInt( v.children, 10 ) || 0,
+				} );
+			} )
+			.catch( function ( err ) {
+				self.message( err.message || t.genericError, true );
+			} )
+			.finally( function () {
+				self.root.classList.remove( 'is-loading' );
+			} );
+	};
+
+	RoomBox.prototype.render = function ( data, room, v, focus ) {
+		var self = this;
+		this.result.innerHTML = '';
+		this.root.classList.add( 'is-checked' );
+		var box = el( 'div', 'fb-box__answer' + ( room.available ? ' is-available' : ' is-unavailable' ) );
+		var stay = el( 'p', 'fb-box__stay', nightsText( data.nights ) + ' · ' + this.guestsText( v ) );
+		if ( room.available ) {
+			box.appendChild( el( 'p', 'fb-box__status is-ok', t.boxAvailable ) );
+			box.appendChild( stay );
+			var total = el( 'p', 'fb-box__total' );
+			total.appendChild( el( 'span', 'fb-box__total-label', t.total ) );
+			total.appendChild( el( 'strong', 'fb-box__total-amount', room.price_from ? fmt( t.from, room.total_formatted ) : room.total_formatted ) );
+			box.appendChild( total );
+			if ( data.nights > 1 && room.price_average_formatted ) {
+				box.appendChild( el( 'p', 'fb-box__avg', fmt( t.avgPerNight, room.price_average_formatted ) ) );
+			}
+			if ( room.units_left > 0 && room.units_left <= 2 ) {
+				box.appendChild( el( 'p', 'fb-box__left', fmt( t.onlyLeft, room.units_left ) ) );
+			}
+			var book = el( 'a', 'fb-button fb-box__book', this.bookText );
+			book.href = this.bookUrl( v, true );
+			box.appendChild( book );
+			this.result.appendChild( box );
+			if ( focus ) {
+				book.focus();
+			}
+			return;
+		}
+		box.appendChild( el( 'p', 'fb-box__status is-no', room.reason || data.notice || t.boxUnavailable ) );
+		box.appendChild( stay );
+		var alt = el( 'div', 'fb-box__alternatives' );
+		box.appendChild( alt );
+		var others = el( 'a', 'fb-link fb-box__others', t.boxOtherRooms );
+		others.href = this.bookUrl( v, false );
+		box.appendChild( others );
+		this.result.appendChild( box );
+		box.querySelector( '.fb-box__status' ).setAttribute( 'tabindex', '-1' );
+		if ( focus ) {
+			box.querySelector( '.fb-box__status' ).focus();
+		}
+
+		var params = { check_in: v.check_in, check_out: v.check_out, adults: v.adults, children: v.children, room: this.room };
+		if ( v.ages.length ) {
+			params.children_ages = v.ages.join( ',' );
+		}
+		if ( this.locale ) {
+			params.locale = this.locale;
+		}
+		request( apiUrl( 'alternatives', params ) )
+			.then( function ( res ) {
+				if ( ! res.dates || ! res.dates.length ) {
+					return;
+				}
+				alt.appendChild( el( 'p', 'fb-box__subtitle', t.nearbyDates ) );
+				var ul = el( 'ul', 'fb-alternatives' );
+				res.dates.slice( 0, 3 ).forEach( function ( d ) {
+					var li = el( 'li' );
+					var b = button( 'fb-alt' );
+					b.appendChild( el( 'strong', '', shortDate( d.check_in, self.locale ) + ' – ' + shortDate( d.check_out, self.locale ) ) );
+					b.appendChild( el( 'span', '', d.from ) );
+					b.addEventListener( 'click', function () {
+						self.form.querySelector( '[name="check_in"]' ).value = d.check_in;
+						self.form.querySelector( '[name="check_out"]' ).value = d.check_out;
+						if ( self.picker.enhanced ) {
+							self.picker.sync();
+						}
+						self.check( true );
+					} );
+					li.appendChild( b );
+					ul.appendChild( li );
+				} );
+				alt.appendChild( ul );
+			} )
+			.catch( function () {} );
+	};
+
 	function init( scope ) {
 		var ctx = scope || document;
+		ctx.querySelectorAll( '[data-flexo-booking-box]:not([data-fb-ready])' ).forEach( function ( node ) {
+			node.setAttribute( 'data-fb-ready', '1' );
+			new RoomBox( node ); // eslint-disable-line no-new
+		} );
 		ctx.querySelectorAll( '[data-flexo-booking]:not([data-fb-ready])' ).forEach( function ( node ) {
 			node.setAttribute( 'data-fb-ready', '1' );
 			new BookingForm( node ); // eslint-disable-line no-new
@@ -3174,6 +3432,9 @@
 		}
 		elementorHooked = true;
 		window.elementorFrontend.hooks.addAction( 'frontend/element_ready/flexo-booking-form.default', function ( $scope ) {
+			init( $scope && $scope[ 0 ] ? $scope[ 0 ] : document );
+		} );
+		window.elementorFrontend.hooks.addAction( 'frontend/element_ready/flexo-room-booking-box.default', function ( $scope ) {
 			init( $scope && $scope[ 0 ] ? $scope[ 0 ] : document );
 		} );
 	}

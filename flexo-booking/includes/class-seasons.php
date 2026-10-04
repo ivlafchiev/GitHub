@@ -93,6 +93,7 @@ class Flexo_Booking_Seasons {
 
 	public static function flush_cache() {
 		self::$cache = array();
+		do_action( 'flexo_booking_prices_changed' );
 	}
 
 	public static function season_for_night( array $seasons, $date ) {

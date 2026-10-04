@@ -422,3 +422,216 @@
 	font-size: 13px;
 	text-align: center;
 }
+
+/* ---- Default room page (when no Elementor Pro template is set) ---- */
+
+.flexo-room-page {
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 24px 16px 48px;
+}
+
+.flexo-room-page *,
+.flexo-room-page *::before,
+.flexo-room-page *::after {
+	box-sizing: border-box;
+}
+
+.flexo-room-page__back {
+	margin: 0 0 12px;
+	font-size: 0.95em;
+}
+
+.flexo-room-page__head {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-bottom: 20px;
+}
+
+.flexo-room-page__type {
+	margin: 0;
+	font-size: 0.8em;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	opacity: 0.7;
+}
+
+.flexo-room-page .flexo-room-page__title {
+	margin: 0;
+	line-height: 1.15;
+}
+
+.flexo-room-page__price {
+	margin: 0;
+	font-size: 1.25em;
+	font-weight: 600;
+}
+
+.flexo-room-page__price span {
+	font-size: 0.75em;
+	font-weight: 400;
+	opacity: 0.75;
+}
+
+.flexo-room-page .flexo-room-gallery {
+	--flexo-per-view: 2;
+	--flexo-height: 420px;
+	--flexo-gap: 12px;
+	--flexo-radius: 10px;
+	margin-bottom: 32px;
+}
+
+.flexo-room-page__layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 32px;
+}
+
+.flexo-room-page__description > :first-child {
+	margin-top: 0;
+}
+
+.flexo-room-page__section {
+	margin-top: 32px;
+}
+
+.flexo-room-page__section h2 {
+	margin: 0 0 16px;
+	font-size: 1.35em;
+}
+
+.flexo-room-page .flexo-room-amenities {
+	--flexo-columns: 2;
+}
+
+.flexo-room-rates {
+	display: grid;
+	gap: 12px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.flexo-room-rates__item {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	margin: 0;
+	padding: 14px 16px;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	border-radius: 10px;
+}
+
+.flexo-room-rates__terms,
+.flexo-room-rates__text {
+	font-size: 0.92em;
+	opacity: 0.8;
+}
+
+@media (min-width: 960px) {
+	.flexo-room-page__layout {
+		grid-template-columns: minmax(0, 1fr) 380px;
+		align-items: start;
+	}
+
+	.flexo-room-page__aside {
+		position: sticky;
+		top: 24px;
+	}
+
+	.flexo-room-page .flexo-room-amenities {
+		--flexo-columns: 3;
+	}
+}
+
+@media (max-width: 767px) {
+	.flexo-room-page .flexo-room-gallery {
+		--flexo-per-view: 1;
+		--flexo-height: 260px;
+	}
+}
+
+/* ---- "Check availability" bar on phones ---- */
+
+.flexo-room-bar {
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 9990;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
+	background: var(--flexo-bar-bg, #fff);
+	box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.08);
+	color: var(--flexo-bar-text, #1d1f22);
+	font-size: 15px;
+	transition: transform 0.25s ease;
+}
+
+.flexo-room-bar.is-away {
+	transform: translateY(110%);
+}
+
+.flexo-room-bar__text {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.flexo-room-bar__name {
+	overflow: hidden;
+	font-weight: 600;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.flexo-room-bar__price small {
+	opacity: 0.75;
+}
+
+.flexo-room-bar .flexo-room-bar__button {
+	display: inline-flex;
+	flex: 0 0 auto;
+	align-items: center;
+	min-height: 44px;
+	padding: 10px 18px;
+	border-radius: 8px;
+	background: var(--fb-primary, var(--e-global-color-accent, var(--e-global-color-primary, #1f6f5c)));
+	color: var(--fb-primary-contrast, #fff);
+	font-weight: 600;
+	line-height: 1.2;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.flexo-room-bar .flexo-room-bar__button:hover,
+.flexo-room-bar .flexo-room-bar__button:focus {
+	color: var(--fb-primary-contrast, #fff);
+	filter: brightness(1.08);
+}
+
+@media (min-width: 768px) {
+	.flexo-room-bar {
+		display: none;
+	}
+}
+
+@media (max-width: 767px) {
+	body.flexo-has-room-bar {
+		padding-bottom: 76px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.flexo-room-bar {
+		transition: none;
+	}
+}

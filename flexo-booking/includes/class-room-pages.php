@@ -34,6 +34,110 @@ class Flexo_Booking_Room_Pages {
 		add_filter( 'wp_sitemaps_posts_query_args', array( __CLASS__, 'sitemap_args' ), 10, 2 );
 		add_action( 'update_option_' . Flexo_Booking_Settings::OPTION, array( __CLASS__, 'settings_saved' ), 10, 2 );
 		add_action( 'save_post_page', array( __CLASS__, 'forget_rooms_page' ) );
+		add_filter( 'template_include', array( __CLASS__, 'template' ), 99 );
+		add_action( 'init', array( __CLASS__, 'register_block_template' ), 20 );
+		add_filter( 'the_content', array( __CLASS__, 'block_theme_content' ), 20 );
+	}
+
+	/* ------------------------------------------------------------------ *
+	 * Default room page
+	 * ------------------------------------------------------------------ */
+
+	/**
+	 * Whether an Elementor Pro Theme Builder single template applies to this
+	 * page (then Pro shows the room and the default page steps aside).
+	 */
+	public static function pro_template_applies() {
+		if ( ! class_exists( '\ElementorPro\Modules\ThemeBuilder\Module' ) ) {
+			return false;
+		}
+		try {
+			$documents = \ElementorPro\Modules\ThemeBuilder\Module::instance()->get_conditions_manager()->get_documents_for_location( 'single' );
+			return ! empty( $documents );
+		} catch ( \Throwable $e ) {
+			return false;
+		}
+	}
+
+	/**
+	 * Classic themes: the plugin's room page, unless the theme has its own
+	 * (single-flexo_room.php or flexo-booking/single-room.php) or an
+	 * Elementor Pro single template applies.
+	 */
+	public static function template( $template ) {
+		if ( ! is_singular( Flexo_Booking_Rooms::POST_TYPE ) || is_404() || self::pro_template_applies() || wp_is_block_theme() ) {
+			return $template;
+		}
+		if ( 'single-' . Flexo_Booking_Rooms::POST_TYPE . '.php' === basename( (string) $template ) ) {
+			return $template;
+		}
+		$theme = locate_template( 'flexo-booking/single-room.php' );
+		return $theme ? $theme : FLEXO_BOOKING_DIR . 'templates/single-room.php';
+	}
+
+	/**
+	 * Block themes: a "Single room" template with the theme's header and
+	 * footer around the room page (editable in the Site Editor).
+	 */
+	public static function register_block_template() {
+		// The block that shows the room page (no automatic paragraphs, unlike the Shortcode block).
+		wp_register_script( 'flexo-booking-room-block', FLEXO_BOOKING_URL . 'assets/js/room-block.js', array( 'wp-blocks', 'wp-element', 'wp-block-editor' ), FLEXO_BOOKING_VERSION, true );
+		wp_localize_script(
+			'flexo-booking-room-block',
+			'FlexoRoomBlock',
+			array(
+				'title'       => __( 'Room page', 'flexo-booking' ),
+				'description' => __( 'Each room\'s photos, description, amenities, details, rates and booking box (Flexo Booking).', 'flexo-booking' ),
+			)
+		);
+		register_block_type(
+			'flexo-booking/room',
+			array(
+				'api_version'     => 3,
+				'title'           => __( 'Room page', 'flexo-booking' ),
+				'category'        => 'theme',
+				'editor_script'   => 'flexo-booking-room-block',
+				'render_callback' => array( 'Flexo_Booking_Room_Render', 'room_shortcode' ),
+				'supports'        => array( 'html' => false ),
+			)
+		);
+		if ( ! function_exists( 'register_block_template' ) || ! wp_is_block_theme() ) {
+			return;
+		}
+		register_block_template(
+			'flexo-booking//single-' . Flexo_Booking_Rooms::POST_TYPE,
+			array(
+				'title'       => __( 'Single room', 'flexo-booking' ),
+				'description' => __( 'A room\'s page: photos, description, amenities and the booking box (Flexo Booking).', 'flexo-booking' ),
+				'post_types'  => array( Flexo_Booking_Rooms::POST_TYPE ),
+				'content'     => '<!-- wp:template-part {"slug":"header","tagName":"header"} /-->'
+					. '<!-- wp:group {"tagName":"main","layout":{"type":"constrained","contentSize":"1200px"}} --><main class="wp-block-group">'
+					. '<!-- wp:flexo-booking/room /-->'
+					. '</main><!-- /wp:group -->'
+					. '<!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->',
+			)
+		);
+	}
+
+	/**
+	 * Block themes on WordPress before 6.7 (no plugin templates): the
+	 * theme's single template shows the name and description; the rest of
+	 * the room page follows the description.
+	 */
+	public static function block_theme_content( $content ) {
+		if ( function_exists( 'register_block_template' ) || ! wp_is_block_theme() || ! is_singular( Flexo_Booking_Rooms::POST_TYPE ) || ! in_the_loop() || ! is_main_query() || self::pro_template_applies() ) {
+			return $content;
+		}
+		$room = Flexo_Booking_Room_Content::room( get_the_ID() );
+		if ( ! $room ) {
+			return $content;
+		}
+		Flexo_Booking_Room_Render::enqueue( true );
+		return $content
+			. Flexo_Booking_Room_Render::gallery( $room, array( 'lightbox' => 'flexo', 'placeholder' => false ) )
+			. Flexo_Booking_Room_Render::details( $room, array( 'layout' => 'inline', 'show' => 'value' ) )
+			. Flexo_Booking_Room_Render::amenities( $room['amenity_list'], array( 'layout' => 'grid' ) )
+			. Flexo_Booking_Frontend::render( array( 'layout' => 'box', 'room' => (string) $room['id'] ) );
 	}
 
 	/**
@@ -338,11 +442,29 @@ class Flexo_Booking_Room_Pages {
 					</p>
 				</td>
 			</tr>
+			<tr>
+				<th scope="row"><label for="fb-room-price"><?php esc_html_e( 'Prices on room pages', 'flexo-booking' ); ?></label></th>
+				<td>
+					<select id="fb-room-price" name="<?php echo esc_attr( $name ); ?>[room_price_display]">
+						<option value="from" <?php selected( $s['room_price_display'], 'from' ); ?>><?php esc_html_e( 'Show the "from" price per night', 'flexo-booking' ); ?></option>
+						<option value="none" <?php selected( $s['room_price_display'], 'none' ); ?>><?php esc_html_e( 'Don\'t show prices before guests choose dates', 'flexo-booking' ); ?></option>
+					</select>
+					<p class="description"><?php esc_html_e( 'The "from" price is the lowest price per night in the next 12 months for 2 adults, with seasons, weekend prices and the room\'s first rate, without tourist tax and promo codes. It updates by itself when prices change.', 'flexo-booking' ); ?></p>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><?php esc_html_e( 'On phones', 'flexo-booking' ); ?></th>
+				<td>
+					<input type="hidden" name="<?php echo esc_attr( $name ); ?>[room_sticky_bar]" value="0">
+					<label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[room_sticky_bar]" value="1" <?php checked( ! empty( $s['room_sticky_bar'] ) ); ?>> <?php esc_html_e( 'Show a "Check availability" bar at the bottom of room pages', 'flexo-booking' ); ?></label>
+					<p class="description"><?php esc_html_e( 'It takes guests to the room\'s booking box, and hides while the box is on screen.', 'flexo-booking' ); ?></p>
+				</td>
+			</tr>
 		</table>
 		<?php if ( $rooms ) : ?>
 			<h2 class="title"><?php esc_html_e( 'Your room pages', 'flexo-booking' ); ?></h2>
 			<table class="widefat striped flexo-room-pages-table">
-				<thead><tr><th><?php esc_html_e( 'Room', 'flexo-booking' ); ?></th><th><?php esc_html_e( 'Page', 'flexo-booking' ); ?></th></tr></thead>
+				<thead><tr><th><?php esc_html_e( 'Room', 'flexo-booking' ); ?></th><th><?php esc_html_e( 'Page', 'flexo-booking' ); ?></th><th><?php esc_html_e( '"From" price', 'flexo-booking' ); ?></th></tr></thead>
 				<tbody>
 				<?php foreach ( $rooms as $post ) : ?>
 					<?php $url = Flexo_Booking_Room_Content::page_url( $post ); ?>
@@ -356,6 +478,17 @@ class Flexo_Booking_Room_Pages {
 							<?php else : ?>
 								<a href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noopener"><?php echo esc_html( wp_make_link_relative( $url ) ); ?></a>
 							<?php endif; ?>
+						</td>
+						<td>
+							<?php
+							$from = Flexo_Booking_Room_Prices::get( $post->ID );
+							if ( $from ) {
+								/* translators: 1: price per night, 2: number of nights, 3: arrival date */
+								echo esc_html( sprintf( _n( '%1$s (%2$d night from %3$s)', '%1$s (%2$d nights from %3$s)', $from['nights'], 'flexo-booking' ), Flexo_Booking_Money::format( $from['amount'], null, true ), $from['nights'], Flexo_Booking_I18n::format_date( $from['check_in'] ) ) );
+							} else {
+								echo '<span class="flexo-muted">' . esc_html__( 'None – check the price and closed dates', 'flexo-booking' ) . '</span>';
+							}
+							?>
 						</td>
 					</tr>
 				<?php endforeach; ?>

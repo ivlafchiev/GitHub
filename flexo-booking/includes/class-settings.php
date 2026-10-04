@@ -67,6 +67,8 @@ class Flexo_Booking_Settings {
 			// Day 7: room pages.
 			'room_base'                     => 'rooms',
 			'rooms_page'                    => '',
+			'room_price_display'            => 'from',
+			'room_sticky_bar'               => 1,
 			'email_logo'                    => '',
 			'email_color'                   => '#1f6f5c',
 			'notify_new'                    => 1,
@@ -382,6 +384,12 @@ class Flexo_Booking_Settings {
 					$clean[ $key ] = preg_match( '/^[A-Z]{2}$/', $value ) && Flexo_Booking_Phone::code( $value ) ? $value : $default;
 					break;
 				case 'picker_prices':
+					$clean[ $key ] = empty( $value ) ? 0 : 1;
+					break;
+				case 'room_price_display':
+					$clean[ $key ] = 'none' === $value ? 'none' : 'from';
+					break;
+				case 'room_sticky_bar':
 					$clean[ $key ] = empty( $value ) ? 0 : 1;
 					break;
 				case 'room_base':

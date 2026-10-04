@@ -75,38 +75,8 @@ class Flexo_Booking_Room_Link_Tag extends Data_Tag {
 		$room_id = Flexo_Booking_Room_Content::current_id( (string) $this->get_settings( 'room' ) );
 		$post    = $room_id ? get_post( $room_id ) : null;
 		$slug    = $post && 'publish' === $post->post_status && ! Flexo_Booking_Room_Content::is_demo( $post->ID ) ? $post->post_name : '';
-		$args    = 'yes' === $this->get_settings( 'pass_search' ) ? self::search_args() : array();
+		$args    = 'yes' === $this->get_settings( 'pass_search' ) ? Flexo_Booking_Room_Content::search_args() : array();
 
 		return esc_url( Flexo_Booking_Room_Content::booking_url( $slug, $args, (string) $this->get_settings( 'booking_page' ) ) );
-	}
-
-	/**
-	 * Dates and guests from the current address (?check_in=…&adults=…),
-	 * checked so only valid values are passed on.
-	 */
-	public static function search_args() {
-		$args = array();
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only values passed on in a link.
-		foreach ( array( 'check_in', 'check_out' ) as $key ) {
-			if ( isset( $_GET[ $key ] ) ) {
-				$date = Flexo_Booking_Dates::parse( sanitize_text_field( wp_unslash( $_GET[ $key ] ) ) );
-				if ( $date ) {
-					$args[ $key ] = $date;
-				}
-			}
-		}
-		foreach ( array( 'adults', 'children' ) as $key ) {
-			if ( isset( $_GET[ $key ] ) && '' !== $_GET[ $key ] ) {
-				$args[ $key ] = min( 99, absint( $_GET[ $key ] ) );
-			}
-		}
-		if ( isset( $_GET['children_ages'] ) ) {
-			$ages = preg_replace( '/[^0-9,]/', '', sanitize_text_field( wp_unslash( $_GET['children_ages'] ) ) );
-			if ( '' !== $ages ) {
-				$args['children_ages'] = substr( $ages, 0, 60 );
-			}
-		}
-		// phpcs:enable
-		return $args;
 	}
 }

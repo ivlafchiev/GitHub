@@ -96,7 +96,7 @@ t_eq( 'flexo-booking', $tags['flexo-room-name']['group'], 'tags are in the Flexo
 t_ok( in_array( 'gallery', $tags['flexo-room-gallery']['categories'], true ), 'gallery tag fits Gallery / Image Carousel widgets' );
 t_ok( in_array( 'image', $tags['flexo-room-image']['categories'], true ), 'image tag fits Image widgets and backgrounds' );
 t_ok( in_array( 'number', $tags['flexo-room-size']['categories'], true ) && in_array( 'text', $tags['flexo-room-size']['categories'], true ), 'size is text and number (Heading, Counter)' );
-foreach ( array( 'flexo-room-amenities', 'flexo-room-details', 'flexo-room-gallery', 'flexo-booking-form' ) as $name ) {
+foreach ( array( 'flexo-room-amenities', 'flexo-room-details', 'flexo-room-gallery', 'flexo-room-booking-box', 'flexo-booking-form' ) as $name ) {
 	t_ok( (bool) Plugin::$instance->widgets_manager->get_widget_types( $name ), "widget {$name} registered" );
 }
 $widget = Plugin::$instance->widgets_manager->get_widget_types( 'flexo-room-gallery' );
@@ -156,6 +156,8 @@ $template = t7e_document(
 		t7e_widget( 'w000001', 'flexo-room-amenities', array( 'layout' => 'grid' ) ),
 		t7e_widget( 'w000002', 'flexo-room-details', array( 'facts' => array( 'size', 'guests', 'beds', 'view', 'type' ), 'show' => 'both' ) ),
 		t7e_widget( 'w000003', 'flexo-room-gallery', array( 'layout' => 'carousel', 'autoplay' => 5 ) ),
+		t7e_widget( 'w000004', 'flexo-room-booking-box', array( 'book_text' => 'Reserve now' ) ),
+		t7e_widget( 'h000012', 'heading', array( 'title' => 'x' ), array( 'title' => t7e_tag( 'flexo-room-price', array( 'price' => 'from', 'after' => ' / night' ) ) ) ),
 	)
 );
 
@@ -185,10 +187,14 @@ t_ok( false !== strpos( $html, 'flexo-room-details__label">Floor</span>' ), 'Roo
 t_ok( false !== strpos( $html, 'data-flexo-carousel' ) && false !== strpos( $html, 'data-autoplay="5000"' ), 'Room gallery widget: carousel with autoplay' );
 t_ok( false !== strpos( $html, 'data-elementor-open-lightbox="yes"' ), 'Room gallery opens Elementor\'s lightbox' );
 t_eq( 3, substr_count( $html, 'flexo-room-gallery__slide' ), 'gallery widget: 3 photos' );
+t_ok( false !== strpos( $html, 'data-flexo-booking-box' ) && false !== strpos( $html, 'data-room="t7e-suite"' ) && false !== strpos( $html, 'data-book-text="Reserve now"' ), 'Room booking box widget: current room' );
+$from = Flexo_Booking_Room_Prices::get( $room );
+t_ok( $from && false !== strpos( $html, '>' . Flexo_Booking_Money::format( $from['amount'], null, true ) . ' / night</h2>' ), 'Room price tag: "from" price' );
 
 $html2 = t7e_render( $template, $other );
 t_ok( false !== strpos( $html2, '>T7E Double</h2>' ) && false === strpos( $html2, 'T7E Suite' ), 'same template, another room: that room\'s data (Loop items work the same)' );
 t_ok( false !== strpos( $html2, 'href="' . home_url( '/booking/?room=t7e-double' ) . '"' ), 'booking link follows the room' );
+t_ok( false !== strpos( $html2, 'data-room="t7e-double"' ), 'booking box follows the room' );
 t_ok( false !== strpos( $html2, 'flexo-room-gallery--empty' ), 'room without photos: neutral placeholder' );
 t_ok( false === strpos( $html2, 'flexo-room-amenities flexo-room-list' ), 'room without amenities: no empty list' );
 

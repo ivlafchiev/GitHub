@@ -1955,3 +1955,129 @@
 .flexo-booking .fb-promo-slot {
 	margin-top: var(--fb-gap);
 }
+
+/* ------------------------------------------------------------------ *
+ * Room booking box (Day 7): one room's dates, guests, availability,
+ * total and "Book now". Fits a sidebar column as well as a full width.
+ * ------------------------------------------------------------------ */
+
+.flexo-booking--box {
+	border: 1px solid var(--fb-border);
+}
+
+.flexo-booking--box .fb-search {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+	align-items: end;
+}
+
+.flexo-booking--box .fb-field {
+	flex: none;
+}
+
+.flexo-booking--box .fb-ages,
+.flexo-booking--box .fb-picker,
+.flexo-booking--box .fb-field--action {
+	grid-column: 1 / -1;
+}
+
+.flexo-booking--box .fb-field--action .fb-button,
+.flexo-booking--box .fb-box__book {
+	width: 100%;
+}
+
+.flexo-booking .fb-box__from {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0 6px;
+	margin: 0 0 14px;
+	color: var(--fb-muted);
+}
+
+.flexo-booking .fb-box__from-price {
+	color: var(--fb-text);
+	font-family: var(--fb-heading-font);
+	font-size: 1.6em;
+	line-height: 1.1;
+}
+
+.flexo-booking .fb-box__result:not(:empty) {
+	margin-top: 16px;
+	padding-top: 16px;
+	border-top: 1px solid var(--fb-border);
+}
+
+.flexo-booking .fb-box__status {
+	margin: 0 0 4px;
+	font-weight: 600;
+}
+
+.flexo-booking .fb-box__status:focus {
+	outline: none;
+}
+
+.flexo-booking .fb-box__status.is-ok {
+	color: var(--fb-ok, #167a3e);
+}
+
+.flexo-booking .fb-box__status.is-ok::before {
+	content: "✓ ";
+}
+
+.flexo-booking .fb-box__status.is-no {
+	color: var(--fb-error);
+}
+
+.flexo-booking .fb-box__stay {
+	margin: 0 0 12px;
+	color: var(--fb-muted);
+	font-size: 0.95em;
+}
+
+.flexo-booking .fb-box__total {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 4px 12px;
+	margin: 0;
+}
+
+.flexo-booking .fb-box__total-amount {
+	font-size: 1.35em;
+}
+
+.flexo-booking .fb-box__avg,
+.flexo-booking .fb-box__left {
+	margin: 2px 0 0;
+	color: var(--fb-muted);
+	font-size: 0.9em;
+}
+
+.flexo-booking .fb-box__left {
+	color: var(--fb-error);
+	font-weight: 600;
+}
+
+.flexo-booking a.fb-box__book {
+	margin-top: 14px;
+	text-decoration: none;
+}
+
+.flexo-booking .fb-box__subtitle {
+	margin: 12px 0 6px;
+	font-weight: 600;
+}
+
+.flexo-booking .fb-box__others {
+	display: inline-block;
+	margin-top: 12px;
+}
+
+@media (max-width: 380px) {
+	.flexo-booking--box .fb-search {
+		grid-template-columns: 1fr;
+	}
+}
