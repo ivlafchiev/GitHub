@@ -1545,3 +1545,55 @@ Theme Builder single template; (2) Room booking box widget + "from" price;
 tag), starter templates; (4) links/copy buttons, old slugs, demo rooms,
 Import/Export, Polylang/WPML, schema/SEO; (5) language pass, tests,
 README, zip 1.8.0. One commit per part.
+
+### 17.11 Decisions after reviewing your single room template (approved direction)
+
+Your answers: everything included and switched on (no feature switch, no
+"off after upgrade"), as user-friendly as possible for the owner and the
+guest, Elementor Pro only, and the **Jet plugins can be removed** – one
+plugin for all room data.
+
+What the template showed: it is a Theme Builder single template whose
+preview type is `single/rooms`, i.e. rooms are a **JetEngine post type
+"rooms"** and room data comes from JetEngine custom-field tags
+(`price_per_night`, `room_size`, `max_guests`, `beds_info`,
+`long_description`, `amenity-1` … `amenity-8`). The gallery (Media
+Carousel), the room amenity icons, the "other rooms" carousel and the
+booking buttons are static. So today the same room exists twice (JetEngine
+post + Flexo Booking room).
+
+Decisions:
+1. **Room pages are always on** (Q1 → no feature switch). Upgraded sites
+   get room pages immediately; static pages under the room base still
+   win where no room has that slug, and Health warns about clashes
+   (e.g. a JetEngine "rooms" post type still registered on the same base).
+2. **Amenities**: one sortable list per room, each item = text + icon.
+   One-click predefined amenities (translated text + bundled icon) and
+   the owner's own amenities ("Sea-facing terrace", "Rain shower with
+   view"), each with an icon from the bundled set or an uploaded
+   SVG/PNG. Existing Day 6 amenity ticks are converted automatically.
+3. **More details**: optional rows of icon + label + value per room
+   (e.g. "Floor – 2nd", "Bathroom – rain shower"), so the owner can add
+   anything else; shown by a Room details widget and a "Room detail" tag.
+4. **Room type** taxonomy (as in §17.10).
+5. **Widgets for the template**: Room amenities (icon list with each
+   amenity's own icon, styled like Elementor's Icon List), Room details,
+   Room gallery (carousel or grid, slides per view, height, lightbox –
+   matches the Media Carousel look) and Room booking box. The gallery tag
+   also works in Elementor's Gallery and Image Carousel widgets.
+6. **Moving rooms out of JetEngine**: *Rooms & prices → Bring in rooms*
+   reads the old room posts (even with JetEngine deactivated), suggests
+   the field mapping (`long_description` → full description, `room_size`
+   → size, `max_guests` → max guests, `beds_info` → beds,
+   `price_per_night` → price if the room has none, `amenity-*` →
+   amenities with matching icons, gallery field, featured image, slug),
+   shows a preview, then creates or updates the Flexo Booking rooms with
+   the **same slugs**, so with the same base (`rooms`) the room addresses
+   stay the same. Afterwards JetEngine can be removed.
+7. **Your template, converted**: a copy of your JSON with every room
+   element wired to Flexo Booking (tags and widgets, no Jet tags), the
+   preview set to Flexo Booking rooms, buttons using the Room booking
+   link, the "other rooms" nested carousel replaced by a **Loop Carousel**,
+   plus a matching **Room card** loop item template. Delivered as files
+   to import (not bundled in the plugin; the plugin bundles generic
+   starter templates).
