@@ -306,7 +306,22 @@
 				own.reportValidity();
 				return;
 			}
-			addAmenity( '', label, 'check', '' );
+			var guess = 'check';
+			var words = ( window.FlexoRoom && window.FlexoRoom.iconWords ) || {};
+			var lower = label.toLowerCase();
+			Object.keys( words ).some( function ( word ) {
+				var at = lower.indexOf( word );
+				if ( at > -1 && ( 0 === at || /[^\p{L}]/u.test( lower.charAt( at - 1 ) ) ) ) {
+					guess = words[ word ];
+					return true;
+				}
+				return false;
+			} );
+			var choice = qs( '.flexo-icon-choice[data-icon="' + guess + '"]' );
+			var row = addAmenity( '', label, 'check', choice ? qs( 'svg', choice ).outerHTML : '' );
+			if ( 'check' !== guess ) {
+				qs( '[data-flexo-icon-value]', row ).value = guess;
+			}
 			own.value = '';
 			own.focus();
 		};

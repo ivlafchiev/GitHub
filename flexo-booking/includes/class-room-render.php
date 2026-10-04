@@ -36,7 +36,16 @@ class Flexo_Booking_Room_Render {
 			self::SCRIPT,
 			'FlexoRooms',
 			array(
-				'i18n' => array(
+				'restUrl' => esc_url_raw( rest_url( Flexo_Booking_Rest::NAMESPACE_V1 . '/' ) ),
+				'locale'  => Flexo_Booking_I18n::current(),
+				'i18n'    => array(
+					'available'   => __( 'Available for your dates', 'flexo-booking' ),
+					/* translators: 1: total price, 2: number of nights, e.g. "3 nights" */
+					'availableFor' => __( 'Available · %1$s for %2$s', 'flexo-booking' ),
+					'unavailable' => __( 'Not available for your dates', 'flexo-booking' ),
+					'night1'      => __( '1 night', 'flexo-booking' ),
+					/* translators: %d: number of nights (2 or more) */
+					'nightsN'     => __( '%d nights', 'flexo-booking' ),
 					'close'    => __( 'Close', 'flexo-booking' ),
 					'previous' => __( 'Previous photo', 'flexo-booking' ),
 					'next'     => __( 'Next photo', 'flexo-booking' ),
@@ -304,6 +313,18 @@ class Flexo_Booking_Room_Render {
 			}
 		}
 		return $out . '</div>';
+	}
+
+	/**
+	 * Placeholder filled by rooms.js with the room's availability for the
+	 * dates in the page address (one request for all rooms on the page).
+	 *
+	 * @param array $room       Room view.
+	 * @param bool  $show_total Add the total for the stay.
+	 */
+	public static function availability( array $room, $show_total = true ) {
+		self::enqueue( true );
+		return '<span class="flexo-room-availability" data-flexo-availability="' . esc_attr( $room['slug'] ) . '"' . ( $show_total ? ' data-total="1"' : '' ) . ' aria-live="polite"></span>';
 	}
 
 	/* ------------------------------------------------------------------ *

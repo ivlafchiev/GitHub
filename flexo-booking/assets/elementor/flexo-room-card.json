@@ -1,0 +1,250 @@
+{
+	"version": "0.4",
+	"title": "Room card (Flexo Booking)",
+	"type": "loop-item",
+	"page_settings": {
+		"preview_type": "single/flexo_room",
+		"preview_id": ""
+	},
+	"content": [
+		{
+			"id": "434b05d",
+			"elType": "container",
+			"isInner": false,
+			"settings": {
+				"content_width": "full",
+				"flex_direction": "column",
+				"padding": {
+					"unit": "px",
+					"top": "0",
+					"right": "0",
+					"bottom": "0",
+					"left": "0",
+					"isLinked": true
+				},
+				"border_border": "solid",
+				"border_width": {
+					"unit": "px",
+					"top": "1",
+					"right": "1",
+					"bottom": "1",
+					"left": "1",
+					"isLinked": true
+				},
+				"border_color": "#00000014",
+				"border_radius": {
+					"unit": "px",
+					"top": "12",
+					"right": "12",
+					"bottom": "12",
+					"left": "12",
+					"isLinked": true
+				},
+				"flex_gap": {
+					"column": "0",
+					"row": "0",
+					"isLinked": true,
+					"unit": "px",
+					"size": 0
+				},
+				"overflow": "hidden"
+			},
+			"elements": [
+				{
+					"id": "91b42b3",
+					"elType": "widget",
+					"widgetType": "image",
+					"settings": {
+						"image": {
+							"url": "",
+							"id": ""
+						},
+						"image_size": "medium_large",
+						"link_to": "custom",
+						"link": {
+							"url": ""
+						},
+						"height": {
+							"unit": "px",
+							"size": 240,
+							"sizes": []
+						},
+						"object-fit": "cover",
+						"width": {
+							"unit": "%",
+							"size": 100,
+							"sizes": []
+						},
+						"__dynamic__": {
+							"image": "[elementor-tag id=\"6809fc7\" name=\"flexo-room-image\" settings=\"%7B%7D\"]",
+							"link": "[elementor-tag id=\"a3ba81e\" name=\"flexo-room-url\" settings=\"%7B%7D\"]"
+						}
+					},
+					"elements": []
+				},
+				{
+					"id": "7e8dc78",
+					"elType": "container",
+					"isInner": true,
+					"settings": {
+						"content_width": "full",
+						"flex_direction": "column",
+						"padding": {
+							"unit": "px",
+							"top": "20",
+							"right": "20",
+							"bottom": "20",
+							"left": "20",
+							"isLinked": true
+						},
+						"flex_gap": {
+							"column": "8",
+							"row": "8",
+							"isLinked": true,
+							"unit": "px",
+							"size": 8
+						}
+					},
+					"elements": [
+						{
+							"id": "5c38bd9",
+							"elType": "widget",
+							"widgetType": "heading",
+							"settings": {
+								"title": "Room type",
+								"header_size": "div",
+								"typography_typography": "custom",
+								"typography_text_transform": "uppercase",
+								"typography_letter_spacing": {
+									"unit": "px",
+									"size": 1.2,
+									"sizes": []
+								},
+								"typography_font_size": {
+									"unit": "px",
+									"size": 12,
+									"sizes": []
+								},
+								"__dynamic__": {
+									"title": "[elementor-tag id=\"656c07d\" name=\"flexo-room-type\" settings=\"%7B%7D\"]"
+								}
+							},
+							"elements": []
+						},
+						{
+							"id": "6e95fdf",
+							"elType": "widget",
+							"widgetType": "heading",
+							"settings": {
+								"title": "Room name",
+								"header_size": "h3",
+								"link": {
+									"url": ""
+								},
+								"__dynamic__": {
+									"title": "[elementor-tag id=\"03bb8ea\" name=\"flexo-room-name\" settings=\"%7B%7D\"]",
+									"link": "[elementor-tag id=\"45b0e8d\" name=\"flexo-room-url\" settings=\"%7B%7D\"]"
+								}
+							},
+							"elements": []
+						},
+						{
+							"id": "da34683",
+							"elType": "widget",
+							"widgetType": "heading",
+							"settings": {
+								"title": "from €95 / night",
+								"header_size": "div",
+								"typography_typography": "custom",
+								"typography_font_weight": "600",
+								"__dynamic__": {
+									"title": "[elementor-tag id=\"738827e\" name=\"flexo-room-price\" settings=\"%7B%22price%22%3A%22from%22%2C%22after%22%3A%22%20%2F%20night%22%7D\"]"
+								}
+							},
+							"elements": []
+						},
+						{
+							"id": "ebdf9dd",
+							"elType": "widget",
+							"widgetType": "flexo-room-details",
+							"settings": {
+								"facts": [
+									"size",
+									"guests",
+									"beds"
+								],
+								"more": "",
+								"show": "value",
+								"layout": "inline",
+								"guests_format": "guests"
+							},
+							"elements": []
+						},
+						{
+							"id": "976308d",
+							"elType": "widget",
+							"widgetType": "text-editor",
+							"settings": {
+								"editor": "",
+								"__dynamic__": {
+									"editor": "[elementor-tag id=\"d803ae7\" name=\"flexo-room-availability\" settings=\"%7B%7D\"]"
+								}
+							},
+							"elements": []
+						},
+						{
+							"id": "4754be6",
+							"elType": "container",
+							"isInner": true,
+							"settings": {
+								"content_width": "full",
+								"flex_direction": "row",
+								"flex_wrap": "wrap",
+								"flex_gap": {
+									"column": "10",
+									"row": "10",
+									"isLinked": true,
+									"unit": "px",
+									"size": 10
+								}
+							},
+							"elements": [
+								{
+									"id": "3206e9a",
+									"elType": "widget",
+									"widgetType": "button",
+									"settings": {
+										"text": "View room",
+										"link": {
+											"url": ""
+										},
+										"button_type": "info",
+										"__dynamic__": {
+											"link": "[elementor-tag id=\"0568519\" name=\"flexo-room-url\" settings=\"%7B%7D\"]"
+										}
+									},
+									"elements": []
+								},
+								{
+									"id": "14caa53",
+									"elType": "widget",
+									"widgetType": "button",
+									"settings": {
+										"text": "Book now",
+										"link": {
+											"url": ""
+										},
+										"__dynamic__": {
+											"link": "[elementor-tag id=\"7d20a10\" name=\"flexo-room-booking-link\" settings=\"%7B%7D\"]"
+										}
+									},
+									"elements": []
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	]
+}

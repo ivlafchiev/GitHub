@@ -1,0 +1,387 @@
+{
+	"version": "0.4",
+	"title": "Single room (Flexo Booking)",
+	"type": "single-post",
+	"page_settings": {
+		"preview_type": "single/flexo_room",
+		"preview_id": ""
+	},
+	"content": [
+		{
+			"id": "b3ab1e2",
+			"elType": "container",
+			"isInner": false,
+			"settings": {
+				"content_width": "boxed",
+				"flex_direction": "column",
+				"padding": {
+					"unit": "px",
+					"top": "48",
+					"right": "16",
+					"bottom": "16",
+					"left": "16",
+					"isLinked": false
+				},
+				"flex_gap": {
+					"column": "10",
+					"row": "10",
+					"isLinked": true,
+					"unit": "px",
+					"size": 10
+				}
+			},
+			"elements": [
+				{
+					"id": "220473c",
+					"elType": "widget",
+					"widgetType": "heading",
+					"settings": {
+						"title": "Room type",
+						"header_size": "div",
+						"typography_typography": "custom",
+						"typography_text_transform": "uppercase",
+						"typography_letter_spacing": {
+							"unit": "px",
+							"size": 1.5,
+							"sizes": []
+						},
+						"typography_font_size": {
+							"unit": "px",
+							"size": 13,
+							"sizes": []
+						},
+						"__dynamic__": {
+							"title": "[elementor-tag id=\"46c855c\" name=\"flexo-room-type\" settings=\"%7B%7D\"]"
+						}
+					},
+					"elements": []
+				},
+				{
+					"id": "dff07b5",
+					"elType": "widget",
+					"widgetType": "heading",
+					"settings": {
+						"title": "Room name",
+						"header_size": "h1",
+						"__dynamic__": {
+							"title": "[elementor-tag id=\"f04ae91\" name=\"flexo-room-name\" settings=\"%7B%7D\"]"
+						}
+					},
+					"elements": []
+				},
+				{
+					"id": "3f395f6",
+					"elType": "widget",
+					"widgetType": "heading",
+					"settings": {
+						"title": "from €95 / night",
+						"header_size": "div",
+						"typography_typography": "custom",
+						"typography_font_size": {
+							"unit": "px",
+							"size": 20,
+							"sizes": []
+						},
+						"typography_font_weight": "600",
+						"__dynamic__": {
+							"title": "[elementor-tag id=\"78b97bd\" name=\"flexo-room-price\" settings=\"%7B%22price%22%3A%22from%22%2C%22after%22%3A%22%20%2F%20night%22%7D\"]"
+						}
+					},
+					"elements": []
+				},
+				{
+					"id": "238effb",
+					"elType": "widget",
+					"widgetType": "flexo-room-details",
+					"settings": {
+						"facts": [
+							"size",
+							"guests",
+							"beds",
+							"view"
+						],
+						"more": "",
+						"show": "value",
+						"layout": "inline",
+						"guests_format": "summary"
+					},
+					"elements": []
+				}
+			]
+		},
+		{
+			"id": "e82fd28",
+			"elType": "container",
+			"isInner": false,
+			"settings": {
+				"content_width": "boxed",
+				"flex_direction": "column",
+				"padding": {
+					"unit": "px",
+					"top": "8",
+					"right": "16",
+					"bottom": "8",
+					"left": "16",
+					"isLinked": false
+				}
+			},
+			"elements": [
+				{
+					"id": "998e2b5",
+					"elType": "widget",
+					"widgetType": "flexo-room-gallery",
+					"settings": {
+						"layout": "carousel",
+						"per_view": "2",
+						"per_view_tablet": "2",
+						"per_view_mobile": "1",
+						"height": {
+							"unit": "px",
+							"size": 440,
+							"sizes": []
+						},
+						"height_tablet": {
+							"unit": "px",
+							"size": 320,
+							"sizes": []
+						},
+						"height_mobile": {
+							"unit": "px",
+							"size": 260,
+							"sizes": []
+						},
+						"radius": {
+							"unit": "px",
+							"size": 12,
+							"sizes": []
+						},
+						"lightbox": "yes",
+						"arrows": "yes",
+						"dots": "yes"
+					},
+					"elements": []
+				}
+			]
+		},
+		{
+			"id": "1b6fd0a",
+			"elType": "container",
+			"isInner": false,
+			"settings": {
+				"content_width": "boxed",
+				"flex_direction": "row",
+				"flex_direction_tablet": "column",
+				"flex_align_items": "flex-start",
+				"flex_gap": {
+					"column": "48",
+					"row": "32",
+					"isLinked": false,
+					"unit": "px",
+					"size": 48
+				},
+				"padding": {
+					"unit": "px",
+					"top": "40",
+					"right": "16",
+					"bottom": "40",
+					"left": "16",
+					"isLinked": false
+				}
+			},
+			"elements": [
+				{
+					"id": "2515e5f",
+					"elType": "container",
+					"isInner": true,
+					"settings": {
+						"content_width": "full",
+						"flex_direction": "column",
+						"width": {
+							"unit": "%",
+							"size": 64,
+							"sizes": []
+						},
+						"width_tablet": {
+							"unit": "%",
+							"size": 100,
+							"sizes": []
+						},
+						"width_mobile": {
+							"unit": "%",
+							"size": 100,
+							"sizes": []
+						},
+						"flex_gap": {
+							"column": "20",
+							"row": "20",
+							"isLinked": true,
+							"unit": "px",
+							"size": 20
+						}
+					},
+					"elements": [
+						{
+							"id": "9fed6b2",
+							"elType": "widget",
+							"widgetType": "text-editor",
+							"settings": {
+								"editor": "Full description",
+								"__dynamic__": {
+									"editor": "[elementor-tag id=\"1988ffb\" name=\"flexo-room-description\" settings=\"%7B%7D\"]"
+								}
+							},
+							"elements": []
+						},
+						{
+							"id": "d737d3e",
+							"elType": "widget",
+							"widgetType": "heading",
+							"settings": {
+								"title": "Amenities",
+								"header_size": "h2"
+							},
+							"elements": []
+						},
+						{
+							"id": "f438aae",
+							"elType": "widget",
+							"widgetType": "flexo-room-amenities",
+							"settings": {
+								"layout": "grid",
+								"columns": "3",
+								"columns_tablet": "2",
+								"columns_mobile": "1",
+								"space_between": {
+									"unit": "px",
+									"size": 14,
+									"sizes": []
+								}
+							},
+							"elements": []
+						},
+						{
+							"id": "9f155c1",
+							"elType": "widget",
+							"widgetType": "heading",
+							"settings": {
+								"title": "Good to know",
+								"header_size": "h2"
+							},
+							"elements": []
+						},
+						{
+							"id": "14ec9b1",
+							"elType": "widget",
+							"widgetType": "flexo-room-details",
+							"settings": {
+								"facts": [],
+								"more": "yes",
+								"show": "stacked",
+								"layout": "grid",
+								"columns": "2",
+								"columns_mobile": "1",
+								"divider": "yes"
+							},
+							"elements": []
+						}
+					]
+				},
+				{
+					"id": "4b58098",
+					"elType": "container",
+					"isInner": true,
+					"settings": {
+						"content_width": "full",
+						"flex_direction": "column",
+						"width": {
+							"unit": "%",
+							"size": 36,
+							"sizes": []
+						},
+						"width_tablet": {
+							"unit": "%",
+							"size": 100,
+							"sizes": []
+						},
+						"width_mobile": {
+							"unit": "%",
+							"size": 100,
+							"sizes": []
+						}
+					},
+					"elements": [
+						{
+							"id": "671f0c9",
+							"elType": "widget",
+							"widgetType": "flexo-room-booking-box",
+							"settings": {
+								"title": "Check availability",
+								"show_price": "yes"
+							},
+							"elements": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"id": "0e88d6a",
+			"elType": "container",
+			"isInner": false,
+			"settings": {
+				"content_width": "boxed",
+				"flex_direction": "column",
+				"padding": {
+					"unit": "px",
+					"top": "40",
+					"right": "16",
+					"bottom": "64",
+					"left": "16",
+					"isLinked": false
+				},
+				"flex_gap": {
+					"column": "20",
+					"row": "20",
+					"isLinked": true,
+					"unit": "px",
+					"size": 20
+				}
+			},
+			"elements": [
+				{
+					"id": "bc051eb",
+					"elType": "widget",
+					"widgetType": "heading",
+					"settings": {
+						"title": "Other rooms",
+						"header_size": "h2"
+					},
+					"elements": []
+				},
+				{
+					"id": "7525dde",
+					"elType": "widget",
+					"widgetType": "loop-carousel",
+					"settings": {
+						"template_id": "{{flexo_room_card}}",
+						"post_query_post_type": "flexo_room",
+						"post_query_exclude": [
+							"current_post"
+						],
+						"posts_per_page": 6,
+						"slides_to_show": "3",
+						"slides_to_show_tablet": "2",
+						"slides_to_show_mobile": "1",
+						"slides_to_scroll": "1",
+						"image_spacing_custom": {
+							"unit": "px",
+							"size": 24,
+							"sizes": []
+						}
+					},
+					"elements": []
+				}
+			]
+		}
+	]
+}

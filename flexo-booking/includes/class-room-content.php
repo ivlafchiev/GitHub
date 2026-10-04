@@ -148,6 +148,169 @@ class Flexo_Booking_Room_Content {
 		return apply_filters( 'flexo_booking_amenity_presets', $presets );
 	}
 
+	/**
+	 * Words that suggest an icon for an amenity the owner types in
+	 * (English and Bulgarian), most specific first: word => icon.
+	 */
+	public static function icon_keywords() {
+		return apply_filters(
+			'flexo_booking_amenity_icon_keywords',
+			array(
+				'hot tub'      => 'bubbles',
+				'jacuzzi'      => 'bubbles',
+				'джакузи'      => 'bubbles',
+				'room service' => 'room_service',
+				'рум сървис'   => 'room_service',
+				'smart tv'     => 'tv',
+				'streaming'    => 'monitor',
+				'netflix'      => 'monitor',
+				'wi-fi'        => 'wifi',
+				'wifi'         => 'wifi',
+				'wi fi'        => 'wifi',
+				'internet'     => 'wifi',
+				'интернет'     => 'wifi',
+				'уай-фай'      => 'wifi',
+				'air con'      => 'air_conditioning',
+				'air-con'      => 'air_conditioning',
+				'климати'      => 'air_conditioning',
+				'shower'       => 'shower',
+				'душ'          => 'shower',
+				'bathtub'      => 'bath',
+				'bath tub'     => 'bath',
+				'вана'         => 'bath',
+				'terrace'      => 'sun',
+				'тераса'       => 'sun',
+				'balcon'       => 'fence',
+				'balkon'       => 'fence',
+				'балкон'       => 'fence',
+				'pool'         => 'pool',
+				'басейн'       => 'pool',
+				'sea'          => 'waves',
+				'море'         => 'waves',
+				'морск'        => 'waves',
+				'beach'        => 'umbrella',
+				'плаж'         => 'umbrella',
+				'mountain'     => 'mountain',
+				'планин'       => 'mountain',
+				'garden'       => 'trees',
+				'градин'       => 'trees',
+				'kitchenette'  => 'microwave',
+				'microwave'    => 'microwave',
+				'микровълн'    => 'microwave',
+				'kitchen'      => 'kitchen',
+				'кухн'         => 'kitchen',
+				'fridge'       => 'fridge',
+				'refrigerator' => 'fridge',
+				'хладилник'    => 'fridge',
+				'minibar'      => 'wine',
+				'минибар'      => 'wine',
+				'coffee'       => 'coffee',
+				'tea'          => 'coffee',
+				'кафе'         => 'coffee',
+				'чай'          => 'coffee',
+				'breakfast'    => 'croissant',
+				'закуска'      => 'croissant',
+				'tv'           => 'tv',
+				'телевизор'    => 'tv',
+				'safe'         => 'safe',
+				'сейф'         => 'safe',
+				'parking'      => 'parking',
+				'паркинг'      => 'parking',
+				'pet'          => 'paw',
+				'любимц'       => 'paw',
+				'non-smoking'  => 'no_smoking',
+				'smoking'      => 'no_smoking',
+				'пушене'       => 'no_smoking',
+				'wheelchair'   => 'accessibility',
+				'step-free'    => 'accessibility',
+				'достъп'       => 'accessibility',
+				'elevator'     => 'lift',
+				'lift'         => 'lift',
+				'асансьор'     => 'lift',
+				'washing'      => 'washing_machine',
+				'перална'      => 'washing_machine',
+				'hairdryer'    => 'hairdryer',
+				'hair dryer'   => 'hairdryer',
+				'сешоар'       => 'hairdryer',
+				'toiletr'      => 'toiletries',
+				'козметик'     => 'toiletries',
+				'iron'         => 'shirt',
+				'ютия'         => 'shirt',
+				'housekeeping' => 'cleaning',
+				'cleaning'     => 'cleaning',
+				'почистване'   => 'cleaning',
+				'heating'      => 'heater',
+				'отопление'    => 'heater',
+				'fireplace'    => 'flame',
+				'камина'       => 'flame',
+				'barbecue'     => 'flame',
+				'bbq'          => 'flame',
+				'барбекю'      => 'flame',
+				'soundproof'   => 'quiet',
+				'шумоизол'     => 'quiet',
+				'blackout'     => 'blinds',
+				'curtain'      => 'blinds',
+				'завеси'       => 'blinds',
+				'baby'         => 'baby',
+				'cot'          => 'baby',
+				'бебе'         => 'baby',
+				'spa'          => 'wellness',
+				'wellness'     => 'wellness',
+				'спа'          => 'wellness',
+				'gym'          => 'gym',
+				'fitness'      => 'gym',
+				'фитнес'       => 'gym',
+				'bike'         => 'bike',
+				'bicycle'      => 'bike',
+				'велосипед'    => 'bike',
+				'speaker'      => 'speaker',
+				'bluetooth'    => 'speaker',
+				'desk'         => 'desk',
+				'бюро'         => 'desk',
+				'sofa'         => 'sofa',
+				'диван'        => 'sofa',
+				'bed'          => 'bed',
+				'легл'         => 'bed',
+				'phone'        => 'phone',
+				'телефон'      => 'phone',
+				'view'         => 'eye',
+				'изглед'       => 'eye',
+			)
+		);
+	}
+
+	/**
+	 * Icon for an amenity text: a ready-made amenity with the same name,
+	 * else the first matching word, else a tick.
+	 */
+	public static function guess_icon( $label ) {
+		$label = function_exists( 'mb_strtolower' ) ? mb_strtolower( trim( (string) $label ) ) : strtolower( trim( (string) $label ) );
+		foreach ( self::amenity_presets() as $preset ) {
+			if ( ( function_exists( 'mb_strtolower' ) ? mb_strtolower( $preset[0] ) : strtolower( $preset[0] ) ) === $label ) {
+				return $preset[1];
+			}
+		}
+		foreach ( self::icon_keywords() as $word => $icon ) {
+			if ( preg_match( '/(^|[^\p{L}])' . preg_quote( $word, '/' ) . '/u', $label ) ) {
+				return $icon;
+			}
+		}
+		return 'check';
+	}
+
+	/**
+	 * The ready-made amenity with this name (in the site's language), or ''.
+	 */
+	public static function preset_for_label( $label ) {
+		$label = function_exists( 'mb_strtolower' ) ? mb_strtolower( trim( (string) $label ) ) : strtolower( trim( (string) $label ) );
+		foreach ( Flexo_Booking_Rooms::amenities() as $key => $name ) {
+			if ( ( function_exists( 'mb_strtolower' ) ? mb_strtolower( $name ) : strtolower( $name ) ) === $label ) {
+				return $key;
+			}
+		}
+		return '';
+	}
+
 	/* ------------------------------------------------------------------ *
 	 * Stored values
 	 * ------------------------------------------------------------------ */

@@ -81,6 +81,7 @@ require_once FLEXO_BOOKING_DIR . 'includes/admin/class-wizard.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-room-editor.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-portability.php';
 require_once FLEXO_BOOKING_DIR . 'includes/elementor/class-elementor.php';
+require_once FLEXO_BOOKING_DIR . 'includes/elementor/class-templates.php';
 
 register_activation_hook( __FILE__, array( 'Flexo_Booking_Install', 'activate' ) );
 
@@ -131,6 +132,7 @@ add_action(
 			Flexo_Booking_Help::init();
 			Flexo_Booking_Wizard::init();
 			Flexo_Booking_Room_Editor::init();
+			Flexo_Booking_Elementor_Templates::init();
 		}
 	}
 );

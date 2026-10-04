@@ -59,6 +59,7 @@ class Flexo_Booking_Elementor {
 			'Flexo_Booking_Room_View_Tag',
 			'Flexo_Booking_Room_Amenities_Tag',
 			'Flexo_Booking_Room_Detail_Tag',
+			'Flexo_Booking_Room_Availability_Tag',
 			'Flexo_Booking_Room_Image_Tag',
 			'Flexo_Booking_Room_Gallery_Tag',
 			'Flexo_Booking_Room_Url_Tag',

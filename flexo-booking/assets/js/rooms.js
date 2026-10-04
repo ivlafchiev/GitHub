@@ -223,6 +223,51 @@
 		dialog.querySelector( '.flexo-lightbox__close' ).focus();
 	} );
 
+	/* ---- Availability for the dates in the address (room lists) ---- */
+	function availability() {
+		var spots = document.querySelectorAll( '[data-flexo-availability]' );
+		if ( ! spots.length || ! window.fetch || ! window.URLSearchParams || ! window.FlexoRooms ) {
+			return;
+		}
+		var q = new URLSearchParams( window.location.search );
+		var checkIn = q.get( 'check_in' );
+		var checkOut = q.get( 'check_out' );
+		if ( ! /^\d{4}-\d{2}-\d{2}$/.test( checkIn || '' ) || ! /^\d{4}-\d{2}-\d{2}$/.test( checkOut || '' ) ) {
+			return;
+		}
+		var params = new URLSearchParams( { check_in: checkIn, check_out: checkOut, adults: q.get( 'adults' ) || '2', children: q.get( 'children' ) || '0' } );
+		var ages = q.get( 'children_ages' ) || q.getAll( 'children_ages[]' ).join( ',' );
+		if ( ages ) {
+			params.set( 'children_ages', ages );
+		}
+		if ( window.FlexoRooms.locale ) {
+			params.set( 'locale', window.FlexoRooms.locale );
+		}
+		var url = window.FlexoRooms.restUrl + 'availability';
+		url += ( url.indexOf( '?' ) === -1 ? '?' : '&' ) + params.toString();
+		fetch( url, { credentials: 'same-origin', headers: { Accept: 'application/json' } } )
+			.then( function ( res ) {
+				return res.ok ? res.json() : null;
+			} )
+			.then( function ( data ) {
+				if ( ! data || ! data.rooms ) {
+					return;
+				}
+				var bySlug = {};
+				data.rooms.forEach( function ( r ) {
+					bySlug[ r.slug ] = r;
+				} );
+				var nights = 1 === data.nights ? t.night1 : fmt( t.nightsN, data.nights );
+				Array.prototype.forEach.call( spots, function ( spot ) {
+					var room = bySlug[ spot.getAttribute( 'data-flexo-availability' ) ];
+					var ok = !! ( room && room.available );
+					spot.classList.add( ok ? 'is-available' : 'is-unavailable' );
+					spot.textContent = ok ? ( spot.getAttribute( 'data-total' ) ? fmt( t.availableFor, room.total_formatted, nights ) : t.available ) : t.unavailable;
+				} );
+			} )
+			.catch( function () {} );
+	}
+
 	/* ---- "Check availability" bar on phones ---- */
 	function phoneBar() {
 		var bar = document.querySelector( '[data-flexo-room-bar]' );
@@ -260,10 +305,12 @@
 		document.addEventListener( 'DOMContentLoaded', function () {
 			init();
 			phoneBar();
+			availability();
 		} );
 	} else {
 		init();
 		phoneBar();
+		availability();
 	}
 	// Elementor editor: widgets are re-rendered while the page is edited.
 	function hookElementor() {

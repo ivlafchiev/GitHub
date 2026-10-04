@@ -496,5 +496,6 @@ class Flexo_Booking_Room_Pages {
 			</table>
 		<?php endif; ?>
 		<?php
+		Flexo_Booking_Elementor_Templates::render_settings();
 	}
 }

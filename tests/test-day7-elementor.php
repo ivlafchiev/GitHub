@@ -89,7 +89,7 @@ function t7e_render( $doc, $room_id ) {
 /* ---------------------------------------------------------------- */
 t_section( 'Registration' );
 $tags = Plugin::$instance->dynamic_tags->get_tags_config();
-foreach ( array( 'flexo-room-name', 'flexo-room-type', 'flexo-room-excerpt', 'flexo-room-description', 'flexo-room-price', 'flexo-room-size', 'flexo-room-guests', 'flexo-room-beds', 'flexo-room-view', 'flexo-room-amenities', 'flexo-room-detail', 'flexo-room-image', 'flexo-room-gallery', 'flexo-room-url', 'flexo-room-booking-link' ) as $name ) {
+foreach ( array( 'flexo-room-availability', 'flexo-room-name', 'flexo-room-type', 'flexo-room-excerpt', 'flexo-room-description', 'flexo-room-price', 'flexo-room-size', 'flexo-room-guests', 'flexo-room-beds', 'flexo-room-view', 'flexo-room-amenities', 'flexo-room-detail', 'flexo-room-image', 'flexo-room-gallery', 'flexo-room-url', 'flexo-room-booking-link' ) as $name ) {
 	t_ok( isset( $tags[ $name ] ), "tag {$name} registered" );
 }
 t_eq( 'flexo-booking', $tags['flexo-room-name']['group'], 'tags are in the Flexo Booking group' );
@@ -197,6 +197,38 @@ t_ok( false !== strpos( $html2, 'href="' . home_url( '/booking/?room=t7e-double'
 t_ok( false !== strpos( $html2, 'data-room="t7e-double"' ), 'booking box follows the room' );
 t_ok( false !== strpos( $html2, 'flexo-room-gallery--empty' ), 'room without photos: neutral placeholder' );
 t_ok( false === strpos( $html2, 'flexo-room-amenities flexo-room-list' ), 'room without amenities: no empty list' );
+
+/* ---------------------------------------------------------------- */
+t_section( 'Starter templates (as Theme Builder / Loop items render them)' );
+t_eq( defined( 'ELEMENTOR_PRO_VERSION' ), Flexo_Booking_Elementor_Templates::can_install(), 'one-click install offered only with Elementor Pro' );
+$single = Flexo_Booking_Elementor_Templates::data( 'single', array( '{{flexo_room_card}}' => '4321' ) );
+$loop   = null;
+$find   = static function ( $els ) use ( &$find, &$loop ) {
+	foreach ( $els as $el ) {
+		if ( isset( $el['widgetType'] ) && 'loop-carousel' === $el['widgetType'] ) {
+			$loop = $el;
+		}
+		$find( $el['elements'] );
+	}
+};
+$find( $single['content'] );
+t_ok( $loop && '4321' === $loop['settings']['template_id'] && 'flexo_room' === $loop['settings']['post_query_post_type'], 'single template: "Other rooms" Loop Carousel of rooms with the Room card' );
+t_eq( 'single-post', $single['type'], 'single template type' );
+t_eq( 'single/flexo_room', $single['page_settings']['preview_type'], 'preview with a room' );
+$starter = t7e_document( 'T7E starter single', $single['content'] );
+$html    = t7e_render( $starter, $room );
+t_ok( false !== strpos( $html, '>T7E Suite</h1>' ), 'starter single: room name' );
+t_ok( false !== strpos( $html, 'flexo-room-gallery' ) && false !== strpos( $html, 'flexo-room-amenities' ) && false !== strpos( $html, 'data-flexo-booking-box' ), 'starter single: gallery, amenities, booking box' );
+t_ok( false !== strpos( $html, 'First paragraph.' ), 'starter single: description' );
+$card = Flexo_Booking_Elementor_Templates::data( 'card' );
+t_eq( 'loop-item', $card['type'], 'room card is a Loop item' );
+$cdoc = t7e_document( 'T7E starter card', $card['content'] );
+$html = t7e_render( $cdoc, $other );
+t_ok( false !== strpos( $html, 'T7E Double' ) && false !== strpos( $html, 'href="' . home_url( '/rooms/t7e-double/' ) . '"' ), 'room card: name linked to the room page' );
+t_ok( false !== strpos( $html, 'data-flexo-availability="t7e-double"' ), 'room card: availability for searched dates' );
+t_ok( false !== strpos( $html, home_url( '/booking/?room=t7e-double' ) ), 'room card: Book now with the room' );
+wp_delete_post( $starter, true );
+wp_delete_post( $cdoc, true );
 
 /* ---------------------------------------------------------------- */
 t_section( 'Pages that are not about a room' );

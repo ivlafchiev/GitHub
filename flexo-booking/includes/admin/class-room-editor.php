@@ -573,6 +573,12 @@ class Flexo_Booking_Room_Editor {
 	 * 1.8.0 and by older export files) in step.
 	 */
 	public static function save_amenities( $post_id, array $items ) {
+		foreach ( $items as $i => $item ) {
+			// The owner's own amenity without an icon: pick one from its words.
+			if ( is_array( $item ) && empty( $item['key'] ) && empty( $item['icon'] ) && ! empty( $item['label'] ) ) {
+				$items[ $i ]['icon'] = Flexo_Booking_Room_Content::guess_icon( $item['label'] );
+			}
+		}
 		$items = Flexo_Booking_Room_Content::sanitize_amenity_items( $items );
 		update_post_meta( $post_id, Flexo_Booking_Room_Content::AMENITY_ITEMS, $items );
 		$keys = array_values( array_filter( wp_list_pluck( $items, 'key' ) ) );
@@ -680,6 +686,7 @@ class Flexo_Booking_Room_Editor {
 					'amenityAdded' => __( 'Already in the list.', 'flexo-booking' ),
 					'siteName'     => get_bloginfo( 'name' ),
 				),
+				'iconWords' => Flexo_Booking_Room_Content::icon_keywords(),
 			)
 		);
 	}

@@ -423,6 +423,35 @@ class Flexo_Booking_Room_Detail_Tag extends Flexo_Booking_Room_Text_Tag {
 }
 
 /**
+ * Availability for the dates in the page address (?check_in=…&check_out=…),
+ * e.g. in a Loop Grid room card under a search bar. Filled in by the
+ * browser with one request for all rooms on the page, so cached pages keep
+ * working. Empty when the address has no dates.
+ */
+class Flexo_Booking_Room_Availability_Tag extends Flexo_Booking_Room_Text_Tag {
+	public function get_name() {
+		return 'flexo-room-availability';
+	}
+	public function get_title() {
+		return __( 'Availability for the searched dates', 'flexo-booking' );
+	}
+	protected function register_tag_controls() {
+		$this->add_control(
+			'show_total',
+			array(
+				'label'        => __( 'Show the total', 'flexo-booking' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'default'      => 'yes',
+				'return_value' => 'yes',
+			)
+		);
+	}
+	protected function text( array $room ) {
+		return Flexo_Booking_Room_Render::availability( $room, 'yes' === $this->get_settings( 'show_total' ) );
+	}
+}
+
+/**
  * Main photo (image tag).
  */
 class Flexo_Booking_Room_Image_Tag extends Data_Tag {

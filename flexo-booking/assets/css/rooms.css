@@ -635,3 +635,23 @@
 		transition: none;
 	}
 }
+
+/* ---- Availability for the searched dates (room lists) ---- */
+
+.flexo-room-availability {
+	display: inline-block;
+	font-size: 0.9em;
+	font-weight: 600;
+}
+
+.flexo-room-availability:empty {
+	display: none;
+}
+
+.flexo-room-availability.is-available {
+	color: var(--flexo-ok, #167a3e);
+}
+
+.flexo-room-availability.is-unavailable {
+	color: var(--flexo-no, #b42318);
+}
