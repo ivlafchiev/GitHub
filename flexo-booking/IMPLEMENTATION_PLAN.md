@@ -2107,9 +2107,9 @@ build addresses.
 | `test-system-pages.php` (new) | 112 passed |
 | `test-confirmation.php` (new, incl. two guests behind a page cache) | 70 passed |
 | `test-booking-fields.php` (new) | 36 passed |
-| `tests/run.sh` (all PHP suites, i18n, constants, 3 concurrency races) | see 18.13 final run below |
+| `tests/run.sh` (all 16 PHP suites, i18n, wp-config constants, 3 concurrency races) | **ALL PASSED** – pricing parity 8, seasons 46, features 30, regression 43, iCal 66, day3 122, day4 93, day5 258, day6 110, day7 193, day7-elementor 85, room design 35, booking page 22, system pages 112, confirmation 70, booking fields 36, i18n 18, constants 6 |
 | `e2e/day8.js` (new) | 46 passed |
-| e2e days 1–7 | see below |
+| e2e days 1–7 | day1 37, day2 51, day3 63, day4 49, day5 167, day6 117, day7 61 – all passed |
 | Upgrade 1.0.0 / 1.5.0 / 1.7.0 / 1.8.3 → Session A (with own booking, thank-you and contact pages) | 34 passed each |
 | Fresh install | built-in Booking + Thank You (separate) + Contact on, no early-translation notices |
 | Polylang site | `polylang-test.php` 21, `polylang-day7.php` 25; built-in pages in Bulgarian at `/pll-book/` and English at `/en/pll-book/` |
