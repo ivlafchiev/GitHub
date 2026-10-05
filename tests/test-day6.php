@@ -330,7 +330,7 @@ foreach ( $t6_form_pages as $p ) {
 	$drafted[] = $p->ID;
 }
 Flexo_Booking_Guest::forget_booking_page();
-t_eq( 'error', $status_of( 'booking_page' ), 'missing booking page detected' );
+t_eq( 'warning', $status_of( 'booking_page' ), 'missing booking page detected (warning: the built-in booking page is used meanwhile)' );
 foreach ( isset( $drafted ) ? array_unique( $drafted ) : array() as $id ) {
 	wp_update_post( array( 'ID' => $id, 'post_status' => 'publish' ) );
 }

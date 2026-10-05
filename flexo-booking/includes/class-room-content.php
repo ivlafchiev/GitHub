@@ -641,8 +641,7 @@ class Flexo_Booking_Room_Content {
 	public static function booking_url( $slug, array $args = array(), $page = '' ) {
 		$page = trim( (string) $page );
 		if ( '' === $page ) {
-			$url = Flexo_Booking_Guest::booking_page_url();
-			$url = '' !== $url ? $url : home_url( '/booking/' );
+			$url = Flexo_Booking_Guest::guest_page_url();
 		} else {
 			$url = preg_match( '#^https?://#i', $page ) ? $page : home_url( '/' . ltrim( $page, '/' ) );
 		}

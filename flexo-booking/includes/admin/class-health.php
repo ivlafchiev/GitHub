@@ -94,7 +94,8 @@ class Flexo_Booking_Health {
 		$detected = Flexo_Booking_Guest::detect_booking_page();
 		$page     = Flexo_Booking_Guest::booking_page_url();
 		if ( '' === $page ) {
-			$add( 'booking_page', 'error', __( 'Booking page', 'flexo-booking' ), __( 'No published page has the booking form, so guests can\'t book and email links (calendar, manage booking) have nowhere to go.', 'flexo-booking' ), array( __( 'Create the booking page', 'flexo-booking' ), Flexo_Booking_Wizard::create_page_url() ) );
+			/* translators: %s: address, e.g. /booking/ */
+			$add( 'booking_page', 'warning', __( 'Booking page', 'flexo-booking' ), sprintf( __( 'No page of your website has the booking form yet, so guests get the plugin\'s built-in booking page at %s (with your header and footer). Create your own page to design it in Elementor.', 'flexo-booking' ), wp_make_link_relative( Flexo_Booking_Guest::builtin_page_url() ) ), array( __( 'Create the booking page', 'flexo-booking' ), Flexo_Booking_Wizard::create_page_url() ) );
 		} elseif ( '' === $detected ) {
 			$add( 'booking_page', 'warning', __( 'Booking page', 'flexo-booking' ), __( 'The booking page set under Settings → Hotel does not seem to contain the booking form (shortcode [flexo_booking] or the Elementor widget). Check that the page is published and has the form.', 'flexo-booking' ), array( __( 'Open the page', 'flexo-booking' ), $page ) );
 		} else {

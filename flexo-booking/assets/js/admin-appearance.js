@@ -156,6 +156,19 @@
 		} );
 	}
 
+	// "Another font": the name field shows only for that choice.
+	form.querySelectorAll( '[data-flexo-font-select]' ).forEach( function ( select ) {
+		var nameField = select.parentNode.querySelector( '[data-flexo-font-name]' );
+		select.addEventListener( 'change', function () {
+			if ( nameField ) {
+				nameField.hidden = 'custom' !== select.value;
+				if ( ! nameField.hidden ) {
+					nameField.focus();
+				}
+			}
+		} );
+	} );
+
 	var reset = document.querySelector( '.flexo-reset-appearance' );
 	if ( reset ) {
 		reset.addEventListener( 'click', function ( e ) {

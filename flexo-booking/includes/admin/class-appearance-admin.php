@@ -65,8 +65,10 @@ class Flexo_Booking_Appearance_Admin {
 		}
 		$raw      = isset( $_POST['settings'] ) && is_array( $_POST['settings'] ) ? wp_unslash( $_POST['settings'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- each value sanitised in values().
 		$settings = array();
-		foreach ( array( 'appearance_primary', 'appearance_accent', 'appearance_text', 'appearance_bg', 'appearance_button_text', 'appearance_corners', 'appearance_heading_font', 'appearance_body_font', 'appearance_text_size' ) as $key ) {
-			$settings[ $key ] = isset( $raw[ $key ] ) ? sanitize_text_field( $raw[ $key ] ) : '';
+		foreach ( array_keys( Flexo_Booking_Settings::defaults() ) as $key ) {
+			if ( 0 === strpos( $key, 'appearance_' ) && 'appearance_mode' !== $key ) {
+				$settings[ $key ] = isset( $raw[ $key ] ) ? sanitize_text_field( $raw[ $key ] ) : '';
+			}
 		}
 		$custom = isset( $raw['appearance_mode'] ) && 'custom' === $raw['appearance_mode'];
 		wp_send_json_success(
@@ -172,18 +174,30 @@ class Flexo_Booking_Appearance_Admin {
 								<tr>
 									<th scope="row"><label for="fb-<?php echo esc_attr( $flexo_key ); ?>"><?php echo esc_html( $flexo_label ); ?></label></th>
 									<td>
-										<select id="fb-<?php echo esc_attr( $flexo_key ); ?>" name="<?php echo esc_attr( $name . '[' . $flexo_key . ']' ); ?>">
+										<select id="fb-<?php echo esc_attr( $flexo_key ); ?>" name="<?php echo esc_attr( $name . '[' . $flexo_key . ']' ); ?>" data-flexo-font-select>
 											<option value=""><?php esc_html_e( 'Website font', 'flexo-booking' ); ?></option>
-											<?php foreach ( Flexo_Booking_Appearance::fonts() as $flexo_font => $flexo_def ) : ?>
-												<option value="<?php echo esc_attr( $flexo_font ); ?>" <?php selected( $s[ $flexo_key ], $flexo_font ); ?>><?php echo esc_html( $flexo_def[0] ); ?></option>
-											<?php endforeach; ?>
+											<?php $flexo_el_fonts = Flexo_Booking_Appearance::elementor_fonts(); ?>
+											<?php if ( $flexo_el_fonts ) : ?>
+												<optgroup label="<?php esc_attr_e( 'Your website\'s fonts (Elementor)', 'flexo-booking' ); ?>">
+													<?php foreach ( $flexo_el_fonts as $flexo_id => $flexo_def ) : ?>
+														<option value="<?php echo esc_attr( 'el:' . $flexo_id ); ?>" <?php selected( $s[ $flexo_key ], 'el:' . $flexo_id ); ?>><?php echo esc_html( $flexo_def[0] . ( '' !== $flexo_def[1] ? ' – ' . $flexo_def[1] : '' ) ); ?></option>
+													<?php endforeach; ?>
+												</optgroup>
+											<?php endif; ?>
+											<optgroup label="<?php esc_attr_e( 'Included with the plugin', 'flexo-booking' ); ?>">
+												<?php foreach ( Flexo_Booking_Appearance::fonts() as $flexo_font => $flexo_def ) : ?>
+													<option value="<?php echo esc_attr( $flexo_font ); ?>" <?php selected( $s[ $flexo_key ], $flexo_font ); ?>><?php echo esc_html( $flexo_def[0] ); ?></option>
+												<?php endforeach; ?>
+											</optgroup>
+											<option value="custom" <?php selected( $s[ $flexo_key ], 'custom' ); ?>><?php esc_html_e( 'Another font (type its name)…', 'flexo-booking' ); ?></option>
 										</select>
+										<input type="text" class="regular-text flexo-font-name" name="<?php echo esc_attr( $name . '[' . $flexo_key . '_name]' ); ?>" value="<?php echo esc_attr( $s[ $flexo_key . '_name' ] ); ?>" placeholder="<?php esc_attr_e( 'e.g. DM Sans', 'flexo-booking' ); ?>" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: Headings font / Text font */ __( '%s: font name', 'flexo-booking' ), $flexo_label ) ); ?>" data-flexo-font-name <?php echo 'custom' === $s[ $flexo_key ] ? '' : 'hidden'; ?>>
 									</td>
 								</tr>
 							<?php endforeach; ?>
 							<tr>
 								<th scope="row"></th>
-								<td><p class="description"><?php esc_html_e( 'The fonts are part of the plugin, work with Cyrillic and are loaded from your own website – never from Google (GDPR).', 'flexo-booking' ); ?></p></td>
+								<td><p class="description"><?php esc_html_e( 'Your website\'s fonts are the ones set in Elementor (Site Settings → Global Fonts). The fonts included with the plugin work with Cyrillic and are loaded from your own website – never from Google (GDPR). "Another font" uses a font your website already loads (theme, Elementor or a fonts plugin) – type its name exactly.', 'flexo-booking' ); ?></p></td>
 							</tr>
 							<tr>
 								<th scope="row"><label for="fb-appearance-size"><?php esc_html_e( 'Text size', 'flexo-booking' ); ?></label></th>
@@ -193,6 +207,22 @@ class Flexo_Booking_Appearance_Admin {
 											<option value="<?php echo esc_attr( $flexo_key ); ?>" <?php selected( $s['appearance_text_size'], $flexo_key ); ?>><?php echo esc_html( $flexo_size[0] ); ?></option>
 										<?php endforeach; ?>
 									</select>
+								</td>
+							</tr>
+						</table>
+						<h3><?php esc_html_e( '"Check availability" panel', 'flexo-booking' ); ?></h3>
+						<p class="description"><?php esc_html_e( 'The panel that opens over a room page with the room\'s calendar. Its text, fonts, buttons and corners follow the settings above.', 'flexo-booking' ); ?></p>
+						<table class="form-table" role="presentation">
+							<?php self::color_row( 'appearance_panel_bg', __( 'Panel background', 'flexo-booking' ), __( 'Leave empty to use the background colour above.', 'flexo-booking' ), $s, $name ); ?>
+							<tr>
+								<th scope="row"><label for="fb-appearance-overlay"><?php esc_html_e( 'Page behind the panel', 'flexo-booking' ); ?></label></th>
+								<td>
+									<select id="fb-appearance-overlay" name="<?php echo esc_attr( $name ); ?>[appearance_overlay]">
+										<?php foreach ( Flexo_Booking_Appearance::overlays() as $flexo_key => $flexo_overlay ) : ?>
+											<option value="<?php echo esc_attr( $flexo_key ); ?>" <?php selected( $s['appearance_overlay'], $flexo_key ); ?>><?php echo esc_html( $flexo_overlay[0] ); ?></option>
+										<?php endforeach; ?>
+									</select>
+									<p class="description"><?php esc_html_e( 'How much the page is darkened while the panel is open.', 'flexo-booking' ); ?></p>
 								</td>
 							</tr>
 						</table>

@@ -3546,9 +3546,53 @@
 		} );
 	}
 
+	/**
+	 * The plugin's own pages (built-in booking page, plain room page) under
+	 * a header that lies over the page (transparent headers made for a big
+	 * photo): the content is moved down so the header doesn't cover it.
+	 */
+	function clearOverlayHeader() {
+		var content = document.querySelector( '.flexo-builtin-booking, .flexo-room-page-wrap' );
+		var header = document.querySelector( '.elementor-location-header, header.site-header, #masthead, body > header' );
+		if ( ! content || ! header ) {
+			return;
+		}
+		// Page coordinates; a fixed header always sits at the top of the page.
+		var scrollY = window.pageYOffset || 0;
+		var isFixed = function ( node ) {
+			for ( var n = node; n && n !== header.parentNode; n = n.parentNode ) {
+				if ( 'fixed' === window.getComputedStyle( n ).position ) {
+					return true;
+				}
+			}
+			return false;
+		};
+		var bottom = 0;
+		[ header ].concat( Array.prototype.slice.call( header.querySelectorAll( ':scope > *, :scope > * > *, :scope > * > * > *' ) ) ).forEach( function ( node ) {
+			var rect = node.getBoundingClientRect();
+			if ( rect.height > 0 && rect.width > 0 ) {
+				bottom = Math.max( bottom, rect.bottom + ( isFixed( node ) ? 0 : scrollY ) );
+			}
+		} );
+		content.style.paddingTop = '';
+		var top = content.getBoundingClientRect().top + scrollY;
+		if ( bottom > top + 1 ) {
+			var base = parseFloat( window.getComputedStyle( content ).paddingTop ) || 0;
+			content.style.paddingTop = Math.ceil( base + bottom - top + 16 ) + 'px';
+		}
+	}
+
 	function init( scope ) {
 		var ctx = scope || document;
 		bindDialogs();
+		if ( ! scope ) {
+			clearOverlayHeader();
+			window.addEventListener( 'load', clearOverlayHeader );
+			window.addEventListener( 'resize', function () {
+				window.clearTimeout( clearOverlayHeader.timer );
+				clearOverlayHeader.timer = window.setTimeout( clearOverlayHeader, 150 );
+			} );
+		}
 		ctx.querySelectorAll( '[data-flexo-booking-box]:not([data-fb-ready])' ).forEach( function ( node ) {
 			node.setAttribute( 'data-fb-ready', '1' );
 			new RoomBox( node ); // eslint-disable-line no-new

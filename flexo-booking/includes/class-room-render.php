@@ -547,7 +547,7 @@ class Flexo_Booking_Room_Render {
 				continue;
 			}
 			$uid = 'flexo-book-' . $room_id;
-			echo '<dialog class="flexo-book-dialog" data-flexo-book-dialog="' . esc_attr( $post->post_name ) . '"' . ( $room_id === $current ? ' data-flexo-book-current' : '' ) . ' aria-labelledby="' . esc_attr( $uid ) . '">';
+			echo '<dialog class="flexo-booking flexo-book-dialog" data-flexo-book-dialog="' . esc_attr( $post->post_name ) . '"' . ( $room_id === $current ? ' data-flexo-book-current' : '' ) . ' aria-labelledby="' . esc_attr( $uid ) . '">';
 			echo '<div class="flexo-book-dialog__head"><div><p class="flexo-book-dialog__eyebrow">' . esc_html__( 'Check availability', 'flexo-booking' ) . '</p>';
 			echo '<h2 class="flexo-book-dialog__title" id="' . esc_attr( $uid ) . '">' . esc_html( $room['title'] ) . '</h2></div>';
 			echo '<button type="button" class="flexo-book-dialog__close" data-flexo-book-close aria-label="' . esc_attr__( 'Close', 'flexo-booking' ) . '"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></button></div>';

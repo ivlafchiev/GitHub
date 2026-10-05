@@ -64,6 +64,65 @@ class Flexo_Booking_Appearance {
 		);
 	}
 
+	/**
+	 * The website's Elementor global fonts (active kit): id => array( title, family ).
+	 * Chosen as "el:<id>" and used through Elementor's own CSS variable, so the
+	 * font is the one the website already loads.
+	 */
+	public static function elementor_fonts() {
+		if ( ! class_exists( '\Elementor\Plugin' ) || ! isset( \Elementor\Plugin::$instance->kits_manager ) ) {
+			return array();
+		}
+		$kit = \Elementor\Plugin::$instance->kits_manager->get_active_kit_for_frontend();
+		if ( ! $kit ) {
+			return array();
+		}
+		$fonts = array();
+		foreach ( array( 'system_typography', 'custom_typography' ) as $group ) {
+			foreach ( (array) $kit->get_settings( $group ) as $item ) {
+				if ( empty( $item['_id'] ) || ! preg_match( '/^[a-z0-9]+$/i', (string) $item['_id'] ) ) {
+					continue;
+				}
+				$fonts[ (string) $item['_id'] ] = array(
+					isset( $item['title'] ) ? (string) $item['title'] : (string) $item['_id'],
+					isset( $item['typography_font_family'] ) ? (string) $item['typography_font_family'] : '',
+				);
+			}
+		}
+		return $fonts;
+	}
+
+	/**
+	 * A font choice: '' (website), a bundled font, "el:<id>" (Elementor
+	 * global font) or "custom" (a font name typed by the owner).
+	 */
+	public static function sanitize_font_choice( $value ) {
+		$value = (string) $value;
+		if ( array_key_exists( $value, self::fonts() ) || 'custom' === $value || preg_match( '/^el:[a-z0-9]+$/i', $value ) ) {
+			return $value;
+		}
+		return '';
+	}
+
+	/**
+	 * A font name as used in CSS, e.g. "DM Sans" (letters, numbers, spaces, dashes).
+	 */
+	public static function sanitize_font_name( $value ) {
+		$value = trim( preg_replace( '/[^\p{L}\p{N} \-]/u', '', (string) $value ) );
+		return substr( preg_replace( '/\s+/', ' ', $value ), 0, 60 );
+	}
+
+	/**
+	 * How much the page behind the "Check availability" panel is dimmed.
+	 */
+	public static function overlays() {
+		return array(
+			'light'  => array( __( 'Light', 'flexo-booking' ), 'rgba(15,20,25,.3)' ),
+			'medium' => array( __( 'Medium', 'flexo-booking' ), 'rgba(15,20,25,.55)' ),
+			'dark'   => array( __( 'Dark', 'flexo-booking' ), 'rgba(15,20,25,.8)' ),
+		);
+	}
+
 	public static function corners() {
 		return array(
 			'square'  => array( __( 'Square', 'flexo-booking' ), '0px' ),
@@ -104,8 +163,14 @@ class Flexo_Booking_Appearance {
 		$corners = self::corners();
 		$sizes   = self::text_sizes();
 		foreach ( array( 'appearance_heading_font', 'appearance_body_font' ) as $key ) {
-			$values[ $key ] = isset( $settings[ $key ], $fonts[ $settings[ $key ] ] ) ? $settings[ $key ] : '';
+			$values[ $key ]           = isset( $settings[ $key ] ) ? self::sanitize_font_choice( $settings[ $key ] ) : '';
+			$values[ $key . '_name' ] = isset( $settings[ $key . '_name' ] ) ? self::sanitize_font_name( $settings[ $key . '_name' ] ) : '';
+			if ( 'custom' === $values[ $key ] && '' === $values[ $key . '_name' ] ) {
+				$values[ $key ] = '';
+			}
 		}
+		$values['appearance_panel_bg'] = self::sanitize_color( isset( $settings['appearance_panel_bg'] ) ? $settings['appearance_panel_bg'] : '' );
+		$values['appearance_overlay']  = isset( $settings['appearance_overlay'] ) && array_key_exists( $settings['appearance_overlay'], self::overlays() ) ? $settings['appearance_overlay'] : 'medium';
 		$values['appearance_corners']   = isset( $settings['appearance_corners'], $corners[ $settings['appearance_corners'] ] ) ? $settings['appearance_corners'] : '';
 		$values['appearance_text_size'] = isset( $settings['appearance_text_size'], $sizes[ $settings['appearance_text_size'] ] ) ? $settings['appearance_text_size'] : 'normal';
 		return $values;
@@ -134,13 +199,16 @@ class Flexo_Booking_Appearance {
 		if ( '' !== $v['appearance_corners'] ) {
 			$props[] = '--fb-radius:' . self::corners()[ $v['appearance_corners'] ][1];
 		}
-		$fonts = self::fonts();
 		if ( '' !== $v['appearance_body_font'] ) {
-			$props[] = '--fb-font:' . self::family( $v['appearance_body_font'] );
+			$props[] = '--fb-font:' . self::family( $v['appearance_body_font'], $v['appearance_body_font_name'] );
 		}
 		if ( '' !== $v['appearance_heading_font'] ) {
-			$props[] = '--fb-heading-font:' . self::family( $v['appearance_heading_font'] );
+			$props[] = '--fb-heading-font:' . self::family( $v['appearance_heading_font'], $v['appearance_heading_font_name'] );
 		}
+		if ( '' !== $v['appearance_panel_bg'] ) {
+			$props[] = '--fb-panel-bg:' . $v['appearance_panel_bg'];
+		}
+		$props[] = '--fb-overlay:' . self::overlays()[ $v['appearance_overlay'] ][1];
 		$size = self::text_sizes()[ $v['appearance_text_size'] ][1];
 		if ( '' !== $size ) {
 			$props[] = '--fb-font-size:' . $size;
@@ -156,7 +224,14 @@ class Flexo_Booking_Appearance {
 	 * font-family value for a bundled font (named "Flexo …" so it never
 	 * clashes with a copy of the same font loaded by the theme).
 	 */
-	public static function family( $key ) {
+	public static function family( $key, $name = '' ) {
+		if ( 'custom' === $key ) {
+			return '"' . self::sanitize_font_name( $name ) . '",system-ui,sans-serif';
+		}
+		if ( 0 === strpos( (string) $key, 'el:' ) ) {
+			// Elementor's variable for the global font; the website's font when it is missing.
+			return 'var(--e-global-typography-' . substr( $key, 3 ) . '-font-family,inherit)';
+		}
 		$fonts = self::fonts();
 		return '"Flexo ' . $fonts[ $key ][0] . '",' . $fonts[ $key ][1];
 	}
@@ -312,7 +387,7 @@ class Flexo_Booking_Appearance {
 			<?php wp_head(); ?>
 			<style id="flexo-preview-fonts"><?php echo self::font_faces( array_keys( self::fonts() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from constants. ?></style>
 			<style id="flexo-preview-custom"><?php echo self::css( null, 'custom' === self::mode() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- sanitised values. ?></style>
-			<style>body{margin:0;padding:16px;background:#fff}.flexo-preview-label{font:12px/1.4 system-ui,sans-serif;color:#646970;margin:18px 0 6px}</style>
+			<style>body{margin:0;padding:16px;background:#fff}.flexo-preview-label{font:12px/1.4 system-ui,sans-serif;color:#646970;margin:18px 0 6px}.flexo-booking.flexo-preview-backdrop{background:var(--fb-overlay,rgba(15,20,25,.55));padding:24px 16px;border-radius:0}.flexo-booking.flexo-preview-panel{display:block;position:static;margin:0 auto;max-height:none;width:100%;max-width:520px}</style>
 		</head>
 		<body <?php body_class( 'flexo-booking-preview' ); ?>>
 		<div class="flexo-booking flexo-booking--full" data-flexo-preview>
@@ -353,6 +428,20 @@ class Flexo_Booking_Appearance {
 			<div class="fb-actions">
 				<button type="button" class="fb-button fb-button--ghost"><?php esc_html_e( 'Back', 'flexo-booking' ); ?></button>
 				<button type="button" class="fb-button"><?php esc_html_e( 'Confirm booking', 'flexo-booking' ); ?></button>
+			</div>
+		</div>
+		<p class="flexo-preview-label"><?php esc_html_e( '"Check availability" panel', 'flexo-booking' ); ?></p>
+		<div class="flexo-booking flexo-preview-backdrop">
+			<div class="flexo-booking flexo-book-dialog flexo-preview-panel">
+				<div class="flexo-book-dialog__head"><div><p class="flexo-book-dialog__eyebrow"><?php esc_html_e( 'Check availability', 'flexo-booking' ); ?></p><h2 class="flexo-book-dialog__title"><?php esc_html_e( 'Double Room with Sea View', 'flexo-booking' ); ?></h2></div><span class="flexo-book-dialog__close" aria-hidden="true">×</span></div>
+				<div class="flexo-booking flexo-booking--box">
+					<p class="fb-box__from"><?php echo esc_html( sprintf( /* translators: %s: price per night, e.g. €95 */ __( 'from %s', 'flexo-booking' ), Flexo_Booking_Money::format( 120, $flexo_currency, true ) ) ); ?></p>
+					<div class="fb-box__answer is-available">
+						<p class="fb-box__status is-ok"><?php esc_html_e( 'Available for your dates', 'flexo-booking' ); ?></p>
+						<p class="fb-box__total"><span class="fb-box__total-label"><?php esc_html_e( 'Total', 'flexo-booking' ); ?></span> <strong class="fb-box__total-amount"><?php echo esc_html( Flexo_Booking_Money::format( 360, $flexo_currency ) ); ?></strong></p>
+						<button type="button" class="fb-button fb-box__book"><?php esc_html_e( 'Book now', 'flexo-booking' ); ?></button>
+					</div>
+				</div>
 			</div>
 		</div>
 		<script>

@@ -6,7 +6,7 @@ Guests pick dates and guests, see which rooms are free with the price, enter the
 
 It's one plugin that works with any theme or template. Extra features are switched on only where a property needs them, so a simple guest house still gets just *dates → room → details → booking request*.
 
-> Version **1.8.2**. Day 7 makes the plugin the single place for rooms: each room has its own page on the website with its photos, description, amenities and a booking box, filled into your Elementor Pro templates through dynamic tags (§3). Day 6 made the plugin easier to use for guests, owners and reception and added Appearance settings; 1.7.0 gave the admin screens their own, app-like design (§17). Development follows `ROADMAP.md`; technical design is in `IMPLEMENTATION_PLAN.md`.
+> Version **1.8.3**. Day 7 makes the plugin the single place for rooms: each room has its own page on the website with its photos, description, amenities and a booking box, filled into your Elementor Pro templates through dynamic tags (§3). Day 6 made the plugin easier to use for guests, owners and reception and added Appearance settings; 1.7.0 gave the admin screens their own, app-like design (§17). Development follows `ROADMAP.md`; technical design is in `IMPLEMENTATION_PLAN.md`.
 
 ---
 
@@ -51,7 +51,7 @@ It's one plugin that works with any theme or template. Extra features are switch
 - JetEngine (or another custom-field plugin) is **not** needed for rooms; rooms made with it can be brought in (§3.2).
 
 **Install:**
-1. Build the zip with `bin/build-zip.sh`, or use the provided `flexo-booking-1.8.2.zip`.
+1. Build the zip with `bin/build-zip.sh`, or use the provided `flexo-booking-1.8.3.zip`.
 2. Go to **Plugins → Add New → Upload Plugin**, choose the zip, then **Install** and **Activate**.
 3. A **Bookings** menu appears in the admin. On a new site (no rooms, no bookings) the **setup wizard** opens once (below).
 4. Check **Settings → General → Timezone**. It must be the hotel's city, because "today" and arrival dates depend on it. **Bookings → Settings → Health** warns if it isn't.
@@ -72,7 +72,7 @@ The wizard never opens by itself on a site that already has rooms or bookings, s
 
 ### Upgrading
 
-**Upgrade from any earlier version (1.0.0–1.8.1):** upload the new zip and choose **Replace current with uploaded**.
+**Upgrade from any earlier version (1.0.0–1.8.2):** upload the new zip and choose **Replace current with uploaded**.
 - The database updates itself on the next page load. No reinstall is needed, and rooms, bookings and settings are kept.
 - If an update step ever fails, a red notice appears in the admin and the step is retried automatically.
 - On staging or in scripts you can also run `wp flexo-booking migrate`.
@@ -92,6 +92,7 @@ The wizard never opens by itself on a site that already has rooms or bookings, s
   - The database update only adds the new settings and refreshes the site's addresses once. Nothing is removed, so going back to 1.7.0 is possible (room pages then stop answering).
 - **1.8.1:** new **Room page design** setting: any page or template you designed in Elementor can be the design of every room page (§3). Fixed: *Settings → Room pages* named the site's header template as the room template (any template shown on the entire site was taken for it), which also kept *Add the starter room templates* from switching to the starter template. No database update.
 - **1.8.2:** **"Check availability" buttons** open the room's calendar on the same page (§3, *Check availability buttons*). Buttons that already use the *Room booking link* tag do this automatically (choose *When clicked → Go to the booking page* in the tag to keep the old behaviour). The booking box now shows the price as soon as both dates are chosen, and changing the guests re-checks the same dates. No database update.
+- **1.8.3:** **built-in booking page** – while no page of the website has the booking form, `/booking/` shows it (with the theme's header and footer) instead of "Page not found"; with a real booking page elsewhere, old `/booking/` links go there (§14). The "Check availability" panel follows **Appearance**, which gets panel settings and more fonts (the website's Elementor global fonts, or any font the website loads) (§15). No database update.
 
 ---
 
@@ -662,7 +663,7 @@ The calendar is for inventory and reservations only. It has no housekeeping or r
 
 ## 14. Putting the booking form on the site
 
-1. **Booking page (required):** edit your *Booking / Reservations* page in Elementor, search the panel for **"Flexo"** and drag in **Flexo Booking Form** (*FlexoHotels* category). Keep *Layout* set to **Full booking form**. Note the page path (default `/booking/`).
+1. **Booking page:** the page where guests choose a rate and enter their details – the booking is confirmed on the same page, so **no thank-you page is needed**. Quickest: **Settings → Hotel → Booking page → Create the booking page** (or *Settings → Health*), which creates *Book your stay* with the form; then design it in Elementor. Until a page exists, the plugin shows its **built-in booking page** at `/booking/` with your header and footer, so "Book now" never ends in *Page not found*; it is kept out of search results. When your booking page has another address, old links to `/booking/` are sent there with the room and dates. By hand: edit your *Booking / Reservations* page in Elementor, search the panel for **"Flexo"** and drag in **Flexo Booking Form** (*FlexoHotels* category). Keep *Layout* set to **Full booking form**. Note the page path (default `/booking/`).
 2. **Hero search bar (optional):** add the widget on the home page with *Layout* **Search bar** and *Booking page path* `/booking/`.
 3. **"Book now" buttons:** on a room page, set the button's *Link* to `#check-availability` (§3, *Check availability buttons*). Elsewhere, on the Button widget's *Link*, choose the dynamic tag **Room booking link** (group *Flexo Booking: room*); by default a click opens the room's calendar on the same page. In a room template or Loop item it books **the room being shown**, so one button serves every room; elsewhere pick the room. It opens the booking page from **Settings → Hotel** (or the page you enter), and with *Keep the dates and guests from the page address* on, a guest who came from a search lands on the rooms with their dates already chosen. Or type `/booking/?room=<slug>`; every room's link has a **Copy** button in the room editor and the Rooms list.
    - **Room booking box** (widget, or `[flexo_room_booking]`) on a room page: the guest chooses dates and guests there and sees at once whether *this* room is free and the total; **Book now** opens the booking page straight at the details step. When it isn't free, nearby free dates and a link to other rooms for the same dates are shown.
@@ -698,9 +699,10 @@ The calendar is for inventory and reservations only. It has no housekeeping or r
 - **Custom:** choose
   - **Colours:** main colour (buttons, selected options, links), accent (badges such as "Only 2 left!"), text, background, button text. Each has **Use website colour**.
   - **Corners:** square, slightly rounded or rounded.
-  - **Fonts** for headings and text: *Website font* or one of **Inter, Roboto, Open Sans, Manrope, Montserrat, Lora, Playfair Display**. The fonts are part of the plugin, include Cyrillic, and are loaded from the hotel's own website – **never from Google** (GDPR). Only the chosen fonts are loaded, and only on pages with the form.
+  - **Fonts** for headings and text: *Website font*; **your website's Elementor global fonts** (e.g. *Primary – DM Sans*, as set in Elementor Site Settings → Global Fonts); one of **Inter, Roboto, Open Sans, Manrope, Montserrat, Lora, Playfair Display**, which are part of the plugin, include Cyrillic and are loaded from the hotel's own website – **never from Google** (GDPR), only the chosen ones and only on pages with the form; or **Another font** – type the name of any font the website already loads (theme, Elementor, a fonts plugin).
+  - **"Check availability" panel** (§3): **panel background** and how dark the **page behind the panel** is. Its title uses the headings font, its text, buttons and corners the settings above.
   - **Text size:** small, normal or large.
-- **Live preview** beside the settings, with the real form and your site's styles, in desktop or phone width. Changes show before saving.
+- **Live preview** beside the settings, with the real form and the "Check availability" panel in your site's styles, in desktop or phone width. Changes show before saving.
 - **Contrast warnings** when text and background, or button text and the main colour, are hard to read (below 4.5:1), with a suggested colour.
 - **Reset to website style** (after a confirmation) goes back to *Match my website*.
 - **Emails:** logo and email colour are set here too (in Custom style, emails use the main colour).

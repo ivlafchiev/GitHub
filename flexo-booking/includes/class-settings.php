@@ -121,6 +121,10 @@ class Flexo_Booking_Settings {
 			'appearance_heading_font'         => '',
 			'appearance_body_font'            => '',
 			'appearance_text_size'            => 'normal',
+			'appearance_heading_font_name'    => '',
+			'appearance_body_font_name'       => '',
+			'appearance_panel_bg'             => '',
+			'appearance_overlay'              => 'medium',
 			'email_log_days'                => 90,
 			// Guest details form (Day 4, data minimisation).
 			'field_phone'                   => 'required',
@@ -283,6 +287,7 @@ class Flexo_Booking_Settings {
 				case 'appearance_text':
 				case 'appearance_bg':
 				case 'appearance_button_text':
+				case 'appearance_panel_bg':
 					$clean[ $key ] = Flexo_Booking_Appearance::sanitize_color( $value );
 					break;
 				case 'appearance_corners':
@@ -290,7 +295,14 @@ class Flexo_Booking_Settings {
 					break;
 				case 'appearance_heading_font':
 				case 'appearance_body_font':
-					$clean[ $key ] = array_key_exists( $value, Flexo_Booking_Appearance::fonts() ) ? $value : '';
+					$clean[ $key ] = Flexo_Booking_Appearance::sanitize_font_choice( $value );
+					break;
+				case 'appearance_heading_font_name':
+				case 'appearance_body_font_name':
+					$clean[ $key ] = Flexo_Booking_Appearance::sanitize_font_name( $value );
+					break;
+				case 'appearance_overlay':
+					$clean[ $key ] = array_key_exists( $value, Flexo_Booking_Appearance::overlays() ) ? $value : 'medium';
 					break;
 				case 'appearance_text_size':
 					$clean[ $key ] = array_key_exists( $value, Flexo_Booking_Appearance::text_sizes() ) ? $value : 'normal';
@@ -626,6 +638,19 @@ class Flexo_Booking_Settings {
 									?>
 								<?php endif; ?>
 							</p>
+							<?php if ( '' === Flexo_Booking_Guest::booking_page_url() ) : ?>
+								<div class="notice notice-info inline"><p>
+									<?php
+									/* translators: %s: address, e.g. /booking/ */
+									printf( esc_html__( 'No page of your website has the booking form yet. Until you create one, guests who click "Book now" get the plugin\'s built-in booking page at %s, with your header and footer – so nothing ends in "Page not found".', 'flexo-booking' ), '<code>' . esc_html( wp_make_link_relative( Flexo_Booking_Guest::builtin_page_url() ) ) . '</code>' );
+									?>
+								</p><p>
+									<?php if ( current_user_can( 'publish_pages' ) ) : ?>
+										<a class="button" href="<?php echo esc_url( Flexo_Booking_Wizard::create_page_url() ); ?>"><?php esc_html_e( 'Create the booking page', 'flexo-booking' ); ?></a>
+									<?php endif; ?>
+									<span class="description"><?php esc_html_e( 'Creates a "Book your stay" page with the booking form, which you can then design in Elementor (keep the Flexo Booking Form widget on it). After booking, guests see their confirmation on the same page – no separate thank-you page is needed.', 'flexo-booking' ); ?></span>
+								</p></div>
+							<?php endif; ?>
 						</td>
 					</tr>
 					<tr>

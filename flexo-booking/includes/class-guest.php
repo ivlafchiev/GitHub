@@ -79,6 +79,22 @@ class Flexo_Booking_Guest {
 	}
 
 	/**
+	 * Address of the built-in booking page (see Flexo_Booking_Frontend::builtin_page()).
+	 */
+	public static function builtin_page_url() {
+		return home_url( '/booking/' );
+	}
+
+	/**
+	 * The booking page for guests: the real one, else the built-in page,
+	 * so links never lead to "Page not found".
+	 */
+	public static function guest_page_url( $locale = '' ) {
+		$url = self::booking_page_url( $locale );
+		return '' !== $url ? $url : self::builtin_page_url();
+	}
+
+	/**
 	 * The first published page with the full booking form (shortcode or
 	 * Elementor widget), remembered for 12 hours.
 	 */
@@ -138,7 +154,7 @@ class Flexo_Booking_Guest {
 	 */
 	public static function links( array $booking ) {
 		$key    = self::key( $booking );
-		$page   = self::booking_page_url( $booking['locale'] );
+		$page   = self::guest_page_url( $booking['locale'] );
 		$args   = array(
 			'reference' => rawurlencode( $booking['reference'] ),
 			'key'       => $key,

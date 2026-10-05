@@ -2082,25 +2082,27 @@
 	}
 }
 
-/* ---- "Check availability" panel (dialog; a bottom sheet on phones) ---- */
+/* ---- "Check availability" panel (dialog; a bottom sheet on phones) ----
+ * The dialog is itself a .flexo-booking element, so the Appearance settings
+ * (colours, fonts, corners; --fb-panel-bg and --fb-overlay) apply to it. */
 
-.flexo-book-dialog {
+.flexo-booking.flexo-book-dialog {
 	box-sizing: border-box;
 	width: min(680px, calc(100vw - 32px));
 	max-width: none;
 	max-height: calc(100vh - 48px);
 	padding: 0;
 	border: 0;
-	border-radius: 16px;
-	background: #fff;
-	color: #1d2327;
+	border-radius: max(var(--fb-radius), 12px);
+	background: var(--fb-panel-bg, var(--fb-bg));
+	color: var(--fb-text);
 	box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
 	overflow: auto;
 	overscroll-behavior: contain;
 }
 
 .flexo-book-dialog::backdrop {
-	background: rgba(15, 20, 25, 0.55);
+	background: var(--fb-overlay, rgba(15, 20, 25, 0.55));
 }
 
 html.flexo-book-dialog-open {
@@ -2119,21 +2121,23 @@ html.flexo-book-dialog-open {
 	background: inherit;
 }
 
-.flexo-book-dialog__eyebrow {
+.flexo-booking .flexo-book-dialog__eyebrow {
 	margin: 0 0 2px;
+	color: var(--fb-muted);
 	font-size: 0.78em;
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
-	opacity: 0.7;
 }
 
-.flexo-book-dialog__title {
+.flexo-booking .flexo-book-dialog__title {
 	margin: 0;
+	color: var(--fb-text);
+	font-family: var(--fb-heading-font);
 	font-size: 1.35em;
 	line-height: 1.25;
 }
 
-.flexo-book-dialog__close {
+.flexo-booking .flexo-book-dialog__close {
 	display: inline-flex;
 	flex: none;
 	align-items: center;
@@ -2145,13 +2149,13 @@ html.flexo-book-dialog-open {
 	border: 0;
 	border-radius: 50%;
 	background: transparent;
-	color: inherit;
+	color: var(--fb-text);
 	cursor: pointer;
 }
 
-.flexo-book-dialog__close:hover,
-.flexo-book-dialog__close:focus-visible {
-	background: rgba(0, 0, 0, 0.06);
+.flexo-booking .flexo-book-dialog__close:hover,
+.flexo-booking .flexo-book-dialog__close:focus-visible {
+	background: color-mix(in srgb, var(--fb-text) 8%, transparent);
 }
 
 .flexo-book-dialog .flexo-booking--box {
@@ -2159,12 +2163,13 @@ html.flexo-book-dialog-open {
 	padding: 12px 24px 24px;
 	border: 0;
 	border-radius: 0;
+	background: transparent;
 	box-shadow: none;
 	max-width: none;
 }
 
 @media (max-width: 600px) {
-	.flexo-book-dialog {
+	.flexo-booking.flexo-book-dialog {
 		width: 100%;
 		max-height: 92vh;
 		max-height: 92dvh;
@@ -2192,4 +2197,13 @@ html.flexo-book-dialog-open {
 		opacity: 0;
 		transform: translateY(16px);
 	}
+}
+
+/* ---- Built-in booking page (no page with the form yet) ---- */
+
+.flexo-builtin-booking {
+	box-sizing: border-box;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 32px 16px 48px;
 }

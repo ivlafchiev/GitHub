@@ -505,6 +505,17 @@ class Flexo_Booking_Room_Pages {
 		$detected = self::detect_rooms_page();
 		?>
 		<p class="flexo-tab-intro"><?php esc_html_e( 'Every room has its own page with its photos, description, amenities and a booking box. The design comes from your Elementor single room template.', 'flexo-booking' ); ?></p>
+		<?php if ( '' === Flexo_Booking_Guest::booking_page_url() ) : ?>
+			<div class="notice notice-info inline"><p>
+				<?php
+				/* translators: %s: address, e.g. /booking/ */
+				printf( esc_html__( '"Book now" leads to the plugin\'s built-in booking page at %s, because no page of your website has the booking form yet.', 'flexo-booking' ), '<code>' . esc_html( wp_make_link_relative( Flexo_Booking_Guest::builtin_page_url() ) ) . '</code>' );
+				?>
+				<?php if ( current_user_can( 'publish_pages' ) ) : ?>
+					<a href="<?php echo esc_url( Flexo_Booking_Wizard::create_page_url() ); ?>"><?php esc_html_e( 'Create the booking page', 'flexo-booking' ); ?></a>
+				<?php endif; ?>
+			</p></div>
+		<?php endif; ?>
 		<table class="form-table" role="presentation">
 			<?php self::render_design_field( $s, $name, $rooms ); ?>
 			<tr>
