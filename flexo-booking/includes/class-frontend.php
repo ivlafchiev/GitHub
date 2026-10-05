@@ -350,6 +350,7 @@ class Flexo_Booking_Frontend {
 				'button_text'  => '',
 				'book_text'    => '',
 				'show_price'   => 'yes',
+				'in_dialog'    => '',
 			),
 			$atts,
 			$is_box ? 'flexo_room_booking' : 'flexo_booking'
@@ -448,6 +449,9 @@ class Flexo_Booking_Frontend {
 		$room     = Flexo_Booking_Rooms::to_array( $post );
 		$settings = Flexo_Booking_Settings::all();
 		$tz       = wp_timezone();
+		if ( '' === $atts['in_dialog'] ) {
+			self::$box_rooms[ $room['id'] ] = true;
+		}
 		$today    = new DateTimeImmutable( 'today', $tz );
 		// Dates and guests from a search ("?check_in=…&adults=…") are filled in and checked at once.
 		$args    = Flexo_Booking_Room_Content::search_args();
@@ -483,7 +487,8 @@ class Flexo_Booking_Frontend {
 			'min_date'    => $today->format( 'Y-m-d' ),
 			'max_date'    => $today->modify( '+' . (int) $settings['max_advance_days'] . ' days' )->format( 'Y-m-d' ),
 			'booking_url' => Flexo_Booking_Room_Content::booking_url( '', array(), $page ),
-			'autosearch'  => '' !== $prefill['check_in'] && '' !== $prefill['check_out'],
+			// In a "Check availability" panel the dates are checked when it opens.
+			'autosearch'  => '' === $atts['in_dialog'] && '' !== $prefill['check_in'] && '' !== $prefill['check_out'],
 			'ask_ages'    => Flexo_Booking_Children::enabled() && $max_kids > 0,
 			'from'        => $from,
 			'max_adults'  => $max_adults,
@@ -498,6 +503,18 @@ class Flexo_Booking_Frontend {
 		ob_start();
 		self::load_template( 'room-booking-box.php', $vars );
 		return ob_get_clean();
+	}
+
+	/**
+	 * @var array Rooms whose booking box is on the page (room ID => true).
+	 */
+	private static $box_rooms = array();
+
+	/**
+	 * Whether the page already shows this room's booking box.
+	 */
+	public static function has_box( $room_id ) {
+		return isset( self::$box_rooms[ (int) $room_id ] );
 	}
 
 	/**

@@ -127,7 +127,7 @@ async function login( browser, user, width = 1400 ) {
 			await bar.locator( 'a' ).click();
 			await p.waitForTimeout( 1200 );
 			ok( await bar.evaluate( ( el ) => el.classList.contains( 'is-away' ) ), `${ w }px: bar hides at the booking box` );
-			ok( /fb-date/.test( await p.evaluate( () => document.activeElement.className ) ), `${ w }px: focus on the dates` );
+			ok( await p.locator( '[data-flexo-booking-box]:not(dialog *) .fb-picker' ).isVisible(), `${ w }px: the box's calendar opens` );
 		} else {
 			ok( ! await bar.isVisible(), `${ w }px: no phone bar` );
 		}
@@ -172,6 +172,69 @@ async function login( browser, user, width = 1400 ) {
 	const admin = await login( browser, 'admin' );
 	res = await admin.goto( BASE + '/rooms/secret-loft/' );
 	ok( 200 === res.status(), 'hidden room: staff can still see its page' );
+
+	section( '"Check availability" panel (room page design without a booking box)' );
+	const design = wp( 'echo (int) get_option( "flexo_e2e_d7_design" );' );
+	if ( '0' !== design && '' !== design ) {
+		const panelErrors = errors.length;
+		wp( `$s = get_option( Flexo_Booking_Settings::OPTION ); $s["room_design"] = ${ design }; update_option( Flexo_Booking_Settings::OPTION, $s );` );
+		p = await page();
+		await p.goto( BASE + ROOM, { waitUntil: 'networkidle' } );
+		const hrefs = await p.$$eval( 'a.elementor-button', ( a ) => a.map( ( x ) => x.getAttribute( 'href' ) ) );
+		ok( hrefs.includes( '#check-availability' ) && hrefs.some( ( h ) => /room=deluxe-sea-view#check-availability$/.test( h ) ), 'buttons: typed #check-availability and the Room booking link tag' );
+		const dlg = p.locator( 'dialog[data-flexo-book-dialog="deluxe-sea-view"]' );
+		await p.click( 'a.elementor-button >> text=Check availability' );
+		await p.waitForTimeout( 400 );
+		ok( await dlg.evaluate( ( d ) => d.open ) && await dlg.locator( '.fb-picker' ).isVisible() && p.url().endsWith( ROOM ), 'the button opens the room\'s panel with its calendar, on the same page' );
+		ok( 2 === await dlg.locator( '.fb-picker .fb-month' ).count().catch( () => 0 ) || await dlg.locator( '.fb-picker.is-double' ).count() === 1, 'two months side by side on a computer' );
+		await dlg.locator( `.fb-day[data-date="${ day( 10 ) }"]` ).click();
+		await dlg.locator( `.fb-day[data-date="${ day( 12 ) }"]` ).click();
+		await dlg.locator( '.fb-box__total-amount' ).waitFor();
+		ok( /Available/.test( await dlg.locator( '.fb-box__status' ).first().innerText() ), 'dates chosen → availability and total at once (no extra click)' );
+		await p.screenshot( { path: SHOTS + '/d7-panel-1280.png' } );
+		await dlg.locator( 'select[name="adults"]' ).selectOption( '1' );
+		await dlg.locator( '.fb-box__total-amount' ).waitFor();
+		ok( /1 adult/.test( await dlg.locator( '.fb-box__stay' ).innerText() ), 'other guests: the same dates are checked again' );
+		await p.keyboard.press( 'Escape' );
+		await p.waitForTimeout( 200 );
+		ok( ! await dlg.evaluate( ( d ) => d.open ), 'Escape closes the panel' );
+		await p.click( 'a.elementor-button >> text=Make a reservation' );
+		await p.waitForTimeout( 300 );
+		ok( await dlg.evaluate( ( d ) => d.open ) && /Available/.test( await dlg.locator( '.fb-box__status' ).first().innerText() ), 'the tag button opens the same panel, answer kept' );
+		await Promise.all( [ p.waitForNavigation(), dlg.locator( '.fb-box__book' ).click() ] );
+		await p.waitForLoadState( 'networkidle' );
+		await p.waitForTimeout( 800 );
+		ok( await p.locator( 'input[name="guest_name"]' ).isVisible() && p.url().includes( 'room=deluxe-sea-view' ), 'Book now → booking page at the guest details' );
+		await p.goto( BASE + '/d7-buttons/', { waitUntil: 'networkidle' } );
+		await p.click( 'a.elementor-button' );
+		await p.waitForTimeout( 300 );
+		ok( 'Sea Double' === ( await p.locator( 'dialog[open] h2' ).innerText().catch( () => '' ) ).trim(), 'a button on another page opens that room\'s panel' );
+		await p.keyboard.press( 'Escape' );
+		await p.keyboard.press( 'Escape' );
+		await p.waitForTimeout( 200 );
+		ok( 0 === await p.locator( 'dialog[open]' ).count() && 'Book Sea Double' === ( await p.evaluate( () => document.activeElement.textContent.trim() ) ), 'Escape: calendar first, then the panel; focus back on the button' );
+		await p.close();
+		p = await page( { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true } );
+		await p.goto( BASE + ROOM, { waitUntil: 'networkidle' } );
+		await p.locator( '[data-flexo-room-bar] a' ).click();
+		await p.waitForTimeout( 500 );
+		const sheet = await p.locator( 'dialog[open]' ).boundingBox();
+		ok( sheet && Math.round( sheet.y + sheet.height ) === 844 && Math.round( sheet.width ) === 390, '390px: the phone bar opens the panel as a bottom sheet' );
+		await p.screenshot( { path: SHOTS + '/d7-panel-390.png' } );
+		await p.close();
+		wp( '$s = get_option( Flexo_Booking_Settings::OPTION ); $s["room_design"] = 0; update_option( Flexo_Booking_Settings::OPTION, $s );' );
+		// A source checkout of Elementor has no built frontend scripts; their errors are not ours.
+		p = await page();
+		await p.goto( BASE + '/', { waitUntil: 'domcontentloaded' } );
+		const elementorBuilt = await p.evaluate( async ( base ) => /javascript/.test( ( await fetch( base + '/wp-content/plugins/elementor/assets/js/frontend.min.js', { redirect: 'manual' } ) ).headers.get( 'content-type' ) || '' ), BASE );
+		await p.close();
+		if ( ! elementorBuilt ) {
+			const ours = errors.slice( panelErrors ).filter( ( m ) => ! /Unexpected token '<'/.test( m ) );
+			errors.splice( panelErrors, errors.length, ...ours );
+		}
+	} else {
+		console.log( '  (skipped: Elementor not active)' );
+	}
 
 	section( 'Room editor' );
 	const id = wp( 'echo get_page_by_path( "deluxe-sea-view", OBJECT, "flexo_room" )->ID;' );

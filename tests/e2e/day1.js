@@ -211,7 +211,7 @@ const menu = ( p ) => p.$$eval( '#toplevel_page_flexo-booking .wp-submenu a', ( 
 	const inherited = await el.$eval( `${ full } .fb-search .fb-button`, ( b ) => getComputedStyle( b ).backgroundColor );
 	ok( 'rgb(97, 206, 112)' === inherited, 'unstyled widget inherits Elementor global accent: ' + inherited );
 	const href = await el.getAttribute( '.elementor-element-b3b3b3b a', 'href' );
-	ok( href && href.endsWith( '/booking/?room=family-suite' ), 'booking link dynamic tag: ' + href );
+	ok( href && href.endsWith( '/booking/?room=family-suite#check-availability' ), 'booking link dynamic tag (opens the room\'s calendar on the page): ' + href );
 
 	// A source checkout of Elementor has no compiled frontend scripts; the server
 	// answers with an HTML page, which the browser reports as "Unexpected token '<'".

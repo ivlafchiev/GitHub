@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Flexo Booking 1.8.1\n"
+"Project-Id-Version: Flexo Booking 1.8.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/flexo-booking\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-05T11:33:21+00:00\n"
+"POT-Creation-Date: 2026-10-05T11:57:02+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: flexo-booking\n"
@@ -336,9 +336,10 @@ msgstr ""
 
 #: includes/admin/class-calendar-admin.php:66
 #: includes/admin/class-calendar-admin.php:635
-#: includes/admin/class-room-editor.php:545
+#: includes/admin/class-room-editor.php:553
 #: includes/class-frontend.php:220
-#: includes/class-room-render.php:49
+#: includes/class-room-render.php:61
+#: includes/class-room-render.php:553
 msgid "Close"
 msgstr ""
 
@@ -469,11 +470,11 @@ msgstr ""
 #: includes/class-guest.php:667
 #: includes/class-privacy.php:236
 #: includes/class-room-icons.php:34
-#: includes/class-room-pages.php:554
+#: includes/class-room-pages.php:564
 #: includes/class-rooms.php:72
 #: includes/elementor/class-booking-widget.php:79
 #: includes/elementor/class-room-box-widget.php:48
-#: includes/elementor/class-room-link-tag.php:43
+#: includes/elementor/class-room-link-tag.php:46
 #: includes/elementor/class-room-tags.php:33
 #: includes/elementor/class-room-widgets.php:43
 #: includes/elementor/class-room-widgets.php:49
@@ -504,7 +505,7 @@ msgstr ""
 #: includes/class-guest.php:664
 #: includes/class-privacy.php:239
 #: includes/class-room-icons.php:41
-#: includes/class-room-render.php:199
+#: includes/class-room-render.php:211
 #: includes/elementor/class-room-widgets.php:374
 msgid "Guests"
 msgstr ""
@@ -2304,7 +2305,7 @@ msgstr ""
 #. translators: 1: uses, 2: limit
 #. translators: 1: photo number, 2: number of photos
 #: includes/admin/class-promo-codes-admin.php:199
-#: includes/class-room-render.php:294
+#: includes/class-room-render.php:306
 #, php-format
 msgid "%1$d of %2$d"
 msgstr ""
@@ -2450,7 +2451,7 @@ msgstr ""
 
 #: includes/admin/class-rate-plans-admin.php:25
 #: includes/class-admin.php:168
-#: includes/class-room-render.php:415
+#: includes/class-room-render.php:427
 #: includes/class-rooms.php:154
 msgid "Rates"
 msgstr ""
@@ -2623,7 +2624,7 @@ msgid "Room name, e.g. Deluxe Double Room with Sea View"
 msgstr ""
 
 #: includes/admin/class-room-editor.php:63
-#: includes/admin/class-room-editor.php:509
+#: includes/admin/class-room-editor.php:517
 #: includes/admin/class-room-importer.php:36
 #: includes/elementor/class-room-tags.php:133
 #: includes/elementor/class-templates.php:133
@@ -2636,7 +2637,7 @@ msgstr ""
 
 #: includes/admin/class-room-editor.php:72
 #: includes/admin/class-room-editor.php:115
-#: includes/admin/class-room-editor.php:508
+#: includes/admin/class-room-editor.php:516
 #: includes/admin/class-room-importer.php:37
 #: includes/elementor/class-room-tags.php:121
 msgid "Short description"
@@ -2653,8 +2654,8 @@ msgstr ""
 
 #. translators: %d: number of amenities
 #: includes/admin/class-room-editor.php:75
-#: includes/admin/class-room-editor.php:511
-#: includes/class-room-render.php:378
+#: includes/admin/class-room-editor.php:519
+#: includes/class-room-render.php:390
 #: includes/elementor/class-room-tags.php:293
 #: includes/elementor/class-templates.php:134
 msgid "Amenities"
@@ -2718,8 +2719,8 @@ msgid "Download missing photos"
 msgstr ""
 
 #: includes/admin/class-room-editor.php:145
-#: includes/admin/class-room-editor.php:505
-#: includes/admin/class-room-editor.php:747
+#: includes/admin/class-room-editor.php:513
+#: includes/admin/class-room-editor.php:755
 #: includes/elementor/class-room-tags.php:479
 msgid "Main photo"
 msgstr ""
@@ -2735,7 +2736,7 @@ msgstr ""
 
 #. translators: %d: number of photos
 #: includes/admin/class-room-editor.php:161
-#: includes/admin/class-room-editor.php:507
+#: includes/admin/class-room-editor.php:515
 #: includes/admin/class-room-importer.php:45
 msgid "Gallery"
 msgstr ""
@@ -2754,7 +2755,7 @@ msgstr ""
 
 #: includes/admin/class-room-editor.php:195
 #: includes/class-room-content.php:61
-#: includes/class-room-render.php:220
+#: includes/class-room-render.php:232
 #: includes/elementor/class-room-tags.php:99
 #: includes/elementor/class-room-widgets.php:377
 #: includes/elementor/class-templates.php:131
@@ -2795,7 +2796,7 @@ msgstr ""
 #: includes/admin/class-room-editor.php:217
 #: includes/admin/class-room-editor.php:233
 #: includes/admin/class-room-importer.php:42
-#: includes/class-room-render.php:206
+#: includes/class-room-render.php:218
 #: includes/elementor/class-room-tags.php:174
 #: includes/elementor/class-room-widgets.php:375
 msgid "Beds"
@@ -2806,16 +2807,16 @@ msgstr ""
 #: includes/admin/class-room-editor.php:471
 #: includes/admin/class-room-importer.php:43
 #: includes/class-room-icons.php:45
-#: includes/class-room-render.php:213
+#: includes/class-room-render.php:225
 #: includes/elementor/class-room-tags.php:186
 #: includes/elementor/class-room-widgets.php:376
 msgid "View"
 msgstr ""
 
 #: includes/admin/class-room-editor.php:229
-#: includes/admin/class-room-editor.php:512
+#: includes/admin/class-room-editor.php:520
 #: includes/class-room-icons.php:39
-#: includes/class-room-render.php:192
+#: includes/class-room-render.php:204
 #: includes/elementor/class-room-widgets.php:208
 #: includes/elementor/class-room-widgets.php:373
 msgid "Size"
@@ -3053,8 +3054,22 @@ msgstr ""
 msgid "Opens the booking form with this room chosen. In Elementor use the \"Room booking link\" dynamic tag instead."
 msgstr ""
 
+#: includes/admin/class-room-editor.php:489
+msgid "\"Check availability\" button"
+msgstr ""
+
+#: includes/admin/class-room-editor.php:492
+#: includes/class-frontend.php:145
+#: includes/class-room-pages.php:547
+msgid "Copy"
+msgstr ""
+
+#: includes/admin/class-room-editor.php:494
+msgid "Put this as the link of any button on the room page: it opens this room's calendar right there, with its free days. After choosing dates guests see the price and book in one step."
+msgstr ""
+
 #. translators: %d: number of photos
-#: includes/admin/class-room-editor.php:507
+#: includes/admin/class-room-editor.php:515
 #, php-format
 msgid "Gallery (%d photo)"
 msgid_plural "Gallery (%d photos)"
@@ -3062,7 +3077,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %d: number of amenities
-#: includes/admin/class-room-editor.php:511
+#: includes/admin/class-room-editor.php:519
 #, php-format
 msgid "%d amenity"
 msgid_plural "%d amenities"
@@ -3070,104 +3085,104 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: 1: items done, 2: all items
-#: includes/admin/class-room-editor.php:520
+#: includes/admin/class-room-editor.php:528
 #, php-format
 msgid "Room page: %1$d of %2$d filled in"
 msgstr ""
 
-#: includes/admin/class-room-editor.php:525
+#: includes/admin/class-room-editor.php:533
 msgid "(missing)"
 msgstr ""
 
-#: includes/admin/class-room-editor.php:544
+#: includes/admin/class-room-editor.php:552
 msgid "Choose an icon"
 msgstr ""
 
-#: includes/admin/class-room-editor.php:548
+#: includes/admin/class-room-editor.php:556
 msgid "Search icons…"
 msgstr ""
 
-#: includes/admin/class-room-editor.php:548
+#: includes/admin/class-room-editor.php:556
 msgid "Search icons"
 msgstr ""
 
-#: includes/admin/class-room-editor.php:549
+#: includes/admin/class-room-editor.php:557
 msgid "Use my own icon (SVG or PNG)"
 msgstr ""
 
-#: includes/admin/class-room-editor.php:550
+#: includes/admin/class-room-editor.php:558
 msgid "Back to the usual icon"
 msgstr ""
 
-#: includes/admin/class-room-editor.php:703
+#: includes/admin/class-room-editor.php:711
 #: includes/class-rooms.php:75
 msgid "View room page"
 msgstr ""
 
-#: includes/admin/class-room-editor.php:706
-#: includes/admin/class-room-editor.php:707
-#: includes/admin/class-room-editor.php:709
+#: includes/admin/class-room-editor.php:714
+#: includes/admin/class-room-editor.php:715
+#: includes/admin/class-room-editor.php:717
 #: includes/class-rooms.php:76
 msgid "Room saved."
 msgstr ""
 
-#: includes/admin/class-room-editor.php:708
+#: includes/admin/class-room-editor.php:716
 msgid "Room published – guests can book it now."
 msgstr ""
 
-#: includes/admin/class-room-editor.php:710
+#: includes/admin/class-room-editor.php:718
 msgid "Room submitted."
 msgstr ""
 
-#: includes/admin/class-room-editor.php:711
+#: includes/admin/class-room-editor.php:719
 msgid "Room scheduled."
 msgstr ""
 
-#: includes/admin/class-room-editor.php:712
+#: includes/admin/class-room-editor.php:720
 msgid "Draft saved."
 msgstr ""
 
-#: includes/admin/class-room-editor.php:748
+#: includes/admin/class-room-editor.php:756
 msgid "Use this photo"
 msgstr ""
 
-#: includes/admin/class-room-editor.php:749
+#: includes/admin/class-room-editor.php:757
 msgid "Add photos to the gallery"
 msgstr ""
 
-#: includes/admin/class-room-editor.php:750
+#: includes/admin/class-room-editor.php:758
 msgid "Add to gallery"
 msgstr ""
 
-#: includes/admin/class-room-editor.php:751
+#: includes/admin/class-room-editor.php:759
 msgid "Your own icon"
 msgstr ""
 
-#: includes/admin/class-room-editor.php:752
+#: includes/admin/class-room-editor.php:760
 msgid "Use this icon"
 msgstr ""
 
 #. translators: %d: number of photos
-#: includes/admin/class-room-editor.php:754
+#: includes/admin/class-room-editor.php:762
 #, php-format
 msgid "(%d)"
 msgstr ""
 
 #. translators: 1: characters typed, 2: recommended maximum
-#: includes/admin/class-room-editor.php:756
+#: includes/admin/class-room-editor.php:764
 #, php-format
 msgid "%1$d / %2$d"
 msgstr ""
 
-#: includes/admin/class-room-editor.php:757
+#: includes/admin/class-room-editor.php:765
 msgid "longer than search engines show"
 msgstr ""
 
-#: includes/admin/class-room-editor.php:758
+#: includes/admin/class-room-editor.php:766
 msgid "This type is already in the list."
 msgstr ""
 
-#: includes/admin/class-room-editor.php:759
+#: includes/admin/class-room-editor.php:767
 msgid "Already in the list."
 msgstr ""
 
@@ -4749,8 +4764,9 @@ msgid "Sorry, you are not allowed to access this page."
 msgstr ""
 
 #: includes/class-appearance.php:324
-#: includes/class-frontend.php:360
-#: includes/class-room-render.php:510
+#: includes/class-frontend.php:361
+#: includes/class-room-render.php:551
+#: includes/class-room-render.php:584
 #: includes/elementor/class-booking-widget.php:102
 #: includes/elementor/class-room-box-widget.php:81
 #: includes/elementor/class-templates.php:136
@@ -5519,7 +5535,7 @@ msgid "Checking availability…"
 msgstr ""
 
 #: includes/class-frontend.php:78
-#: includes/class-room-render.php:42
+#: includes/class-room-render.php:54
 msgid "Available for your dates"
 msgstr ""
 
@@ -5532,7 +5548,7 @@ msgid "See other rooms for these dates"
 msgstr ""
 
 #: includes/class-frontend.php:81
-#: includes/class-frontend.php:363
+#: includes/class-frontend.php:364
 #: includes/elementor/class-room-box-widget.php:91
 #: includes/elementor/class-templates.php:139
 msgid "Book now"
@@ -5551,8 +5567,8 @@ msgid "Unavailable"
 msgstr ""
 
 #: includes/class-frontend.php:86
-#: includes/class-room-render.php:361
-#: includes/class-room-render.php:508
+#: includes/class-room-render.php:373
+#: includes/class-room-render.php:582
 #: templates/room-booking-box.php:46
 msgid "per night"
 msgstr ""
@@ -5680,10 +5696,6 @@ msgstr ""
 
 #: includes/class-frontend.php:144
 msgid "Bank transfer details"
-msgstr ""
-
-#: includes/class-frontend.php:145
-msgid "Copy"
 msgstr ""
 
 #: includes/class-frontend.php:164
@@ -5873,13 +5885,13 @@ msgstr ""
 #. translators: %d: number of nights
 #. translators: %d: number of nights (2 or more)
 #: includes/class-frontend.php:268
-#: includes/class-room-render.php:48
+#: includes/class-room-render.php:60
 #, php-format
 msgid "%d nights"
 msgstr ""
 
 #: includes/class-frontend.php:269
-#: includes/class-room-render.php:46
+#: includes/class-room-render.php:58
 msgid "1 night"
 msgstr ""
 
@@ -6068,35 +6080,35 @@ msgstr ""
 msgid "Show price details"
 msgstr ""
 
-#: includes/class-frontend.php:360
+#: includes/class-frontend.php:361
 msgid "Search"
 msgstr ""
 
-#: includes/class-frontend.php:441
+#: includes/class-frontend.php:442
 msgid "Room booking box: no room here. Use it in your room template, or choose a room."
 msgstr ""
 
-#: includes/class-frontend.php:446
+#: includes/class-frontend.php:447
 msgid "This is a demo room: it cannot be booked."
 msgstr ""
 
-#: includes/class-frontend.php:553
+#: includes/class-frontend.php:570
 msgid "Visa, Mastercard and other cards. You pay on Stripe's secure payment page; your card details never reach us."
 msgstr ""
 
 #. translators: %d: number of days
-#: includes/class-frontend.php:556
+#: includes/class-frontend.php:573
 #, php-format
 msgid "You receive our bank details right away. Please pay within %d day."
 msgid_plural "You receive our bank details right away. Please pay within %d days."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-frontend.php:557
+#: includes/class-frontend.php:574
 msgid "Once we confirm your request, we email you our bank details."
 msgstr ""
 
-#: includes/class-frontend.php:560
+#: includes/class-frontend.php:577
 msgid "How would you like to pay?"
 msgstr ""
 
@@ -7960,46 +7972,54 @@ msgid "The \"from\" price is the lowest price per night in the next 12 months fo
 msgstr ""
 
 #: includes/class-room-pages.php:543
+msgid "\"Check availability\" buttons"
+msgstr ""
+
+#: includes/class-room-pages.php:549
+msgid "In Elementor, set the link of the room page's \"Check availability\" or \"Book now\" buttons to #check-availability. A click opens the room's calendar on the same page (a panel, or the booking box if the page has one): free days are shown, the price appears as soon as the dates are chosen, and \"Book now\" goes straight to the guest details. On other pages (home page, room cards) use the \"Room booking link\" dynamic tag – it does the same for the room you choose."
+msgstr ""
+
+#: includes/class-room-pages.php:553
 msgid "On phones"
 msgstr ""
 
-#: includes/class-room-pages.php:546
+#: includes/class-room-pages.php:556
 msgid "Show a \"Check availability\" bar at the bottom of room pages"
 msgstr ""
 
-#: includes/class-room-pages.php:547
+#: includes/class-room-pages.php:557
 msgid "It takes guests to the room's booking box, and hides while the box is on screen."
 msgstr ""
 
-#: includes/class-room-pages.php:552
+#: includes/class-room-pages.php:562
 msgid "Your room pages"
 msgstr ""
 
-#: includes/class-room-pages.php:554
+#: includes/class-room-pages.php:564
 msgid "Page"
 msgstr ""
 
-#: includes/class-room-pages.php:554
+#: includes/class-room-pages.php:564
 msgid "\"From\" price"
 msgstr ""
 
-#: includes/class-room-pages.php:562
+#: includes/class-room-pages.php:572
 msgid "Demo – only you see it"
 msgstr ""
 
-#: includes/class-room-pages.php:564
+#: includes/class-room-pages.php:574
 msgid "Not on the website"
 msgstr ""
 
 #. translators: 1: price per night, 2: number of nights, 3: arrival date
-#: includes/class-room-pages.php:574
+#: includes/class-room-pages.php:584
 #, php-format
 msgid "%1$s (%2$d night from %3$s)"
 msgid_plural "%1$s (%2$d nights from %3$s)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-room-pages.php:576
+#: includes/class-room-pages.php:586
 msgid "None – check the price and closed dates"
 msgstr ""
 
@@ -8008,60 +8028,60 @@ msgid "From price (lowest per night)"
 msgstr ""
 
 #. translators: 1: total price, 2: number of nights, e.g. "3 nights"
-#: includes/class-room-render.php:44
+#: includes/class-room-render.php:56
 #, php-format
 msgid "Available · %1$s for %2$s"
 msgstr ""
 
-#: includes/class-room-render.php:45
+#: includes/class-room-render.php:57
 msgid "Not available for your dates"
 msgstr ""
 
-#: includes/class-room-render.php:50
+#: includes/class-room-render.php:62
 msgid "Previous photo"
 msgstr ""
 
-#: includes/class-room-render.php:51
+#: includes/class-room-render.php:63
 msgid "Next photo"
 msgstr ""
 
 #. translators: 1: photo number, 2: number of photos
-#: includes/class-room-render.php:53
+#: includes/class-room-render.php:65
 #, php-format
 msgid "Photo %1$d of %2$d"
 msgstr ""
 
 #. translators: %d: page of photos
-#: includes/class-room-render.php:55
+#: includes/class-room-render.php:67
 #, php-format
 msgid "Show photos, page %d"
 msgstr ""
 
 #. translators: %s: room name
-#: includes/class-room-render.php:272
+#: includes/class-room-render.php:284
 #, php-format
 msgid "Photos of %s"
 msgstr ""
 
 #. translators: 1: room name, 2: photo number
-#: includes/class-room-render.php:281
+#: includes/class-room-render.php:293
 #, php-format
 msgid "%1$s – photo %2$d"
 msgstr ""
 
-#: includes/class-room-render.php:308
+#: includes/class-room-render.php:320
 msgid "Previous photos"
 msgstr ""
 
-#: includes/class-room-render.php:309
+#: includes/class-room-render.php:321
 msgid "Next photos"
 msgstr ""
 
-#: includes/class-room-render.php:357
+#: includes/class-room-render.php:369
 msgid "← All rooms"
 msgstr ""
 
-#: includes/class-room-render.php:390
+#: includes/class-room-render.php:402
 #: includes/elementor/class-templates.php:135
 msgid "Good to know"
 msgstr ""
@@ -8967,7 +8987,7 @@ msgstr ""
 
 #: includes/elementor/class-booking-widget.php:67
 #: includes/elementor/class-room-box-widget.php:98
-#: includes/elementor/class-room-link-tag.php:54
+#: includes/elementor/class-room-link-tag.php:71
 msgid "Booking page path"
 msgstr ""
 
@@ -9063,7 +9083,7 @@ msgid "Room booking box"
 msgstr ""
 
 #: includes/elementor/class-room-box-widget.php:51
-#: includes/elementor/class-room-link-tag.php:46
+#: includes/elementor/class-room-link-tag.php:49
 #: includes/elementor/class-room-tags.php:36
 #: includes/elementor/class-room-widgets.php:52
 msgid "Current room (automatic)"
@@ -9082,28 +9102,44 @@ msgid "\"Book now\" text"
 msgstr ""
 
 #: includes/elementor/class-room-box-widget.php:101
-#: includes/elementor/class-room-link-tag.php:57
+#: includes/elementor/class-room-link-tag.php:74
 msgid "From Settings → Hotel"
 msgstr ""
 
 #: includes/elementor/class-room-box-widget.php:102
-#: includes/elementor/class-room-link-tag.php:58
+#: includes/elementor/class-room-link-tag.php:75
 msgid "Leave empty to use the booking page from the settings."
 msgstr ""
 
-#: includes/elementor/class-room-link-tag.php:28
+#: includes/elementor/class-room-link-tag.php:31
 msgid "Room booking link"
 msgstr ""
 
-#: includes/elementor/class-room-link-tag.php:47
+#: includes/elementor/class-room-link-tag.php:50
 msgid "Automatic: the room of the page. On pages that are not about one room, the guest chooses."
 msgstr ""
 
-#: includes/elementor/class-room-link-tag.php:65
+#: includes/elementor/class-room-link-tag.php:57
+msgid "When clicked"
+msgstr ""
+
+#: includes/elementor/class-room-link-tag.php:61
+msgid "Open the room's calendar on this page (recommended)"
+msgstr ""
+
+#: includes/elementor/class-room-link-tag.php:62
+msgid "Go to the booking page"
+msgstr ""
+
+#: includes/elementor/class-room-link-tag.php:64
+msgid "The calendar shows the room's free days. After choosing dates the guest sees the price at once and books in one step."
+msgstr ""
+
+#: includes/elementor/class-room-link-tag.php:82
 msgid "Keep the dates and guests from the page address"
 msgstr ""
 
-#: includes/elementor/class-room-link-tag.php:69
+#: includes/elementor/class-room-link-tag.php:86
 msgid "When a guest came from a search, the booking form opens with their dates."
 msgstr ""
 

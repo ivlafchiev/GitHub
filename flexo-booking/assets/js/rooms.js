@@ -274,21 +274,14 @@
 		if ( ! bar ) {
 			return;
 		}
-		var box = document.querySelector( '[data-flexo-booking-box]' );
+		var box = Array.prototype.filter.call( document.querySelectorAll( '[data-flexo-booking-box]' ), function ( node ) {
+			return ! node.closest( 'dialog' );
+		} )[ 0 ];
 		bar.hidden = false;
 		document.body.classList.add( 'flexo-has-room-bar' );
+		// The button (…#check-availability) opens the booking box or the
+		// room's panel – see "Check availability" panel in booking.js.
 		if ( box ) {
-			// Go to the booking box on this page instead of leaving it.
-			bar.querySelector( 'a' ).addEventListener( 'click', function ( e ) {
-				e.preventDefault();
-				box.scrollIntoView( { behavior: reduced ? 'auto' : 'smooth', block: 'start' } );
-				var first = box.querySelector( '.fb-date' ) || box.querySelector( 'input[name="check_in"]' );
-				if ( first ) {
-					window.setTimeout( function () {
-						first.focus( { preventScroll: true } );
-					}, reduced ? 0 : 450 );
-				}
-			} );
 			if ( 'IntersectionObserver' in window ) {
 				new IntersectionObserver( function ( entries ) {
 					bar.classList.toggle( 'is-away', entries[ 0 ].isIntersecting );

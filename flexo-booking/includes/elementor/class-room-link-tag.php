@@ -3,7 +3,10 @@
  * Elementor dynamic tag: "Room booking link".
  *
  * Points any Elementor button or link at the booking page with a room
- * chosen, e.g. /booking/?room=deluxe-double. By default it uses the current
+ * chosen, e.g. /booking/?room=deluxe-double. By default a click opens the
+ * room's calendar on the same page ("Check availability" panel, see
+ * Flexo_Booking_Room_Render::request_panel()); the link itself still
+ * leads to the booking page without JavaScript. It uses the current
  * room (room page, room template, Loop item); on other pages without a
  * chosen room it opens the booking page for the guest to choose. Built
  * from a path and a slug at render time, so it keeps working after the
@@ -49,6 +52,20 @@ class Flexo_Booking_Room_Link_Tag extends Data_Tag {
 		);
 
 		$this->add_control(
+			'action',
+			array(
+				'label'       => __( 'When clicked', 'flexo-booking' ),
+				'type'        => Controls_Manager::SELECT,
+				'default'     => 'panel',
+				'options'     => array(
+					'panel' => __( 'Open the room\'s calendar on this page (recommended)', 'flexo-booking' ),
+					'page'  => __( 'Go to the booking page', 'flexo-booking' ),
+				),
+				'description' => __( 'The calendar shows the room\'s free days. After choosing dates the guest sees the price at once and books in one step.', 'flexo-booking' ),
+			)
+		);
+
+		$this->add_control(
 			'booking_page',
 			array(
 				'label'       => __( 'Booking page path', 'flexo-booking' ),
@@ -77,6 +94,11 @@ class Flexo_Booking_Room_Link_Tag extends Data_Tag {
 		$slug    = $post && 'publish' === $post->post_status && ! Flexo_Booking_Room_Content::is_demo( $post->ID ) ? $post->post_name : '';
 		$args    = 'yes' === $this->get_settings( 'pass_search' ) ? Flexo_Booking_Room_Content::search_args() : array();
 
-		return esc_url( Flexo_Booking_Room_Content::booking_url( $slug, $args, (string) $this->get_settings( 'booking_page' ) ) );
+		$url = Flexo_Booking_Room_Content::booking_url( $slug, $args, (string) $this->get_settings( 'booking_page' ) );
+		if ( '' !== $slug && 'page' !== $this->get_settings( 'action' ) ) {
+			Flexo_Booking_Room_Render::request_panel( $room_id );
+			$url .= '#' . Flexo_Booking_Room_Render::PANEL_HASH;
+		}
+		return esc_url( $url );
 	}
 }

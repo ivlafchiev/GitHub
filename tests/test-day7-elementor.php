@@ -177,7 +177,7 @@ t_ok( false !== strpos( $html, '<p>First paragraph.</p>' ) && false !== strpos( 
 t_ok( false !== strpos( $html, 'Suite with a terrace.' ), 'Short description' );
 t_ok( false !== strpos( $html, wp_get_attachment_url( $img['b'] ) ), 'main photo in the Image widget' );
 t_ok( preg_match( '/gallery-item.*t7e-b.*gallery-item.*t7e-a.*gallery-item.*t7e-c/s', $html ), 'Basic Gallery: main photo then gallery, in order' );
-t_ok( false !== strpos( $html, 'href="' . home_url( '/booking/?room=t7e-suite' ) . '"' ), 'Book now button: booking link of the current room' );
+t_ok( false !== strpos( $html, 'href="' . home_url( '/booking/?room=t7e-suite#check-availability' ) . '"' ), 'Book now button: booking link of the current room (opens its calendar on the page)' );
 t_ok( false !== strpos( $html, 'href="' . home_url( '/rooms/t7e-suite/' ) . '"' ), 'View room button: room page' );
 t_ok( false !== strpos( $html, 'flexo-room-amenities flexo-room-list--grid' ), 'Room amenities widget' );
 t_ok( 2 === substr_count( $html, 'class="flexo-room-icon"' ) - 0 || false !== strpos( $html, 'lucide' ) || substr_count( $html, 'flexo-room-icon' ) >= 3, 'each amenity has an icon' );
@@ -193,7 +193,7 @@ t_ok( $from && false !== strpos( $html, '>' . Flexo_Booking_Money::format( $from
 
 $html2 = t7e_render( $template, $other );
 t_ok( false !== strpos( $html2, '>T7E Double</h2>' ) && false === strpos( $html2, 'T7E Suite' ), 'same template, another room: that room\'s data (Loop items work the same)' );
-t_ok( false !== strpos( $html2, 'href="' . home_url( '/booking/?room=t7e-double' ) . '"' ), 'booking link follows the room' );
+t_ok( false !== strpos( $html2, 'href="' . home_url( '/booking/?room=t7e-double#check-availability' ) . '"' ), 'booking link follows the room' );
 t_ok( false !== strpos( $html2, 'data-room="t7e-double"' ), 'booking box follows the room' );
 t_ok( false !== strpos( $html2, 'flexo-room-gallery--empty' ), 'room without photos: neutral placeholder' );
 t_ok( false === strpos( $html2, 'flexo-room-amenities flexo-room-list' ), 'room without amenities: no empty list' );
@@ -251,7 +251,7 @@ $picked = t7e_document(
 $html = Plugin::$instance->frontend->get_builder_content( $picked, false );
 t_ok( false !== strpos( $html, '>T7E Double</h2>' ), 'tag with a picked room works on any page' );
 t_ok( false !== strpos( $html, '22 m²' ), 'widget with a picked room works on any page' );
-t_ok( false !== strpos( $html, 'href="' . home_url( '/reserve/?room=t7e-double' ) . '"' ), 'booking link with its own booking page path' );
+t_ok( false !== strpos( $html, 'href="' . home_url( '/reserve/?room=t7e-double#check-availability' ) . '"' ), 'booking link with its own booking page path' );
 $_GET = array( 'check_in' => '2027-07-01', 'check_out' => '2027-07-04', 'adults' => '2', 'children' => 'x1', 'children_ages' => '5,<b>9' );
 $html = Plugin::$instance->frontend->get_builder_content( $picked, false );
 t_ok( false !== strpos( $html, 'check_in=2027-07-01&#038;check_out=2027-07-04&#038;adults=2&#038;children=0&#038;children_ages=59' ) || false !== strpos( $html, 'check_in=2027-07-01' ), 'booking link keeps valid dates and guests from the address' );
@@ -265,7 +265,11 @@ unset( $GLOBALS['post'] );
 /* ---------------------------------------------------------------- */
 t_section( 'Old "Room booking link" settings (before 1.8.0)' );
 $old_tag = Plugin::$instance->dynamic_tags->create_tag( null, 'flexo-room-booking-link', array( 'room' => 't7e-suite', 'booking_page' => '/booking/' ) );
-t_eq( home_url( '/booking/?room=t7e-suite' ), $old_tag->get_value(), 'room + path chosen in 1.x: same link' );
+t_eq( home_url( '/booking/?room=t7e-suite#check-availability' ), $old_tag->get_value(), 'room + path chosen in 1.x: same booking page and room (now opening the calendar first)' );
+$page_tag = Plugin::$instance->dynamic_tags->create_tag( null, 'flexo-room-booking-link', array( 'room' => 't7e-suite', 'action' => 'page' ) );
+t_eq( home_url( '/booking/?room=t7e-suite' ), $page_tag->get_value(), '"Go to the booking page": plain link, no panel' );
+$none_tag = Plugin::$instance->dynamic_tags->create_tag( null, 'flexo-room-booking-link', array() );
+t_ok( false === strpos( (string) $none_tag->get_value(), '#check-availability' ), 'no room: plain booking page link' );
 $old_tag = Plugin::$instance->dynamic_tags->create_tag( null, 'flexo-room-booking-link', array( 'room' => '', 'booking_page' => '/booking/' ) );
 t_eq( home_url( '/booking/' ), $old_tag->get_value(), 'no room on a normal page: booking page, guest chooses (as before)' );
 

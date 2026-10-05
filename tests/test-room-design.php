@@ -144,6 +144,7 @@ $bg = static function ( $html, $room ) {
 };
 t_ok( $bg( $html, $sea ), 'background from the room\'s own photo (dynamic CSS)' );
 t_ok( false !== strpos( $html, '<header' ) || false !== strpos( $html, 'wp-block-template-part' ) || false !== strpos( $html, 'site-header' ), 'theme header kept' );
+t_ok( false !== strpos( $html, 'data-flexo-book-dialog="rd-sea-view" data-flexo-book-current' ), '"Check availability" panel for the room, ready for #check-availability buttons' );
 list( $code, $html2 ) = $get( '/rooms/rd-garden/' );
 t_ok( 200 === $code && false !== strpos( $html2, 'RD Garden Double' ) && false !== strpos( $html2, 'Garden description text.' ) && false !== strpos( $html2, 'Private garden patio' ) && false !== strpos( $html2, '190' ), 'Garden: its own name, description, amenities and price' );
 t_ok( false === strpos( $html2, 'RD Sea View Double' ) && false === strpos( $html2, 'Sea-facing terrace' ), 'Garden: nothing from the Sea View room' );
@@ -161,6 +162,7 @@ t_section( 'Back to automatic' );
 update_option( Flexo_Booking_Settings::OPTION, Flexo_Booking_Settings::sanitize( array_merge( Flexo_Booking_Settings::all(), array( 'room_design' => 0 ) ) ) );
 list( $code, $html ) = $get( '/rooms/rd-sea-view/' );
 t_ok( 200 === $code && false !== strpos( $html, 'flexo-room-page' ) && false === strpos( $html, 'data-elementor-id="' . $design . '"' ), 'without a design the plugin\'s room page is back' );
+t_ok( false === strpos( $html, 'data-flexo-book-dialog=' ), 'the plugin\'s room page has its own booking box, so no extra panel' );
 update_option( Flexo_Booking_Settings::OPTION, Flexo_Booking_Settings::sanitize( array_merge( Flexo_Booking_Settings::all(), array( 'room_design' => $design ) ) ) );
 wp_trash_post( $design );
 t_eq( 0, Flexo_Booking_Room_Design::id(), 'a design in the bin is ignored' );

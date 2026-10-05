@@ -71,6 +71,47 @@ if ( defined( 'ELEMENTOR_VERSION' ) ) {
 	update_post_meta( $page, '_elementor_data', wp_slash( wp_json_encode( $data ) ) );
 }
 
+// "Check availability" panel: a room design with two buttons (one typed
+// #check-availability, one with the Room booking link tag) and an ordinary
+// page with a button for another room.
+if ( defined( 'ELEMENTOR_VERSION' ) ) {
+	foreach ( array( 'd7-room-design', 'd7-buttons' ) as $old_slug ) {
+		$old = get_page_by_path( $old_slug );
+		if ( $old ) {
+			wp_delete_post( $old->ID, true );
+		}
+	}
+	$tag    = static function ( $name, array $settings = array() ) {
+		return '[elementor-tag id="' . substr( md5( $name . wp_json_encode( $settings ) ), 0, 7 ) . '" name="' . $name . '" settings="' . rawurlencode( wp_json_encode( (object) $settings ) ) . '"]';
+	};
+	$button = static function ( $id, $text, $url, $dynamic = '' ) {
+		$settings = array( 'text' => $text, 'link' => array( 'url' => $url ) );
+		if ( $dynamic ) {
+			$settings['__dynamic__'] = array( 'link' => $dynamic );
+		}
+		return array( 'id' => $id, 'elType' => 'widget', 'widgetType' => 'button', 'settings' => $settings, 'elements' => array() );
+	};
+	$elementor_page = static function ( $slug, $title, array $elements ) {
+		$id = wp_insert_post( array( 'post_type' => 'page', 'post_title' => $title, 'post_name' => $slug, 'post_status' => 'publish' ) );
+		update_post_meta( $id, '_elementor_edit_mode', 'builder' );
+		update_post_meta( $id, '_elementor_template_type', 'wp-page' );
+		update_post_meta( $id, '_elementor_version', ELEMENTOR_VERSION );
+		update_post_meta( $id, '_elementor_data', wp_slash( wp_json_encode( array( array( 'id' => 'd7p' . substr( md5( $slug ), 0, 4 ), 'elType' => 'container', 'settings' => array(), 'elements' => $elements ) ) ) ) );
+		return $id;
+	};
+	$design = $elementor_page(
+		'd7-room-design',
+		'D7 room design',
+		array(
+			array( 'id' => 'd7h0001', 'elType' => 'widget', 'widgetType' => 'heading', 'settings' => array( 'title' => 'x', '__dynamic__' => array( 'title' => $tag( 'flexo-room-name' ) ) ), 'elements' => array() ),
+			$button( 'd7b0001', 'Check availability', '#check-availability' ),
+			$button( 'd7b0002', 'Make a reservation', '', $tag( 'flexo-room-booking-link' ) ),
+		)
+	);
+	update_option( 'flexo_e2e_d7_design', $design );
+	$elementor_page( 'd7-buttons', 'D7 buttons', array( $button( 'd7b0003', 'Book Sea Double', '', $tag( 'flexo-room-booking-link', array( 'room' => 'sea-double' ) ) ) ) );
+}
+
 // Sea Double is sold out on days 20–22.
 Flexo_Booking_Bookings::create( array_merge( t_guest(), array( 'room' => 'sea-double', 'check_in' => t_day( 20 ), 'check_out' => t_day( 22 ), 'adults' => 2, 'privacy_consent' => 1 ) ) );
 update_option( 'flexo_booking_flush_rewrite', 1 );

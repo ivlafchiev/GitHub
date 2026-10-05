@@ -192,7 +192,7 @@ $one = Flexo_Booking_Bookings::search( t_day( 1 ), t_day( 3 ), 2, 0, 't7-hidden'
 t_ok( 1 === count( $one['rooms'] ) && $one['rooms'][0]['available'], 'hidden room still bookable through its link' );
 $one = Flexo_Booking_Bookings::search( t_day( 1 ), t_day( 3 ), 2, 0, 't7-demo' );
 t_eq( 0, count( $one['rooms'] ), 'demo room not offered even by its link' );
-$b = Flexo_Booking_Bookings::create( array_merge( t_guest(), array( 'room' => 't7-hidden', 'check_in' => t_day( 1 ), 'check_out' => t_day( 3 ) ) ) );
+$b = Flexo_Booking_Bookings::create( array_merge( t_guest(), array( 'room' => 't7-hidden', 'check_in' => t_day( 1 ), 'check_out' => t_day( 3 ), 'privacy_consent' => 1 ) ) );
 t_ok( ! is_wp_error( $b ), 'hidden room can be booked' );
 $b = Flexo_Booking_Bookings::create( array_merge( t_guest(), array( 'room' => 't7-demo', 'check_in' => t_day( 1 ), 'check_out' => t_day( 3 ) ) ) );
 t_ok( is_wp_error( $b ) && 'flexo_demo_room' === $b->get_error_code(), 'demo room cannot be booked' );

@@ -1015,6 +1015,9 @@
 			this.commit();
 			this.setStatus( humanDate( this.start, this.options.dateFormat, this.locale ) + ' – ' + humanDate( this.end, this.options.dateFormat, this.locale ) + ' · ' + nightsText( diffDays( this.start, this.end ) ) );
 			this.close( true );
+			if ( this.options.onDone ) {
+				this.options.onDone( this.start, this.end );
+			}
 			return;
 		}
 		if ( ! state.ok ) {
@@ -3154,6 +3157,7 @@
 	function RoomBox( node ) {
 		var self = this;
 		this.root = node;
+		node.flexoRoomBox = this;
 		this.form = node.querySelector( '.fb-search' );
 		this.result = node.querySelector( '[data-fb-box-result]' );
 		this.room = node.getAttribute( 'data-room' ) || '';
@@ -3173,6 +3177,10 @@
 			onChange: function () {
 				self.clear();
 			},
+			// Both dates chosen: availability and price straight away.
+			onDone: function () {
+				self.check( false );
+			},
 		} );
 		if ( ! this.picker.enhanced ) {
 			bindDates( this.form );
@@ -3186,11 +3194,16 @@
 			self.check( true );
 		} );
 		this.form.addEventListener( 'change', function ( e ) {
-			if ( 'adults' === e.target.name || 'children' === e.target.name ) {
-				if ( self.picker.enhanced ) {
-					self.picker.reset();
-				}
+			if ( 'adults' === e.target.name || 'children' === e.target.name || 'children_ages[]' === e.target.name ) {
+				// Same dates, other guests: checked again (the calendar asks for these guests next time).
 				self.clear();
+				var v = self.values();
+				var ageMissing = Array.prototype.some.call( self.form.querySelectorAll( '[name="children_ages[]"]' ), function ( sel ) {
+					return '' === sel.value;
+				} );
+				if ( v.check_in && v.check_out && ! ageMissing ) {
+					self.check( false );
+				}
 			}
 		} );
 		if ( '1' === node.getAttribute( 'data-autosearch' ) ) {
@@ -3400,8 +3413,142 @@
 			.catch( function () {} );
 	};
 
+	/* ---------------------------------------------------------------------
+	 * "Check availability" panel: links ending in #check-availability open
+	 * the room's booking box on this page with its calendar (see
+	 * Flexo_Booking_Room_Render::request_panel()).
+	 * ------------------------------------------------------------------- */
+
+	var PANEL_HASH = '#check-availability';
+	var reducedMotion = window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+
+	function isVisible( node ) {
+		return !! ( node.offsetWidth || node.offsetHeight || node.getClientRects().length );
+	}
+
+	/** Calendar open, or – with dates already chosen – the answer. */
+	function startBox( node ) {
+		var box = node && node.flexoRoomBox;
+		if ( ! box ) {
+			return;
+		}
+		var v = box.values();
+		if ( v.check_in && v.check_out ) {
+			if ( ! node.classList.contains( 'is-checked' ) ) {
+				box.check( false );
+			}
+			var status = node.querySelector( '.fb-box__status' ) || node.querySelector( '.fb-date' );
+			if ( status ) {
+				if ( ! status.hasAttribute( 'tabindex' ) && ! /^(BUTTON|A|INPUT|SELECT)$/.test( status.tagName ) ) {
+					status.setAttribute( 'tabindex', '-1' );
+				}
+				status.focus( { preventScroll: true } );
+			}
+		} else if ( box.picker.enhanced ) {
+			box.picker.open( v.check_in ? 'out' : 'in' );
+		} else {
+			var field = node.querySelector( 'input[name="check_in"]' );
+			if ( field ) {
+				field.focus();
+			}
+		}
+	}
+
+	/**
+	 * Opens the room's booking box: the one on the page, else its dialog.
+	 *
+	 * @param {string} slug Room address ('' = the room of this page).
+	 * @return {boolean} Whether something opened (otherwise the link is followed).
+	 */
+	function openPanel( slug ) {
+		var onPage = null;
+		document.querySelectorAll( '[data-flexo-booking-box]' ).forEach( function ( node ) {
+			if ( ! onPage && ! node.closest( 'dialog' ) && isVisible( node ) && ( ! slug || node.getAttribute( 'data-room' ) === slug ) ) {
+				onPage = node;
+			}
+		} );
+		if ( onPage ) {
+			onPage.scrollIntoView( { behavior: reducedMotion ? 'auto' : 'smooth', block: 'center' } );
+			window.setTimeout( function () {
+				startBox( onPage );
+			}, reducedMotion ? 0 : 450 );
+			return true;
+		}
+		var dialog = null;
+		document.querySelectorAll( 'dialog[data-flexo-book-dialog]' ).forEach( function ( node ) {
+			if ( ! dialog && ( slug ? node.getAttribute( 'data-flexo-book-dialog' ) === slug : node.hasAttribute( 'data-flexo-book-current' ) ) ) {
+				dialog = node;
+			}
+		} );
+		if ( ! dialog || 'function' !== typeof dialog.showModal ) {
+			return false;
+		}
+		dialog.showModal();
+		document.documentElement.classList.add( 'flexo-book-dialog-open' );
+		var inner = dialog.querySelector( '[data-flexo-booking-box]' );
+		// After layout, so the calendar knows its width (one or two months).
+		window.requestAnimationFrame( function () {
+			startBox( inner );
+		} );
+		return true;
+	}
+
+	function panelSlug( link ) {
+		var url;
+		try {
+			url = new URL( link.href, window.location.href );
+		} catch ( err ) {
+			return null;
+		}
+		if ( url.hash !== PANEL_HASH ) {
+			return null;
+		}
+		return url.searchParams.get( 'room' ) || '';
+	}
+
+	document.addEventListener( 'click', function ( e ) {
+		if ( e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || ! e.target.closest ) {
+			return;
+		}
+		var link = e.target.closest( 'a[href]' );
+		var slug = link ? panelSlug( link ) : null;
+		if ( null !== slug && openPanel( slug ) ) {
+			e.preventDefault();
+		}
+	} );
+
+	function bindDialogs() {
+		document.querySelectorAll( 'dialog[data-flexo-book-dialog]:not([data-fb-ready])' ).forEach( function ( dialog ) {
+			dialog.setAttribute( 'data-fb-ready', '1' );
+			var close = function () {
+				dialog.close();
+			};
+			dialog.querySelectorAll( '[data-flexo-book-close]' ).forEach( function ( btn ) {
+				btn.addEventListener( 'click', close );
+			} );
+			// A click on the dimmed page around the dialog closes it.
+			dialog.addEventListener( 'click', function ( e ) {
+				if ( e.target === dialog ) {
+					close();
+				}
+			} );
+			// Escape closes an open calendar first.
+			dialog.addEventListener( 'cancel', function ( e ) {
+				var node = dialog.querySelector( '[data-flexo-booking-box]' );
+				if ( node && node.flexoRoomBox && node.flexoRoomBox.picker.enhanced && node.flexoRoomBox.picker.isOpen() ) {
+					e.preventDefault();
+					node.flexoRoomBox.picker.close( true );
+				}
+			} );
+			dialog.addEventListener( 'close', function () {
+				document.documentElement.classList.remove( 'flexo-book-dialog-open' );
+			} );
+		} );
+	}
+
 	function init( scope ) {
 		var ctx = scope || document;
+		bindDialogs();
 		ctx.querySelectorAll( '[data-flexo-booking-box]:not([data-fb-ready])' ).forEach( function ( node ) {
 			node.setAttribute( 'data-fb-ready', '1' );
 			new RoomBox( node ); // eslint-disable-line no-new

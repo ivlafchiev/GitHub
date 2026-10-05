@@ -540,6 +540,16 @@ class Flexo_Booking_Room_Pages {
 				</td>
 			</tr>
 			<tr>
+				<th scope="row"><?php esc_html_e( '"Check availability" buttons', 'flexo-booking' ); ?></th>
+				<td>
+					<p>
+						<code>#<?php echo esc_html( Flexo_Booking_Room_Render::PANEL_HASH ); ?></code>
+						<button type="button" class="button button-small" data-flexo-copy-text="#<?php echo esc_attr( Flexo_Booking_Room_Render::PANEL_HASH ); ?>"><?php esc_html_e( 'Copy', 'flexo-booking' ); ?></button>
+					</p>
+					<p class="description"><?php esc_html_e( 'In Elementor, set the link of the room page\'s "Check availability" or "Book now" buttons to #check-availability. A click opens the room\'s calendar on the same page (a panel, or the booking box if the page has one): free days are shown, the price appears as soon as the dates are chosen, and "Book now" goes straight to the guest details. On other pages (home page, room cards) use the "Room booking link" dynamic tag – it does the same for the room you choose.', 'flexo-booking' ); ?></p>
+				</td>
+			</tr>
+			<tr>
 				<th scope="row"><?php esc_html_e( 'On phones', 'flexo-booking' ); ?></th>
 				<td>
 					<input type="hidden" name="<?php echo esc_attr( $name ); ?>[room_sticky_bar]" value="0">

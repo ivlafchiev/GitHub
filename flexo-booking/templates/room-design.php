@@ -16,6 +16,18 @@ $flexo_canvas = Flexo_Booking_Room_Design::is_canvas();
 $flexo_blocks = ! $flexo_canvas && wp_is_block_theme() && function_exists( 'block_template_part' );
 $flexo_own    = $flexo_canvas || $flexo_blocks;
 
+// Block themes: the header and footer parts are built before wp_head(), as
+// WordPress does for block templates, so their scripts (e.g. the navigation's
+// script modules) are known when the head is printed.
+$flexo_parts = array();
+if ( $flexo_blocks ) {
+	foreach ( array( 'header', 'footer' ) as $flexo_part ) {
+		ob_start();
+		block_template_part( $flexo_part );
+		$flexo_parts[ $flexo_part ] = ob_get_clean();
+	}
+}
+
 if ( $flexo_own ) {
 	?>
 <!DOCTYPE html>
@@ -29,9 +41,7 @@ if ( $flexo_own ) {
 	<?php
 	wp_body_open();
 	if ( $flexo_blocks ) {
-		echo '<div class="wp-site-blocks"><header class="wp-block-template-part">';
-		block_template_part( 'header' );
-		echo '</header>';
+		echo '<div class="wp-site-blocks"><header class="wp-block-template-part">' . $flexo_parts['header'] . '</header>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WordPress block output.
 	}
 } else {
 	get_header();
@@ -48,9 +58,7 @@ if ( $flexo_own ) {
 <?php
 if ( $flexo_own ) {
 	if ( $flexo_blocks ) {
-		echo '<footer class="wp-block-template-part">';
-		block_template_part( 'footer' );
-		echo '</footer></div>';
+		echo '<footer class="wp-block-template-part">' . $flexo_parts['footer'] . '</footer></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WordPress block output.
 	}
 	wp_footer();
 	echo "</body>\n</html>\n";

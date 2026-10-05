@@ -485,6 +485,14 @@ class Flexo_Booking_Room_Editor {
 					</span>
 					<span class="description"><?php esc_html_e( 'Opens the booking form with this room chosen. In Elementor use the "Room booking link" dynamic tag instead.', 'flexo-booking' ); ?></span>
 				</div>
+				<div class="flexo-link-row">
+					<span class="flexo-link-row__label"><?php esc_html_e( '"Check availability" button', 'flexo-booking' ); ?></span>
+					<code class="flexo-link-row__url">#<?php echo esc_html( Flexo_Booking_Room_Render::PANEL_HASH ); ?></code>
+					<span class="flexo-link-row__actions">
+						<button type="button" class="button button-small" data-flexo-copy-text="#<?php echo esc_attr( Flexo_Booking_Room_Render::PANEL_HASH ); ?>"><?php esc_html_e( 'Copy', 'flexo-booking' ); ?></button>
+					</span>
+					<span class="description"><?php esc_html_e( 'Put this as the link of any button on the room page: it opens this room\'s calendar right there, with its free days. After choosing dates guests see the price and book in one step.', 'flexo-booking' ); ?></span>
+				</div>
 			<?php endif; ?>
 
 			<?php self::checklist( $post ); ?>

@@ -6,7 +6,7 @@ Guests pick dates and guests, see which rooms are free with the price, enter the
 
 It's one plugin that works with any theme or template. Extra features are switched on only where a property needs them, so a simple guest house still gets just *dates → room → details → booking request*.
 
-> Version **1.8.1**. Day 7 makes the plugin the single place for rooms: each room has its own page on the website with its photos, description, amenities and a booking box, filled into your Elementor Pro templates through dynamic tags (§3). Day 6 made the plugin easier to use for guests, owners and reception and added Appearance settings; 1.7.0 gave the admin screens their own, app-like design (§17). Development follows `ROADMAP.md`; technical design is in `IMPLEMENTATION_PLAN.md`.
+> Version **1.8.2**. Day 7 makes the plugin the single place for rooms: each room has its own page on the website with its photos, description, amenities and a booking box, filled into your Elementor Pro templates through dynamic tags (§3). Day 6 made the plugin easier to use for guests, owners and reception and added Appearance settings; 1.7.0 gave the admin screens their own, app-like design (§17). Development follows `ROADMAP.md`; technical design is in `IMPLEMENTATION_PLAN.md`.
 
 ---
 
@@ -51,7 +51,7 @@ It's one plugin that works with any theme or template. Extra features are switch
 - JetEngine (or another custom-field plugin) is **not** needed for rooms; rooms made with it can be brought in (§3.2).
 
 **Install:**
-1. Build the zip with `bin/build-zip.sh`, or use the provided `flexo-booking-1.8.1.zip`.
+1. Build the zip with `bin/build-zip.sh`, or use the provided `flexo-booking-1.8.2.zip`.
 2. Go to **Plugins → Add New → Upload Plugin**, choose the zip, then **Install** and **Activate**.
 3. A **Bookings** menu appears in the admin. On a new site (no rooms, no bookings) the **setup wizard** opens once (below).
 4. Check **Settings → General → Timezone**. It must be the hotel's city, because "today" and arrival dates depend on it. **Bookings → Settings → Health** warns if it isn't.
@@ -72,7 +72,7 @@ The wizard never opens by itself on a site that already has rooms or bookings, s
 
 ### Upgrading
 
-**Upgrade from any earlier version (1.0.0–1.8.0):** upload the new zip and choose **Replace current with uploaded**.
+**Upgrade from any earlier version (1.0.0–1.8.1):** upload the new zip and choose **Replace current with uploaded**.
 - The database updates itself on the next page load. No reinstall is needed, and rooms, bookings and settings are kept.
 - If an update step ever fails, a red notice appears in the admin and the step is retried automatically.
 - On staging or in scripts you can also run `wp flexo-booking migrate`.
@@ -91,6 +91,7 @@ The wizard never opens by itself on a site that already has rooms or bookings, s
   - Existing amenities, sizes, beds, photos and descriptions are kept and shown in the new editor; amenities get their usual icons.
   - The database update only adds the new settings and refreshes the site's addresses once. Nothing is removed, so going back to 1.7.0 is possible (room pages then stop answering).
 - **1.8.1:** new **Room page design** setting: any page or template you designed in Elementor can be the design of every room page (§3). Fixed: *Settings → Room pages* named the site's header template as the room template (any template shown on the entire site was taken for it), which also kept *Add the starter room templates* from switching to the starter template. No database update.
+- **1.8.2:** **"Check availability" buttons** open the room's calendar on the same page (§3, *Check availability buttons*). Buttons that already use the *Room booking link* tag do this automatically (choose *When clicked → Go to the booking page* in the tag to keep the old behaviour). The booking box now shows the price as soon as both dates are chosen, and changing the guests re-checks the same dates. No database update.
 
 ---
 
@@ -215,7 +216,20 @@ What the page looks like:
 
 **The "from" price** ("from 95 € per night") is the lowest price per night a guest can really get in the **next 12 months** (or the booking window, if shorter), for **2 adults** (fewer if the room takes fewer): seasons, weekend prices, the minimum stay and the room's first rate plan are included; closed dates are skipped; tourist tax and promo codes are not included. The booking form always honours it. It updates itself when prices, seasons, closed dates, rates or settings change, and once a day. **Settings → Room pages → Prices on room pages** can hide it until guests choose dates. The *Your room pages* table on the same tab shows each room's address, status and "from" price (or why it has none).
 
-**On phones**, a **Check availability** bar with the "from" price stays at the bottom of room pages; it scrolls to the booking box (and hides while the box is on screen). Switch it off under **Settings → Room pages → On phones**.
+**On phones**, a **Check availability** bar with the "from" price stays at the bottom of room pages; it opens the room's calendar (below), and hides while a booking box is on screen. Switch it off under **Settings → Room pages → On phones**.
+
+### Check availability buttons
+
+Every room page can have its own **Check availability** (or *Book now*, *Make a reservation*) button that books **that room**, with the fewest steps for the guest:
+
+1. The guest clicks the button. **The room's calendar opens right there** – in a panel over the page (a bottom sheet on phones), or, if the page has a *Room booking box*, the page scrolls to it and opens its calendar. Days that are full or closed are crossed out; the minimum stay is shown.
+2. The guest picks arrival and departure. **Availability and the total price appear at once** (no extra button). Changing the number of guests re-checks the same dates. If the room is taken, nearby free dates and a link to other rooms for the same dates are shown.
+3. **Book now** opens the booking page **at the guest details**, with the room, dates and guests chosen. If the guest came from a search (dates in the address), the panel opens with the answer straight away.
+
+Setting it up (once, in your room design):
+- **On the room page:** set the button's *Link* to **`#check-availability`** (type it, or copy it from *Settings → Room pages* or the room's *On the website* card). Nothing else – each room page opens its own room.
+- **Anywhere else** (home page, room cards in a Loop Grid / Carousel, menus): use the dynamic tag **Room booking link** as the link and pick the room (in a Loop item, leave *Current room*). It does the same; *When clicked → Go to the booking page* makes it a plain link instead.
+- Without JavaScript, or with the link opened in a new tab, the same buttons go to the booking page with the room chosen, so nothing is ever a dead end. Keyboard: the panel takes the focus, Escape closes the calendar and then the panel, and focus returns to the button.
 
 ### 3.1 Room templates in Elementor Pro
 
@@ -234,7 +248,7 @@ Design **one room page and one room card**; every room fills them with its own d
 | Availability for the searched dates | Text | When the page was opened from a search (dates in the address): *Available · 390 € for 2 nights* or *Not available for your dates*; empty otherwise. Optionally without the total. |
 | Room main photo, Room gallery | Image / gallery | Main, 2nd, 3rd or 4th photo; a neutral placeholder when a room has none |
 | Room page link | URL | For card titles and "View room" buttons |
-| Room booking link | URL | Opens the booking page with the room chosen (§14) |
+| Room booking link | URL | Opens the room's calendar on the page (*Check availability buttons* above), or – *When clicked → Go to the booking page* – the booking page with the room chosen (§14) |
 
 Every tag has a **Room** option, **Current room (automatic)** by default: in the single template and in Loop items each room shows its own data. Choose a room only to show a specific room elsewhere (e.g. on the home page). While editing a template, the first room is shown as a sample; use *Preview settings* to pick another.
 
@@ -650,7 +664,7 @@ The calendar is for inventory and reservations only. It has no housekeeping or r
 
 1. **Booking page (required):** edit your *Booking / Reservations* page in Elementor, search the panel for **"Flexo"** and drag in **Flexo Booking Form** (*FlexoHotels* category). Keep *Layout* set to **Full booking form**. Note the page path (default `/booking/`).
 2. **Hero search bar (optional):** add the widget on the home page with *Layout* **Search bar** and *Booking page path* `/booking/`.
-3. **"Book now" buttons:** on the Button widget's *Link*, choose the dynamic tag **Room booking link** (group *Flexo Booking: room*). In a room template or Loop item it books **the room being shown**, so one button serves every room; elsewhere pick the room. It opens the booking page from **Settings → Hotel** (or the page you enter), and with *Keep the dates and guests from the page address* on, a guest who came from a search lands on the rooms with their dates already chosen. Or type `/booking/?room=<slug>`; every room's link has a **Copy** button in the room editor and the Rooms list.
+3. **"Book now" buttons:** on a room page, set the button's *Link* to `#check-availability` (§3, *Check availability buttons*). Elsewhere, on the Button widget's *Link*, choose the dynamic tag **Room booking link** (group *Flexo Booking: room*); by default a click opens the room's calendar on the same page. In a room template or Loop item it books **the room being shown**, so one button serves every room; elsewhere pick the room. It opens the booking page from **Settings → Hotel** (or the page you enter), and with *Keep the dates and guests from the page address* on, a guest who came from a search lands on the rooms with their dates already chosen. Or type `/booking/?room=<slug>`; every room's link has a **Copy** button in the room editor and the Rooms list.
    - **Room booking box** (widget, or `[flexo_room_booking]`) on a room page: the guest chooses dates and guests there and sees at once whether *this* room is free and the total; **Book now** opens the booking page straight at the details step. When it isn't free, nearby free dates and a link to other rooms for the same dates are shown.
 4. **Without Elementor**, use the shortcodes:
    - `[flexo_booking]`

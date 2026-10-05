@@ -18,12 +18,24 @@ class Flexo_Booking_Room_Render {
 	const SCRIPT = 'flexo-booking-rooms';
 
 	/**
+	 * Links ending in #check-availability open a room's calendar on the
+	 * page instead of leaving it (see request_panel()).
+	 */
+	const PANEL_HASH = 'check-availability';
+
+	/**
+	 * @var array Rooms that need a "Check availability" panel (room ID => true).
+	 */
+	private static $panels = array();
+
+	/**
 	 * @var int Counter for unique gallery IDs on a page.
 	 */
 	private static $uid = 0;
 
 	public static function init() {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'register_assets' ), 5 );
+		add_action( 'wp_footer', array( __CLASS__, 'print_panels' ), 5 );
 		add_action( 'wp_footer', array( __CLASS__, 'phone_bar' ) );
 		add_shortcode( 'flexo_room', array( __CLASS__, 'room_shortcode' ) );
 		add_shortcode( 'flexo_room_field', array( __CLASS__, 'field_shortcode' ) );
@@ -484,6 +496,68 @@ class Flexo_Booking_Room_Render {
 	}
 
 	/* ------------------------------------------------------------------ *
+	 * "Check availability" panel
+	 * ------------------------------------------------------------------ */
+
+	/**
+	 * Asks for a room's "Check availability" panel on this page.
+	 *
+	 * Any link ending in #check-availability (the "Room booking link" tag
+	 * adds it, or the owner types it on a button) then opens, on the same
+	 * page: the room's booking box when the page shows one (scrolled to,
+	 * calendar open), otherwise a dialog with the box (a bottom sheet on
+	 * phones). The calendar shows the room's free days; once the dates are
+	 * chosen the price is shown at once and "Book now" opens the booking
+	 * page at the guest details. Room pages always get their room's panel.
+	 */
+	public static function request_panel( $room_id ) {
+		$room_id = Flexo_Booking_Room_I18n::canonical_id( (int) $room_id );
+		if ( $room_id ) {
+			self::$panels[ $room_id ] = true;
+		}
+	}
+
+	/**
+	 * The panels' dialogs, hidden until a button opens one (wp_footer).
+	 */
+	public static function print_panels() {
+		$current = 0;
+		if ( is_singular( Flexo_Booking_Rooms::POST_TYPE ) ) {
+			$current = Flexo_Booking_Room_I18n::canonical_id( get_queried_object_id() );
+			self::request_panel( $current );
+		}
+		foreach ( array_keys( self::$panels ) as $room_id ) {
+			$post = get_post( $room_id );
+			// A room whose booking box is on the page uses that box.
+			if ( ! $post || 'publish' !== $post->post_status || Flexo_Booking_Frontend::has_box( $room_id ) || Flexo_Booking_Room_Content::is_demo( $room_id ) ) {
+				continue;
+			}
+			$room = Flexo_Booking_Room_Content::room( Flexo_Booking_Room_I18n::translation_id( $room_id ) );
+			if ( ! $room || $room['units'] < 1 ) {
+				continue;
+			}
+			$box = Flexo_Booking_Frontend::render(
+				array(
+					'layout'    => 'box',
+					'room'      => (string) $room_id,
+					'in_dialog' => '1',
+				)
+			);
+			if ( '' === $box ) {
+				continue;
+			}
+			$uid = 'flexo-book-' . $room_id;
+			echo '<dialog class="flexo-book-dialog" data-flexo-book-dialog="' . esc_attr( $post->post_name ) . '"' . ( $room_id === $current ? ' data-flexo-book-current' : '' ) . ' aria-labelledby="' . esc_attr( $uid ) . '">';
+			echo '<div class="flexo-book-dialog__head"><div><p class="flexo-book-dialog__eyebrow">' . esc_html__( 'Check availability', 'flexo-booking' ) . '</p>';
+			echo '<h2 class="flexo-book-dialog__title" id="' . esc_attr( $uid ) . '">' . esc_html( $room['title'] ) . '</h2></div>';
+			echo '<button type="button" class="flexo-book-dialog__close" data-flexo-book-close aria-label="' . esc_attr__( 'Close', 'flexo-booking' ) . '"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></button></div>';
+			echo $box; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in the template.
+			echo '</dialog>';
+		}
+		self::$panels = array();
+	}
+
+	/* ------------------------------------------------------------------ *
 	 * "Check availability" bar on phones
 	 * ------------------------------------------------------------------ */
 
@@ -507,7 +581,7 @@ class Flexo_Booking_Room_Render {
 		if ( '' !== $from ) {
 			echo '<span class="flexo-room-bar__price">' . esc_html( $from ) . ' <small>' . esc_html__( 'per night', 'flexo-booking' ) . '</small></span>';
 		}
-		echo '</span><a class="flexo-room-bar__button" href="' . esc_url( $room['booking_url'] ) . '">' . esc_html__( 'Check availability', 'flexo-booking' ) . '</a></div>';
+		echo '</span><a class="flexo-room-bar__button" href="' . esc_url( $room['booking_url'] . '#' . self::PANEL_HASH ) . '">' . esc_html__( 'Check availability', 'flexo-booking' ) . '</a></div>';
 	}
 }
 

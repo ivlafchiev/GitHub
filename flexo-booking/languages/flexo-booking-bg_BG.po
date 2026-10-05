@@ -1,10 +1,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Flexo Booking 1.8.1\n"
+"Project-Id-Version: Flexo Booking 1.8.2\n"
 "Report-Msgid-Bugs-To: https://github.com/ivlafchiev/GitHub\n"
 "POT-Creation-Date: 2026-09-24T12:10:42+00:00\n"
-"PO-Revision-Date: 2026-10-05 15:00+0300\n"
+"PO-Revision-Date: 2026-10-05 18:00+0300\n"
 "Last-Translator: FlexoHotels\n"
 "Language-Team: FlexoHotels\n"
 "Language: bg_BG\n"
@@ -66,8 +66,8 @@ msgstr "Блокиране на дати"
 
 #: includes/admin/class-calendar-admin.php:66
 #: includes/admin/class-calendar-admin.php:635
-#: includes/admin/class-room-editor.php:545 includes/class-frontend.php:220
-#: includes/class-room-render.php:49
+#: includes/admin/class-room-editor.php:553 includes/class-frontend.php:220
+#: includes/class-room-render.php:61 includes/class-room-render.php:553
 msgid "Close"
 msgstr "Затвори"
 
@@ -180,10 +180,10 @@ msgstr "Телефон"
 #: includes/class-emails.php:858 includes/class-frontend.php:163
 #: includes/class-frontend.php:301 includes/class-guest.php:667
 #: includes/class-privacy.php:236 includes/class-room-icons.php:34
-#: includes/class-room-pages.php:554 includes/class-rooms.php:72
+#: includes/class-room-pages.php:564 includes/class-rooms.php:72
 #: includes/elementor/class-booking-widget.php:79
 #: includes/elementor/class-room-box-widget.php:48
-#: includes/elementor/class-room-link-tag.php:43
+#: includes/elementor/class-room-link-tag.php:46
 #: includes/elementor/class-room-tags.php:33
 #: includes/elementor/class-room-widgets.php:43
 #: includes/elementor/class-room-widgets.php:49
@@ -207,7 +207,7 @@ msgstr "Заминаване"
 #: includes/class-admin.php:1311 includes/class-emails.php:862
 #: includes/class-frontend.php:107 includes/class-guest.php:664
 #: includes/class-privacy.php:239 includes/class-room-icons.php:41
-#: includes/class-room-render.php:199
+#: includes/class-room-render.php:211
 #: includes/elementor/class-room-widgets.php:374
 msgid "Guests"
 msgstr "Гости"
@@ -691,7 +691,7 @@ msgstr "Всеки престой"
 #. translators: 1: uses, 2: limit
 #. translators: 1: photo number, 2: number of photos
 #: includes/admin/class-promo-codes-admin.php:199
-#: includes/class-room-render.php:294
+#: includes/class-room-render.php:306
 #, php-format
 msgid "%1$d of %2$d"
 msgstr "%1$d от %2$d"
@@ -2502,8 +2502,8 @@ msgstr "Избери"
 msgid "Unavailable"
 msgstr "Няма свободни"
 
-#: includes/class-frontend.php:86 includes/class-room-render.php:361
-#: includes/class-room-render.php:508 templates/room-booking-box.php:46
+#: includes/class-frontend.php:86 includes/class-room-render.php:373
+#: includes/class-room-render.php:582 templates/room-booking-box.php:46
 msgid "per night"
 msgstr "на нощувка"
 
@@ -2602,12 +2602,12 @@ msgstr "Приложи"
 msgid "Promo code %1$s applied (%2$s)."
 msgstr "Промо код %1$s е приложен (%2$s)."
 
-#: includes/class-frontend.php:360
+#: includes/class-frontend.php:361
 msgid "Search"
 msgstr "Търсене"
 
-#: includes/class-appearance.php:324 includes/class-frontend.php:360
-#: includes/class-room-render.php:510
+#: includes/class-appearance.php:324 includes/class-frontend.php:361
+#: includes/class-room-render.php:551 includes/class-room-render.php:584
 #: includes/elementor/class-booking-widget.php:102
 #: includes/elementor/class-room-box-widget.php:81
 #: includes/elementor/class-templates.php:136
@@ -4414,7 +4414,7 @@ msgstr ""
 
 #: includes/elementor/class-booking-widget.php:67
 #: includes/elementor/class-room-box-widget.php:98
-#: includes/elementor/class-room-link-tag.php:54
+#: includes/elementor/class-room-link-tag.php:71
 msgid "Booking page path"
 msgstr "Адрес на страницата за резервации"
 
@@ -4512,7 +4512,7 @@ msgstr "Текст и полета"
 msgid "Buttons"
 msgstr "Бутони"
 
-#: includes/elementor/class-room-link-tag.php:28
+#: includes/elementor/class-room-link-tag.php:31
 msgid "Room booking link"
 msgstr "Връзка за резервация на стая"
 
@@ -5206,7 +5206,8 @@ msgstr "Търси отново"
 msgid "Bank transfer details"
 msgstr "Данни за банков превод"
 
-#: includes/class-frontend.php:145
+#: includes/admin/class-room-editor.php:492 includes/class-frontend.php:145
+#: includes/class-room-pages.php:547
 msgid "Copy"
 msgstr "Копирай"
 
@@ -5214,7 +5215,7 @@ msgstr "Копирай"
 msgid "Copied"
 msgstr "Копирано"
 
-#: includes/class-frontend.php:553
+#: includes/class-frontend.php:570
 msgid ""
 "Visa, Mastercard and other cards. You pay on Stripe's secure payment page; "
 "your card details never reach us."
@@ -5223,7 +5224,7 @@ msgstr ""
 "данните на картата ви никога не достигат до нас."
 
 #. translators: %d: number of days
-#: includes/class-frontend.php:556
+#: includes/class-frontend.php:573
 #, php-format
 msgid "You receive our bank details right away. Please pay within %d day."
 msgid_plural ""
@@ -5233,12 +5234,12 @@ msgstr[0] ""
 msgstr[1] ""
 "Получавате банковите ни данни веднага. Моля, платете в рамките на %d дни."
 
-#: includes/class-frontend.php:557
+#: includes/class-frontend.php:574
 msgid "Once we confirm your request, we email you our bank details."
 msgstr ""
 "След като потвърдим заявката ви, ще ви изпратим банковите си данни по имейл."
 
-#: includes/class-frontend.php:560
+#: includes/class-frontend.php:577
 msgid "How would you like to pay?"
 msgstr "Как предпочитате да платите?"
 
@@ -6543,7 +6544,7 @@ msgstr ""
 " социалните мрежи, напр. SUMMER10 за 10% отстъпка."
 
 #: includes/admin/class-rate-plans-admin.php:25 includes/class-admin.php:168
-#: includes/class-room-render.php:415 includes/class-rooms.php:154
+#: includes/class-room-render.php:427 includes/class-rooms.php:154
 msgid "Rates"
 msgstr "Тарифи"
 
@@ -7584,12 +7585,12 @@ msgstr "+ още %d"
 
 #. translators: %d: number of nights
 #. translators: %d: number of nights (2 or more)
-#: includes/class-frontend.php:268 includes/class-room-render.php:48
+#: includes/class-frontend.php:268 includes/class-room-render.php:60
 #, php-format
 msgid "%d nights"
 msgstr "%d нощувки"
 
-#: includes/class-frontend.php:269 includes/class-room-render.php:46
+#: includes/class-frontend.php:269 includes/class-room-render.php:58
 msgid "1 night"
 msgstr "1 нощувка"
 
@@ -8122,8 +8123,8 @@ msgstr ""
 "стаите от този списък."
 
 #: includes/admin/class-room-editor.php:229
-#: includes/admin/class-room-editor.php:512 includes/class-room-icons.php:39
-#: includes/class-room-render.php:192
+#: includes/admin/class-room-editor.php:520 includes/class-room-icons.php:39
+#: includes/class-room-render.php:204
 #: includes/elementor/class-room-widgets.php:208
 #: includes/elementor/class-room-widgets.php:373
 msgid "Size"
@@ -8131,7 +8132,7 @@ msgstr "Площ"
 
 #: includes/admin/class-room-editor.php:217
 #: includes/admin/class-room-editor.php:233
-#: includes/admin/class-room-importer.php:42 includes/class-room-render.php:206
+#: includes/admin/class-room-importer.php:42 includes/class-room-render.php:218
 #: includes/elementor/class-room-tags.php:174
 #: includes/elementor/class-room-widgets.php:375
 msgid "Beds"
@@ -8139,7 +8140,7 @@ msgstr "Легла"
 
 #. translators: %d: number of amenities
 #: includes/admin/class-room-editor.php:75
-#: includes/admin/class-room-editor.php:511 includes/class-room-render.php:378
+#: includes/admin/class-room-editor.php:519 includes/class-room-render.php:390
 #: includes/elementor/class-room-tags.php:293
 #: includes/elementor/class-templates.php:134
 msgid "Amenities"
@@ -8641,7 +8642,7 @@ msgid "Room name, e.g. Deluxe Double Room with Sea View"
 msgstr "Име на стаята, напр. Двойна стая Делукс с изглед към морето"
 
 #: includes/admin/class-room-editor.php:63
-#: includes/admin/class-room-editor.php:509
+#: includes/admin/class-room-editor.php:517
 #: includes/admin/class-room-importer.php:36
 #: includes/elementor/class-room-tags.php:133
 #: includes/elementor/class-templates.php:133
@@ -8658,7 +8659,7 @@ msgstr ""
 
 #: includes/admin/class-room-editor.php:72
 #: includes/admin/class-room-editor.php:115
-#: includes/admin/class-room-editor.php:508
+#: includes/admin/class-room-editor.php:516
 #: includes/admin/class-room-importer.php:37
 #: includes/elementor/class-room-tags.php:121
 msgid "Short description"
@@ -8734,8 +8735,8 @@ msgid "Download missing photos"
 msgstr "Изтегли липсващите снимки"
 
 #: includes/admin/class-room-editor.php:145
-#: includes/admin/class-room-editor.php:505
-#: includes/admin/class-room-editor.php:747
+#: includes/admin/class-room-editor.php:513
+#: includes/admin/class-room-editor.php:755
 #: includes/elementor/class-room-tags.php:479
 msgid "Main photo"
 msgstr "Основна снимка"
@@ -8751,7 +8752,7 @@ msgstr "Показва се в картите на стаите и най-гор
 
 #. translators: %d: number of photos
 #: includes/admin/class-room-editor.php:161
-#: includes/admin/class-room-editor.php:507
+#: includes/admin/class-room-editor.php:515
 #: includes/admin/class-room-importer.php:45
 msgid "Gallery"
 msgstr "Галерия"
@@ -8773,7 +8774,7 @@ msgstr ""
 "основната снимка, после тези."
 
 #: includes/admin/class-room-editor.php:195 includes/class-room-content.php:61
-#: includes/class-room-render.php:220 includes/elementor/class-room-tags.php:99
+#: includes/class-room-render.php:232 includes/elementor/class-room-tags.php:99
 #: includes/elementor/class-room-widgets.php:377
 #: includes/elementor/class-templates.php:131
 msgid "Room type"
@@ -8816,7 +8817,7 @@ msgstr "Преименувай или изтрий типове стаи"
 #: includes/admin/class-room-editor.php:237
 #: includes/admin/class-room-editor.php:471
 #: includes/admin/class-room-importer.php:43 includes/class-room-icons.php:45
-#: includes/class-room-render.php:213
+#: includes/class-room-render.php:225
 #: includes/elementor/class-room-tags.php:186
 #: includes/elementor/class-room-widgets.php:376
 msgid "View"
@@ -9037,113 +9038,113 @@ msgstr ""
 "динамичния таг „Връзка за резервация на стаята“."
 
 #. translators: %d: number of photos
-#: includes/admin/class-room-editor.php:507
+#: includes/admin/class-room-editor.php:515
 msgid "Gallery (%d photo)"
 msgid_plural "Gallery (%d photos)"
 msgstr[0] "Галерия (%d снимка)"
 msgstr[1] "Галерия (%d снимки)"
 
 #. translators: %d: number of amenities
-#: includes/admin/class-room-editor.php:511
+#: includes/admin/class-room-editor.php:519
 msgid "%d amenity"
 msgid_plural "%d amenities"
 msgstr[0] "%d удобство"
 msgstr[1] "%d удобства"
 
 #. translators: 1: items done, 2: all items
-#: includes/admin/class-room-editor.php:520
+#: includes/admin/class-room-editor.php:528
 msgid "Room page: %1$d of %2$d filled in"
 msgstr "Страница на стаята: попълнени %1$d от %2$d"
 
-#: includes/admin/class-room-editor.php:525
+#: includes/admin/class-room-editor.php:533
 msgid "(missing)"
 msgstr "(липсва)"
 
-#: includes/admin/class-room-editor.php:544
+#: includes/admin/class-room-editor.php:552
 msgid "Choose an icon"
 msgstr "Изберете иконка"
 
-#: includes/admin/class-room-editor.php:548
+#: includes/admin/class-room-editor.php:556
 msgid "Search icons…"
 msgstr "Търсене на иконки…"
 
-#: includes/admin/class-room-editor.php:548
+#: includes/admin/class-room-editor.php:556
 msgid "Search icons"
 msgstr "Търсене на иконки"
 
-#: includes/admin/class-room-editor.php:549
+#: includes/admin/class-room-editor.php:557
 msgid "Use my own icon (SVG or PNG)"
 msgstr "Използвай моя иконка (SVG или PNG)"
 
-#: includes/admin/class-room-editor.php:550
+#: includes/admin/class-room-editor.php:558
 msgid "Back to the usual icon"
 msgstr "Върни обичайната иконка"
 
-#: includes/admin/class-room-editor.php:703 includes/class-rooms.php:75
+#: includes/admin/class-room-editor.php:711 includes/class-rooms.php:75
 msgid "View room page"
 msgstr "Виж страницата на стаята"
 
-#: includes/admin/class-room-editor.php:706
-#: includes/admin/class-room-editor.php:707
-#: includes/admin/class-room-editor.php:709 includes/class-rooms.php:76
+#: includes/admin/class-room-editor.php:714
+#: includes/admin/class-room-editor.php:715
+#: includes/admin/class-room-editor.php:717 includes/class-rooms.php:76
 msgid "Room saved."
 msgstr "Стаята е запазена."
 
-#: includes/admin/class-room-editor.php:708
+#: includes/admin/class-room-editor.php:716
 msgid "Room published – guests can book it now."
 msgstr "Стаята е публикувана – гостите вече могат да я резервират."
 
-#: includes/admin/class-room-editor.php:710
+#: includes/admin/class-room-editor.php:718
 msgid "Room submitted."
 msgstr "Стаята е изпратена за преглед."
 
-#: includes/admin/class-room-editor.php:711
+#: includes/admin/class-room-editor.php:719
 msgid "Room scheduled."
 msgstr "Стаята е насрочена."
 
-#: includes/admin/class-room-editor.php:712
+#: includes/admin/class-room-editor.php:720
 msgid "Draft saved."
 msgstr "Черновата е запазена."
 
-#: includes/admin/class-room-editor.php:748
+#: includes/admin/class-room-editor.php:756
 msgid "Use this photo"
 msgstr "Използвай тази снимка"
 
-#: includes/admin/class-room-editor.php:749
+#: includes/admin/class-room-editor.php:757
 msgid "Add photos to the gallery"
 msgstr "Добави снимки в галерията"
 
-#: includes/admin/class-room-editor.php:750
+#: includes/admin/class-room-editor.php:758
 msgid "Add to gallery"
 msgstr "Добави в галерията"
 
-#: includes/admin/class-room-editor.php:751
+#: includes/admin/class-room-editor.php:759
 msgid "Your own icon"
 msgstr "Ваша иконка"
 
-#: includes/admin/class-room-editor.php:752
+#: includes/admin/class-room-editor.php:760
 msgid "Use this icon"
 msgstr "Използвай тази иконка"
 
 #. translators: %d: number of photos
-#: includes/admin/class-room-editor.php:754
+#: includes/admin/class-room-editor.php:762
 msgid "(%d)"
 msgstr "(%d)"
 
 #. translators: 1: characters typed, 2: recommended maximum
-#: includes/admin/class-room-editor.php:756
+#: includes/admin/class-room-editor.php:764
 msgid "%1$d / %2$d"
 msgstr "%1$d / %2$d"
 
-#: includes/admin/class-room-editor.php:757
+#: includes/admin/class-room-editor.php:765
 msgid "longer than search engines show"
 msgstr "по-дълго, отколкото показват търсачките"
 
-#: includes/admin/class-room-editor.php:758
+#: includes/admin/class-room-editor.php:766
 msgid "This type is already in the list."
 msgstr "Този тип вече е в списъка."
 
-#: includes/admin/class-room-editor.php:759
+#: includes/admin/class-room-editor.php:767
 msgid "Already in the list."
 msgstr "Вече е в списъка."
 
@@ -9316,7 +9317,7 @@ msgstr ""
 "Това е демо стая и не може да бъде резервирана. Редактирайте стаята и "
 "изключете „Демо стая“, за да приема резервации."
 
-#: includes/class-frontend.php:78 includes/class-room-render.php:42
+#: includes/class-frontend.php:78 includes/class-room-render.php:54
 msgid "Available for your dates"
 msgstr "Свободна за вашите дати"
 
@@ -9328,13 +9329,13 @@ msgstr "Няма свободни места за тези дати."
 msgid "See other rooms for these dates"
 msgstr "Вижте други стаи за тези дати"
 
-#: includes/class-frontend.php:81 includes/class-frontend.php:363
+#: includes/class-frontend.php:81 includes/class-frontend.php:364
 #: includes/elementor/class-room-box-widget.php:91
 #: includes/elementor/class-templates.php:139
 msgid "Book now"
 msgstr "Резервирай"
 
-#: includes/class-frontend.php:441
+#: includes/class-frontend.php:442
 msgid ""
 "Room booking box: no room here. Use it in your room template, or choose a "
 "room."
@@ -9342,7 +9343,7 @@ msgstr ""
 "Поле за резервация на стая: тук няма стая. Използвайте го в шаблона на стаята"
 " или изберете стая."
 
-#: includes/class-frontend.php:446
+#: includes/class-frontend.php:447
 msgid "This is a demo room: it cannot be booked."
 msgstr "Това е демо стая: не може да бъде резервирана."
 
@@ -9961,16 +9962,16 @@ msgstr ""
 "възрастни, със сезоните, уикенд цените и първата тарифа на стаята, без "
 "туристически данък и промо кодове. Обновява се сама при промяна на цените."
 
-#: includes/class-room-pages.php:543
+#: includes/class-room-pages.php:553
 msgid "On phones"
 msgstr "На телефони"
 
-#: includes/class-room-pages.php:546
+#: includes/class-room-pages.php:556
 msgid "Show a \"Check availability\" bar at the bottom of room pages"
 msgstr ""
 "Показвай лента „Провери наличността“ в долната част на страниците на стаите"
 
-#: includes/class-room-pages.php:547
+#: includes/class-room-pages.php:557
 msgid ""
 "It takes guests to the room's booking box, and hides while the box is on "
 "screen."
@@ -9978,34 +9979,34 @@ msgstr ""
 "Води гостите до полето за резервация на стаята и се скрива, докато полето е "
 "на екрана."
 
-#: includes/class-room-pages.php:552
+#: includes/class-room-pages.php:562
 msgid "Your room pages"
 msgstr "Вашите страници на стаи"
 
-#: includes/class-room-pages.php:554
+#: includes/class-room-pages.php:564
 msgid "Page"
 msgstr "Страница"
 
-#: includes/class-room-pages.php:554
+#: includes/class-room-pages.php:564
 msgid "\"From\" price"
 msgstr "Цена „от“"
 
-#: includes/class-room-pages.php:562
+#: includes/class-room-pages.php:572
 msgid "Demo – only you see it"
 msgstr "Демо – виждате я само вие"
 
-#: includes/class-room-pages.php:564
+#: includes/class-room-pages.php:574
 msgid "Not on the website"
 msgstr "Не е на сайта"
 
 #. translators: 1: price per night, 2: number of nights, 3: arrival date
-#: includes/class-room-pages.php:574
+#: includes/class-room-pages.php:584
 msgid "%1$s (%2$d night from %3$s)"
 msgid_plural "%1$s (%2$d nights from %3$s)"
 msgstr[0] "%1$s (%2$d нощувка от %3$s)"
 msgstr[1] "%1$s (%2$d нощувки от %3$s)"
 
-#: includes/class-room-pages.php:576
+#: includes/class-room-pages.php:586
 msgid "None – check the price and closed dates"
 msgstr "Няма – проверете цената и затворените дати"
 
@@ -10014,55 +10015,55 @@ msgid "From price (lowest per night)"
 msgstr "Цена „от“ (най-ниска на нощувка)"
 
 #. translators: 1: total price, 2: number of nights, e.g. "3 nights"
-#: includes/class-room-render.php:44
+#: includes/class-room-render.php:56
 msgid "Available · %1$s for %2$s"
 msgstr "Свободна · %1$s за %2$s"
 
-#: includes/class-room-render.php:45
+#: includes/class-room-render.php:57
 msgid "Not available for your dates"
 msgstr "Няма места за вашите дати"
 
-#: includes/class-room-render.php:50
+#: includes/class-room-render.php:62
 msgid "Previous photo"
 msgstr "Предишна снимка"
 
-#: includes/class-room-render.php:51
+#: includes/class-room-render.php:63
 msgid "Next photo"
 msgstr "Следваща снимка"
 
 #. translators: 1: photo number, 2: number of photos
-#: includes/class-room-render.php:53
+#: includes/class-room-render.php:65
 msgid "Photo %1$d of %2$d"
 msgstr "Снимка %1$d от %2$d"
 
 #. translators: %d: page of photos
-#: includes/class-room-render.php:55
+#: includes/class-room-render.php:67
 msgid "Show photos, page %d"
 msgstr "Покажи снимките, страница %d"
 
 #. translators: %s: room name
-#: includes/class-room-render.php:272
+#: includes/class-room-render.php:284
 msgid "Photos of %s"
 msgstr "Снимки на %s"
 
 #. translators: 1: room name, 2: photo number
-#: includes/class-room-render.php:281
+#: includes/class-room-render.php:293
 msgid "%1$s – photo %2$d"
 msgstr "%1$s – снимка %2$d"
 
-#: includes/class-room-render.php:308
+#: includes/class-room-render.php:320
 msgid "Previous photos"
 msgstr "Предишни снимки"
 
-#: includes/class-room-render.php:309
+#: includes/class-room-render.php:321
 msgid "Next photos"
 msgstr "Следващи снимки"
 
-#: includes/class-room-render.php:357
+#: includes/class-room-render.php:369
 msgid "← All rooms"
 msgstr "← Всички стаи"
 
-#: includes/class-room-render.php:390
+#: includes/class-room-render.php:402
 #: includes/elementor/class-templates.php:135
 msgid "Good to know"
 msgstr "Полезно да знаете"
@@ -10101,7 +10102,7 @@ msgid "Room booking box"
 msgstr "Поле за резервация на стая"
 
 #: includes/elementor/class-room-box-widget.php:51
-#: includes/elementor/class-room-link-tag.php:46
+#: includes/elementor/class-room-link-tag.php:49
 #: includes/elementor/class-room-tags.php:36
 #: includes/elementor/class-room-widgets.php:52
 msgid "Current room (automatic)"
@@ -10124,17 +10125,17 @@ msgid "\"Book now\" text"
 msgstr "Текст на „Резервирай“"
 
 #: includes/elementor/class-room-box-widget.php:101
-#: includes/elementor/class-room-link-tag.php:57
+#: includes/elementor/class-room-link-tag.php:74
 msgid "From Settings → Hotel"
 msgstr "От Настройки → Хотел"
 
 #: includes/elementor/class-room-box-widget.php:102
-#: includes/elementor/class-room-link-tag.php:58
+#: includes/elementor/class-room-link-tag.php:75
 msgid "Leave empty to use the booking page from the settings."
 msgstr ""
 "Оставете празно, за да се използва страницата за резервации от настройките."
 
-#: includes/elementor/class-room-link-tag.php:47
+#: includes/elementor/class-room-link-tag.php:50
 msgid ""
 "Automatic: the room of the page. On pages that are not about one room, the "
 "guest chooses."
@@ -10142,11 +10143,11 @@ msgstr ""
 "Автоматично: стаята на страницата. На страници, които не са за една стая, "
 "гостът избира."
 
-#: includes/elementor/class-room-link-tag.php:65
+#: includes/elementor/class-room-link-tag.php:82
 msgid "Keep the dates and guests from the page address"
 msgstr "Запази датите и гостите от адреса на страницата"
 
-#: includes/elementor/class-room-link-tag.php:69
+#: includes/elementor/class-room-link-tag.php:86
 msgid ""
 "When a guest came from a search, the booking form opens with their dates."
 msgstr ""
@@ -10731,3 +10732,60 @@ msgstr ""
 "Flexo Booking (например стаи от JetEngine), затова страниците на стаите не го"
 " използват. Изберете го по-горе като дизайн на страниците на стаите или "
 "сменете условието му за показване на „Стаи“ в Elementor."
+
+#: includes/admin/class-room-editor.php:489
+msgid "\"Check availability\" button"
+msgstr "Бутон „Провери наличността“"
+
+#: includes/admin/class-room-editor.php:494
+msgid ""
+"Put this as the link of any button on the room page: it opens this room's "
+"calendar right there, with its free days. After choosing dates guests see the"
+" price and book in one step."
+msgstr ""
+"Сложете това като връзка на който и да е бутон на страницата на стаята: той "
+"отваря календара на тази стая направо там, със свободните ѝ дни. След избора "
+"на дати гостите виждат цената и резервират с една стъпка."
+
+#: includes/class-room-pages.php:543
+msgid "\"Check availability\" buttons"
+msgstr "Бутони „Провери наличността“"
+
+#: includes/class-room-pages.php:549
+msgid ""
+"In Elementor, set the link of the room page's \"Check availability\" or "
+"\"Book now\" buttons to #check-availability. A click opens the room's "
+"calendar on the same page (a panel, or the booking box if the page has one): "
+"free days are shown, the price appears as soon as the dates are chosen, and "
+"\"Book now\" goes straight to the guest details. On other pages (home page, "
+"room cards) use the \"Room booking link\" dynamic tag – it does the same for "
+"the room you choose."
+msgstr ""
+"В Elementor задайте връзката на бутоните „Провери наличността“ или "
+"„Резервирай“ на страницата на стаята да е #check-availability. С едно "
+"щракване се отваря календарът на стаята на същата страница (в панел или в "
+"полето за резервация, ако страницата има такова): показват се свободните дни,"
+" цената се появява веднага след избора на дати, а „Резервирай“ води направо "
+"към данните на госта. На други страници (начална страница, карти на стаи) "
+"използвайте динамичния таг „Връзка за резервация на стаята“ – той прави "
+"същото за избраната от вас стая."
+
+#: includes/elementor/class-room-link-tag.php:57
+msgid "When clicked"
+msgstr "При щракване"
+
+#: includes/elementor/class-room-link-tag.php:61
+msgid "Open the room's calendar on this page (recommended)"
+msgstr "Отвори календара на стаята на тази страница (препоръчително)"
+
+#: includes/elementor/class-room-link-tag.php:62
+msgid "Go to the booking page"
+msgstr "Отиди на страницата за резервации"
+
+#: includes/elementor/class-room-link-tag.php:64
+msgid ""
+"The calendar shows the room's free days. After choosing dates the guest sees "
+"the price at once and books in one step."
+msgstr ""
+"Календарът показва свободните дни на стаята. След избора на дати гостът вижда"
+" цената веднага и резервира с една стъпка."
