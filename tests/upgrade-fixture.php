@@ -11,7 +11,16 @@ Flexo_Booking_Rooms::save_meta_values( $deluxe, array( '_flexo_price' => 100, '_
 $suite = wp_insert_post( array( 'post_type' => 'flexo_room', 'post_title' => 'Family Suite', 'post_name' => 'family-suite', 'post_status' => 'publish' ) );
 Flexo_Booking_Rooms::save_meta_values( $suite, array( '_flexo_price' => 200, '_flexo_capacity' => 4, '_flexo_units' => 1, '_flexo_min_nights' => 2 ) );
 
+// A live site's own pages (1.9.0 checks they keep winning): booking page with
+// the form, a thank-you page set in the settings, and a contact page.
+$pages = array();
+foreach ( array( 'booking' => '[flexo_booking]', 'thank-you' => 'Thank you for booking with us!', 'contact' => 'Call us any time.' ) as $slug => $content ) {
+	$pages[ $slug ] = wp_insert_post( array( 'post_type' => 'page', 'post_title' => ucfirst( $slug ), 'post_name' => $slug, 'post_status' => 'publish', 'post_content' => $content ) );
+}
+
 $settings                  = Flexo_Booking_Settings::all();
+$settings['booking_page']  = '/booking/';
+$settings['thank_you_url'] = '/thank-you/';
 $settings['booking_mode']  = 'instant';
 $settings['currency']      = 'EUR';
 $settings['terms_url']     = '/terms/';
@@ -32,6 +41,7 @@ $fixture = array(
 		'family-suite'  => get_post_meta( $suite ),
 	),
 	'db_version' => get_option( 'flexo_booking_db_version' ),
+	'pages'      => $pages,
 	'plugin'     => FLEXO_BOOKING_VERSION,
 );
 file_put_contents( getenv( 'FLEXO_FIXTURE' ), wp_json_encode( $fixture ) );

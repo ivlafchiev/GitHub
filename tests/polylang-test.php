@@ -105,7 +105,8 @@ $response = wp_remote_post(
 $data = json_decode( wp_remote_retrieve_body( $response ), true );
 t_eq( 201, wp_remote_retrieve_response_code( $response ), 'booked over HTTP' );
 t_ok( 0 === strpos( (string) $data['message'], 'Thank you! We received your booking request' ), 'answer in English' );
-t_eq( get_permalink( get_page_by_path( 'thank-you-en' ) ) . '?booking=' . $data['reference'], $data['redirect'], 'redirected to the English thank-you page' );
+// 1.9.0: plus the one-time hand-off token for the secure Thank You context.
+t_ok( 1 === preg_match( '#^' . preg_quote( get_permalink( get_page_by_path( 'thank-you-en' ) ) . '?booking=' . $data['reference'], '#' ) . '&fb_t=[a-f0-9]{64}$#', $data['redirect'] ), 'redirected to the English thank-you page' );
 $booking = Flexo_Booking_Bookings::get_by_reference( $data['reference'] );
 t_eq( 'en_US', $booking['locale'], 'booking stored as English' );
 $consent = Flexo_Booking_Privacy::consent_for( $booking['id'] );

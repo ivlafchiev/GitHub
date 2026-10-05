@@ -167,7 +167,8 @@ const contrastOf = ( p, sel ) => p.evaluate( ( s ) => {
 	ok( count1 === count0 + 1, `three quick submits → one booking (${ count0 } → ${ count1 })` );
 	const done = await text( g, '.fb-success' );
 	ok( /FB-[A-Z0-9]{6}/.test( done ) && done.includes( 'What happens next' ) && done.includes( 'Contact' ) && done.includes( 'Bed & Breakfast' ), 'confirmation: reference, full summary, next steps, contact' );
-	ok( g.url().includes( 'fb_done=' ) && g.url().includes( 'fb_key=' ), 'confirmation address survives a refresh' );
+	// 1.9.0 (decision 3): the guest key stays in the tab, not in the address.
+	ok( g.url().includes( 'fb_done=' ) && ! g.url().includes( 'fb_key=' ), 'confirmation address survives a refresh, without the guest key' );
 	await g.reload();
 	await g.waitForSelector( '.fb-done__title' );
 	ok( ( await text( g, '.fb-success' ) ).includes( 'Bed & Breakfast' ), 'confirmation shown again after refresh' );

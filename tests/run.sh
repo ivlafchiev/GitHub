@@ -25,7 +25,7 @@ LANGDIR="$SITE/wp-content/languages"
 mkdir -p "$LANGDIR"
 [ -f "$LANGDIR/bg_BG.mo" ] || cp "$DIR/fixtures/empty.mo" "$LANGDIR/bg_BG.mo"
 
-for t in test-pricing-parity test-seasons test-features test-regression test-ical test-day3 test-day4 test-day5 test-day6 test-day7 test-day7-elementor test-room-design test-booking-page; do
+for t in test-pricing-parity test-seasons test-features test-regression test-ical test-day3 test-day4 test-day5 test-day6 test-day7 test-day7-elementor test-room-design test-booking-page test-system-pages test-confirmation test-booking-fields; do
 	run "$t" $WP eval-file "$DIR/$t.php"
 done
 $WP option update WPLANG bg_BG >/dev/null 2>&1

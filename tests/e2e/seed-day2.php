@@ -68,4 +68,5 @@ foreach ( $results as $id => $r ) {
 	echo $cal['name'] . ': ' . ( is_wp_error( $r ) ? 'ERROR ' . $r->get_error_message() : $r['total'] . ' bookings' ) . "\n";
 }
 echo 'conflicts: ' . count( Flexo_Booking_ICal::open_conflicts() ) . "\n";
+t_legacy_pages();
 echo 'D0=' . t_day( 0 ) . "\n";

@@ -94,31 +94,8 @@ defined( 'ABSPATH' ) || exit;
 		<p class="fb-required-note"><?php esc_html_e( 'Fields marked * are required.', 'flexo-booking' ); ?></p>
 
 		<div class="fb-grid">
-			<div class="fb-field">
-				<label for="<?php echo esc_attr( $uid ); ?>-name"><?php esc_html_e( 'Full name', 'flexo-booking' ); ?> <span class="fb-req" aria-hidden="true">*</span></label>
-				<input id="<?php echo esc_attr( $uid ); ?>-name" type="text" name="guest_name" required autocomplete="name" autocapitalize="words" enterkeyhint="next">
-			</div>
-			<div class="fb-field">
-				<label for="<?php echo esc_attr( $uid ); ?>-email"><?php esc_html_e( 'Email', 'flexo-booking' ); ?> <span class="fb-req" aria-hidden="true">*</span></label>
-				<input id="<?php echo esc_attr( $uid ); ?>-email" type="email" name="guest_email" required autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" enterkeyhint="next" aria-describedby="<?php echo esc_attr( $uid ); ?>-email-hint">
-				<small class="fb-hint" id="<?php echo esc_attr( $uid ); ?>-email-hint"><?php esc_html_e( 'We send your confirmation here.', 'flexo-booking' ); ?></small>
-			</div>
-			<?php $phone_mode = isset( $settings['field_phone'] ) ? $settings['field_phone'] : 'required'; ?>
-			<?php if ( 'hidden' !== $phone_mode ) : ?>
-				<div class="fb-field fb-field--phone">
-					<label for="<?php echo esc_attr( $uid ); ?>-phone"><?php esc_html_e( 'Phone', 'flexo-booking' ); ?><?php echo 'required' === $phone_mode ? ' <span class="fb-req" aria-hidden="true">*</span>' : ' <span class="fb-optional">' . esc_html__( '(optional)', 'flexo-booking' ) . '</span>'; ?></label>
-					<div class="fb-phone">
-						<?php echo Flexo_Booking_Frontend::phone_country_select( $uid ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in phone_country_select(). ?>
-						<input id="<?php echo esc_attr( $uid ); ?>-phone" type="tel" name="guest_phone" <?php echo 'required' === $phone_mode ? 'required' : ''; ?> autocomplete="tel" inputmode="tel" enterkeyhint="next">
-					</div>
-				</div>
-			<?php endif; ?>
-			<?php if ( ! isset( $settings['field_notes'] ) || 'hidden' !== $settings['field_notes'] ) : ?>
-				<div class="fb-field fb-field--wide">
-					<label for="<?php echo esc_attr( $uid ); ?>-notes"><?php esc_html_e( 'Special requests', 'flexo-booking' ); ?> <span class="fb-optional"><?php esc_html_e( '(optional)', 'flexo-booking' ); ?></span></label>
-					<textarea id="<?php echo esc_attr( $uid ); ?>-notes" name="notes" rows="3" placeholder="<?php esc_attr_e( 'e.g. late arrival, baby cot, quiet room', 'flexo-booking' ); ?>"></textarea>
-				</div>
-			<?php endif; ?>
+			<?php // Name, email, phone and special requests: texts, order and phone / requests settings from Settings → Pages → Booking. ?>
+			<?php echo Flexo_Booking_Forms::booking_fields_html( $uid, $settings ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in booking_fields_html(). ?>
 		</div>
 
 		<div class="fb-hp" aria-hidden="true">

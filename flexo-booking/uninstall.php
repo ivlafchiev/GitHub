@@ -31,7 +31,7 @@ foreach ( $flexo_rooms as $flexo_room_id ) {
 foreach ( array( 'bookings', 'seasons', 'closures', 'calendars', 'calendar_events', 'rate_plans', 'promo_codes', 'consents', 'invoices', 'email_log', 'payments', 'webhook_events', 'booking_log' ) as $flexo_table ) {
 	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}flexo_{$flexo_table}" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 }
-foreach ( array( 'flexo_booking_settings', 'flexo_booking_db_version', 'flexo_booking_enabled_features', 'flexo_booking_available_features', 'flexo_booking_migration_error', 'flexo_booking_add_rate_plan_presets', 'flexo_booking_smtp_notice', 'flexo_booking_payment_secrets', 'flexo_booking_wizard', 'flexo_booking_wizard_redirect', 'flexo_booking_support', 'flexo_booking_cron_last', 'flexo_booking_stripe_check', 'flexo_booking_last_test_email', 'flexo_booking_flush_rewrite', 'flexo_booking_room_bases', 'flexo_booking_prices_version' ) as $flexo_option ) {
+foreach ( array( 'flexo_booking_settings', 'flexo_booking_db_version', 'flexo_booking_enabled_features', 'flexo_booking_available_features', 'flexo_booking_migration_error', 'flexo_booking_add_rate_plan_presets', 'flexo_booking_smtp_notice', 'flexo_booking_payment_secrets', 'flexo_booking_wizard', 'flexo_booking_wizard_redirect', 'flexo_booking_support', 'flexo_booking_cron_last', 'flexo_booking_stripe_check', 'flexo_booking_last_test_email', 'flexo_booking_flush_rewrite', 'flexo_booking_room_bases', 'flexo_booking_prices_version', 'flexo_booking_pages', 'flexo_booking_forms', 'flexo_booking_overlay_header' ) as $flexo_option ) {
 	delete_option( $flexo_option );
 }
 wp_clear_scheduled_hook( 'flexo_booking_ical_sync' );

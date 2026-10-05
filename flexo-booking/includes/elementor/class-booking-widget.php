@@ -229,7 +229,8 @@ class Flexo_Booking_Elementor_Widget extends Widget_Base {
 			array(
 				'layout'       => $settings['layout'],
 				'room'         => $settings['room'],
-				'booking_page' => $settings['booking_page'] ? $settings['booking_page'] : '/booking/',
+				// Empty: the Booking page of Settings → Pages.
+				'booking_page' => $settings['booking_page'],
 				'title'        => $settings['title'],
 				'button_text'  => $settings['button_text'],
 			)

@@ -142,6 +142,7 @@ class Flexo_Booking_Wizard {
 		$settings                 = Flexo_Booking_Settings::all();
 		$settings['booking_page'] = wp_make_link_relative( get_permalink( $id ) );
 		update_option( Flexo_Booking_Settings::OPTION, $settings );
+		Flexo_Booking_System_Pages::update( array( 'booking' => array( 'source' => 'page', 'page_id' => $id ) ) );
 		Flexo_Booking_Guest::forget_booking_page();
 		return $id;
 	}
@@ -271,7 +272,11 @@ class Flexo_Booking_Wizard {
 				}
 				break;
 			case 'page':
-				$choice = isset( $post['page_choice'] ) ? sanitize_key( $post['page_choice'] ) : 'create';
+				$choice = isset( $post['page_choice'] ) ? sanitize_key( $post['page_choice'] ) : 'builtin';
+				if ( 'builtin' === $choice ) {
+					Flexo_Booking_System_Pages::update( array( 'booking' => array( 'source' => 'builtin' ) ) );
+					return '';
+				}
 				if ( 'create' === $choice ) {
 					$created = self::create_page();
 					if ( is_wp_error( $created ) ) {
@@ -294,6 +299,7 @@ class Flexo_Booking_Wizard {
 					);
 				}
 				$settings['booking_page'] = wp_make_link_relative( get_permalink( $page ) );
+				Flexo_Booking_System_Pages::update( array( 'booking' => array( 'source' => 'page', 'page_id' => $page ) ) );
 				Flexo_Booking_Guest::forget_booking_page();
 				break;
 			case 'emails':
@@ -458,7 +464,15 @@ class Flexo_Booking_Wizard {
 					<?php endif; ?>
 					<fieldset>
 						<legend class="screen-reader-text"><?php esc_html_e( 'Booking page', 'flexo-booking' ); ?></legend>
-						<label class="flexo-choice-card"><input type="radio" name="page_choice" value="create" <?php checked( ! $current ); ?>>
+						<label class="flexo-choice-card"><input type="radio" name="page_choice" value="builtin" <?php checked( ! $current ); ?>>
+							<strong><?php esc_html_e( 'Use the ready-made booking page (recommended)', 'flexo-booking' ); ?></strong>
+							<span>
+								<?php
+								/* translators: %s: address, e.g. /booking/ */
+								printf( esc_html__( 'Works right away at %s, with your website\'s header and footer. Customize it under Settings → Pages.', 'flexo-booking' ), esc_html( wp_make_link_relative( Flexo_Booking_System_Pages::builtin_url( 'booking' ) ) ) );
+								?>
+							</span></label>
+						<label class="flexo-choice-card"><input type="radio" name="page_choice" value="create">
 							<strong><?php esc_html_e( 'Create a "Book your stay" page for me', 'flexo-booking' ); ?></strong>
 							<span><?php esc_html_e( 'You can design it later with Elementor – the form is the "Flexo Booking Form" widget.', 'flexo-booking' ); ?></span></label>
 						<label class="flexo-choice-card"><input type="radio" name="page_choice" value="existing" <?php checked( (bool) $current ); ?>>
@@ -494,7 +508,7 @@ class Flexo_Booking_Wizard {
 					</fieldset>
 
 				<?php else : ?>
-					<?php $page = Flexo_Booking_Guest::booking_page_url(); ?>
+					<?php $page = Flexo_Booking_Guest::guest_page_url(); ?>
 					<?php if ( ! $page ) : ?>
 						<p><?php esc_html_e( 'First create the booking page (step "Booking page").', 'flexo-booking' ); ?></p>
 					<?php else : ?>

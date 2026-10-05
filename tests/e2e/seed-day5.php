@@ -61,4 +61,5 @@ wp_insert_post( array( 'post_type' => 'page', 'post_title' => 'Thank you', 'post
 if ( file_exists( WP_CONTENT_DIR . '/mail.log' ) ) {
 	unlink( WP_CONTENT_DIR . '/mail.log' );
 }
+t_legacy_pages();
 echo 'D0=' . t_day( 0 ) . "\n";

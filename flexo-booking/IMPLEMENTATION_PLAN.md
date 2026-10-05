@@ -1,6 +1,6 @@
-# Flexo Booking: implementation plan (Days 1–7)
+# Flexo Booking: implementation plan (Days 1–7, 1.9.0)
 
-Status: **All six days done (1.6.0); admin redesign done (1.7.0, §16); Day 7 planned (§17, waiting for approval).** Day 1 (1.1.0) is in §9, Day 2
+Status: **Days 1–7 done (1.8.x); admin redesign done (1.7.0, §16); Day 7 in §17; 1.9.0 system pages in §18 – Session A done (§18.13), Sessions B and C waiting for approval.** Day 1 (1.1.0) is in §9, Day 2
 (1.2.0) in §10, Day 3 (1.3.0) in §11, Day 4 (1.4.0) in §12 and Day 5 (1.5.0)
 in §13, each with what was built, the deviations and the test results. §14
 is the status after Day 5. §15 is Day 6 (1.6.0, usability and appearance,
@@ -1683,7 +1683,7 @@ data hand-over was tested through their filters (`wpseo_schema_graph`,
 
 ## 18. 1.9.0 plan: system pages (Booking, Thank You, Contact)
 
-Status: **plan only – waiting for approval before Session A.** Written after
+Status: **approved; Session A done (see 18.13); Sessions B and C waiting.** Written after
 auditing 1.8.3 (plugin header `Version: 1.8.3`, migrations at 8). Sections
 refer to the brief's letters (A–AP).
 
@@ -2019,3 +2019,128 @@ New checks:
   It is covered by upgrade tests from 1.0.0, 1.5.0, 1.7.0 and 1.8.3 fixtures
   (the 1.8.3 fixture with an own booking page, a `thank_you_url`, a
   `/contact/` page and a `/thank-you/` page).
+
+### 18.13 Session A: status, deviations and test results
+
+Built as planned in 18.2–18.10, with the approved answers of 18.11.
+The version stays **1.8.3** until Session C (AK); migrations are at **9**.
+
+**What already existed and was reused**
+- The 1.8.3 built-in `/booking/` route: became the System Pages router.
+- `Flexo_Booking_Frontend::render()`: the only booking form, on the built-in page too.
+- `Flexo_Booking_Guest::view()` and `Payments::guest_view()`: the Thank You page's data.
+- Payment return and polling in booking.js; `trackComplete()` (once per reference).
+- The nonce-free public REST API.
+- The `field_phone` / `field_notes` settings.
+- `page-shell.php`, `clearOverlayHeader()`, `I18n::page_url()` / `translate()`.
+
+**New files**
+
+| File | Role |
+|---|---|
+| `includes/class-system-pages.php` | Registry, option `flexo_booking_pages` (merge sanitiser, slug history), URLs per language, collisions, routing on the 404 path, serving, booking-page view model, header styles, overlay report (REST `overlay-header`, admins only), sitemap, Yoast sitemap, Elementor Pro condition |
+| `includes/class-confirmation.php` | Hand-off token, cookie, booking context, Thank You view model, sections/order/texts/layouts renderer, the hotel's preview with sample data |
+| `includes/class-forms.php` | Option `flexo_booking_forms`: booking field labels, example texts, help texts and order (`flexo_booking_guest_fields` filter) |
+| `includes/class-page-cache.php` | No-cache headers, `DONOTCACHEPAGE` & co., LiteSpeed action, WP Rocket rejected URIs, detection of caching plugins for Health |
+| `includes/class-page-seo.php` | Titles, description, canonical, robots (core, Yoast, Rank Math filters) |
+| `includes/class-sitemap-provider.php` | WordPress core sitemap of Booking (and Contact) |
+| `includes/elementor/class-system-page-condition.php` | Pro Theme Builder condition *General → Flexo Booking pages* (loaded only with Pro) |
+| `includes/admin/class-pages-admin.php`, `assets/js/admin-pages.js` | Settings → **Pages** tab |
+| `templates/system-page-booking.php`, `system-page-thank-you.php`, `confirmation.php` | Presentation only (view models prepared by the classes) |
+
+**Changed:**
+- `class-frontend.php`: the route moved out; the search bar defaults to the Booking page; config for the overlay report and texts.
+- `class-guest.php`: booking page URLs come from the system pages; `detect_booking_page_id()` (database only, for the migration).
+- `class-rest.php`: hand-off URL for bookings and confirmed payments.
+- `class-migrations.php`: migration 9 (remembers fresh vs upgrade).
+- `class-settings.php`: Pages tab; Hotel tab points to it.
+- `class-health.php`: system page checks; system report.
+- `class-i18n.php`, `class-room-pages.php`.
+- `admin/class-wizard.php`: the built-in page is the first choice.
+- `admin/class-admin-ui.php`, `admin/class-today-admin.php`: links use the page guests get.
+- `elementor/class-booking-widget.php`.
+- `templates/booking-form.php`: fields come from `Flexo_Booking_Forms`, with the same ids and names.
+- `booking.js`, `booking.css`, `admin.css`, `uninstall.php`, languages (+188 strings, BG complete).
+
+**Removed:**
+- `templates/booking-page.php`, replaced by `system-page-booking.php`. Theme copies of the old name are still used.
+- `Flexo_Booking_Frontend::builtin_page()`, moved to `Flexo_Booking_System_Pages::route()`.
+
+**Migration 9 (settings only, idempotent):** as in 18.3. The pages are
+found in the database only, because migrations run before WordPress can
+build addresses.
+- Fresh install: built-in Booking and Thank You (*separate*), Contact on.
+- Upgrade: an own booking page set or found is kept; `thank_you_url` gives *separate* + own page; otherwise *inline*. Thank You and Contact are off.
+
+**Routes:**
+- `/booking/` and `/thank-you/` (slugs editable; `/xx/` language prefix; `?flexo_page=` on plain permalinks).
+- Old slugs → 301; the built-in slug → 302 to the own page.
+- `/thank-you/?fb_t=…` → 303 to the clean address.
+- REST `POST flexo-booking/v1/overlay-header` (manage_options).
+- Sitemap `wp-sitemap-flexobooking-pages-1.xml`.
+
+**Deviations from the plan and the brief (please review)**
+1. **Own booking page is an explicit choice.** 1.8.3 adopted any page with the form automatically. Now a new page with the form is used once it is chosen under Settings → Pages (upgrades keep the page found at migration time; Health and the Hotel tab show the page in use and mention a page with the form that is not chosen).
+2. **The built-in Booking page is indexable by default** (brief AP); in 1.8.3 it was noindex. Health shows it as OK instead of a warning.
+3. **"Normal" header style keeps the 1.8.3 automatic move** below a header lying over the page (rather than literally nothing), so existing sites look as before. The overlay hint comes from an administrator's own visit (the browser reports it; there is no server-side way to know).
+4. **Own (legacy) Thank You page:**
+   - It also gets the one-time token: one extra 303 hop to the same `?booking=REF` address.
+   - It is never cached, so the Session C widget can use the same cookie.
+   - It still shows only the page as designed.
+5. **The old `thank_you_url` setting alone no longer switches the mode.**
+   - Upgrades are migrated, and the field moved to Pages → Thank You → own page (advanced).
+   - Code that writes the raw option after the upgrade must also set `after_booking` (one browser test did this and was updated).
+6. **Guest key in the address (decision 3):**
+   - Removed for the inline confirmation (`fb_done`) and the Stripe return.
+   - Kept in "Manage your booking" email links (T: no redesign); those pages get `no-store` + `no-referrer` instead.
+7. **Contact is not routed in Session A.**
+   - The option, migration and collision checks already know it.
+   - Its card, route and tests come in Session B.
+   - The Pages screen's Appearance part is a pointer to Bookings → Appearance (O is Session C).
+8. **Rank Math sitemap:** no integration (no stable filter verified); documented as "add by hand".
+9. **Logged-in editors** see a draft page at the same address instead of the built-in page. This is WordPress's normal draft preview; visitors are not affected.
+
+**Tests (MariaDB site, Twenty Twenty-Five):**
+
+| Suite | Result |
+|---|---|
+| `test-system-pages.php` (new) | 112 passed |
+| `test-confirmation.php` (new, incl. two guests behind a page cache) | 70 passed |
+| `test-booking-fields.php` (new) | 36 passed |
+| `tests/run.sh` (all PHP suites, i18n, constants, 3 concurrency races) | see 18.13 final run below |
+| `e2e/day8.js` (new) | 46 passed |
+| e2e days 1–7 | see below |
+| Upgrade 1.0.0 / 1.5.0 / 1.7.0 / 1.8.3 → Session A (with own booking, thank-you and contact pages) | 34 passed each |
+| Fresh install | built-in Booking + Thank You (separate) + Contact on, no early-translation notices |
+| Polylang site | `polylang-test.php` 21, `polylang-day7.php` 25; built-in pages in Bulgarian at `/pll-book/` and English at `/en/pll-book/` |
+
+Updated existing tests (intended 1.9.0 behaviour):
+- `test-booking-page.php`: indexable; Health OK; an own page is used once chosen.
+- `test-day5.php`: runs as an upgraded site.
+- `test-day6.php`: missing own page → warning; the wizard chooses the page.
+- `test-day7.php`: migration ≥ 8.
+- `e2e/day4.js`: the own thank-you page chosen under Pages; the redirect address has `fb_t`.
+- `e2e/day6.js`: `fb_done` without `fb_key`.
+- `polylang-test.php`: the redirect has `fb_t`.
+- `upgrade-*.php`: pages.
+- Seeds: `t_legacy_pages()`.
+
+**Not verified here (needs the client environment)**
+- Elementor Pro Theme Builder with the Azure template at 1440/1024/768/390. Elementor Pro is not available here; an overlay header was simulated in the browser test.
+- The *Flexo Booking pages* condition, Yoast SEO, Rank Math, LiteSpeed Cache and WP Rocket. Their hooks and filters are called directly in the tests, without the plugins installed.
+
+**Manual QA for Session A**
+1. On a staging copy of a live site, update and open **Settings → Pages**:
+   - Booking shows your page.
+   - "After a booking" is unchanged.
+   - Thank You is off.
+   - `/contact/` and `/thank-you/` show your pages.
+2. Switch to **Separate Thank You page**, choose *Flexo built-in page*, switch it on, save, and make a test booking:
+   - the address is `/thank-you/` without anything after it;
+   - Back and refresh are fine.
+3. Open `/thank-you/` in a private window: you get only the general text.
+4. With a bank transfer booking: bank details on the Thank You page.
+5. With Stripe test mode: the card returns to the booking page, then Thank You with *Payment received*.
+6. **Preview with a sample booking**: try every case, reorder sections, switch layouts.
+7. With the Azure header, try the three header styles at 1440/1024/768/390. In Elementor Pro, check which header conditions show and try *Flexo Booking pages*.
+8. With LiteSpeed / WP Rocket / Cloudflare: check that `/thank-you/` is never served from the cache (response headers) and that Health lists no manual rule, or add the listed rules.

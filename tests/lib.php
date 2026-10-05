@@ -73,3 +73,19 @@ function t_reset_inventory() {
 	Flexo_Booking_Seasons::flush_cache();
 	Flexo_Booking_Closures::flush_cache();
 }
+
+/**
+ * System pages as on a site upgraded from 1.8 (migration 9 decides from the
+ * current settings and pages): what the Day 1–7 tests expect. Seeds call it
+ * after creating their pages.
+ */
+function t_legacy_pages() {
+	delete_option( Flexo_Booking_System_Pages::OPTION );
+	Flexo_Booking_Guest::forget_booking_page();
+	$fresh = new ReflectionProperty( 'Flexo_Booking_Migrations', 'fresh' );
+	$fresh->setAccessible( true );
+	$fresh->setValue( null, false );
+	$step = new ReflectionMethod( 'Flexo_Booking_Migrations', 'migrate_9_system_pages' );
+	$step->setAccessible( true );
+	$step->invoke( null );
+}

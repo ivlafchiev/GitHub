@@ -139,6 +139,8 @@ async function fillGuest( p, name, email ) {
 
 	section( 'Tracking: thank-you page redirect and Meta Pixel' );
 	wp( 'update_option( "flexo_booking_settings", array_merge( Flexo_Booking_Settings::all(), array( "thank_you_url" => "/thank-you/", "tracking_meta_pixel" => 1 ) ) );' );
+	// 1.9.0: the own thank-you page is chosen under Settings → Pages (the 1.8 address still works there).
+	wp( 'Flexo_Booking_System_Pages::update( array( "after_booking" => "separate", "thank_you" => array( "source" => "page", "page_id" => 0 ) ) );' );
 	await guest.evaluate( () => { sessionStorage.removeItem( 'e2e_events' ); sessionStorage.removeItem( 'e2e_fbq' ); } );
 	await toDetails( guest, 40, 42 );
 	await fillGuest( guest, 'Petar Petrov', 'petar@example.com' );
@@ -153,6 +155,7 @@ async function fillGuest( p, name, email ) {
 	await guest.reload();
 	ok( ( await events( guest ) ).filter( ( e ) => e.event === 'booking_complete' ).length === 1, 'reloading the thank-you page fires nothing' );
 	wp( 'update_option( "flexo_booking_settings", array_merge( Flexo_Booking_Settings::all(), array( "thank_you_url" => "", "tracking_meta_pixel" => 0 ) ) );' );
+	wp( 'Flexo_Booking_System_Pages::update( array( "after_booking" => "inline", "thank_you" => array( "source" => "builtin" ) ) );' );
 
 	section( 'Guest: phone' );
 	const phoneCtx = await browser.newContext( { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } );

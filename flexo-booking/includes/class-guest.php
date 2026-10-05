@@ -67,31 +67,28 @@ class Flexo_Booking_Guest {
 	}
 
 	/**
-	 * The page with the full booking form: the setting, else found
-	 * automatically, in the guest's language when the site is multilingual.
+	 * The hotel's own booking page (Settings → Pages → Booking → "Use my own
+	 * page"), in the guest's language when the site is multilingual; '' when
+	 * the built-in Booking page is used.
 	 */
 	public static function booking_page_url( $locale = '' ) {
-		$url = Flexo_Booking_Settings::site_url_setting( 'booking_page' );
-		if ( '' === $url ) {
-			$url = self::detect_booking_page();
-		}
-		return '' === $url ? '' : Flexo_Booking_I18n::page_url( $url, $locale );
+		return Flexo_Booking_System_Pages::own_page_url( 'booking', $locale );
 	}
 
 	/**
-	 * Address of the built-in booking page (see Flexo_Booking_Frontend::builtin_page()).
+	 * Address of the built-in Booking page (/booking/ by default).
 	 */
 	public static function builtin_page_url() {
-		return home_url( '/booking/' );
+		return Flexo_Booking_System_Pages::builtin_url( 'booking' );
 	}
 
 	/**
-	 * The booking page for guests: the real one, else the built-in page,
+	 * The booking page for guests: the own page, else the built-in page,
 	 * so links never lead to "Page not found".
 	 */
 	public static function guest_page_url( $locale = '' ) {
-		$url = self::booking_page_url( $locale );
-		return '' !== $url ? $url : self::builtin_page_url();
+		$url = Flexo_Booking_System_Pages::url( 'booking', $locale );
+		return '' !== $url ? $url : Flexo_Booking_System_Pages::builtin_url( 'booking', $locale );
 	}
 
 	/**
@@ -103,33 +100,38 @@ class Flexo_Booking_Guest {
 		if ( false !== $cached ) {
 			return (string) $cached;
 		}
+		$id  = self::detect_booking_page_id();
+		$url = $id ? (string) get_permalink( $id ) : '';
+		set_transient( self::PAGE_TRANSIENT, $url, 12 * HOUR_IN_SECONDS );
+		return $url;
+	}
+
+	/**
+	 * ID of the first published page with the full booking form (0: none).
+	 * Database only, so it also works before WordPress builds addresses.
+	 */
+	public static function detect_booking_page_id() {
 		global $wpdb;
-		$url = '';
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery
 		$ids = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_type = 'page' AND post_status = 'publish' AND post_content LIKE %s ORDER BY menu_order, ID LIMIT 20", '%' . $wpdb->esc_like( '[flexo_booking' ) . '%' ) );
 		foreach ( $ids as $id ) {
 			if ( preg_match_all( '/\[flexo_booking([^\]]*)\]/', (string) get_post_field( 'post_content', $id ), $m ) ) {
 				foreach ( $m[1] as $attrs ) {
 					if ( ! preg_match( '/layout\s*=\s*["\']?search/', $attrs ) ) {
-						$url = get_permalink( $id );
-						break 2;
+						return (int) $id;
 					}
 				}
 			}
 		}
-		if ( '' === $url ) {
-			$ids = $wpdb->get_col( $wpdb->prepare( "SELECT p.ID FROM {$wpdb->posts} p INNER JOIN {$wpdb->postmeta} m ON m.post_id = p.ID AND m.meta_key = '_elementor_data' WHERE p.post_type = 'page' AND p.post_status = 'publish' AND m.meta_value LIKE %s ORDER BY p.menu_order, p.ID LIMIT 20", '%' . $wpdb->esc_like( 'flexo-booking-form' ) . '%' ) );
-			foreach ( $ids as $id ) {
-				$data = json_decode( (string) get_post_meta( $id, '_elementor_data', true ), true );
-				if ( self::elementor_has_full_form( is_array( $data ) ? $data : array() ) ) {
-					$url = get_permalink( $id );
-					break;
-				}
+		$ids = $wpdb->get_col( $wpdb->prepare( "SELECT p.ID FROM {$wpdb->posts} p INNER JOIN {$wpdb->postmeta} m ON m.post_id = p.ID AND m.meta_key = '_elementor_data' WHERE p.post_type = 'page' AND p.post_status = 'publish' AND m.meta_value LIKE %s ORDER BY p.menu_order, p.ID LIMIT 20", '%' . $wpdb->esc_like( 'flexo-booking-form' ) . '%' ) );
+		// phpcs:enable
+		foreach ( $ids as $id ) {
+			$data = json_decode( (string) get_post_meta( $id, '_elementor_data', true ), true );
+			if ( self::elementor_has_full_form( is_array( $data ) ? $data : array() ) ) {
+				return (int) $id;
 			}
 		}
-		// phpcs:enable
-		set_transient( self::PAGE_TRANSIENT, (string) $url, 12 * HOUR_IN_SECONDS );
-		return (string) $url;
+		return 0;
 	}
 
 	private static function elementor_has_full_form( array $elements ) {

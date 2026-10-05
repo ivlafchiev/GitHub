@@ -170,6 +170,8 @@ class Flexo_Booking_I18n {
 				$strings[ $key ] = $value;
 			}
 		}
+		// 1.9.0: texts of the system pages and the booking form fields.
+		$strings = array_merge( $strings, Flexo_Booking_System_Pages::translatable_strings(), Flexo_Booking_Forms::translatable_strings() );
 		foreach ( Flexo_Booking_Rate_Plans::all() as $plan ) {
 			$strings[ 'rate_plan_' . $plan['id'] . '_name' ] = $plan['name'];
 			if ( '' !== $plan['description'] ) {

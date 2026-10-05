@@ -363,7 +363,7 @@ class Flexo_Booking_Today_Admin {
 		if ( ! is_admin() || ! current_user_can( Flexo_Booking_Admin::capability() ) ) {
 			return;
 		}
-		$url = Flexo_Booking_Guest::booking_page_url();
+		$url = Flexo_Booking_Guest::guest_page_url();
 		if ( '' === $url ) {
 			return;
 		}
@@ -475,7 +475,7 @@ class Flexo_Booking_Today_Admin {
 		$week       = self::period( $today, Flexo_Booking_Dates::add_days( $today, 7 ) );
 		$month      = self::occupancy( wp_date( 'Y-m-01' ) );
 		$items      = self::attention();
-		$page       = Flexo_Booking_Guest::booking_page_url();
+		$page       = Flexo_Booking_Guest::guest_page_url();
 		$arrivals   = self::arrivals( $today );
 		$departures = self::departures( $today );
 		$staying    = self::staying( $today );

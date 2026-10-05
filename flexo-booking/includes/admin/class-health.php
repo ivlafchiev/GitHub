@@ -89,17 +89,9 @@ class Flexo_Booking_Health {
 			$add( 'room_pages', 'ok', __( 'Room pages', 'flexo-booking' ), sprintf( __( 'Rooms have their own pages at /%s/…', 'flexo-booking' ), $base ) );
 		}
 
-		// Booking page.
-		Flexo_Booking_Guest::forget_booking_page();
-		$detected = Flexo_Booking_Guest::detect_booking_page();
-		$page     = Flexo_Booking_Guest::booking_page_url();
-		if ( '' === $page ) {
-			/* translators: %s: address, e.g. /booking/ */
-			$add( 'booking_page', 'warning', __( 'Booking page', 'flexo-booking' ), sprintf( __( 'No page of your website has the booking form yet, so guests get the plugin\'s built-in booking page at %s (with your header and footer). Create your own page to design it in Elementor.', 'flexo-booking' ), wp_make_link_relative( Flexo_Booking_Guest::builtin_page_url() ) ), array( __( 'Create the booking page', 'flexo-booking' ), Flexo_Booking_Wizard::create_page_url() ) );
-		} elseif ( '' === $detected ) {
-			$add( 'booking_page', 'warning', __( 'Booking page', 'flexo-booking' ), __( 'The booking page set under Settings → Hotel does not seem to contain the booking form (shortcode [flexo_booking] or the Elementor widget). Check that the page is published and has the form.', 'flexo-booking' ), array( __( 'Open the page', 'flexo-booking' ), $page ) );
-		} else {
-			$add( 'booking_page', 'ok', __( 'Booking page', 'flexo-booking' ), wp_make_link_relative( $page ), array( __( 'Open', 'flexo-booking' ), $page ) );
+		// System pages (1.9.0): Booking, Thank You, Contact.
+		foreach ( self::system_page_checks() as $check ) {
+			$add( $check['id'], $check['status'], $check['title'], $check['text'], $check['action'] );
 		}
 
 		// Email sending.
@@ -262,7 +254,10 @@ class Flexo_Booking_Health {
 			'Payments: ' . ( Flexo_Booking_Payments::enabled() ? $s['payment_mode'] . ' · Stripe ' . $s['stripe_mode'] . ' · keys ' . ( '' !== $secrets[ 'stripe_' . $s['stripe_mode'] . '_secret_key' ] ? 'entered' : 'missing' ) : 'off' ),
 			'Appearance: ' . Flexo_Booking_Appearance::mode(),
 			'Rooms: ' . count( Flexo_Booking_Rooms::all() ) . ' · Bookings: ' . $count,
-			'Booking page: ' . ( Flexo_Booking_Guest::booking_page_url() ? wp_make_link_relative( Flexo_Booking_Guest::booking_page_url() ) : 'missing' ),
+			'Booking page: ' . wp_make_link_relative( Flexo_Booking_Guest::guest_page_url() ) . ( '' === Flexo_Booking_Guest::booking_page_url() ? ' (built-in)' : ' (own page)' ),
+			'Thank You page: ' . ( Flexo_Booking_Confirmation::separate() ? wp_make_link_relative( Flexo_Booking_System_Pages::url( 'thank_you' ) ) : 'in the booking form' ),
+			'Header style: ' . Flexo_Booking_System_Pages::get_header_style(),
+			'Page caches: ' . ( Flexo_Booking_Page_Cache::detected() ? implode( ', ', wp_list_pluck( Flexo_Booking_Page_Cache::detected(), 'name' ) ) : 'none found' ),
 			'',
 			'Checks:',
 		);
@@ -270,6 +265,117 @@ class Flexo_Booking_Health {
 			$lines[] = '- [' . strtoupper( $check['status'] ) . '] ' . $check['title'] . ': ' . $check['text'];
 		}
 		return implode( "\n", $lines );
+	}
+
+	/**
+	 * Booking, Thank You and Contact pages, address clashes, page caches
+	 * and the header (1.9.0).
+	 *
+	 * @return array[] Same shape as checks().
+	 */
+	public static function system_page_checks() {
+		$out   = array();
+		$pages = admin_url( 'admin.php?page=' . Flexo_Booking_Admin::MENU_SLUG . '-settings&tab=pages' );
+		$add   = static function ( $id, $status, $title, $text, $action = null ) use ( &$out ) {
+			$out[] = compact( 'id', 'status', 'title', 'text', 'action' );
+		};
+		$all   = Flexo_Booking_System_Pages::all();
+
+		// Booking.
+		$title = __( 'Booking page', 'flexo-booking' );
+		$page  = $all['booking'];
+		Flexo_Booking_Guest::forget_booking_page();
+		if ( 'page' === $page['source'] && '' !== Flexo_Booking_System_Pages::own_page_url( 'booking' ) ) {
+			$url = Flexo_Booking_System_Pages::own_page_url( 'booking' );
+			$id  = (int) $page['page_id'];
+			$has = $id ? self::page_has_form( $id ) : '' !== Flexo_Booking_Guest::detect_booking_page();
+			if ( ! $has ) {
+				$add( 'booking_page', 'warning', $title, __( 'Your booking page does not seem to contain the booking form (the Flexo Booking Form widget or the [flexo_booking] shortcode). Add it, or use the built-in booking page.', 'flexo-booking' ), array( __( 'Open the page', 'flexo-booking' ), $url ) );
+			} else {
+				/* translators: %s: page address */
+				$add( 'booking_page', 'ok', $title, sprintf( __( 'Your own page: %s', 'flexo-booking' ), wp_make_link_relative( $url ) ), array( __( 'Open', 'flexo-booking' ), $url ) );
+			}
+		} elseif ( 'page' === $page['source'] ) {
+			/* translators: %s: address */
+			$add( 'booking_page', 'warning', $title, sprintf( __( 'The page chosen as booking page is missing or not published. Meanwhile guests get the built-in booking page at %s. Publish the page or choose another one.', 'flexo-booking' ), wp_make_link_relative( Flexo_Booking_System_Pages::builtin_url( 'booking' ) ) ), array( __( 'Settings → Pages', 'flexo-booking' ), $pages ) );
+		} else {
+			$hit = Flexo_Booking_System_Pages::collision( 'booking' );
+			if ( $hit ) {
+				$add( 'booking_page', 'warning', $title, Flexo_Booking_Pages_Admin::collision_text( 'booking', $hit, Flexo_Booking_System_Pages::slug( 'booking' ) ), array( __( 'Settings → Pages', 'flexo-booking' ), $pages ) );
+			} else {
+				$url  = Flexo_Booking_System_Pages::builtin_url( 'booking' );
+				/* translators: %s: address */
+				$text = sprintf( __( 'The built-in booking page works at %s, with your header and footer.', 'flexo-booking' ), wp_make_link_relative( $url ) );
+				$found = Flexo_Booking_Guest::detect_booking_page();
+				if ( '' !== $found ) {
+					/* translators: %s: page address */
+					$text .= ' ' . sprintf( __( 'Your page %s also has the booking form – to use it instead, choose it under Settings → Pages.', 'flexo-booking' ), wp_make_link_relative( $found ) );
+				}
+				$add( 'booking_page', 'ok', $title, $text, array( __( 'Open', 'flexo-booking' ), $url ) );
+			}
+		}
+
+		// Thank You.
+		$title = __( 'Thank You page', 'flexo-booking' );
+		$page  = $all['thank_you'];
+		if ( 'separate' !== $all['after_booking'] ) {
+			$add( 'thank_you_page', 'ok', $title, __( 'Guests see their confirmation in the booking form.', 'flexo-booking' ) );
+		} elseif ( 'page' === $page['source'] ) {
+			$url = Flexo_Booking_System_Pages::own_page_url( 'thank_you' );
+			if ( '' === $url ) {
+				$add( 'thank_you_page', 'warning', $title, __( 'The page chosen as Thank You page is missing or not published, so guests see their confirmation in the booking form. Publish the page, choose another one or use the built-in Thank You page.', 'flexo-booking' ), array( __( 'Settings → Pages', 'flexo-booking' ), $pages ) );
+			} else {
+				/* translators: %s: page address */
+				$add( 'thank_you_page', 'ok', $title, sprintf( __( 'Your own page: %s', 'flexo-booking' ), wp_make_link_relative( $url ) ), array( __( 'Open', 'flexo-booking' ), $url ) );
+			}
+		} elseif ( empty( $page['enabled'] ) ) {
+			$add( 'thank_you_page', 'warning', $title, __( '"Separate Thank You page" is chosen, but the built-in Thank You page is switched off, so guests see their confirmation in the booking form. Switch the page on, or choose your own page.', 'flexo-booking' ), array( __( 'Settings → Pages', 'flexo-booking' ), $pages ) );
+		} else {
+			$hit = Flexo_Booking_System_Pages::collision( 'thank_you' );
+			if ( $hit ) {
+				$add( 'thank_you_page', 'warning', $title, Flexo_Booking_Pages_Admin::collision_text( 'thank_you', $hit, Flexo_Booking_System_Pages::slug( 'thank_you' ) ) . ' ' . __( 'Until then guests see their confirmation in the booking form.', 'flexo-booking' ), array( __( 'Settings → Pages', 'flexo-booking' ), $pages ) );
+			} else {
+				/* translators: %s: address */
+				$add( 'thank_you_page', 'ok', $title, sprintf( __( 'Guests go to %s after booking. It shows their booking securely for 60 minutes and is never cached or indexed.', 'flexo-booking' ), wp_make_link_relative( Flexo_Booking_System_Pages::builtin_url( 'thank_you' ) ) ), array( __( 'Preview', 'flexo-booking' ), Flexo_Booking_Confirmation::preview_url( 'instant' ) ) );
+			}
+		}
+
+		// Page caches.
+		$caches = Flexo_Booking_Page_Cache::detected();
+		$manual = array_values( array_filter( $caches, static function ( $cache ) {
+			return empty( $cache['automatic'] );
+		} ) );
+		$rules  = implode( '  ', Flexo_Booking_Page_Cache::manual_rules() );
+		if ( $manual ) {
+			/* translators: 1: caching plugin names, 2: addresses to exclude */
+			$add( 'page_cache', 'warning', __( 'Page caching', 'flexo-booking' ), sprintf( __( '%1$s can\'t be told automatically which pages must never be cached. In its settings, exclude these addresses from caching: %2$s', 'flexo-booking' ), implode( ', ', wp_list_pluck( $manual, 'name' ) ), $rules ) );
+		} elseif ( $caches ) {
+			/* translators: %s: caching plugin names */
+			$add( 'page_cache', 'ok', __( 'Page caching', 'flexo-booking' ), sprintf( __( '%s: the Thank You page and booking links are kept out of the cache automatically.', 'flexo-booking' ), implode( ', ', wp_list_pluck( $caches, 'name' ) ) ) );
+		} else {
+			/* translators: %s: addresses to exclude */
+			$add( 'page_cache', 'ok', __( 'Page caching', 'flexo-booking' ), sprintf( __( 'No caching plugin found. Private pages tell caches not to store them. If your hosting or Cloudflare caches pages, exclude: %s', 'flexo-booking' ), $rules ) );
+		}
+
+		// Header lying over the pages.
+		$overlay = Flexo_Booking_System_Pages::overlay_detected();
+		if ( $overlay && 'normal' === $all['header_style'] ) {
+			/* translators: %s: page address */
+			$add( 'overlay_header', 'ok', __( 'Header above Flexo pages', 'flexo-booking' ), sprintf( __( 'Your header lies over the page content (seen on %s); the page is moved below it automatically. For a look like your other pages, choose "Title band behind the header".', 'flexo-booking' ), $overlay['path'] ), array( __( 'Header style', 'flexo-booking' ), $pages . '#flexo-page-header' ) );
+		}
+
+		return apply_filters( 'flexo_booking_system_page_checks', $out );
+	}
+
+	/**
+	 * Whether a page contains the full booking form (shortcode or widget).
+	 */
+	private static function page_has_form( $id ) {
+		if ( preg_match( '/\[flexo_booking(?![^\]]*layout\s*=\s*["\']?search)[^\]]*\]/', (string) get_post_field( 'post_content', $id ) ) ) {
+			return true;
+		}
+		$data = (string) get_post_meta( $id, '_elementor_data', true );
+		return false !== strpos( $data, 'flexo-booking-form' );
 	}
 
 	public static function render() {

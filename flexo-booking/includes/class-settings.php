@@ -485,6 +485,7 @@ class Flexo_Booking_Settings {
 			'general'    => __( 'Hotel', 'flexo-booking' ),
 			'rules'      => __( 'Booking rules', 'flexo-booking' ),
 			'room_pages' => __( 'Room pages', 'flexo-booking' ),
+			'pages'      => __( 'Pages', 'flexo-booking' ),
 		);
 		if ( Flexo_Booking_Payments::enabled() ) {
 			$tabs['payments'] = __( 'Payments', 'flexo-booking' );
@@ -571,7 +572,7 @@ class Flexo_Booking_Settings {
 					array(
 						'title' => __( 'Settings', 'flexo-booking' ),
 						'icon'  => 'sliders',
-						'tools' => in_array( $tab, array( 'general', 'rules' ), true ) ? '<span class="flexo-advanced-toggle">' . Flexo_Booking_Admin_UI::switch_html( __( 'Show advanced settings', 'flexo-booking' ), 'id="flexo-show-advanced"' ) . '</span>' : '',
+						'tools' => in_array( $tab, array( 'general', 'rules', 'pages' ), true ) ? '<span class="flexo-advanced-toggle">' . Flexo_Booking_Admin_UI::switch_html( __( 'Show advanced settings', 'flexo-booking' ), 'id="flexo-show-advanced"' ) . '</span>' : '',
 						'tabs'  => array( 'settings', $tab ),
 					)
 				);
@@ -591,6 +592,11 @@ class Flexo_Booking_Settings {
 			}
 			if ( 'health' === $tab ) {
 				Flexo_Booking_Health::render();
+				echo '</div>';
+				return;
+			}
+			if ( 'pages' === $tab ) {
+				Flexo_Booking_Pages_Admin::render();
 				echo '</div>';
 				return;
 			}
@@ -625,39 +631,16 @@ class Flexo_Booking_Settings {
 						</td>
 					</tr>
 					<tr>
-						<th scope="row"><label for="fb-booking-page"><?php esc_html_e( 'Booking page', 'flexo-booking' ); ?></label></th>
+						<th scope="row"><?php esc_html_e( 'Booking and Thank You pages', 'flexo-booking' ); ?></th>
 						<td>
-							<?php $flexo_detected = Flexo_Booking_Guest::detect_booking_page(); ?>
-							<input id="fb-booking-page" type="text" class="regular-text" name="<?php echo esc_attr( $name ); ?>[booking_page]" value="<?php echo esc_attr( $s['booking_page'] ); ?>" placeholder="<?php echo esc_attr( $flexo_detected ? wp_make_link_relative( $flexo_detected ) : '/booking/' ); ?>">
-							<p class="description">
-								<?php esc_html_e( 'The page with the full booking form. Links in emails (add to calendar, manage your booking) open it.', 'flexo-booking' ); ?>
-								<?php if ( '' === $s['booking_page'] && $flexo_detected ) : ?>
-									<?php
-									/* translators: %s: page address */
-									printf( esc_html__( 'Found automatically: %s', 'flexo-booking' ), '<code>' . esc_html( wp_make_link_relative( $flexo_detected ) ) . '</code>' );
-									?>
-								<?php endif; ?>
+							<?php $flexo_pages_url = add_query_arg( array( 'page' => Flexo_Booking_Admin::MENU_SLUG . '-settings', 'tab' => 'pages' ), admin_url( 'admin.php' ) ); ?>
+							<p>
+								<?php
+								/* translators: %s: address of the booking page */
+								printf( esc_html__( 'Guests book at %s.', 'flexo-booking' ), '<code>' . esc_html( wp_make_link_relative( Flexo_Booking_Guest::guest_page_url() ) ) . '</code>' );
+								?>
+								<a href="<?php echo esc_url( $flexo_pages_url ); ?>"><?php esc_html_e( 'Choose and customize the pages under Settings → Pages', 'flexo-booking' ); ?></a>
 							</p>
-							<?php if ( '' === Flexo_Booking_Guest::booking_page_url() ) : ?>
-								<div class="notice notice-info inline"><p>
-									<?php
-									/* translators: %s: address, e.g. /booking/ */
-									printf( esc_html__( 'No page of your website has the booking form yet. Until you create one, guests who click "Book now" get the plugin\'s built-in booking page at %s, with your header and footer – so nothing ends in "Page not found".', 'flexo-booking' ), '<code>' . esc_html( wp_make_link_relative( Flexo_Booking_Guest::builtin_page_url() ) ) . '</code>' );
-									?>
-								</p><p>
-									<?php if ( current_user_can( 'publish_pages' ) ) : ?>
-										<a class="button" href="<?php echo esc_url( Flexo_Booking_Wizard::create_page_url() ); ?>"><?php esc_html_e( 'Create the booking page', 'flexo-booking' ); ?></a>
-									<?php endif; ?>
-									<span class="description"><?php esc_html_e( 'Creates a "Book your stay" page with the booking form, which you can then design in Elementor (keep the Flexo Booking Form widget on it). After booking, guests see their confirmation on the same page – no separate thank-you page is needed.', 'flexo-booking' ); ?></span>
-								</p></div>
-							<?php endif; ?>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row"><label for="fb-thanks"><?php esc_html_e( 'Thank-you page', 'flexo-booking' ); ?></label></th>
-						<td>
-							<input id="fb-thanks" type="text" class="regular-text" name="<?php echo esc_attr( $name ); ?>[thank_you_url]" value="<?php echo esc_attr( $s['thank_you_url'] ); ?>" placeholder="/thank-you/">
-							<p class="description"><?php esc_html_e( 'Optional. Use a path such as /thank-you/ so it keeps working when the site moves to another domain. Leave empty to show the confirmation inside the form.', 'flexo-booking' ); ?></p>
 						</td>
 					</tr>
 					<tr>
@@ -752,7 +735,8 @@ class Flexo_Booking_Settings {
 									<option value="optional" <?php selected( $s['field_notes'], 'optional' ); ?>><?php esc_html_e( 'Optional', 'flexo-booking' ); ?></option>
 									<option value="hidden" <?php selected( $s['field_notes'], 'hidden' ); ?>><?php esc_html_e( 'Not asked', 'flexo-booking' ); ?></option>
 								</select></label></p>
-							<p class="description"><?php esc_html_e( 'Ask only for what you need (data minimisation).', 'flexo-booking' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Ask only for what you need (data minimisation).', 'flexo-booking' ); ?>
+								<a href="<?php echo esc_url( add_query_arg( array( 'page' => Flexo_Booking_Admin::MENU_SLUG . '-settings', 'tab' => 'pages' ), admin_url( 'admin.php' ) ) . '#flexo-page-booking' ); ?>"><?php esc_html_e( 'Labels, help texts and order of the fields: Settings → Pages → Booking.', 'flexo-booking' ); ?></a></p>
 						</td>
 					</tr>
 					<tr class="flexo-advanced">

@@ -59,4 +59,18 @@ t_eq( 1, Flexo_Booking_Inventory::units_available( $room, t_day( 0 ), t_day( 6 )
 $suite = Flexo_Booking_Rooms::to_array( get_page_by_path( 'family-suite', OBJECT, 'flexo_room' ) );
 t_eq( 0, Flexo_Booking_Inventory::units_available( $suite, t_day( 20 ), t_day( 21 ) ), 'old blocked dates still block' );
 
+// 1.9.0: nothing visible changes on an upgraded site.
+if ( class_exists( 'Flexo_Booking_System_Pages' ) && ! empty( $fixture['pages'] ) ) {
+	$pages = Flexo_Booking_System_Pages::all();
+	t_ok( 'page' === $pages['booking']['source'] && (int) $fixture['pages']['booking'] === (int) $pages['booking']['page_id'], 'own booking page kept' );
+	t_eq( get_permalink( $fixture['pages']['booking'] ), Flexo_Booking_Guest::guest_page_url(), 'guests still book on it' );
+	t_ok( 'separate' === $pages['after_booking'] && 'page' === $pages['thank_you']['source'] && (int) $fixture['pages']['thank-you'] === (int) $pages['thank_you']['page_id'], 'own thank-you page kept' );
+	t_ok( 0 === $pages['thank_you']['enabled'] && 0 === $pages['contact']['enabled'], 'built-in Thank You and Contact start switched off' );
+	foreach ( array( 'thank_you' => 'thank-you', 'contact' => 'contact' ) as $key => $slug ) {
+		$hit = Flexo_Booking_System_Pages::collision( $key );
+		t_ok( $hit && (int) $fixture['pages'][ $slug ] === $hit['id'] && ! Flexo_Booking_System_Pages::route_active( $key ), "/{$slug}/: the existing page wins" );
+	}
+	t_eq( 'publish', get_post_status( $fixture['pages']['contact'] ), 'no page deleted or changed' );
+}
+
 t_done();

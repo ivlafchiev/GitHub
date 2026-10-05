@@ -19,7 +19,7 @@ class Flexo_Booking_Migrations {
 
 	const OPTION       = 'flexo_booking_db_version';
 	const ERROR_OPTION = 'flexo_booking_migration_error';
-	const LATEST       = 8;
+	const LATEST       = 9;
 
 	/**
 	 * @return array Version => method name.
@@ -34,8 +34,19 @@ class Flexo_Booking_Migrations {
 			6 => 'migrate_6_day5',
 			7 => 'migrate_7_day6',
 			8 => 'migrate_8_day7',
+			9 => 'migrate_9_system_pages',
 		);
 	}
+
+	/**
+	 * @var int|null Version the current run started from (0 = fresh install).
+	 */
+	private static $from = null;
+
+	/**
+	 * @var bool Whether the current run is a fresh install (nothing stored before).
+	 */
+	private static $fresh = false;
 
 	public static function init() {
 		add_action( 'admin_notices', array( __CLASS__, 'admin_notice' ) );
@@ -62,6 +73,10 @@ class Flexo_Booking_Migrations {
 			$version = self::current_version();
 			if ( $version >= self::LATEST ) {
 				return true;
+			}
+			if ( null === self::$from ) {
+				self::$from  = $version;
+				self::$fresh = 0 === $version && false === get_option( Flexo_Booking_Settings::OPTION );
 			}
 
 			Flexo_Booking_Schema::install();
@@ -241,6 +256,65 @@ class Flexo_Booking_Migrations {
 			Flexo_Booking_Room_Pages::schedule_flush();
 		}
 		return true;
+	}
+
+	/**
+	 * 1.9.0: system pages (Booking, Thank You, Contact). Settings only.
+	 *
+	 * Fresh install: built-in Booking, Thank You (bookings end there) and
+	 * Contact pages – unless the address is already in use, where the
+	 * existing page wins anyway.
+	 *
+	 * Upgrade: nothing visible changes. A booking page set or found stays
+	 * the booking page; a thank-you page set stays (bank details still in
+	 * the form); otherwise the confirmation stays in the form. The built-in
+	 * Thank You and Contact pages start switched off.
+	 */
+	private static function migrate_9_system_pages() {
+		if ( is_array( get_option( Flexo_Booking_System_Pages::OPTION ) ) ) {
+			return true; // Already decided (e.g. a re-run after an error).
+		}
+		$pages = Flexo_Booking_System_Pages::defaults();
+		if ( ! self::$fresh ) {
+			// Runs before WordPress can build addresses: pages are found in the database.
+			$booking = Flexo_Booking_Settings::site_url_setting( 'booking_page' );
+			if ( '' !== $booking ) {
+				$pages['booking']['source']  = 'page';
+				$pages['booking']['page_id'] = self::page_id( $booking );
+			} elseif ( class_exists( 'Flexo_Booking_Guest' ) ) {
+				$found = Flexo_Booking_Guest::detect_booking_page_id();
+				if ( $found ) {
+					$pages['booking']['source']  = 'page';
+					$pages['booking']['page_id'] = $found;
+				}
+			}
+			$thanks = Flexo_Booking_Settings::site_url_setting( 'thank_you_url' );
+			if ( '' !== $thanks ) {
+				$pages['after_booking']        = 'separate';
+				$pages['thank_you']['source']  = 'page';
+				$pages['thank_you']['page_id'] = self::page_id( $thanks );
+			} else {
+				$pages['after_booking'] = 'inline';
+			}
+			$pages['thank_you']['enabled'] = 0;
+			$pages['contact']['enabled']   = 0;
+		}
+		add_option( Flexo_Booking_System_Pages::OPTION, $pages );
+		return true;
+	}
+
+	/**
+	 * The page at an address of this site (0 when it is not a page, e.g. an
+	 * external address – the stored path keeps being used then).
+	 */
+	private static function page_id( $url ) {
+		$home = untrailingslashit( home_url() );
+		if ( 0 !== stripos( $url, $home ) ) {
+			return 0;
+		}
+		$path = trim( (string) wp_parse_url( substr( $url, strlen( $home ) ), PHP_URL_PATH ), '/' );
+		$page = '' !== $path ? get_page_by_path( $path ) : null;
+		return $page && 'publish' === $page->post_status ? (int) $page->ID : 0;
 	}
 
 	public static function admin_notice() {

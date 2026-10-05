@@ -61,4 +61,5 @@ Flexo_Booking_Promo_Codes::save( array( 'code' => 'OLD', 'discount_type' => 'per
 
 wp_insert_post( array( 'post_type' => 'page', 'post_title' => 'Booking', 'post_name' => 'booking', 'post_status' => 'publish', 'post_content' => '[flexo_booking title="Book your stay"]' ) );
 wp_insert_post( array( 'post_type' => 'page', 'post_title' => 'Home', 'post_name' => 'home', 'post_status' => 'publish', 'post_content' => '[flexo_booking layout="search" booking_page="/booking/"]' ) );
+t_legacy_pages();
 echo 'D0=' . t_day( 0 ) . "\n";

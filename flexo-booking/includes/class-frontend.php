@@ -16,75 +16,6 @@ class Flexo_Booking_Frontend {
 		add_action( 'init', array( __CLASS__, 'register_assets' ) );
 		add_shortcode( 'flexo_booking', array( __CLASS__, 'shortcode' ) );
 		add_shortcode( 'flexo_room_booking', array( __CLASS__, 'room_box_shortcode' ) );
-		// Before redirect_canonical(), which would guess another page for the missing address.
-		add_action( 'template_redirect', array( __CLASS__, 'builtin_page' ), 0 );
-	}
-
-	/**
-	 * The built-in booking page: when the booking page address (/booking/,
-	 * or the path set under Settings → Hotel) has no page, the booking form
-	 * is shown there with the theme's header and footer instead of "Page not
-	 * found". A real page with the form always wins.
-	 */
-	public static function builtin_page() {
-		if ( ! is_404() ) {
-			return;
-		}
-		$home    = trim( (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH ), '/' );
-		$request = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_parse_url( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ), PHP_URL_PATH ) : '';
-		$target  = trim( (string) wp_parse_url( Flexo_Booking_Guest::guest_page_url(), PHP_URL_PATH ), '/' );
-		$path    = trim( rawurldecode( $request ), '/' );
-		if ( '' !== $home && 0 === strpos( $path . '/', $home . '/' ) ) {
-			$path = trim( substr( $path, strlen( $home ) ), '/' );
-		}
-		if ( '' !== $home && 0 === strpos( $target . '/', $home . '/' ) ) {
-			$target = trim( substr( $target, strlen( $home ) ), '/' );
-		}
-		// The same address with a language in front (/en/booking/) is fine too.
-		$matches = static function ( $target ) use ( $path ) {
-			return '' !== $target && preg_match( '#^(?:[a-z]{2}(?:[-_][a-z]{2})?/)?' . preg_quote( $target, '#' ) . '$#i', $path );
-		};
-		if ( ! $matches( $target ) ) {
-			// Old or default links to /booking/ go to the real booking page, keeping room and dates.
-			$real = Flexo_Booking_Guest::booking_page_url();
-			if ( '' !== $real && $matches( 'booking' ) ) {
-				$query = isset( $_SERVER['QUERY_STRING'] ) ? (string) wp_unslash( $_SERVER['QUERY_STRING'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- passed on to wp_safe_redirect() unchanged.
-				wp_safe_redirect( '' !== $query ? $real . ( false === strpos( $real, '?' ) ? '?' : '&' ) . $query : $real, 302 );
-				exit;
-			}
-			return;
-		}
-		global $wp_query;
-		$wp_query->is_404 = false;
-		status_header( 200 );
-		add_filter(
-			'template_include',
-			static function () {
-				$theme = locate_template( 'flexo-booking/booking-page.php' );
-				return $theme ? $theme : FLEXO_BOOKING_DIR . 'templates/booking-page.php';
-			},
-			100
-		);
-		add_filter(
-			'pre_get_document_title',
-			static function () {
-				return __( 'Book your stay', 'flexo-booking' ) . ' – ' . get_bloginfo( 'name' );
-			},
-			30
-		);
-		add_filter(
-			'body_class',
-			static function ( $classes ) {
-				return array_merge( array_diff( $classes, array( 'error404' ) ), array( 'flexo-booking-page' ) );
-			}
-		);
-		add_filter(
-			'wp_robots',
-			static function ( $robots ) {
-				$robots['noindex'] = true;
-				return $robots;
-			}
-		);
 	}
 
 	/**
@@ -136,6 +67,11 @@ class Flexo_Booking_Frontend {
 				'replyTime' => Flexo_Booking_Guest::reply_time_text(),
 				'manage'    => Flexo_Booking_Guest::manage_enabled(),
 				'phoneMode' => $settings['field_phone'],
+				// 1.9.0: an administrator's visit tells Settings → Pages whether the header lies over the page.
+				'overlayReport' => current_user_can( 'manage_options' ) ? array(
+					'url'   => esc_url_raw( rest_url( Flexo_Booking_Rest::NAMESPACE_V1 . '/overlay-header' ) ),
+					'nonce' => wp_create_nonce( 'wp_rest' ),
+				) : false,
 				'phoneCountry' => $settings['phone_country'],
 				'consent'   => Flexo_Booking_Privacy::enabled() ? array(
 					'html'     => Flexo_Booking_Privacy::consent_text( true ),
@@ -387,6 +323,7 @@ class Flexo_Booking_Frontend {
 			'noRequests'      => __( 'To change this booking, please contact us by phone or email.', 'flexo-booking' ),
 			'loading'         => __( 'Loading…', 'flexo-booking' ),
 			'staySummary'     => __( 'Your stay', 'flexo-booking' ),
+			'keyMissing'      => __( 'To see this booking, open the link in your confirmation email.', 'flexo-booking' ),
 			'showSummary'     => __( 'Show price details', 'flexo-booking' ),
 		);
 	}
@@ -401,7 +338,7 @@ class Flexo_Booking_Frontend {
 	 *                                or "box" (one room's booking box: availability, total and "Book now").
 	 *     @type string $room         Room slug or ID to preselect. The box uses the room of the page when empty.
 	 *     @type string $booking_page Path or URL of the booking page, used by the "search" and "box" layouts
-	 *                                (the box uses the booking page from the settings when empty).
+	 *                                (the Booking page of Settings → Pages when empty).
 	 *     @type string $title        Optional heading.
 	 *     @type string $button_text  Text of the search button.
 	 *     @type string $book_text    Box: text of the "Book now" button.
@@ -414,7 +351,7 @@ class Flexo_Booking_Frontend {
 			array(
 				'layout'       => 'full',
 				'room'         => '',
-				'booking_page' => $is_box ? '' : '/booking/',
+				'booking_page' => '',
 				'title'        => '',
 				'button_text'  => '',
 				'book_text'    => '',
@@ -473,7 +410,7 @@ class Flexo_Booking_Frontend {
 			'uid'          => 'fb-' . wp_unique_id(),
 			'min_date'     => $today->format( 'Y-m-d' ),
 			'max_date'     => $today->modify( '+' . (int) $settings['max_advance_days'] . ' days' )->format( 'Y-m-d' ),
-			'booking_url'  => self::resolve_url( $atts['booking_page'] ),
+			'booking_url'  => '' !== trim( (string) $atts['booking_page'] ) ? self::resolve_url( $atts['booking_page'] ) : Flexo_Booking_Guest::guest_page_url(),
 			'autosearch'   => $prefill['check_in'] && $prefill['check_out'],
 			'ask_ages'     => Flexo_Booking_Children::enabled() && (int) $settings['max_children'] > 0,
 			'terms_url'    => Flexo_Booking_I18n::page_url( Flexo_Booking_Settings::site_url_setting( 'terms_url' ) ),

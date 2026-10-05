@@ -19,7 +19,7 @@
 defined( 'ABSPATH' ) || exit;
 
 define( 'FLEXO_BOOKING_VERSION', '1.8.3' );
-define( 'FLEXO_BOOKING_DB_VERSION', '8' ); // Kept for compatibility; see Flexo_Booking_Migrations::LATEST.
+define( 'FLEXO_BOOKING_DB_VERSION', '9' ); // Kept for compatibility; see Flexo_Booking_Migrations::LATEST.
 define( 'FLEXO_BOOKING_FILE', __FILE__ );
 define( 'FLEXO_BOOKING_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FLEXO_BOOKING_URL', plugin_dir_url( __FILE__ ) );
@@ -66,6 +66,11 @@ require_once FLEXO_BOOKING_DIR . 'includes/class-guest.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-roles.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-rest.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-frontend.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-forms.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-page-cache.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-page-seo.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-confirmation.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-system-pages.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-admin.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-seasons-admin.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-closures-admin.php';
@@ -77,6 +82,7 @@ require_once FLEXO_BOOKING_DIR . 'includes/admin/class-payments-admin.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-appearance-admin.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-today-admin.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-health.php';
+require_once FLEXO_BOOKING_DIR . 'includes/admin/class-pages-admin.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-help.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-admin-ui.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-wizard.php';
@@ -117,12 +123,15 @@ add_action(
 		Flexo_Booking_ICal::init();
 		Flexo_Booking_Rate_Plans::init();
 		Flexo_Booking_Frontend::init();
+		Flexo_Booking_System_Pages::init();
+		Flexo_Booking_Page_Cache::init();
 		Flexo_Booking_Elementor::init();
 
 		if ( is_admin() ) {
 			Flexo_Booking_Migrations::init();
 			Flexo_Booking_Features::init();
 			Flexo_Booking_Settings::init();
+			Flexo_Booking_Pages_Admin::init();
 			Flexo_Booking_Admin::init();
 			Flexo_Booking_Admin_UI::init();
 			Flexo_Booking_Seasons_Admin::init();

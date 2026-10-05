@@ -83,4 +83,5 @@ foreach ( array( 'staff' => 'hotel_staff', 'manager' => 'hotel_manager' ) as $lo
 // Per-visitor limits (bookings, enquiries, requests) start fresh.
 $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_%flexo\_rl\_%' OR option_name LIKE '\_transient\_timeout\_%flexo\_rl\_%'" );
 file_put_contents( WP_CONTENT_DIR . '/mail.log', '' );
+t_legacy_pages();
 echo 'D0=' . t_day( 0 ) . "\n";

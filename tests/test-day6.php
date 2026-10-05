@@ -318,7 +318,10 @@ $status_of = static function ( $id ) {
 	}
 	return 'missing';
 };
-$saved_page = Flexo_Booking_Settings::get( 'booking_page' );
+$saved_page  = Flexo_Booking_Settings::get( 'booking_page' );
+$saved_pages = get_option( Flexo_Booking_System_Pages::OPTION );
+// 1.9.0: an own booking page chosen (by its 1.8 address) that no longer exists.
+Flexo_Booking_System_Pages::update( array( 'booking' => array( 'source' => 'page', 'page_id' => 0 ) ) );
 t6_settings( array( 'booking_page' => '' ) );
 // Every published page with the form – shortcode or Elementor widget (e.g. left by the browser-test seeds).
 $t6_form_pages = array_merge(
@@ -331,6 +334,7 @@ foreach ( $t6_form_pages as $p ) {
 }
 Flexo_Booking_Guest::forget_booking_page();
 t_eq( 'warning', $status_of( 'booking_page' ), 'missing booking page detected (warning: the built-in booking page is used meanwhile)' );
+t_eq( home_url( '/booking/' ), Flexo_Booking_Guest::guest_page_url(), '…and guests get the built-in page' );
 foreach ( isset( $drafted ) ? array_unique( $drafted ) : array() as $id ) {
 	wp_update_post( array( 'ID' => $id, 'post_status' => 'publish' ) );
 }
@@ -371,8 +375,10 @@ t_section( 'Wizard helpers and settings tabs' );
 $page = Flexo_Booking_Wizard::create_page();
 t_ok( ! is_wp_error( $page ) && false !== strpos( get_post_field( 'post_content', $page ), '[flexo_booking]' ), 'booking page created with the form' );
 t_eq( wp_make_link_relative( get_permalink( $page ) ), Flexo_Booking_Settings::get( 'booking_page' ), '…and set as the booking page' );
+t_eq( $page, Flexo_Booking_System_Pages::get( 'booking' )['page_id'], '…and chosen under Settings → Pages (1.9.0)' );
 wp_delete_post( $page, true );
 t6_settings( array( 'booking_page' => '/booking/' ) );
+false === $saved_pages ? delete_option( Flexo_Booking_System_Pages::OPTION ) : update_option( Flexo_Booking_System_Pages::OPTION, $saved_pages );
 t_ok( ! Flexo_Booking_Wizard::is_fresh(), 'a site with rooms is not "fresh" (no wizard redirect)' );
 $tabs = Flexo_Booking_Settings::tabs();
 t_ok( isset( $tabs['general'], $tabs['rules'], $tabs['health'], $tabs['features'] ), 'settings tabs: hotel, booking rules, health, features' );

@@ -287,8 +287,8 @@ class Flexo_Booking_Rest {
 		}
 		$view = Flexo_Booking_Payments::guest_view( $booking );
 		if ( 'confirmed' === $view['state'] ) {
-			$redirect = Flexo_Booking_I18n::page_url( Flexo_Booking_Settings::site_url_setting( 'thank_you_url' ), $booking['locale'] );
-			$view['redirect'] = $redirect ? add_query_arg( 'booking', rawurlencode( $booking['reference'] ), $redirect ) : '';
+			// Only a payment the server confirmed moves on to the Thank You page.
+			$view['redirect'] = Flexo_Booking_Confirmation::redirect_url( $booking );
 			$view['quote']    = Flexo_Booking_Pricing::public_view( Flexo_Booking_Pricing::snapshot( $booking ) );
 		}
 		$response = rest_ensure_response( $view );
@@ -490,13 +490,8 @@ class Flexo_Booking_Rest {
 		}
 
 		$confirmed = 'confirmed' === $booking['status'];
-		$redirect  = Flexo_Booking_I18n::page_url( Flexo_Booking_Settings::site_url_setting( 'thank_you_url' ), $booking['locale'] );
-		// Bank details are shown in the form, so the guest stays on the page.
-		if ( $redirect && ! $payment ) {
-			$redirect = add_query_arg( 'booking', rawurlencode( $booking['reference'] ), $redirect );
-		} else {
-			$redirect = '';
-		}
+		// The Thank You page (a one-time link), unless the card payment page comes first.
+		$redirect = $payment && ! empty( $payment['redirect'] ) ? '' : Flexo_Booking_Confirmation::redirect_url( Flexo_Booking_Bookings::get( $booking['id'] ), (bool) $payment );
 
 		$response = new WP_REST_Response(
 			array(

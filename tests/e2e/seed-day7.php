@@ -115,3 +115,4 @@ if ( defined( 'ELEMENTOR_VERSION' ) ) {
 // Sea Double is sold out on days 20–22.
 Flexo_Booking_Bookings::create( array_merge( t_guest(), array( 'room' => 'sea-double', 'check_in' => t_day( 20 ), 'check_out' => t_day( 22 ), 'adults' => 2, 'privacy_consent' => 1 ) ) );
 update_option( 'flexo_booking_flush_rewrite', 1 );
+t_legacy_pages();

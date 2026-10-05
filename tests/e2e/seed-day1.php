@@ -27,4 +27,5 @@ update_post_meta( $page, '_elementor_edit_mode', 'builder' );
 update_post_meta( $page, '_elementor_template_type', 'wp-page' );
 update_post_meta( $page, '_elementor_version', ELEMENTOR_VERSION );
 update_post_meta( $page, '_elementor_data', wp_slash( wp_json_encode( $data ) ) );
+t_legacy_pages();
 echo "seeded; d0=" . t_day( 0 ) . "\n";

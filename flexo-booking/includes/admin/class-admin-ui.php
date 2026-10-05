@@ -163,7 +163,7 @@ class Flexo_Booking_Admin_UI {
 		}
 		$can_book = current_user_can( Flexo_Booking_Admin::capability() );
 		$count    = $can_book ? Flexo_Booking_Today_Admin::attention_count() : 0;
-		$page     = $can_book ? Flexo_Booking_Guest::booking_page_url() : '';
+		$page     = $can_book ? Flexo_Booking_Guest::guest_page_url() : '';
 		$site     = wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES );
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only: keeps the search text on the list.
 		$search   = isset( $_GET['s'], $_GET['page'] ) && Flexo_Booking_Admin::MENU_SLUG . '-list' === $_GET['page'] ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';

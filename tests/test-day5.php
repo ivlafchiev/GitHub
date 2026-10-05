@@ -11,6 +11,7 @@ require __DIR__ . '/lib.php';
 global $wpdb;
 $t5_saved_settings = get_option( Flexo_Booking_Settings::OPTION );
 $t5_saved_features = get_option( Flexo_Booking_Features::ENABLED_OPTION );
+$t5_saved_pages    = get_option( Flexo_Booking_System_Pages::OPTION );
 t_reset_inventory();
 foreach ( array( 'payments', 'webhook_events', 'email_log' ) as $table ) {
 	$wpdb->query( 'DELETE FROM ' . Flexo_Booking_Schema::table( $table ) );
@@ -216,6 +217,8 @@ t5_settings(
 	)
 );
 t5_features( array( 'online_payment', 'deposit', 'bank_transfer' ) );
+// Day 5 behaviour as on a site upgraded from 1.8 (1.9.0: confirmation inside the form).
+t_legacy_pages();
 
 // ---------------------------------------------------------------------------------
 t_section( 'Configuration and payment modes' );
@@ -839,6 +842,7 @@ t5_settings( array( 'payment_mode' => 'full', 'deposit_value' => 30, 'booking_mo
 // Leave the site as it was.
 update_option( Flexo_Booking_Settings::OPTION, $t5_saved_settings );
 update_option( Flexo_Booking_Features::ENABLED_OPTION, $t5_saved_features );
+false === $t5_saved_pages ? delete_option( Flexo_Booking_System_Pages::OPTION ) : update_option( Flexo_Booking_System_Pages::OPTION, $t5_saved_pages );
 delete_option( Flexo_Booking_Payments::SECRETS_OPTION );
 t_reset_inventory();
 

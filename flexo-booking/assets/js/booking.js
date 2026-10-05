@@ -154,6 +154,40 @@
 		} catch ( e ) {}
 	}
 
+	/**
+	 * A guest's key for a booking, kept in this tab only (1.9.0): it leaves
+	 * the address bar, so it is not in history, shared links or referrers,
+	 * and a refresh still shows the booking.
+	 */
+	function guestKeyGet( reference ) {
+		try {
+			return window.sessionStorage.getItem( 'flexo_key_' + reference );
+		} catch ( e ) {
+			return null;
+		}
+	}
+
+	function guestKeySet( reference, key ) {
+		try {
+			window.sessionStorage.setItem( 'flexo_key_' + reference, key );
+		} catch ( e ) {}
+	}
+
+	/**
+	 * Removes the guest key from the address bar (keeps the rest).
+	 */
+	function dropKeyFromAddress() {
+		if ( ! window.history || ! window.history.replaceState || ! window.URL ) {
+			return;
+		}
+		var url = new URL( window.location.href );
+		if ( ! url.searchParams.has( 'fb_key' ) ) {
+			return;
+		}
+		url.searchParams.delete( 'fb_key' );
+		window.history.replaceState( window.history.state, '', url.toString() );
+	}
+
 	var uidCounter = 0;
 	function uid( prefix ) {
 		uidCounter++;
@@ -1302,17 +1336,33 @@
 		if ( ! this.useUrl && ! initial ) {
 			return;
 		}
-		if ( q.get( 'fb_payment' ) && q.get( 'fb_ref' ) && q.get( 'fb_key' ) ) {
+		var doneRef = q.get( 'fb_done' ) || ( q.get( 'fb_payment' ) ? q.get( 'fb_ref' ) : '' );
+		if ( doneRef && q.get( 'fb_key' ) ) {
+			// Kept in this tab; the address no longer shows it.
+			guestKeySet( doneRef, q.get( 'fb_key' ) );
+			dropKeyFromAddress();
+		}
+		if ( q.get( 'fb_payment' ) && q.get( 'fb_ref' ) ) {
 			// Back from the payment page: show the payment result.
-			this.resumePayment( q.get( 'fb_payment' ), q.get( 'fb_ref' ), q.get( 'fb_key' ) );
+			var payKey = q.get( 'fb_key' ) || guestKeyGet( q.get( 'fb_ref' ) );
+			if ( payKey ) {
+				this.resumePayment( q.get( 'fb_payment' ), q.get( 'fb_ref' ), payKey );
+			} else {
+				this.showKeyMissing();
+			}
 			return;
 		}
 		if ( q.get( 'fb_manage' ) && q.get( 'fb_key' ) ) {
 			this.loadBooking( q.get( 'fb_manage' ), q.get( 'fb_key' ), true );
 			return;
 		}
-		if ( q.get( 'fb_done' ) && q.get( 'fb_key' ) ) {
-			this.loadBooking( q.get( 'fb_done' ), q.get( 'fb_key' ), false );
+		if ( q.get( 'fb_done' ) ) {
+			var doneKey = q.get( 'fb_key' ) || guestKeyGet( q.get( 'fb_done' ) );
+			if ( doneKey ) {
+				this.loadBooking( q.get( 'fb_done' ), doneKey, false );
+			} else {
+				this.showKeyMissing();
+			}
 			return;
 		}
 		this.showAll = q.get( 'fb_all' ) === '1';
@@ -2578,7 +2628,8 @@
 					return;
 				}
 				if ( data.view ) {
-					self.setUrl( { fb_done: data.reference, fb_key: data.key }, true );
+					guestKeySet( data.reference, data.key );
+					self.setUrl( { fb_done: data.reference }, true );
 					self.showDone( data.view, false );
 				} else {
 					self.showSuccess( data );
@@ -2885,6 +2936,21 @@
 	/**
 	 * The confirmation after a refresh, or the guest booking page.
 	 */
+	/**
+	 * A confirmation address opened without its key (another tab or
+	 * device, a shared link): nothing is shown, only how to see it.
+	 */
+	BookingForm.prototype.showKeyMissing = function () {
+		this.searchForm.hidden = true;
+		this.stayBar.hidden = true;
+		this.results.hidden = true;
+		this.detailsForm.hidden = true;
+		this.success.hidden = false;
+		this.success.innerHTML = '';
+		this.success.appendChild( el( 'p', 'fb-success__message', t.keyMissing ) );
+		this.addRestart();
+	};
+
 	BookingForm.prototype.loadBooking = function ( reference, key, manage ) {
 		var self = this;
 		this.guestRef = reference;
@@ -3045,8 +3111,9 @@
 					window.location.href = view.redirect;
 					return;
 				}
-				// The full confirmation, which also survives a refresh.
-				self.setUrl( { fb_done: self.paymentRef, fb_key: self.paymentKey }, true );
+				// The full confirmation, which also survives a refresh (the key stays in this tab).
+				guestKeySet( self.paymentRef, self.paymentKey );
+				self.setUrl( { fb_done: self.paymentRef }, true );
 				self.loadBooking( self.paymentRef, self.paymentKey, false );
 			} );
 			return;
@@ -3551,10 +3618,19 @@
 	 * a header that lies over the page (transparent headers made for a big
 	 * photo): the content is moved down so the header doesn't cover it.
 	 */
+	/**
+	 * Plugin pages under a header that lies over them (transparent headers
+	 * made for a hero picture): the page moves below the header, or the
+	 * title band leaves room for it. An administrator's visit is reported,
+	 * so Settings → Pages can suggest a header style.
+	 */
 	function clearOverlayHeader() {
-		var content = document.querySelector( '.flexo-builtin-booking, .flexo-room-page-wrap' );
+		var body = document.body;
+		var band = document.querySelector( '[data-fb-title-band]' );
+		var content = band ? null : document.querySelector( '[data-fb-clear-header], .flexo-builtin-booking, .flexo-room-page-wrap' );
 		var header = document.querySelector( '.elementor-location-header, header.site-header, #masthead, body > header' );
-		if ( ! content || ! header ) {
+		var target = band || content;
+		if ( ! target || ! header ) {
 			return;
 		}
 		// Page coordinates; a fixed header always sits at the top of the page.
@@ -3574,17 +3650,94 @@
 				bottom = Math.max( bottom, rect.bottom + ( isFixed( node ) ? 0 : scrollY ) );
 			}
 		} );
+		var top = target.getBoundingClientRect().top + scrollY;
+		var overlay = bottom > top + 1;
+		reportOverlay( overlay );
+		if ( band ) {
+			band.style.setProperty( '--fb-band-pad', overlay ? Math.ceil( bottom - top ) + 'px' : '0px' );
+			return;
+		}
+		if ( body.classList.contains( 'flexo-header-space-fixed' ) ) {
+			return; // The hotel set the space for every device.
+		}
 		content.style.paddingTop = '';
-		var top = content.getBoundingClientRect().top + scrollY;
+		top = content.getBoundingClientRect().top + scrollY;
 		if ( bottom > top + 1 ) {
 			var base = parseFloat( window.getComputedStyle( content ).paddingTop ) || 0;
 			content.style.paddingTop = Math.ceil( base + bottom - top + 16 ) + 'px';
 		}
 	}
 
+	function reportOverlay( overlay ) {
+		var report = cfg.overlayReport;
+		if ( ! report || reportOverlay.sent ) {
+			return;
+		}
+		reportOverlay.sent = true;
+		try {
+			if ( window.sessionStorage.getItem( 'flexo_overlay_' + location.pathname ) === String( overlay ) ) {
+				return;
+			}
+			window.sessionStorage.setItem( 'flexo_overlay_' + location.pathname, String( overlay ) );
+		} catch ( e ) {}
+		window.fetch( report.url, {
+			method: 'POST',
+			credentials: 'same-origin',
+			headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': report.nonce },
+			body: JSON.stringify( { overlay: overlay, path: location.pathname } ),
+		} ).catch( function () {} );
+	}
+
+	/**
+	 * The Thank You page: copy buttons, and a page that re-checks by itself
+	 * while a card payment is being confirmed (every 5 s, up to 2 minutes).
+	 */
+	function initConfirmation( ctx ) {
+		ctx.querySelectorAll( '[data-fb-copy]' ).forEach( function ( copy ) {
+			if ( ! navigator.clipboard || copy.getAttribute( 'data-fb-ready' ) ) {
+				return;
+			}
+			copy.setAttribute( 'data-fb-ready', '1' );
+			copy.hidden = false;
+			copy.addEventListener( 'click', function () {
+				navigator.clipboard.writeText( copy.getAttribute( 'data-fb-copy' ) ).then( function () {
+					copy.textContent = t.copied;
+					window.setTimeout( function () {
+						copy.textContent = t.copy;
+					}, 2000 );
+				} );
+			} );
+		} );
+		var pending = ctx.querySelector( '[data-fb-ty-refresh]' );
+		var counter = 'flexo_ty_refresh_' + location.pathname;
+		var count = 0;
+		try {
+			count = parseInt( window.sessionStorage.getItem( counter ) || '0', 10 ) || 0;
+			if ( ! pending ) {
+				window.sessionStorage.removeItem( counter );
+			}
+		} catch ( e ) {}
+		if ( ! pending ) {
+			return;
+		}
+		var max = parseInt( pending.getAttribute( 'data-fb-ty-max' ), 10 ) || 24;
+		var wait = ( parseInt( pending.getAttribute( 'data-fb-ty-refresh' ), 10 ) || 5 ) * 1000;
+		if ( count >= max ) {
+			pending.appendChild( el( 'span', 'fb-ty-muted', ' ' + t.stillChecking ) );
+			return;
+		}
+		window.setTimeout( function () {
+			try {
+				window.sessionStorage.setItem( counter, String( count + 1 ) );
+			} catch ( e ) {}
+			window.location.reload();
+		}, wait );
+	}
+
 	function init( scope ) {
 		var ctx = scope || document;
 		bindDialogs();
+		initConfirmation( ctx );
 		if ( ! scope ) {
 			clearOverlayHeader();
 			window.addEventListener( 'load', clearOverlayHeader );

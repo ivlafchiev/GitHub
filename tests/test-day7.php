@@ -75,8 +75,8 @@ t7_flush();
 
 /* ---------------------------------------------------------------- */
 t_section( 'Migration 8' );
-t_eq( 8, Flexo_Booking_Migrations::LATEST, 'latest migration is 8' );
-t_eq( 8, Flexo_Booking_Migrations::current_version(), 'site is on migration 8' );
+t_ok( Flexo_Booking_Migrations::LATEST >= 8, 'migration 8 is part of the migrations (1.9.0 adds 9)' );
+t_eq( Flexo_Booking_Migrations::LATEST, Flexo_Booking_Migrations::current_version(), 'site is on the latest migration' );
 $pt = get_post_type_object( Flexo_Booking_Rooms::POST_TYPE );
 t_ok( $pt->public && $pt->publicly_queryable && $pt->show_in_nav_menus, 'rooms are a public post type (Theme Builder / Loop Grid can use them)' );
 t_ok( false === $pt->has_archive, 'no archive at the room base (the hotel\'s own rooms page stays)' );
