@@ -210,6 +210,15 @@ $q = new WP_Query( array( 's' => 'T7', 'posts_per_page' => -1, 'fields' => 'ids'
 t_ok( ! in_array( $hidden, $q->posts, true ) && in_array( $room, $q->posts, true ), 'site search: hidden room left out' );
 $q = new WP_Query( array( 'post_type' => Flexo_Booking_Rooms::POST_TYPE, 'post__not_in' => array( $room ), 'posts_per_page' => -1, 'fields' => 'ids' ) );
 t_ok( ! in_array( $room, $q->posts, true ) && ! in_array( $hidden, $q->posts, true ), 'existing exclusions kept (e.g. "other rooms" without the current one)' );
+$by_name = get_posts( array( 'post_type' => Flexo_Booking_Rooms::POST_TYPE, 'name' => 't7-hidden', 'post_status' => 'any', 'fields' => 'ids' ) );
+$by_id   = get_posts( array( 'post_type' => Flexo_Booking_Rooms::POST_TYPE, 'p' => $hidden, 'post_status' => 'any', 'fields' => 'ids' ) );
+t_ok( array( $hidden ) === $by_name && array( $hidden ) === $by_id, 'looking up one room by address or ID finds a hidden room (imports, other plugins)' );
+$t7_file = Flexo_Booking_Portability::export();
+$t7_file['rooms'] = array_values( array_filter( $t7_file['rooms'], static function ( $r ) { return 't7-hidden' === $r['slug']; } ) );
+$t7_before = count( get_posts( array( 'post_type' => Flexo_Booking_Rooms::POST_TYPE, 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids', 'flexo_all_rooms' => true ) ) );
+$t7_result = Flexo_Booking_Portability::import( $t7_file, array( 'settings' => false, 'rooms' => true, 'seasons' => false, 'closures' => false, 'rate_plans' => false, 'promo_codes' => false, 'bookings' => false ) );
+$t7_after  = count( get_posts( array( 'post_type' => Flexo_Booking_Rooms::POST_TYPE, 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids', 'flexo_all_rooms' => true ) ) );
+t_ok( ! is_wp_error( $t7_result ) && 1 === $t7_result['rooms_updated'] && $t7_before === $t7_after, 're-importing a hidden room updates it (no duplicate)' );
 $admin = get_users( array( 'role' => 'administrator', 'number' => 1 ) )[0];
 wp_set_current_user( $admin->ID );
 $q = new WP_Query( array( 'post_type' => Flexo_Booking_Rooms::POST_TYPE, 'posts_per_page' => -1, 'fields' => 'ids' ) );

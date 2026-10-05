@@ -555,6 +555,12 @@
 	}
 }
 
+@media (max-width: 399px) {
+	.flexo-room-page .flexo-room-amenities {
+		--flexo-columns: 1;
+	}
+}
+
 /* ---- "Check availability" bar on phones ---- */
 
 .flexo-room-bar {

@@ -320,14 +320,21 @@ $status_of = static function ( $id ) {
 };
 $saved_page = Flexo_Booking_Settings::get( 'booking_page' );
 t6_settings( array( 'booking_page' => '' ) );
-foreach ( get_posts( array( 'post_type' => 'page', 's' => '[flexo_booking', 'posts_per_page' => -1, 'post_status' => 'publish' ) ) as $p ) {
+// Every published page with the form – shortcode or Elementor widget (e.g. left by the browser-test seeds).
+$t6_form_pages = array_merge(
+	get_posts( array( 'post_type' => 'page', 's' => '[flexo_booking', 'posts_per_page' => -1, 'post_status' => 'publish' ) ),
+	get_posts( array( 'post_type' => 'page', 'posts_per_page' => -1, 'post_status' => 'publish', 'meta_key' => '_elementor_data', 'meta_value' => 'flexo-booking-form', 'meta_compare' => 'LIKE' ) )
+);
+foreach ( $t6_form_pages as $p ) {
 	wp_update_post( array( 'ID' => $p->ID, 'post_status' => 'draft' ) );
 	$drafted[] = $p->ID;
 }
+Flexo_Booking_Guest::forget_booking_page();
 t_eq( 'error', $status_of( 'booking_page' ), 'missing booking page detected' );
-foreach ( isset( $drafted ) ? $drafted : array() as $id ) {
+foreach ( isset( $drafted ) ? array_unique( $drafted ) : array() as $id ) {
 	wp_update_post( array( 'ID' => $id, 'post_status' => 'publish' ) );
 }
+Flexo_Booking_Guest::forget_booking_page();
 t6_settings( array( 'booking_page' => $saved_page ) );
 Flexo_Booking_Emails::log( 0, 'guest_confirmed', 'x@example.com', 'Test', 'failed', 'SMTP error' );
 t_eq( 'error', $status_of( 'email' ), 'failing email detected' );

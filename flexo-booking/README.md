@@ -6,7 +6,7 @@ Guests pick dates and guests, see which rooms are free with the price, enter the
 
 It's one plugin that works with any theme or template. Extra features are switched on only where a property needs them, so a simple guest house still gets just *dates → room → details → booking request*.
 
-> Version **1.7.0**. All six development days are done; Day 6 made the plugin easier to use for guests, owners and reception, and added Appearance settings. 1.7.0 gives the plugin's admin screens their own, app-like design (§17). Development follows `ROADMAP.md`; technical design is in `IMPLEMENTATION_PLAN.md`.
+> Version **1.8.0**. Day 7 makes the plugin the single place for rooms: each room has its own page on the website with its photos, description, amenities and a booking box, filled into your Elementor Pro templates through dynamic tags (§3). Day 6 made the plugin easier to use for guests, owners and reception and added Appearance settings; 1.7.0 gave the admin screens their own, app-like design (§17). Development follows `ROADMAP.md`; technical design is in `IMPLEMENTATION_PLAN.md`.
 
 ---
 
@@ -14,7 +14,7 @@ It's one plugin that works with any theme or template. Extra features are switch
 
 1. [Installing and upgrading](#1-installing-and-upgrading)
 2. [Features: what the hotel can switch on](#2-features-what-the-hotel-can-switch-on)
-3. [Creating rooms](#3-creating-rooms)
+3. [Rooms and room pages](#3-rooms-and-room-pages)
 4. [Setting prices](#4-setting-prices)
 5. [Seasonal prices](#5-seasonal-prices)
 6. [Closed dates](#6-closed-dates)
@@ -47,10 +47,11 @@ It's one plugin that works with any theme or template. Extra features are switch
 
 **Requirements:**
 - WordPress 6.0+ and PHP 7.4+. MySQL or MariaDB is recommended.
-- Elementor 3.5+ for the widget (Elementor Pro works too). Without Elementor, the `[flexo_booking]` shortcode still works.
+- Elementor 3.5+ for the widgets; **Elementor Pro** (3.x) for room templates (Theme Builder single room page, Loop Grid / Loop Carousel of rooms). Without Elementor the shortcodes still work, and every room still gets the plugin's own room page.
+- JetEngine (or another custom-field plugin) is **not** needed for rooms; rooms made with it can be brought in (§3.2).
 
 **Install:**
-1. Build the zip with `bin/build-zip.sh`, or use the provided `flexo-booking-1.7.0.zip`.
+1. Build the zip with `bin/build-zip.sh`, or use the provided `flexo-booking-1.8.0.zip`.
 2. Go to **Plugins → Add New → Upload Plugin**, choose the zip, then **Install** and **Activate**.
 3. A **Bookings** menu appears in the admin. On a new site (no rooms, no bookings) the **setup wizard** opens once (below).
 4. Check **Settings → General → Timezone**. It must be the hotel's city, because "today" and arrival dates depend on it. **Bookings → Settings → Health** warns if it isn't.
@@ -71,7 +72,7 @@ The wizard never opens by itself on a site that already has rooms or bookings, s
 
 ### Upgrading
 
-**Upgrade from any earlier version (1.0.0–1.6.0):** upload the new zip and choose **Replace current with uploaded**.
+**Upgrade from any earlier version (1.0.0–1.7.0):** upload the new zip and choose **Replace current with uploaded**.
 - The database updates itself on the next page load. No reinstall is needed, and rooms, bookings and settings are kept.
 - If an update step ever fails, a red notice appears in the admin and the step is retried automatically.
 - On staging or in scripts you can also run `wp flexo-booking migrate`.
@@ -85,6 +86,10 @@ The wizard never opens by itself on a site that already has rooms or bookings, s
   - The **guest booking page** is off until switched on (§16). The new room fields (size, beds, amenities) and rate-plan meals are empty/filled from the presets and simply not shown while empty.
   - Status names are clearer (e.g. *Waiting for confirmation*, *Not paid in time*); the stored statuses, CSV values and filters are unchanged.
 - **1.7.0:** the plugin's admin screens have a new design (§17). No settings, data, addresses or guest-facing pages change, and there is no database update. The rest of the WordPress admin looks as before.
+- **1.8.0 (Day 7):**
+  - **Every published room gets a page at `/rooms/<slug>/`** and appears in sitemaps (§3). Nothing else on the site changes: existing pages, the booking form, booking links and prices stay as they are. If the site already has pages or another post type (e.g. JetEngine rooms) under `/rooms/`, **Settings → Health** says so: pages with a room's address are no longer shown (remove them), and the other post type should be switched off – or choose another word under **Settings → Room pages**.
+  - Existing amenities, sizes, beds, photos and descriptions are kept and shown in the new editor; amenities get their usual icons.
+  - The database update only adds the new settings and refreshes the site's addresses once. Nothing is removed, so going back to 1.7.0 is possible (room pages then stop answering).
 
 ---
 
@@ -167,25 +172,90 @@ Upgrading a client to a bigger package only means changing that line: their sett
 
 ---
 
-## 3. Creating rooms
+## 3. Rooms and room pages
 
-Go to **Bookings → Rooms & prices → Add room** and create one entry per **room type** (not per physical room). A new room starts with 2 max guests and 1 unit; the price per night is required.
+Since 1.8.0 **Flexo Booking is the only place where rooms live**: their texts, photos, amenities and facts as well as their prices. Every room has its **own page on the website**, room lists and "other rooms" carousels are filled from it, and the booking form uses the same rooms. No JetEngine (or other custom-field plugin) is needed for rooms.
 
-| Field | Notes |
+Create **one room per room type** (not per physical room): **Bookings → Rooms & prices → Add room**. The editor is a set of cards, top to bottom:
+
+| Card | What goes in it |
 |---|---|
-| Title, description, excerpt, featured image | Shown in the search results (the excerpt is the short line) |
-| **Size**, **Beds**, **Amenities** | Optional (1.6.0). Shown on the room card: m², e.g. "1 double bed or 2 single beds", and up to five ticked amenities with icons. Left empty, they're simply not shown. |
-| **Price per night** | The normal price (see §4) |
-| **Weekend price per night** | Optional. Used for Friday and Saturday nights. |
-| **Max guests** | Adults and children together, babies included |
-| **Max adults** | Optional, shown with *Children & ages* on. E.g. a family room for 4 guests but at most 2 adults. |
-| **Child prices** | Optional, shown with *Children & ages* on: tick *Use different child prices for this room* to override the general rules (§7) |
-| **Rate plans** | Shown with *Rate plans* on: which plans this room offers, with a link to choose them (§8) |
-| **Number of rooms of this type** | E.g. 5 identical doubles means `5`. Enter `0` to stop selling this type. |
-| **Minimum nights** | Optional. Overrides the global minimum. |
-| Order | Lower numbers are listed first |
+| **Room name and Full description** | The public name and the text guests read on the room page. |
+| **Short description** | One or two sentences for room cards, lists and the booking form. Empty = the first words of the full description. A counter shows when it gets long. |
+| **Photos** | **Main photo** (room cards and the top of the room page) and the **Gallery** (add several at once, drag to reorder, × to remove). Rooms brought in from another site can show **Download missing photos** (below). |
+| **Room facts** | **Room type** (Double room, Suite… – tick one or more, or type a new one and **Add**; used to group and filter rooms), **Size** (m²), **Beds**, **View**, **Max guests**, **Max adults** (with *Children & ages* on), **Identical rooms** (how many can be booked for the same night; `0` stops bookings), **Minimum nights**. |
+| **Amenities** | Click the ones the room has (42 ready-made ones: Wi-Fi, air conditioning, sea view, balcony, kitchen…) or type your own and **Add** – an icon is suggested from the words, in English or Bulgarian (e.g. "Rain shower" or "Джакузи"). Drag or use ↑ ↓ to order them; the first five also appear on the room cards in the booking form. Click an icon to choose another one from the 126 bundled icons (search by name) or **Use my own icon** (SVG or PNG from the Media Library). |
+| **More details** | Anything else, as short "name: value" lines with an icon – *Floor: 2nd, with lift*, *Distance to the beach: 200 m*, *Check-in: from 14:00*. Suggestions are one click away. |
+| **Prices** | Price per night, weekend price, child prices, rate plans – as before (§4, §7, §8). |
+| **Search engines** | Title and description in search results, with a live preview. Hidden when Yoast SEO or Rank Math is active: use their box on the same screen. |
+| **On the website** | **Show on the website** (on by default), **Demo room**, **Display order**, the room page address and booking link with **Copy** buttons, and a checklist (*Room page: 7 of 9 filled in*) of what is still missing. |
 
-Each room has a **slug** (e.g. `deluxe-double`), shown in the Rooms list. "Book now" links and the Elementor widget use it, so it stays the same when the site is copied. To change it, open the room, click **Screen Options**, tick **Slug**, and edit it.
+All fields are optional except the name and the price; empty ones are simply not shown on the website.
+
+**The slug** (e.g. `deluxe-double`) is the last part of the room page address and of booking links: change it under **Screen Options → Slug**. Old addresses keep working after a change (they redirect to the new one, and old booking links still book the room).
+
+**Room types** are renamed or deleted on their own screen: **Rename or delete room types** in the *Room facts* card.
+
+### The room page
+
+Every published room has a page at **`/rooms/<slug>/`**. The word `rooms` is set under **Bookings → Settings → Room pages → Room page address** (e.g. `stai`, `villas`). After a change, the old addresses redirect to the new ones and room links in menus need no update.
+
+What the page looks like:
+
+1. **With Elementor Pro and a single room template** (Theme Builder → Single, condition *Rooms*): your design, filled by each room through the **Flexo Booking: room** dynamic tags and the room widgets (§3.1). This is the normal FlexoHotels setup.
+2. **Without a template** (or before you make one): the plugin's own room page – name, type, "from" price, facts, gallery with lightbox, description, amenities, more details, rates and the **booking box** – in the theme's layout and fonts. It works on classic and block themes; block themes can edit it under **Appearance → Editor → Templates → Single room**.
+
+**Search engines:** each room page has its title and description (or Yoast's / Rank Math's), structured data (HotelRoom, the hotel and the "from" price) and is listed in the sitemap (WordPress, Yoast or Rank Math). With Yoast or Rank Math the room data is added to *their* structured data, so nothing appears twice.
+
+**Show on the website = off** (a room sold only by phone, or not ready yet): the page answers *not found*, and the room is left out of room lists, search results, sitemaps and the booking form's room list. Staff still see the page, guests can still book it through its **booking link**, and you can book it from the admin.
+
+**Demo rooms:** **Rooms & prices → Add demo rooms** adds three sample rooms (double room, studio, family suite) with drawn sample photos, texts, amenities and details, so a template can be designed before the hotel's rooms exist. Only logged-in staff see them on the website, and they **can never be booked**. **Remove demo rooms** deletes them and their photos (a demo room that somehow has bookings is kept). Any room can be marked or unmarked as a demo room in its *On the website* card.
+
+**The "from" price** ("from 95 € per night") is the lowest price per night a guest can really get in the **next 12 months** (or the booking window, if shorter), for **2 adults** (fewer if the room takes fewer): seasons, weekend prices, the minimum stay and the room's first rate plan are included; closed dates are skipped; tourist tax and promo codes are not included. The booking form always honours it. It updates itself when prices, seasons, closed dates, rates or settings change, and once a day. **Settings → Room pages → Prices on room pages** can hide it until guests choose dates. The *Your room pages* table on the same tab shows each room's address, status and "from" price (or why it has none).
+
+**On phones**, a **Check availability** bar with the "from" price stays at the bottom of room pages; it scrolls to the booking box (and hides while the box is on screen). Switch it off under **Settings → Room pages → On phones**.
+
+### 3.1 Room templates in Elementor Pro
+
+Design **one room page and one room card**; every room fills them with its own data.
+
+1. **Bookings → Settings → Room pages → Elementor templates for rooms** shows which template room pages use. **Add the starter room templates** creates a *Single room* template (with the display condition *Rooms*) and a *Room card* for Loop Grid / Loop Carousel. When you already have a room template, **Add the starter templates (keep my template in use)** adds them without switching. Both are also downloadable as `.json` to import under **Templates → Import**.
+2. **Or connect your own template:** open it, click a widget's dynamic-tag icon (the stack icon next to a field) and choose from the group **Flexo Booking: room**:
+
+| Dynamic tag | Gives | Options |
+|---|---|---|
+| Room name, Room type, Short description, Full description | Text | Separator between types |
+| Room size, Beds, View, Guests (capacity) | Text | Size with unit (24 m²) or number only; guests as "Up to 4 guests (max. 2 adults)", "4 guests" or a number (max guests / adults / children) |
+| Room price | Price per night | Base, weekend or **From price**; with currency or number only |
+| Amenities | Text | Names separated by commas, one per line, or one amenity by position |
+| Room detail (More details) | Text | A detail by name (e.g. *Floor*) or position; value only, or "name: value" |
+| Availability for the searched dates | Text | When the page was opened from a search (dates in the address): *Available · 390 € for 2 nights* or *Not available for your dates*; empty otherwise. Optionally without the total. |
+| Room main photo, Room gallery | Image / gallery | Main, 2nd, 3rd or 4th photo; a neutral placeholder when a room has none |
+| Room page link | URL | For card titles and "View room" buttons |
+| Room booking link | URL | Opens the booking page with the room chosen (§14) |
+
+Every tag has a **Room** option, **Current room (automatic)** by default: in the single template and in Loop items each room shows its own data. Choose a room only to show a specific room elsewhere (e.g. on the home page). While editing a template, the first room is shown as a sample; use *Preview settings* to pick another.
+
+3. **Room widgets** (panel category *FlexoHotels*), for things a text field can't do well:
+   - **Room amenities** – the amenities with their icons, as a list, in a row or in columns; icon size and colour (uploaded icons can keep their own colours), dividers, how many.
+   - **Room details** – the facts (size, beds, view, guests) and/or *More details*, with icons, name above value or value only.
+   - **Room gallery** – carousel (photos side by side, height per device, arrows, dots, autoplay that stops on touch and for visitors who prefer less motion) or grid; lightbox.
+   - **Room booking box** – dates and guests, then availability and the total for *this* room, and **Book now** straight to the guest details step (§14). Same Style options as the booking form.
+4. **Room lists:** Pro's **Loop Grid** or **Loop Carousel** with *Query → Source: Rooms* and the *Room card* (or your own loop item using the tags). Order follows the rooms' *Display order*; hidden and demo rooms are left out for guests. For "other rooms" on a room page, exclude the current post in the query.
+
+**Converting a template built on JetEngine:** `bin/convert-jet-room-template.py` rewrites an exported Elementor JSON so every JetEngine room field becomes the matching Flexo Booking tag or widget (photos, gallery, amenities, facts, prices, booking buttons, the rooms query). `elementor-templates/` holds the converted Azure single room template and room card, with an import guide.
+
+**Without Elementor:** `[flexo_room]` prints the plugin's room page for the current (or a given) room, `[flexo_room_field field="name|type|excerpt|description|size|guests|beds|view|price|from_price|amenities|url|booking_url" room="slug"]` prints one field, and `[flexo_room_booking room="slug"]` the booking box.
+
+### 3.2 Bringing rooms in from JetEngine (or another plugin)
+
+**Rooms & prices → Bring in rooms** copies rooms made with another plugin into Flexo Booking:
+
+1. Choose where the rooms are now (e.g. *Rooms (rooms) – 12*). Rooms made with JetEngine are found **even when JetEngine is switched off**.
+2. Check which field goes where. Suggestions are filled in from the field names (`room_size` → Size, `price_per_night` → Price, `amenity-1…8` → Amenities, gallery fields → Gallery…), with an example value for each. The name, address (slug), main photo and order are always copied.
+3. **Bring in the rooms.** Rooms keep the **same addresses**, so links and search results keep working. Running it again updates the same rooms; **prices already set in Flexo Booking are kept**. Nothing is deleted.
+
+Then: check prices, identical rooms and amenity icons; point the single room template at Flexo Booking (§3.1); **switch off the old room post type** (or JetEngine) so it no longer answers the same addresses – the results screen and **Settings → Health** warn while it does. When everything looks right, JetEngine and its add-ons can be removed.
 
 ---
 
@@ -570,7 +640,8 @@ The calendar is for inventory and reservations only. It has no housekeeping or r
 
 1. **Booking page (required):** edit your *Booking / Reservations* page in Elementor, search the panel for **"Flexo"** and drag in **Flexo Booking Form** (*FlexoHotels* category). Keep *Layout* set to **Full booking form**. Note the page path (default `/booking/`).
 2. **Hero search bar (optional):** add the widget on the home page with *Layout* **Search bar** and *Booking page path* `/booking/`.
-3. **"Book now" buttons:** on the Button widget's *Link*, choose the dynamic tag **Flexo Booking → Room booking link**, then pick the room. Or type `/booking/?room=<slug>`.
+3. **"Book now" buttons:** on the Button widget's *Link*, choose the dynamic tag **Room booking link** (group *Flexo Booking: room*). In a room template or Loop item it books **the room being shown**, so one button serves every room; elsewhere pick the room. It opens the booking page from **Settings → Hotel** (or the page you enter), and with *Keep the dates and guests from the page address* on, a guest who came from a search lands on the rooms with their dates already chosen. Or type `/booking/?room=<slug>`; every room's link has a **Copy** button in the room editor and the Rooms list.
+   - **Room booking box** (widget, or `[flexo_room_booking]`) on a room page: the guest chooses dates and guests there and sees at once whether *this* room is free and the total; **Book now** opens the booking page straight at the details step. When it isn't free, nearby free dates and a link to other rooms for the same dates are shown.
 4. **Without Elementor**, use the shortcodes:
    - `[flexo_booking]`
    - `[flexo_booking room="deluxe-double"]`
@@ -839,7 +910,7 @@ With payments on, these are added (only for the ways of paying that are switched
 2. The form follows the page's language: texts, prices, dates, messages, and which language the booking is stored in.
 3. The **privacy policy**, **terms** and **thank-you** pages are opened in the guest's language when you have translated them and linked the translations.
 4. Your own texts (email subjects and texts you changed, the consent text, rate plan names, descriptions and cancellation texts) appear under **Languages → Translations** (Polylang) or **WPML → String Translation**, in the group **Flexo Booking**. Translate them there.
-5. Rooms are the same in every language. Room names come from the room itself; use rate plans' own names for anything guests should read in their language.
+5. **Rooms in several languages:** rooms and room types are translatable like pages. Translate a room with the language buttons in the Rooms list: the translation has its own name, descriptions, beds, view, amenities, details, search texts and **its own address** (e.g. `/en/rooms/sea-view-double/`). **Prices, guests, identical rooms, photos, seasons, closed dates and bookings always come from the room in the main language** (the translation's Prices card says so and links to it), so a translation is never an extra room, availability is never split, and a booking made in English is stored on the main room. The booking form shows each room's name and amenities in the guest's language. Rooms made before Polylang was set up are given the main language automatically. WPML reads the same rules from `wpml-config.xml`.
 
 ---
 
@@ -873,7 +944,7 @@ Switch on **Settings → Features → Conversion tracking**. The booking form th
 |---|---|---|
 | Plugin code (including the bundled fonts) | `wp-content/plugins/flexo-booking` | Install the zip, or it comes with a full-site clone |
 | Widget placement and styling | Elementor page/template data | Elementor template/kit export |
-| Rooms, **seasons, closed dates**, settings (incl. child prices, tourist tax, **email texts, privacy, invoice fields, tracking and payment settings, Appearance**), enabled features, **rate plans** (and which rooms offer them), **promo codes** | Posts, plugin tables, options | **Bookings → Import / Export** (JSON) or WP-CLI |
+| Rooms (**with their room page content: texts, types, amenities, details, photos**), **seasons, closed dates**, settings (incl. child prices, tourist tax, **email texts, privacy, invoice fields, tracking and payment settings, Appearance**), enabled features, **rate plans** (and which rooms offer them), **promo codes** | Posts, plugin tables, options | **Bookings → Import / Export** (JSON) or WP-CLI |
 | Stripe keys and webhook secrets, the hotel's bank account, notification addresses | Options | **Never exported**: enter them on each site |
 | Calendar connections (Booking.com/Airbnb links) | Plugin table | In the export file, but imported **only when ticked** (moving the same hotel) |
 | Bookings | `wp_flexo_bookings` table | Full-site migration, or export with "include bookings" |
@@ -900,6 +971,7 @@ How the import behaves:
 - **Rate plans** are matched by name (updated, never duplicated) and the file decides which plans each imported room offers, including room-specific amounts. Each room's own child prices and max adults come along.
 - **Promo codes** are matched by code. Their room and rate-plan limits are re-linked by room slug and plan name. **Usage is not copied**: it's counted from each site's own bookings, so it starts at 0.
 - Calendar connections are **not** imported unless you tick *Import calendar connections* (or use `--calendars`). A template's Booking.com links belong to the template, not to the client. Export links are never copied: every site creates its own, so paste the new links into the booking sites after moving a hotel.
+- **Room pages (1.8.0):** texts, room types, amenities (with uploaded icons), details, search texts, show-on-website and display order come along. **Photos** are downloaded from the original site when *Download room images from the source site* is ticked (`--images`), never twice; otherwise the room shows **Download missing photos** in its editor, for later. Demo rooms stay demo rooms.
 - Files from 1.0.0–1.4.0 still import.
 - With "include bookings" (moving a live hotel), bookings keep their payment status and payment history. A card payment still in progress when the file was made arrives as *Not paid in time*.
 
@@ -935,6 +1007,8 @@ wp flexo-booking import template.flexo-booking.json --images      # --skip-setti
 **Settings → Privacy** (with *Privacy consent* on): consent checkbox, its text, privacy page, retention period (§19).
 
 **Settings → Tracking** (with *Conversion tracking* on): the events for Tag Manager and the optional direct Meta Pixel (§23).
+
+**Settings → Room pages:** room page address (`rooms`), the *All rooms* page room pages link back to (found automatically when empty), prices on room pages ("from" price or none), the **Check availability** bar on phones, the table of your room pages, and the Elementor templates for rooms (§3).
 
 **Settings → Features:** see §2. **Settings → Health:** see §18. **Calendar sync** (§12) and **Import & export** (§24) are linked from the same tab bar.
 
@@ -1033,6 +1107,23 @@ All routes accept `locale` (e.g. `en_US`): the answer is in that language, and a
 | `flexo_booking_guest_request`, `flexo_booking_enquiry` | actions | After a guest's change/cancellation request, after an enquiry |
 | `flexo_booking_before_insert`, `flexo_booking_guest_email`, `flexo_booking_admin_email`, `flexo_booking_email_placeholders`, `flexo_booking_manage_capability` (default `flexo_manage_bookings`), `flexo_booking_rate_limit`, `flexo_booking_promo_attempts`, `flexo_booking_template`, `flexo_booking_use_mysql_locks` | filters | As named |
 
+**Rooms (1.8.0):**
+
+| Part | Where |
+|---|---|
+| Post type `flexo_room` (public, address base from the setting `room_base`), taxonomy `flexo_room_type` | `Flexo_Booking_Rooms`, `Flexo_Booking_Room_Content` |
+| Room meta | `_flexo_gallery` (attachment IDs), `_flexo_view`, `_flexo_amenity_items` (`key`, `label`, `icon`; a preset with an empty label follows the translation; `_flexo_amenities` keeps the preset keys in step), `_flexo_details` (`icon`, `label`, `value`), `_flexo_hidden`, `_flexo_demo`, `_flexo_seo_title`, `_flexo_seo_description`, `_flexo_from_price` (cache) |
+| Icons | `name` (bundled Lucide icons, ISC licence, `includes/data/room-icons.php`) or `media:<attachment ID>`; `Flexo_Booking_Room_Icons::html()` |
+| The room as data | `Flexo_Booking_Room_Content::room( $id )` (texts from the translation, booking data from the main room) and `current_id()` (explicit room → the loop's post → the queried object → `flexo_booking_current_room`) |
+| Pages, addresses, hidden rooms, default page, block template | `Flexo_Booking_Room_Pages`; output in `Flexo_Booking_Room_Render` (`templates/single-room.php`, `templates/room-booking-box.php`, overridable like the form templates) |
+| "From" prices | `Flexo_Booking_Room_Prices::get()`, cache per room, daily cron `flexo_booking_from_prices` |
+| Structured data, titles | `Flexo_Booking_Room_Seo` |
+| Languages | `Flexo_Booking_Room_I18n` (`canonical_id()`, `translation_id()`) |
+| Elementor | `includes/elementor/class-room-tags.php`, `class-room-link-tag.php`, `class-room-widgets.php`, `class-room-box-widget.php`, `class-templates.php` (starter templates in `assets/elementor/`) |
+| Admin | `includes/admin/class-room-editor.php`, `class-demo-rooms.php`, `class-room-importer.php` |
+
+Room hooks: `flexo_booking_current_room` (filter: the room when nothing else says), `flexo_booking_amenity_presets` and `flexo_booking_amenity_icon_keywords` (filters: ready-made amenities and the words that suggest icons), `flexo_booking_room_schema` (filter `( $nodes, $room )`: structured data), `flexo_booking_room_price_options` / `flexo_booking_room_price_tag` (filters: the Room price tag), `flexo_booking_prices_changed` (action: fire it when something changes every room's price, so "from" prices are worked out again). Engine queries pass the query var `flexo_all_rooms` to include hidden rooms; the REST `rooms` route and the booking form's room list leave out hidden and demo rooms (a hidden room is still booked through `?room=<slug>`).
+
 **Build:** `bin/build-zip.sh` → `dist/flexo-booking-<version>.zip`.
 
 ---
@@ -1042,7 +1133,7 @@ All routes accept `locale` (e.g. `en_US`): the answer is in that language, and a
 1. **Setup wizard** finished (or each of its steps done by hand), and **Settings → Health** shows no ✕.
 2. **Features and package:** `FLEXO_BOOKING_FEATURES` in `wp-config.php` matches what the client bought (§2); the hotel's Features tab has the right booking mode.
 3. **Timezone** (Settings → General) is the hotel's city.
-4. **Rooms:** prices, weekend prices, max guests (and max adults), number of identical rooms, minimum stay, photos. Seasons, closed dates, rate plans, child prices and tourist tax as needed.
+4. **Rooms:** prices, weekend prices, max guests (and max adults), number of identical rooms, minimum stay. Seasons, closed dates, rate plans, child prices and tourist tax as needed. **Room pages:** every room's checklist in its *On the website* card is complete (photos, description, amenities), **demo rooms removed**, the single room template and room card in place (**Settings → Room pages** names the template in use), the "from" prices in the *Your room pages* table look right, and nothing else uses `/rooms/` (**Settings → Health**). If rooms came from JetEngine, its room post type is switched off.
 5. **Pages:** booking page with the widget or `[flexo_booking]`; hero search bar pointing to it; "Book now" buttons; privacy policy page (Settings → Privacy); terms and thank-you pages if used. Translated pages linked in Polylang/WPML.
 6. **Emails:** notification addresses, hotel phone, logo/colour; an SMTP plugin connected to the hotel's own domain; **Send test email** arrives in the inbox (not spam).
 7. **Payments** (if used):
@@ -1061,4 +1152,4 @@ All routes accept `locale` (e.g. `en_US`): the answer is in that language, and a
 
 ## 28. Testing
 
-The `tests/` folder in the repository is not shipped in the zip. It holds WP-CLI test scripts (including the calendar-sync engine test with Booking.com/Airbnb-style sample feeds), a concurrency test (two simultaneous bookings for the last unit), the upgrade and portability tests, a promo-code race test (two bookings for a code's last use), privacy/email/invoice tests, a Bulgarian-site language test, a Polylang test, Day 5 payment tests (`test-day5.php`, with Stripe's API faked inside WordPress and webhooks signed like Stripe's), a local **Stripe stand-in** (`tests/stripe-mock/server.php`: Checkout API, hosted payment page, signed webhooks, refunds) used by the Day 5 browser test, a payment-hold race test, Day 6 tests (`test-day6.php`: history, notes, resend, roles and capabilities, Today, health, wizard, guest keys and pages, calendar and alternatives, enquiries, phone numbers, Appearance CSS and fonts, Import & export), and Playwright browser tests for Days 1–6 (Days 5 and 6 include layout checks at 360, 390, 414, 768, 1024 and 1280 px; Day 6 also keyboard-only booking, screen-reader labels, contrast, back/refresh, double submit, no Google requests, Cyrillic fonts, Elementor priority, the wizard on a fresh site, roles and the admin on a phone). See `tests/README.md`. Run them against a throwaway site only.
+The `tests/` folder in the repository is not shipped in the zip. It holds WP-CLI test scripts (including the calendar-sync engine test with Booking.com/Airbnb-style sample feeds), a concurrency test (two simultaneous bookings for the last unit), the upgrade and portability tests, a promo-code race test (two bookings for a code's last use), privacy/email/invoice tests, a Bulgarian-site language test, a Polylang test, Day 5 payment tests (`test-day5.php`, with Stripe's API faked inside WordPress and webhooks signed like Stripe's), a local **Stripe stand-in** (`tests/stripe-mock/server.php`: Checkout API, hosted payment page, signed webhooks, refunds) used by the Day 5 browser test, a payment-hold race test, Day 6 tests (`test-day6.php`: history, notes, resend, roles and capabilities, Today, health, wizard, guest keys and pages, calendar and alternatives, enquiries, phone numbers, Appearance CSS and fonts, Import & export), Day 7 tests (`test-day7.php`, `test-day7-elementor.php`, `polylang-day7.php`: room pages and addresses, hidden and demo rooms, room content, "from" prices, structured data, Elementor tags and widgets, starter templates, Import/Export of room pages, the JetEngine importer, translations), and Playwright browser tests for Days 1–7 (Day 7: room page, booking box, phone bar, availability tags, room editor at 360/390/768/1440 px; Days 5 and 6 include layout checks at 360, 390, 414, 768, 1024 and 1280 px; Day 6 also keyboard-only booking, screen-reader labels, contrast, back/refresh, double submit, no Google requests, Cyrillic fonts, Elementor priority, the wizard on a fresh site, roles and the admin on a phone). See `tests/README.md`. Run them against a throwaway site only.

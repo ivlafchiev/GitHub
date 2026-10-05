@@ -18,7 +18,7 @@ $settings['terms_url']     = '/terms/';
 $settings['email_request_subject'] = 'Custom subject {reference}';
 update_option( Flexo_Booking_Settings::OPTION, $settings );
 
-$g = array( 'guest_name' => 'Old Guest', 'guest_email' => 'old@example.com', 'guest_phone' => '123', 'adults' => 2 );
+$g = array( 'guest_name' => 'Old Guest', 'guest_email' => 'old@example.com', 'guest_phone' => '+359 888 123 456', 'adults' => 2 );
 Flexo_Booking_Bookings::create( array_merge( $g, array( 'room' => 'deluxe-double', 'check_in' => t_day( 0 ), 'check_out' => t_day( 3 ) ) ) );
 Flexo_Booking_Bookings::create( array_merge( $g, array( 'room' => 'deluxe-double', 'check_in' => t_day( 4 ), 'check_out' => t_day( 6 ) ) ) );
 Flexo_Booking_Bookings::create( array_merge( $g, array( 'room' => 'family-suite', 'check_in' => t_day( 10 ), 'check_out' => t_day( 13 ), 'adults' => 3 ) ) );

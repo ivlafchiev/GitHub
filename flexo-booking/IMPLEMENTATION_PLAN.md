@@ -1597,3 +1597,84 @@ Decisions:
    plus a matching **Room card** loop item template. Delivered as files
    to import (not bundled in the plugin; the plugin bundles generic
    starter templates).
+
+### 17.12 Day 7 status, deviations and test results (1.8.0, migration 8)
+
+Built in the revised order of §17.10, one commit per part (parts 1–4),
+then the language pass, tests and docs (part 5).
+
+| Area | Files |
+|---|---|
+| Migration 8 (additive) | New settings `room_base`, `rooms_page`, `room_price_display`, `room_sticky_bar`; rewrite rules flushed once (option `flexo_booking_flush_rewrite`); nothing removed. Day 6 amenity ticks are read as ready-made amenities. |
+| Room content (A) | `class-room-content.php` (taxonomy `flexo_room_type`, gallery, view, amenities with icons, More details, hidden/demo, SEO texts, `room()` view, `current_id()`), `class-room-icons.php` + `includes/data/room-icons.php` (126 Lucide icons, ISC), `admin/class-room-editor.php` + `assets/css/admin-room.css` / `assets/js/admin-room.js` (card editor), `class-rooms.php` (public post type, Prices card, list columns, `bookable()`). |
+| Elementor Pro (B, C) | `elementor/class-room-tags.php` (15 tags, group *Flexo Booking: room*), `class-room-link-tag.php`, `class-room-widgets.php` (amenities, details, gallery), `class-room-box-widget.php`, `class-templates.php` (one-click starter templates with the condition *Rooms*), `assets/elementor/*.json`, `bin/elementor-starter-templates.py`, `bin/convert-jet-room-template.py`, `elementor-templates/` (client template converted). |
+| Room pages (D) | `class-room-pages.php` (base, old bases/slugs, static-page fallback, hidden/demo 404, robots, sitemaps, default page for classic and block themes, settings tab), `class-room-render.php` + `templates/single-room.php` + `assets/css/rooms.css` / `assets/js/rooms.js` (lists, gallery, lightbox, phone bar, availability), `class-room-seo.php` (title, description, JSON-LD alone or inside Yoast / Rank Math), `class-room-i18n.php` + `wpml-config.xml`. |
+| Booking box, "from" price (F, G) | `class-frontend.php` (`[flexo_room_booking]`, layout `box`), `templates/room-booking-box.php`, `booking.js` (RoomBox), `class-room-prices.php` (cache + `flexo_booking_prices_changed`). |
+| Links, demo rooms, Import/Export (I, J) | Room booking link (current room, booking page from Settings, keeps searched dates), copy buttons, old slugs; `admin/class-demo-rooms.php`; `class-portability.php` (schema 6: room page content, photos downloaded once, *Download missing photos*); `admin/class-room-importer.php` (Bring in rooms from JetEngine, also with JetEngine off). |
+| Health, uninstall, language | Health check for address clashes; uninstall removes the Day 7 options, cron event and room types; 457 new Bulgarian strings, `.po` / `.mo` / `.l10n.php` regenerated. |
+
+**Deviations and decisions while building**
+
+1. **Room gallery widget uses its own carousel** (CSS scroll-snap + a small
+   script), not Elementor's Swiper: it works the same with and without
+   Pro's assets, needs no extra library on the page and respects
+   *prefers-reduced-motion*. The Room gallery **tag** still feeds Pro's
+   Gallery / Image Carousel / Media Carousel widgets for those who prefer
+   them.
+2. **Default room page on block themes** is a registered block template
+   (`flexo-booking//single-flexo_room`) with a dynamic block
+   `flexo-booking/room`; a shortcode block was tried first but `wpautop`
+   broke the booking box layout.
+3. **Availability tag is filled in the browser** with one request for all
+   rooms on the page, so cached pages (and Loop Grid pagination) keep
+   working; without dates in the address it prints nothing.
+4. **Room types are not publicly queryable** (no `/room-type/…` archive
+   pages): lists are built with Loop Grid queries and taxonomy filters, so
+   there is no thin archive page for search engines.
+5. **Hidden rooms are left out of lists only.** Found in the regression
+   run: the filter that removes hidden rooms from front-end queries also
+   hit lookups by slug outside the admin (WP-CLI and REST imports), so
+   re-importing a hidden room created a duplicate and imported bookings,
+   closed dates and promo-code limits of a hidden room lost their room.
+   Lookups of one room (`name` or `p`) now always find it, and the
+   importer's queries pass `flexo_all_rooms`. Covered by `test-day7.php`.
+6. **The Rooms list widget/shortcode was dropped** (§17.10): lists use
+   Pro's Loop Grid / Loop Carousel with the Room card template.
+7. `tests/upgrade-fixture.php` used the phone number `123`, which 1.6.0+
+   rejects, so on 1.6/1.7 sites the fixture made only one of its four
+   bookings; it now uses a real number (the plugin is unchanged).
+8. Two older tests depended on the date or on leftovers of other tests,
+   not on the plugin: `e2e/day2.js` clicked a day 20 days ahead in the
+   current month's calendar (now opens that day's month), and
+   `test-day6.php` expected "no booking page" while the Day 1 browser seed's
+   Elementor booking page was still published (now drafts Elementor pages
+   with the form too).
+
+**Tests (MariaDB 10.11, PHP 8.x, WordPress 7.2-alpha, Elementor 4.4 free)**
+
+| Suite | Result |
+|---|---|
+| `test-day7.php` | 193/193 |
+| `test-day7-elementor.php` | 83/83 |
+| `polylang-day7.php` (Polylang, BG main + EN) | 25/25 |
+| `e2e/day7.js` (room page, booking box, phone bar, 360/390/768, availability tags, hidden room, room editor 1440/390) | 50/50 |
+| Days 1–6 PHP (`run.sh`: parity 8, seasons 46, features 30 + 6, regression 43, iCal 66, Day 3 122, Day 4 93, Day 5 258 (Stripe stand-in), Day 6 108, i18n 18, three concurrency races) | all passed |
+| `polylang-test.php` | 21/21 |
+| Upgrade 1.0.0 / 1.5.0 / 1.7.0 → 1.8.0 | 27/27 each; room pages answer at once after the upgrade |
+| Portability: base 11 + re-import 3, calendars 12, Day 3 4 + 21, full 7 + 30 | all passed |
+| Browser tests Days 1–6 | Day 1 37/37, Day 2 51/51, Day 3 63/63, Day 4 49/49, Day 5 167/167 (Stripe stand-in), Day 6 117/117 |
+
+**Not tested, because Elementor Pro is not available in this environment**
+(the zip was never provided in the session): importing the starter and
+converted templates into Pro's Theme Builder and their display condition;
+the one-click template installer with Pro active (`save_item` + conditions);
+Loop Grid / Loop Carousel with the Room card (query source *Rooms*, hidden
+rooms left out, order, "exclude current post"); Pro's own widgets fed by
+the room tags (Gallery, Media Carousel, Image Carousel, Nested Accordion);
+`pro_template_applies()` against Pro's conditions manager; the editor's
+*Preview settings* with a room; Pro's AJAX Loop pagination. All tags and
+widgets were checked with Elementor 4.4 (free, from source) rendering a
+template document with each room as the global post, which is what Pro
+does. Yoast SEO and Rank Math were not installed either: the structured
+data hand-over was tested through their filters (`wpseo_schema_graph`,
+`rank_math/json_ld`) and sitemap hooks only.

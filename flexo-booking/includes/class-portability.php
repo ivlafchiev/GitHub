@@ -278,10 +278,11 @@ class Flexo_Booking_Portability {
 				$slug     = sanitize_title( $room['slug'] );
 				$existing = get_posts(
 					array(
-						'post_type'      => Flexo_Booking_Rooms::POST_TYPE,
-						'name'           => $slug,
-						'post_status'    => 'any',
-						'posts_per_page' => 1,
+						'post_type'       => Flexo_Booking_Rooms::POST_TYPE,
+						'name'            => $slug,
+						'post_status'     => 'any',
+						'posts_per_page'  => 1,
+						'flexo_all_rooms' => true,
 					)
 				);
 				$postarr  = array(
@@ -366,10 +367,11 @@ class Flexo_Booking_Portability {
 				if ( ! empty( $closure['room'] ) ) {
 					$room    = get_posts(
 						array(
-							'post_type'      => Flexo_Booking_Rooms::POST_TYPE,
-							'name'           => sanitize_title( $closure['room'] ),
-							'post_status'    => 'any',
-							'posts_per_page' => 1,
+							'post_type'       => Flexo_Booking_Rooms::POST_TYPE,
+							'name'            => sanitize_title( $closure['room'] ),
+							'post_status'     => 'any',
+							'posts_per_page'  => 1,
+							'flexo_all_rooms' => true,
 						)
 					);
 					$room_id = $room ? $room[0]->ID : 0;
@@ -406,10 +408,11 @@ class Flexo_Booking_Portability {
 				foreach ( isset( $promo['rooms'] ) ? (array) $promo['rooms'] : array() as $slug ) {
 					$found = get_posts(
 						array(
-							'post_type'      => Flexo_Booking_Rooms::POST_TYPE,
-							'name'           => sanitize_title( $slug ),
-							'post_status'    => 'any',
-							'posts_per_page' => 1,
+							'post_type'       => Flexo_Booking_Rooms::POST_TYPE,
+							'name'            => sanitize_title( $slug ),
+							'post_status'     => 'any',
+							'posts_per_page'  => 1,
+							'flexo_all_rooms' => true,
 						)
 					);
 					if ( $found ) {
@@ -453,10 +456,11 @@ class Flexo_Booking_Portability {
 			if ( ! isset( $room_ids[ $booking['room'] ] ) ) {
 				$post                          = get_posts(
 					array(
-						'post_type'      => Flexo_Booking_Rooms::POST_TYPE,
-						'name'           => sanitize_title( $booking['room'] ),
-						'post_status'    => 'any',
-						'posts_per_page' => 1,
+						'post_type'       => Flexo_Booking_Rooms::POST_TYPE,
+						'name'            => sanitize_title( $booking['room'] ),
+						'post_status'     => 'any',
+						'posts_per_page'  => 1,
+						'flexo_all_rooms' => true,
 					)
 				);
 				$room_ids[ $booking['room'] ] = $post ? $post[0]->ID : 0;

@@ -305,6 +305,11 @@ class Flexo_Booking_Room_Pages {
 		if ( $query->get( 'flexo_all_rooms' ) || ( is_admin() && ! self::is_elementor_request() ) ) {
 			return;
 		}
+		// Looking up one particular room (by address or ID) always finds it:
+		// only lists and search leave hidden rooms out.
+		if ( '' !== (string) $query->get( 'name' ) || $query->get( 'p' ) ) {
+			return;
+		}
 		$types = $query->get( 'post_type' );
 		if ( empty( $types ) ) {
 			if ( ! $query->is_search() ) {

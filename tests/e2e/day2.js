@@ -95,6 +95,8 @@ const section = ( t ) => console.log( '\n== ' + t );
 	await Promise.all( [ p.waitForNavigation(), p.click( '#fbc-dialog a:has-text("Remove block")' ) ] );
 	ok( await studioRow.locator( '.fbc-item--blocked' ).count() === 0, 'dialog "Remove block" removes it' );
 
+	// The calendar shows one month: open the one with that day (D0 + 20 can be next month).
+	await cal( month( 20 ) );
 	await studioRow.locator( `.fbc-cell[data-day="${ day( 20 ) }"]` ).click();
 	await p.waitForSelector( '#fbc-dialog[open]' );
 	ok( ( await p.textContent( '#fbc-dialog' ) ).includes( '1 of 1 free' ), 'click empty day → availability and quick actions' );
