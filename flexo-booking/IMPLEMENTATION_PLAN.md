@@ -1678,3 +1678,344 @@ template document with each room as the global post, which is what Pro
 does. Yoast SEO and Rank Math were not installed either: the structured
 data hand-over was tested through their filters (`wpseo_schema_graph`,
 `rank_math/json_ld`) and sitemap hooks only.
+
+---
+
+## 18. 1.9.0 plan: system pages (Booking, Thank You, Contact)
+
+Status: **plan only – waiting for approval before Session A.** Written after
+auditing 1.8.3 (plugin header `Version: 1.8.3`, migrations at 8). Sections
+refer to the brief's letters (A–AP).
+
+### 18.1 What already exists (reused, not rebuilt)
+
+| Need in the brief | Already in 1.8.3 | 1.9.0 change |
+|---|---|---|
+| Built-in Booking route (C) | `Flexo_Booking_Frontend::builtin_page()`: when `/booking/` (or the booking-page path) is a 404, serves the booking form in `templates/page-shell.php` (theme header/footer, block themes, canvas), own title, noindex; `/booking/` redirects to a real booking page elsewhere | Becomes the first of three system pages; gains settings, layouts, sections, SEO, cache rules |
+| One booking renderer (C, L, M) | `Flexo_Booking_Frontend::render()` serves the Elementor widget `flexo-booking-form`, `[flexo_booking]`, the built-in page and the room box | Unchanged; the system page only wraps it |
+| Guest field settings (D) | `field_phone` (required/optional/hidden), `field_notes` (optional/hidden), privacy consent and invoice features; fields printed by `templates/booking-form.php` | Add label / placeholder / help / order on top; existing keys stay authoritative |
+| Secure guest access (E, T, L3) | `Flexo_Booking_Guest::key()` (HMAC, no storage), `check()` (signed key or payment key), `view()` (the confirmation view model incl. payment state, bank details, next steps, contact, `.ics`, manage link), REST `guest-booking`, `payment`, `booking.ics` | The Thank You page renders `Guest::view()` server-side; no second lookup |
+| Custom thank-you page (E) | Setting `thank_you_url` (path): after a confirmed booking the guest is sent to `thank_you_url?booking=REF` (reference only); bank transfer stays on the booking page (details shown there) | Kept as "Custom WordPress page" mode, unchanged behaviour |
+| Inline confirmation (E) | Booking page shows the confirmation and keeps `?fb_done=REF&fb_key=KEY` in the address so it survives a refresh | Kept as "Show confirmation inside booking form" (see decision 3) |
+| Card return / webhook pending (S) | Stripe returns to the booking page (`fb_payment`, `fb_ref`, `fb_key`), the form polls `payment`, shows "still checking", retry, expiry, conflict | Kept; only the *last* step (confirmed) may go to the Thank You page |
+| `booking_complete` once (X) | `trackComplete()` fires once per reference (localStorage) **before** any redirect | Unchanged – the Thank You page never fires it |
+| REST nonces (AN, V) | Public routes are **nonce-free** (validation, honeypot `fb_website`, per-IP limits `flexo_rl_*`) – already cache-safe | Contact uses the same pattern |
+| Enquiries (I–K, W, Y) | `Guest::enquiry()`: `flexo_booking_log` row (`booking_id` 0, action `enquiry`, details JSON incl. `status` open/handled), hotel email with Reply-To, honeypot, rate limit, Today → *Needs your attention* + *Mark as answered*, deleted after `retention_months` (default 12), WP personal-data export/erase by email | Contact messages are enquiries with `details.kind = contact` (availability enquiries get `kind = availability` when missing). **No new table.** |
+| Owner texts in languages (U) | Untouched texts translated by gettext; changed texts registered with Polylang/WPML (`I18n::translatable_strings()` / `translate()`) | Page texts join the same list |
+| Appearance (O) | CSS variables on `.flexo-booking`, Custom/Match modes, bundled + Elementor global + typed fonts, panel settings, preview | Extended in Session C |
+| Overlay headers (AO) | `clearOverlayHeader()` in booking.js moves plugin pages below a header lying over them | Becomes the "auto" part of the header setting |
+| Health (Z) | Checks incl. `booking_page` (warning while the built-in page is used), `room_pages` (address clashes) | New checks below |
+| Page caching (AN) | **Nothing** (only admin/export call `nocache_headers()`) | New |
+| SEO for plugin routes (AP) | Title + noindex on the built-in booking page only | New |
+
+### 18.2 Architecture
+
+**Routing (A, B) – "soft routes" on the 404 path, no rewrite rules.**
+Extends the 1.8.3 mechanism. At `template_redirect` priority 0, when WordPress
+found **nothing** (`is_404()`), the requested path is compared with the
+enabled system pages' slugs (with an optional language prefix as today).
+- **Existing content always wins:** pages, posts, CPTs and room pages are
+  resolved by WordPress first.
+- **Why not rewrite rules:**
+  - A rule placed *above* WordPress's page rules would hide an existing page.
+  - A rule placed *below* them never matches, because the page rule catches
+    every path.
+  - So no rewrite rule is needed, and nothing is ever flushed (no flush on
+    slug change either).
+- **On a match:**
+  - `is_404` → false, status 200, the page template;
+  - headers (cache, referrer), SEO and header-compatibility hooks;
+  - WordPress's "guess a similar page" redirect is avoided because we run
+    first.
+- **Old slugs:** kept in a list; a 404 on an old slug gets a 301 to the
+  current one. Loops are impossible because the target is always a current
+  slug different from the old one.
+- **Paths:** trailing slashes follow `user_trailingslashit()`.
+- **Collisions:**
+  - At save and in Health, a slug is checked against published pages/posts,
+    other post types' rewrite slugs, the room base and the other system
+    pages.
+  - A clashing system page simply never activates at that path (the
+    existing page wins), and the Pages screen and Health say so with the two
+    fixes.
+
+**New classes and files**
+
+| File | Role |
+|---|---|
+| `includes/class-system-pages.php` – `Flexo_Booking_System_Pages` | Registry of the three pages (`booking`, `thank_you`, `contact`): mode (built-in / own page), enabled, slug, old slugs, resolution (incl. Polylang/WPML page translation via `I18n::page_url()`), routing, collisions, headers, SEO, header compatibility, rendering through `page-shell.php` |
+| `includes/class-confirmation.php` – `Flexo_Booking_Confirmation` | Thank You context: one-time hand-off token, signed cookie, view model = `Guest::view()` + section config + state headings; one renderer for the built-in page, the shortcode and the widget (Session C) |
+| `includes/class-forms.php` – `Flexo_Booking_Forms` | Field definitions and config: booking details (Session A) and contact fields (Session B); sanitising per type |
+| `includes/class-contact.php` – `Flexo_Booking_Contact` (Session B) | Contact form renderer and submission; storage, email and rate limiting **shared with `Guest::enquiry()`** (refactored into one internal method, not copied) |
+| `includes/class-page-cache.php` – `Flexo_Booking_Page_Cache` | No-cache markers and cache-plugin APIs, detection for Health |
+| `includes/admin/class-pages-admin.php` | Settings → **Pages** tab (cards, Page / Content / Sections / Layout / Appearance) |
+| `templates/system-page-booking.php`, `system-page-thank-you.php`, `system-page-contact.php`, `confirmation.php`, `contact-form.php`, `forms-tabs.php` | Small presentation templates fed with prepared view models; `booking-page.php` (1.8.3) is replaced by `system-page-booking.php` (theme overrides of the old name still honoured) |
+
+Changed: `class-frontend.php` (route moves to System_Pages; render options
+for title/intro/steps/summary/help), `class-rest.php` (Thank You hand-off
+URL in the booking/payment responses), `class-guest.php` (enquiry storage
+shared; kind), `class-settings.php` (migration of field labels; Pages tab
+registered), `class-health.php`, `class-portability.php`, `class-i18n.php`,
+`class-appearance.php` (Session C), `class-migrations.php`, booking.js
+(redirect to Thank You hand-off; tabs and contact in B/C), booking.css,
+admin assets, Elementor (Session C).
+
+### 18.3 Data model and migration (AC)
+
+- **No new tables, no schema change.**
+- **Settings:**
+  - one new option `flexo_booking_pages` holds the pages' modes, slugs, old
+    slugs, layouts, sections and order, texts, header compatibility and
+    per-page appearance;
+  - one new option `flexo_booking_forms` holds the booking field extras and
+    the contact fields.
+  - Both have their own sanitiser that **merges with the saved values**, as
+    `Flexo_Booking_Settings::sanitize()` already does, so saving one card
+    never resets another.
+- **Migration 9 (settings only, idempotent, additive)** decides the
+  starting state. `Migrations::run()` remembers the version it started from
+  (0 = fresh install):
+
+| | Fresh install (from 0) | Upgrade from 1.8.x |
+|---|---|---|
+| Booking | Built-in, `/booking/` | Own page if `booking_page` is set or a page with the form is found (kept exactly); otherwise built-in at the same address (what 1.8.3 already does) |
+| After booking | Separate Thank You page (built-in, `/thank-you/`) | `thank_you_url` set → Separate page, **own page** = that URL (unchanged behaviour); otherwise **inline** (unchanged). Built-in Thank You **disabled** |
+| Contact | Built-in, `/contact/` (Session B) | **Disabled** |
+| Field texts | Defaults (translated) | Current behaviour; empty label = default text |
+| Appearance | Unchanged | Unchanged |
+
+A fresh install whose slug is already taken (for example a demo-content
+`/contact/` page) starts with that system page inactive at the clashing path.
+Health explains the fix.
+
+### 18.4 Thank You flow (E, S, T)
+
+| Booking type | Built-in Thank You (separate mode) | Own Thank You page (legacy `thank_you_url`) | Inline mode |
+|---|---|---|---|
+| Request | REST response carries the hand-off URL; JS fires `booking_complete`, then goes there | As today (`?booking=REF`) | As today |
+| Instant | Same | As today | As today |
+| Bank transfer | Hand-off → Thank You shows amount, bank details, reference and deadline (from `Payments::guest_view`) | As today: stays on the booking page with bank details | As today |
+| Card | Stripe still returns to the **booking page**, which keeps handling cancel, retry, expiry and conflict; only when the server reports `confirmed` does it go to the hand-off URL. If the guest lands on Thank You while the webhook is pending, they see "Your payment is being confirmed", and the page re-checks automatically every 5 s for up to 2 minutes, then explains what happens next | As today | As today |
+
+**Hand-off and context (security, decision-free part):**
+- **The hand-off token:**
+  - 32 random bytes;
+  - single use, stored as a transient for 10 minutes that maps it to the
+    booking ID;
+  - created only by the booking/payment REST response for the guest who
+    just booked.
+- **The guest's long-term key never appears in the Thank You URL.**
+- **`/thank-you/?fb_t=TOKEN`:**
+  - the token is checked and deleted;
+  - the cookie `flexo_booking_ty` is set:
+    - value `booking_id.expires.HMAC(wp_salt)`;
+    - `HttpOnly`, `Secure` on HTTPS, `SameSite=Lax`;
+    - path = the Thank You path;
+    - **60 minutes**;
+  - then a 303 redirect to the clean `/thank-you/`.
+- **On every Thank You response:**
+  - `Referrer-Policy: no-referrer`;
+  - `X-Robots-Tag` / meta `noindex, nofollow`;
+  - never in sitemaps;
+  - no-cache (18.5).
+- **No valid cookie** (expired, forged, a reference guessed or typed in the
+  address): the generic thank-you text only. The emailed *Manage your
+  booking* link stays the long-term way back.
+- **No personal data in any generated URL.** A test asserts this for every
+  link the plugin builds.
+- **`booking_complete`:** fired once on the booking page before leaving,
+  as now. The Thank You page never fires it, so a refresh or Back can't
+  double-count it.
+
+**Sections and texts:**
+- **Sections (shown when applicable, in an owner-defined order with
+  Up/Down buttons):**
+  - booking status, reference, room, dates, guests, rate plan;
+  - price breakdown, total, payment status, amount paid, amount remaining;
+  - bank transfer, what happens next, hotel contact, address;
+  - add to calendar, directions, manage booking, back to website.
+- **Editable texts:** headings per state, intro, next-steps title and text,
+  help title, button labels.
+  - Allowed placeholders: `{hotel_name}`, `{reference}`, `{check_in}`,
+    `{check_out}`.
+  - Sanitised with `wp_kses_post()`; no PHP.
+- **Layouts:** Card, Summary and Split. All collapse to one column below
+  768 px.
+
+### 18.5 Caching (AN)
+
+- **Thank You and every response showing a booking:**
+  - `nocache_headers()` and `DONOTCACHEPAGE` / `DONOTCACHEOBJECT`;
+  - LiteSpeed `litespeed_control_set_nocache`;
+  - WP Rocket `rocket_cache_reject_uri` (the Thank You path);
+  - W3 Total Cache and WP Super Cache honour `DONOTCACHEPAGE`.
+  - Their pages are rendered from the cookie on the server, so a cached copy
+    could only ever be the generic version. The headers make sure even that
+    is not stored.
+- **Booking and Contact pages:** see decision 1.
+- **Health:** a warning when a known cache plugin is active without an API
+  we could use, with the rules to add by hand.
+- **README:** Cloudflare and server rules (bypass the Thank You path and
+  `?fb_` URLs).
+- **REST:** already nonce-free, so expired nonces can't break submissions
+  on cached pages.
+
+### 18.6 SEO (AP)
+
+- **Booking and Contact:**
+  - title "Page title – Site name" through `pre_get_document_title`, Yoast
+    `wpseo_title` and Rank Math `rank_math/frontend/title` (otherwise those
+    plugins would show the home title);
+  - editable meta description;
+  - our own `rel=canonical`, plus Yoast and Rank Math canonical filters;
+  - indexable by default, switchable;
+  - added to the WordPress core sitemap through a small sitemap provider;
+    for Yoast/Rank Math through their extra-URL filters where available,
+    otherwise documented.
+- **Thank You:** always `noindex, nofollow`, no canonical, never in
+  sitemaps.
+
+### 18.7 Header compatibility (AO)
+
+- **Setting** in Settings → Pages: "Header style above Flexo pages".
+  1. **Normal** (default). The current automatic check stays: when a header
+     lying over the page is detected, a hint appears in Pages and Health.
+  2. **Space for an overlay header.** Top space per device, or *Automatic*
+     (the 1.8.3 measurement).
+  3. **Title band behind the header.** Page title on a colour or an image,
+     with a height per device.
+- **Applies to:** all system pages and the plugin's plain room page.
+- **Elementor Pro Theme Builder:**
+  - System pages are not posts, so on them *Entire Site* header/footer
+    conditions apply, and *Singular → Page* conditions don't. To make them
+    targetable, a Pro condition "Flexo Booking pages" (General → Flexo
+    Booking pages) would be registered through
+    `elementor/theme/register_conditions`.
+  - **This can't be verified here without Elementor Pro** (decision 7).
+
+### 18.8 Admin (A, AF)
+
+- **Where:** a new Settings tab **Pages**, next to *Room pages*.
+- **Cards** for Booking, Thank You and Contact, each showing: status in
+  plain words, mode, address, **Open / Preview**, **Customize**.
+- **Customize opens:** Page (source, slug, enabled) · Content (title,
+  intro, texts) · Sections (show/hide, order) · Layout · Appearance (Use
+  global / overrides, Session C).
+- **Global settings:** header style, and "After a booking" (separate page /
+  inline).
+- **Advanced settings** (slugs, SEO switches) sit behind the existing
+  *Show advanced settings* switch.
+
+### 18.9 Health (Z)
+
+New checks:
+- **Each system page:** OK, or a warning when its own page is missing,
+  unpublished, or (for a custom Thank You page) lacks the confirmation
+  component.
+- **Slug collisions:** with an explanation and the fixes.
+- **Cache plugin without automatic exclusion:** the rules to add by hand.
+- **Overlay header:** a hint when one is detected.
+
+### 18.10 Sessions, files and tests
+
+**Session A**
+- **Brief sections:** A, B, C, D, E, F, S, T, AN, AO, AP, Z, AA, AC.
+- **Files:**
+  - new: `class-system-pages.php`, `class-confirmation.php`,
+    `class-forms.php` (booking part), `class-page-cache.php`,
+    `admin/class-pages-admin.php`, the booking and thank-you templates;
+  - changed: migration 9, REST hand-off, booking.js, CSS.
+- **Tests:**
+  - `tests/test-system-pages.php`: brief items 1–16, 45–49 and 73–75;
+  - `tests/test-confirmation.php`: items 28–44 (incl. the two-guests
+    cache test);
+  - `tests/test-booking-fields.php`: items 17–27;
+  - `tests/e2e/day8.js`: built-in booking page, booking → clean Thank
+    You, inline mode, bank transfer, card return via the Stripe stand-in,
+    Back, widths 360–desktop, overlay header;
+  - the full existing suite.
+
+**Session B**
+- **Brief sections:** G, H, I, J, K, W, X, Y, plus Z/AA/AC for these parts.
+- **Files:** `class-contact.php`, the forms contact part,
+  `templates/contact-form.php`, the contact system page; the REST route
+  `/contact`; Today labels; privacy export/erase (already by email).
+- **Tests:** `tests/test-contact.php`: items 50–72; e2e contact flows.
+- **Tabs:** the Booking & Contact tabs layout lands in Session B only if
+  the shared tabs component is clean there, otherwise in Session C.
+
+**Session C**
+- **Brief sections:** L, M, N, O, AF, AB, U, AJ, AK, AI/AL.
+- **Work:** widgets and shortcodes, tabs, Appearance extension and per-page
+  overrides, import/export, translations, docs, version 1.9.0, zip.
+- **Tests:** items 76–87 and the full Definition of Done run.
+
+### 18.11 Decisions needing your answer (conflicts with the brief or the current code)
+
+1. **Booking and Contact pages and caching (AN).** These pages contain no
+   private data (the booking form is filled in by the browser, and the
+   REST calls need no nonce), so serving them from a page cache is safe and
+   makes them faster.
+   - **Proposal:** never cache Thank You, inline confirmations and any
+     manage-booking response (headers, `DONOTCACHEPAGE`, plugin APIs).
+   - **Leave Booking and Contact cacheable,** with a setting to switch
+     caching off if a hotel wants it.
+   - The brief asks to never cache them. Which do you prefer?
+2. **No rewrite rules / no flushes (B).** The 404-path routes in 18.2 give
+   "existing page always wins" automatically and never need flushing. The
+   brief mentions flushing on slug changes; this design doesn't need it.
+   Agree?
+3. **The guest key in the address in inline mode (E).** Inline mode (kept
+   for upgraded sites) and the Stripe return keep `fb_key` in the address
+   today.
+   - **Proposal:** after the page has read it, remove it from the address
+     bar (history replace) and keep it in the tab's sessionStorage, so a
+     refresh still shows the confirmation.
+   - Also send `Referrer-Policy: same-origin` with built-in booking pages.
+   - This changes current behaviour slightly (a copied address no longer
+     shows the booking). OK for Session A?
+4. **Card payments (S).** Stripe keeps returning to the booking page, and
+   only a server-confirmed payment moves on to Thank You. Sending Stripe
+   straight to Thank You would mean re-implementing cancel, retry and
+   expiry there. Agree?
+5. **Booking page "Enabled/Disabled" (C).** Without a booking page every
+   *Book now* breaks.
+   - **Proposal:** Booking can't be disabled, only switched between
+     built-in and your own page.
+   - Thank You and Contact get the on/off switch.
+6. **Own Thank You page (E).** The page selector stores a page ID, and the
+   old `thank_you_url` path keeps working as the fallback (upgraded sites).
+   On an own page, booking details appear only through the *Flexo Booking
+   Confirmation* widget or shortcode (Session C), with the same cookie
+   security. Until then it shows the page as designed. OK?
+7. **Elementor Pro / Azure (AO, AI).**
+   - **Testing on the Azure template with the Pro Theme Builder header at
+     1440/1024/768/390 needs the Elementor Pro zip and a copy of the Azure
+     site** (or network access to a staging copy).
+   - Without them I test with Hello, a simulated overlay header and
+     Elementor free, and list Pro as untested.
+   - The Pro condition "Flexo Booking pages" would be written but unverified.
+   - Yoast and Rank Math are also not available: tested through their
+     filters only.
+8. **Where the screen lives (A).** The new tab **Pages** sits next to
+   *Room pages*, which stays as it is. Alternatively Room pages could become
+   a fourth card in Pages. Preference?
+9. **Retention (W).** Contact messages use the existing
+   `retention_months` (default 12), the same as availability enquiries. OK?
+10. **Translated slugs.** Out of scope as allowed: `/booking/` and
+    `/bg/booking/` style only.
+
+### 18.12 Risks
+
+- **Other plugins acting on 404s before `template_redirect` priority 0.**
+  Very rare; Redirection and Rank Math's 404 monitor act later or log only.
+  Covered by a Health check that requests each system URL and reports
+  anything other than 200.
+- **Themes printing their own title on non-singular requests.** The page
+  shell already avoids the theme's single template.
+- **Cache plugins that ignore `DONOTCACHEPAGE`.** Handled by the plugin
+  APIs, a Health warning and the docs.
+- **Extra work:** migration 9 must decide the upgrade state exactly once.
+  It is covered by upgrade tests from 1.0.0, 1.5.0, 1.7.0 and 1.8.3 fixtures
+  (the 1.8.3 fixture with an own booking page, a `thank_you_url`, a
+  `/contact/` page and a `/thank-you/` page).
