@@ -867,3 +867,12 @@
 		width: 160px;
 	}
 }
+
+.flexo-admin-ui.post-type-flexo_room .flexo-translation-note {
+	margin: 10px 0;
+	padding: 10px 12px;
+	border: 1px solid var(--fx-info-line);
+	border-radius: var(--fx-radius-sm);
+	background: var(--fx-info-soft);
+	color: var(--fx-text-2);
+}

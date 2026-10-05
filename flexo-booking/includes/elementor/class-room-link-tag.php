@@ -72,7 +72,7 @@ class Flexo_Booking_Room_Link_Tag extends Data_Tag {
 	}
 
 	public function get_value( array $options = array() ) {
-		$room_id = Flexo_Booking_Room_Content::current_id( (string) $this->get_settings( 'room' ) );
+		$room_id = Flexo_Booking_Room_I18n::canonical_id( Flexo_Booking_Room_Content::current_id( (string) $this->get_settings( 'room' ) ) );
 		$post    = $room_id ? get_post( $room_id ) : null;
 		$slug    = $post && 'publish' === $post->post_status && ! Flexo_Booking_Room_Content::is_demo( $post->ID ) ? $post->post_name : '';
 		$args    = 'yes' === $this->get_settings( 'pass_search' ) ? Flexo_Booking_Room_Content::search_args() : array();

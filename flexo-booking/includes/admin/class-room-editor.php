@@ -26,6 +26,21 @@ class Flexo_Booking_Room_Editor {
 		add_filter( 'post_updated_messages', array( __CLASS__, 'messages' ) );
 		add_filter( 'parent_file', array( __CLASS__, 'parent_file' ) );
 		add_filter( 'submenu_file', array( __CLASS__, 'submenu_file' ) );
+		add_action( 'admin_post_flexo_booking_room_photos', array( __CLASS__, 'download_photos' ) );
+	}
+
+	/**
+	 * "Download missing photos" after an import without photos.
+	 */
+	public static function download_photos() {
+		$post_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0;
+		check_admin_referer( 'flexo_booking_room_photos_' . $post_id );
+		if ( ! $post_id || Flexo_Booking_Rooms::POST_TYPE !== get_post_type( $post_id ) || ! current_user_can( 'edit_post', $post_id ) || ! current_user_can( 'upload_files' ) ) {
+			wp_die( esc_html__( 'Sorry, you are not allowed to do this.', 'flexo-booking' ), 403 );
+		}
+		$count = Flexo_Booking_Portability::download_missing( $post_id );
+		wp_safe_redirect( add_query_arg( 'flexo_photos', $count, get_edit_post_link( $post_id, 'raw' ) ) );
+		exit;
 	}
 
 	private static function is_room_screen() {
@@ -59,9 +74,35 @@ class Flexo_Booking_Room_Editor {
 		add_meta_box( 'flexo-room-facts', __( 'Room facts', 'flexo-booking' ), array( __CLASS__, 'facts_box' ), $type, 'normal', 'high' );
 		add_meta_box( 'flexo-room-amenities', __( 'Amenities', 'flexo-booking' ), array( __CLASS__, 'amenities_box' ), $type, 'normal', 'high' );
 		add_meta_box( 'flexo-room-more', __( 'More details', 'flexo-booking' ), array( __CLASS__, 'details_box' ), $type, 'normal', 'high' );
-		add_meta_box( 'flexo-room-details', __( 'Prices', 'flexo-booking' ), array( 'Flexo_Booking_Rooms', 'render_meta_box' ), $type, 'normal', 'high' );
+		$main = self::main_room( $post );
+		add_meta_box( 'flexo-room-details', __( 'Prices', 'flexo-booking' ), $main ? array( __CLASS__, 'translation_prices_box' ) : array( 'Flexo_Booking_Rooms', 'render_meta_box' ), $type, 'normal', 'high' );
 		add_meta_box( 'flexo-room-seo', __( 'Search engines', 'flexo-booking' ), array( __CLASS__, 'seo_box' ), $type, 'normal', 'low' );
 		add_meta_box( 'flexo-room-website', __( 'On the website', 'flexo-booking' ), array( __CLASS__, 'website_box' ), $type, 'side', 'default' );
+	}
+
+	/**
+	 * The main-language room when this is a translation, else null.
+	 */
+	private static function main_room( $post ) {
+		if ( ! Flexo_Booking_Room_I18n::active() || ! $post || 'auto-draft' === $post->post_status ) {
+			return null;
+		}
+		$main = Flexo_Booking_Room_I18n::canonical_id( $post->ID );
+		return $main !== (int) $post->ID ? get_post( $main ) : null;
+	}
+
+	private static function translation_note( WP_Post $main ) {
+		echo '<p class="flexo-translation-note">';
+		/* translators: 1: language name, 2: room name */
+		echo esc_html( sprintf( __( 'This is a translation. Prices, guests, identical rooms, seasons and bookings come from the %1$s room "%2$s".', 'flexo-booking' ), Flexo_Booking_Room_I18n::main_language_name(), get_the_title( $main ) ) );
+		echo ' <a href="' . esc_url( get_edit_post_link( $main ) ) . '">' . esc_html__( 'Edit them there', 'flexo-booking' ) . '</a></p>';
+	}
+
+	public static function translation_prices_box( $post ) {
+		$main = self::main_room( $post );
+		if ( $main ) {
+			self::translation_note( $main );
+		}
 	}
 
 	/* ------------------------------------------------------------------ *
@@ -82,6 +123,23 @@ class Flexo_Booking_Room_Editor {
 		$gallery = Flexo_Booking_Room_Content::gallery( $post->ID, false );
 		?>
 		<input type="hidden" name="flexo_room_cards[]" value="photos">
+		<?php
+		$missing = get_post_meta( $post->ID, Flexo_Booking_Portability::MISSING_META, true );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- message after the download.
+		if ( isset( $_GET['flexo_photos'] ) ) {
+			/* translators: %d: number of photos */
+			echo '<div class="notice notice-success inline"><p>' . esc_html( sprintf( _n( '%d photo downloaded.', '%d photos downloaded.', absint( $_GET['flexo_photos'] ), 'flexo-booking' ), absint( $_GET['flexo_photos'] ) ) ) . '</p></div>'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		}
+		if ( is_array( $missing ) && $missing ) :
+			?>
+			<div class="notice notice-info inline flexo-missing-photos"><p>
+				<?php
+				/* translators: %d: number of photos */
+				echo esc_html( sprintf( _n( '%d photo of this room is still on the site it was imported from.', '%d photos of this room are still on the site they were imported from.', count( $missing ), 'flexo-booking' ), count( $missing ) ) );
+				?>
+				<a class="button button-small" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=flexo_booking_room_photos&post=' . $post->ID ), 'flexo_booking_room_photos_' . $post->ID ) ); ?>"><?php esc_html_e( 'Download missing photos', 'flexo-booking' ); ?></a>
+			</p></div>
+		<?php endif; ?>
 		<div class="flexo-photos">
 			<div class="flexo-photos__main">
 				<h4><?php esc_html_e( 'Main photo', 'flexo-booking' ); ?></h4>
@@ -151,6 +209,21 @@ class Flexo_Booking_Room_Editor {
 				<?php endif; ?>
 			</p>
 		</div>
+		<?php $main = self::main_room( $post ); ?>
+		<?php if ( $main ) : ?>
+			<?php self::translation_note( $main ); ?>
+			<div class="flexo-fields flexo-fields--3">
+				<p class="flexo-field">
+					<label for="flexo-beds"><?php esc_html_e( 'Beds', 'flexo-booking' ); ?></label>
+					<input id="flexo-beds" type="text" name="_flexo_beds" value="<?php echo esc_attr( $room['beds'] ); ?>" maxlength="190">
+				</p>
+				<p class="flexo-field">
+					<label for="flexo-view"><?php esc_html_e( 'View', 'flexo-booking' ); ?></label>
+					<input id="flexo-view" type="text" name="flexo_view" value="<?php echo esc_attr( (string) get_post_meta( $post->ID, Flexo_Booking_Room_Content::VIEW, true ) ); ?>" maxlength="100">
+				</p>
+			</div>
+			<?php return; ?>
+		<?php endif; ?>
 		<div class="flexo-fields flexo-fields--3">
 			<p class="flexo-field">
 				<label for="flexo-size"><?php esc_html_e( 'Size', 'flexo-booking' ); ?></label>

@@ -62,6 +62,33 @@ class Flexo_Booking_Health {
 			$add( 'rooms', 'ok', __( 'Rooms', 'flexo-booking' ), sprintf( _n( '%d room with a price.', '%d rooms with prices.', count( $rooms ), 'flexo-booking' ), count( $rooms ) ) );
 		}
 
+		// Room pages: another post type or child pages using the same address.
+		$base    = Flexo_Booking_Room_Pages::base();
+		$clashes = array();
+		foreach ( get_post_types( array( 'public' => true ), 'objects' ) as $type ) {
+			if ( Flexo_Booking_Rooms::POST_TYPE !== $type->name && is_array( $type->rewrite ) && isset( $type->rewrite['slug'] ) && trim( $type->rewrite['slug'], '/' ) === $base ) {
+				$clashes[] = $type->labels->name;
+			}
+		}
+		$parent   = get_page_by_path( $base );
+		$children = $parent ? get_pages( array( 'child_of' => $parent->ID, 'parent' => $parent->ID ) ) : array();
+		$covered  = array();
+		foreach ( $children as $child ) {
+			if ( get_page_by_path( $child->post_name, OBJECT, Flexo_Booking_Rooms::POST_TYPE ) ) {
+				$covered[] = $child->post_title;
+			}
+		}
+		if ( $clashes ) {
+			/* translators: 1: address part, 2: post type names */
+			$add( 'room_pages', 'warning', __( 'Room pages', 'flexo-booking' ), sprintf( __( 'Another kind of content also uses /%1$s/ in its addresses (%2$s), so some room pages may show the wrong content. Switch it off (for example the JetEngine rooms post type) or change the room page address.', 'flexo-booking' ), $base, implode( ', ', $clashes ) ), array( __( 'Room pages settings', 'flexo-booking' ), admin_url( 'admin.php?page=' . Flexo_Booking_Admin::MENU_SLUG . '-settings&tab=room_pages' ) ) );
+		} elseif ( $covered ) {
+			/* translators: 1: address part, 2: page names */
+			$add( 'room_pages', 'warning', __( 'Room pages', 'flexo-booking' ), sprintf( __( 'These pages under /%1$s/ have the same address as a room and are no longer shown: %2$s. You can delete them.', 'flexo-booking' ), $base, implode( ', ', $covered ) ) );
+		} else {
+			/* translators: %s: address part */
+			$add( 'room_pages', 'ok', __( 'Room pages', 'flexo-booking' ), sprintf( __( 'Rooms have their own pages at /%s/…', 'flexo-booking' ), $base ) );
+		}
+
 		// Booking page.
 		Flexo_Booking_Guest::forget_booking_page();
 		$detected = Flexo_Booking_Guest::detect_booking_page();

@@ -39,6 +39,7 @@ require_once FLEXO_BOOKING_DIR . 'includes/class-room-pages.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-room-render.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-room-prices.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-room-seo.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-room-i18n.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-seasons.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-closures.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-inventory.php';
@@ -79,6 +80,8 @@ require_once FLEXO_BOOKING_DIR . 'includes/admin/class-help.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-admin-ui.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-wizard.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-room-editor.php';
+require_once FLEXO_BOOKING_DIR . 'includes/admin/class-demo-rooms.php';
+require_once FLEXO_BOOKING_DIR . 'includes/admin/class-room-importer.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-portability.php';
 require_once FLEXO_BOOKING_DIR . 'includes/elementor/class-elementor.php';
 require_once FLEXO_BOOKING_DIR . 'includes/elementor/class-templates.php';
@@ -97,6 +100,7 @@ add_action(
 		Flexo_Booking_Room_Render::init();
 		Flexo_Booking_Room_Prices::init();
 		Flexo_Booking_Room_SEO::init();
+		Flexo_Booking_Room_I18n::init();
 		Flexo_Booking_Emails::init();
 		Flexo_Booking_Payments::init();
 		Flexo_Booking_Privacy::init();
@@ -132,6 +136,8 @@ add_action(
 			Flexo_Booking_Help::init();
 			Flexo_Booking_Wizard::init();
 			Flexo_Booking_Room_Editor::init();
+			Flexo_Booking_Demo_Rooms::init();
+			Flexo_Booking_Room_Importer::init();
 			Flexo_Booking_Elementor_Templates::init();
 		}
 	}

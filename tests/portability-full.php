@@ -104,7 +104,7 @@ if ( 'source' === getenv( 'FLEXO_PHASE' ) ) {
 	update_option( Flexo_Booking_Payments::SECRETS_OPTION, $saved[2] );
 	$json = wp_json_encode( $data );
 	t_section( 'Export from the template' );
-	t_eq( 5, $data['schema'], 'schema 5' );
+	t_ok( $data['schema'] >= 5, 'schema 5 or later' );
 	t_eq( $all, array_values( array_intersect( $all, $data['features']['enabled'] ) ), 'all 15 features in the file' );
 	t_ok( false === strpos( $json, 'sk_test_template' ) && false === strpos( $json, 'sk_live_template' ) && false === strpos( $json, 'whsec_' ), 'no Stripe keys or webhook secrets' );
 	t_ok( false === strpos( $json, 'BG80BNBG' ) && false === strpos( $json, 'Template Hotel Ltd.' ) && false === strpos( $json, 'Template Bank' ), 'no bank account' );

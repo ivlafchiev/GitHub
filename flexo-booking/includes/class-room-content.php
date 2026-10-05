@@ -474,11 +474,13 @@ class Flexo_Booking_Room_Content {
 	 * ------------------------------------------------------------------ */
 
 	public static function is_hidden( $room_id ) {
-		return in_array( (int) $room_id, self::flagged()['hidden'], true );
+		$flags = self::flagged()['hidden'];
+		return in_array( (int) $room_id, $flags, true ) || ( $flags && in_array( Flexo_Booking_Room_I18n::canonical_id( $room_id ), $flags, true ) );
 	}
 
 	public static function is_demo( $room_id ) {
-		return in_array( (int) $room_id, self::flagged()['demo'], true );
+		$flags = self::flagged()['demo'];
+		return in_array( (int) $room_id, $flags, true ) || ( $flags && in_array( Flexo_Booking_Room_I18n::canonical_id( $room_id ), $flags, true ) );
 	}
 
 	/**
@@ -568,10 +570,25 @@ class Flexo_Booking_Room_Content {
 		if ( ! $post || Flexo_Booking_Rooms::POST_TYPE !== $post->post_type ) {
 			return null;
 		}
-		$room    = Flexo_Booking_Rooms::to_array( $post );
+		// A translation shows its own texts; booking data comes from the main room.
+		$main_id = Flexo_Booking_Room_I18n::canonical_id( $room_id );
+		$main    = $main_id !== $room_id ? get_post( $main_id ) : $post;
+		$main    = $main ? $main : $post;
+		$room    = Flexo_Booking_Rooms::to_array( $main );
 		$terms   = get_the_terms( $post, self::TAXONOMY );
+		$terms   = is_array( $terms ) && $terms ? $terms : ( $main !== $post ? get_the_terms( $main, self::TAXONOMY ) : array() );
 		$terms   = is_array( $terms ) ? $terms : array();
 		$gallery = self::gallery( $room_id );
+		$gallery = $gallery || $main === $post ? $gallery : self::gallery( $main->ID );
+		$own     = static function ( $value, $fallback ) {
+			return ( is_array( $value ) ? $value : trim( (string) $value ) ) ? $value : $fallback;
+		};
+		if ( $main !== $post ) {
+			$room['title']   = get_the_title( $post );
+			$room['excerpt'] = has_excerpt( $post ) ? get_the_excerpt( $post ) : ( '' !== trim( $post->post_content ) ? wp_trim_words( wp_strip_all_tags( $post->post_content ), 25 ) : $room['excerpt'] );
+			$room['beds']    = $own( (string) get_post_meta( $room_id, '_flexo_beds', true ), $room['beds'] );
+			$room['image']   = $gallery ? wp_get_attachment_image_url( $gallery[0], 'medium_large' ) : $room['image'];
+		}
 
 		$max_children = 0;
 		if ( Flexo_Booking_Children::enabled() ) {
@@ -581,16 +598,18 @@ class Flexo_Booking_Room_Content {
 		$room = array_merge(
 			$room,
 			array(
+				'id'           => $room_id,
+				'main_id'      => (int) $main->ID,
 				'url'          => self::page_url( $post ),
-				'booking_url'  => self::booking_url( $post->post_name ),
+				'booking_url'  => self::booking_url( $main->post_name ),
 				'types'        => wp_list_pluck( $terms, 'name' ),
 				'type_slugs'   => wp_list_pluck( $terms, 'slug' ),
-				'description'  => $post->post_content,
-				'view'         => (string) get_post_meta( $room_id, self::VIEW, true ),
+				'description'  => $own( $post->post_content, $main->post_content ),
+				'view'         => $own( (string) get_post_meta( $room_id, self::VIEW, true ), (string) get_post_meta( $main->ID, self::VIEW, true ) ),
 				'image_id'     => $gallery ? $gallery[0] : 0,
 				'gallery'      => $gallery,
-				'amenity_list' => self::amenities( $room_id ),
-				'details'      => self::details( $room_id ),
+				'amenity_list' => $own( self::amenities( $room_id ), $main !== $post ? self::amenities( $main->ID ) : array() ),
+				'details'      => $own( self::details( $room_id ), $main !== $post ? self::details( $main->ID ) : array() ),
 				'max_children' => $max_children,
 				'hidden'       => self::is_hidden( $room_id ),
 				'demo'         => self::is_demo( $room_id ),

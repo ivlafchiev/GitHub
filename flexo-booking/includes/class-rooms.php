@@ -272,6 +272,12 @@ class Flexo_Booking_Rooms {
 		if ( ! $post || self::POST_TYPE !== $post->post_type || 'publish' !== $post->post_status ) {
 			return null;
 		}
+		// A translation books its room in the main language.
+		$main = Flexo_Booking_Room_I18n::canonical_id( $post->ID );
+		if ( $main !== (int) $post->ID ) {
+			$main_post = get_post( $main );
+			return $main_post && 'publish' === $main_post->post_status ? $main_post : null;
+		}
 		return $post;
 	}
 
@@ -282,7 +288,7 @@ class Flexo_Booking_Rooms {
 	 * @return WP_Post[]
 	 */
 	public static function all( $status = 'publish' ) {
-		return get_posts(
+		$posts = get_posts(
 			array(
 				'post_type'       => self::POST_TYPE,
 				'post_status'     => $status,
@@ -292,6 +298,19 @@ class Flexo_Booking_Rooms {
 					'title'      => 'ASC',
 				),
 				'flexo_all_rooms' => true,
+				'lang'            => '', // Polylang: every language (translations are filtered out below).
+			)
+		);
+		if ( ! Flexo_Booking_Room_I18n::active() ) {
+			return $posts;
+		}
+		// Main-language rooms only: a translation is not another room.
+		return array_values(
+			array_filter(
+				$posts,
+				static function ( $post ) {
+					return Flexo_Booking_Room_I18n::is_canonical( $post->ID );
+				}
 			)
 		);
 	}

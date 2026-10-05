@@ -1,0 +1,37 @@
+<wpml-config>
+	<!--
+		Rooms: translations hold the texts guests read; prices, guests and
+		booking data are copied from the main-language room (the booking
+		engine always uses the main room).
+	-->
+	<custom-types>
+		<custom-type translate="1">flexo_room</custom-type>
+	</custom-types>
+	<taxonomies>
+		<taxonomy translate="1">flexo_room_type</taxonomy>
+	</taxonomies>
+	<custom-fields>
+		<custom-field action="copy">_flexo_price</custom-field>
+		<custom-field action="copy">_flexo_weekend_price</custom-field>
+		<custom-field action="copy">_flexo_capacity</custom-field>
+		<custom-field action="copy">_flexo_units</custom-field>
+		<custom-field action="copy">_flexo_min_nights</custom-field>
+		<custom-field action="copy">_flexo_max_adults</custom-field>
+		<custom-field action="copy">_flexo_size</custom-field>
+		<custom-field action="copy">_flexo_rate_plans</custom-field>
+		<custom-field action="copy">_flexo_child_rules</custom-field>
+		<custom-field action="copy">_flexo_hidden</custom-field>
+		<custom-field action="copy">_flexo_demo</custom-field>
+		<custom-field action="copy">_flexo_gallery</custom-field>
+		<custom-field action="ignore">_flexo_from_price</custom-field>
+		<custom-field action="ignore">_flexo_ical_token</custom-field>
+		<custom-field action="ignore">_flexo_missing_images</custom-field>
+		<custom-field action="translate">_flexo_beds</custom-field>
+		<custom-field action="translate">_flexo_view</custom-field>
+		<custom-field action="translate">_flexo_seo_title</custom-field>
+		<custom-field action="translate">_flexo_seo_description</custom-field>
+		<custom-field action="copy-once">_flexo_amenity_items</custom-field>
+		<custom-field action="copy-once">_flexo_amenities</custom-field>
+		<custom-field action="copy-once">_flexo_details</custom-field>
+	</custom-fields>
+</wpml-config>

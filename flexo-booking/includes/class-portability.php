@@ -36,7 +36,7 @@ class Flexo_Booking_Portability {
 
 		$data = array(
 			'format'      => self::FORMAT,
-			'schema'      => 5,
+			'schema'      => 6,
 			'version'     => FLEXO_BOOKING_VERSION,
 			'exported_at' => gmdate( 'c' ),
 			'source'      => home_url(),
@@ -97,6 +97,8 @@ class Flexo_Booking_Portability {
 					)
 				),
 				'child_rules' => Flexo_Booking_Children::room_rules( $post->ID ),
+				// Day 7: what guests see on the room page (photos as addresses).
+				'page'        => self::export_room_page( $post ),
 				// Connected Booking.com/Airbnb calendars. Export links (tokens)
 				// are never exported – each site creates its own.
 				'calendars'  => array_map(
@@ -314,6 +316,11 @@ class Flexo_Booking_Portability {
 						++$stats['images'];
 					}
 				}
+				if ( isset( $room['page'] ) && is_array( $room['page'] ) ) {
+					$stats['images'] += self::import_room_page( $post_id, $room['page'], $options['images'] );
+				} elseif ( ! $options['images'] && ! empty( $room['image'] ) && ! has_post_thumbnail( $post_id ) ) {
+					update_post_meta( $post_id, self::MISSING_META, array( array( 'role' => 'main', 'url' => esc_url_raw( $room['image'] ), 'alt' => '' ) ) );
+				}
 
 				// The file's list replaces the plans this room offers.
 				if ( $options['rate_plans'] && isset( $room['rate_plans'] ) && is_array( $room['rate_plans'] ) ) {
@@ -516,15 +523,203 @@ class Flexo_Booking_Portability {
 	}
 
 	private static function sideload_image( $url, $post_id ) {
+		$attachment_id = self::download( $url, $post_id );
+		return $attachment_id ? set_post_thumbnail( $post_id, $attachment_id ) : false;
+	}
+
+	const MISSING_META = '_flexo_missing_images';
+
+	/**
+	 * An image from another site in this site's media library (once: the
+	 * same address is not downloaded twice).
+	 *
+	 * @return int Attachment ID, or 0.
+	 */
+	public static function download( $url, $post_id = 0, $alt = '' ) {
+		$url = esc_url_raw( (string) $url );
+		if ( '' === $url ) {
+			return 0;
+		}
+		$known = get_posts(
+			array(
+				'post_type'      => 'attachment',
+				'post_status'    => 'inherit',
+				'posts_per_page' => 1,
+				'fields'         => 'ids',
+				'meta_key'       => '_flexo_source_url', // phpcs:ignore WordPress.DB.SlowDBQuery -- import only.
+				'meta_value'     => $url, // phpcs:ignore WordPress.DB.SlowDBQuery
+			)
+		);
+		if ( $known ) {
+			return (int) $known[0];
+		}
 		require_once ABSPATH . 'wp-admin/includes/media.php';
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		require_once ABSPATH . 'wp-admin/includes/image.php';
-
-		$attachment_id = media_sideload_image( esc_url_raw( $url ), $post_id, null, 'id' );
+		$attachment_id = media_sideload_image( $url, $post_id, null, 'id' );
 		if ( is_wp_error( $attachment_id ) ) {
-			return false;
+			return 0;
 		}
-		return set_post_thumbnail( $post_id, $attachment_id );
+		update_post_meta( $attachment_id, '_flexo_source_url', $url );
+		if ( '' !== $alt ) {
+			update_post_meta( $attachment_id, '_wp_attachment_image_alt', sanitize_text_field( $alt ) );
+		}
+		return (int) $attachment_id;
+	}
+
+	/**
+	 * Room page content for the export file. Photos and uploaded icons are
+	 * exported as addresses, so the importing site can download them.
+	 */
+	public static function export_room_page( WP_Post $post ) {
+		$photo = static function ( $id ) {
+			return array(
+				'url' => (string) wp_get_attachment_url( $id ),
+				'alt' => (string) get_post_meta( $id, '_wp_attachment_image_alt', true ),
+			);
+		};
+		$icon  = static function ( $ref ) {
+			if ( preg_match( '/^media:(\d+)$/', (string) $ref, $m ) ) {
+				$url = wp_get_attachment_url( (int) $m[1] );
+				return $url ? 'url:' . $url : '';
+			}
+			return (string) $ref;
+		};
+		$amenities = Flexo_Booking_Room_Content::amenity_items( $post->ID );
+		foreach ( $amenities as $i => $item ) {
+			$amenities[ $i ]['icon'] = $icon( $item['icon'] );
+		}
+		$details = Flexo_Booking_Room_Content::details( $post->ID );
+		foreach ( $details as $i => $row ) {
+			$details[ $i ]['icon'] = $icon( $row['icon'] );
+		}
+		$main = (int) get_post_thumbnail_id( $post );
+		return array(
+			'types'           => wp_get_object_terms( $post->ID, Flexo_Booking_Room_Content::TAXONOMY, array( 'fields' => 'names' ) ),
+			'view'            => (string) get_post_meta( $post->ID, Flexo_Booking_Room_Content::VIEW, true ),
+			'main_photo'      => $main ? $photo( $main ) : null,
+			'gallery'         => array_map( $photo, Flexo_Booking_Room_Content::gallery( $post->ID, false ) ),
+			'amenities'       => $amenities,
+			'details'         => $details,
+			'hidden'          => Flexo_Booking_Room_Content::is_hidden( $post->ID ),
+			'seo_title'       => (string) get_post_meta( $post->ID, Flexo_Booking_Room_Content::SEO_TITLE, true ),
+			'seo_description' => (string) get_post_meta( $post->ID, Flexo_Booking_Room_Content::SEO_DESCRIPTION, true ),
+		);
+	}
+
+	/**
+	 * Room page content from an export file. Without downloading, photos
+	 * are remembered and the room screen offers "Download missing photos".
+	 *
+	 * @return int Images downloaded.
+	 */
+	public static function import_room_page( $post_id, array $page, $download ) {
+		$count = 0;
+		if ( isset( $page['types'] ) && is_array( $page['types'] ) ) {
+			$names = array_filter( array_map( 'sanitize_text_field', $page['types'] ) );
+			wp_set_object_terms( $post_id, array_values( $names ), Flexo_Booking_Room_Content::TAXONOMY );
+		}
+		foreach ( array( 'view' => Flexo_Booking_Room_Content::VIEW, 'seo_title' => Flexo_Booking_Room_Content::SEO_TITLE ) as $key => $meta ) {
+			if ( isset( $page[ $key ] ) ) {
+				self::set_meta( $post_id, $meta, mb_substr( sanitize_text_field( $page[ $key ] ), 0, 'view' === $key ? 100 : 120 ) );
+			}
+		}
+		if ( isset( $page['seo_description'] ) ) {
+			self::set_meta( $post_id, Flexo_Booking_Room_Content::SEO_DESCRIPTION, mb_substr( sanitize_textarea_field( $page['seo_description'] ), 0, 320 ) );
+		}
+		if ( isset( $page['hidden'] ) ) {
+			self::set_meta( $post_id, Flexo_Booking_Room_Content::HIDDEN, $page['hidden'] ? '1' : '' );
+		}
+
+		// Icons uploaded on the other site: downloaded, or a matching bundled icon.
+		$icon = static function ( $ref, $label ) use ( $download, $post_id, &$count ) {
+			if ( 0 === strpos( (string) $ref, 'url:' ) ) {
+				$id = $download ? self::download( substr( $ref, 4 ), $post_id ) : 0;
+				if ( $id ) {
+					++$count;
+					return 'media:' . $id;
+				}
+				return Flexo_Booking_Room_Content::guess_icon( $label );
+			}
+			return (string) $ref;
+		};
+		if ( isset( $page['amenities'] ) && is_array( $page['amenities'] ) ) {
+			$items = array();
+			foreach ( $page['amenities'] as $item ) {
+				if ( is_array( $item ) ) {
+					$item['icon'] = $icon( isset( $item['icon'] ) ? $item['icon'] : '', isset( $item['label'] ) ? $item['label'] : '' );
+					$items[]      = $item;
+				}
+			}
+			Flexo_Booking_Room_Editor::save_amenities( $post_id, $items );
+		}
+		if ( isset( $page['details'] ) && is_array( $page['details'] ) ) {
+			$rows = array();
+			foreach ( $page['details'] as $row ) {
+				if ( is_array( $row ) ) {
+					$row['icon'] = $icon( isset( $row['icon'] ) ? $row['icon'] : '', isset( $row['label'] ) ? $row['label'] : '' );
+					$rows[]      = $row;
+				}
+			}
+			self::set_meta( $post_id, Flexo_Booking_Room_Content::DETAILS, Flexo_Booking_Room_Content::sanitize_details( $rows ) );
+		}
+
+		// Photos.
+		$missing = array();
+		if ( ! empty( $page['main_photo']['url'] ) && ! has_post_thumbnail( $post_id ) ) {
+			$missing[] = array( 'role' => 'main', 'url' => esc_url_raw( $page['main_photo']['url'] ), 'alt' => (string) ( $page['main_photo']['alt'] ?? '' ) );
+		}
+		if ( ! empty( $page['gallery'] ) && is_array( $page['gallery'] ) && ! Flexo_Booking_Room_Content::gallery( $post_id, false ) ) {
+			foreach ( array_slice( $page['gallery'], 0, Flexo_Booking_Room_Content::MAX_GALLERY ) as $photo ) {
+				if ( ! empty( $photo['url'] ) ) {
+					$missing[] = array( 'role' => 'gallery', 'url' => esc_url_raw( $photo['url'] ), 'alt' => (string) ( $photo['alt'] ?? '' ) );
+				}
+			}
+		}
+		self::set_meta( $post_id, self::MISSING_META, $missing );
+		if ( $download && $missing ) {
+			$count += self::download_missing( $post_id );
+		}
+		return $count;
+	}
+
+	/**
+	 * Downloads the photos an import left out ("Download missing photos").
+	 *
+	 * @return int Photos downloaded.
+	 */
+	public static function download_missing( $post_id ) {
+		$missing = get_post_meta( $post_id, self::MISSING_META, true );
+		if ( ! is_array( $missing ) || ! $missing ) {
+			return 0;
+		}
+		$count   = 0;
+		$gallery = Flexo_Booking_Room_Content::gallery( $post_id, false );
+		$left    = array();
+		foreach ( $missing as $photo ) {
+			$id = self::download( isset( $photo['url'] ) ? $photo['url'] : '', $post_id, isset( $photo['alt'] ) ? $photo['alt'] : '' );
+			if ( ! $id ) {
+				$left[] = $photo;
+				continue;
+			}
+			++$count;
+			if ( 'main' === $photo['role'] ) {
+				set_post_thumbnail( $post_id, $id );
+			} elseif ( ! in_array( $id, $gallery, true ) ) {
+				$gallery[] = $id;
+			}
+		}
+		self::set_meta( $post_id, Flexo_Booking_Room_Content::GALLERY, Flexo_Booking_Room_Content::sanitize_gallery( $gallery ) );
+		self::set_meta( $post_id, self::MISSING_META, $left );
+		return $count;
+	}
+
+	private static function set_meta( $post_id, $key, $value ) {
+		if ( '' === $value || array() === $value || null === $value ) {
+			delete_post_meta( $post_id, $key );
+		} else {
+			update_post_meta( $post_id, $key, $value );
+		}
 	}
 
 	public static function handle_export() {

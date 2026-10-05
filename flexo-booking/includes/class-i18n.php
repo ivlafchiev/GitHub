@@ -100,7 +100,7 @@ class Flexo_Booking_I18n {
 		return $out;
 	}
 
-	private static function slug_for( $locale ) {
+	public static function slug_for( $locale ) {
 		foreach ( self::multilingual_languages() as $language ) {
 			if ( $language['locale'] === $locale ) {
 				return $language['slug'];

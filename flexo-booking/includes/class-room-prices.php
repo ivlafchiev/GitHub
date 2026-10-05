@@ -95,7 +95,7 @@ class Flexo_Booking_Room_Prices {
 	 * @return array|null { amount: float (per night), nights: int, check_in: Y-m-d } or null when the room has none.
 	 */
 	public static function get( $room_id ) {
-		$room_id = (int) $room_id;
+		$room_id = Flexo_Booking_Room_I18n::canonical_id( (int) $room_id );
 		if ( array_key_exists( $room_id, self::$memo ) ) {
 			return self::$memo[ $room_id ];
 		}

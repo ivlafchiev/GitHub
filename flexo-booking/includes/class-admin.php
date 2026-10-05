@@ -89,6 +89,7 @@ class Flexo_Booking_Admin {
 			'flexo-booking-closures'  => 'rooms',
 			'flexo-booking-rate-plans' => 'rooms',
 			'flexo-booking-sync'      => 'rooms',
+			'flexo-booking-import-rooms' => 'rooms',
 			self::MENU_SLUG . '-tools' => 'settings',
 			'flexo-booking-wizard'    => 'settings',
 		);
@@ -201,20 +202,49 @@ class Flexo_Booking_Admin {
 					'title'      => __( 'Rooms & prices', 'flexo-booking' ),
 					'icon'       => 'bed',
 					'intro'      => esc_html__( 'One entry per room type, with its price, how many guests fit and how many identical rooms you have.', 'flexo-booking' ),
-					'actions'    => current_user_can( 'edit_flexo_rooms' ) ? array(
-						array(
-							'label'   => __( 'Add room', 'flexo-booking' ),
-							'url'     => admin_url( 'post-new.php?post_type=' . Flexo_Booking_Rooms::POST_TYPE ),
-							'icon'    => 'plus',
-							'primary' => true,
-						),
-					) : array(),
+					'actions'    => current_user_can( 'edit_flexo_rooms' ) ? self::rooms_actions() : array(),
 					'tabs'       => array( 'rooms', 'rooms' ),
 					'header_end' => false,
 				)
 			);
 			echo '</div>';
 		}
+	}
+
+	/**
+	 * Buttons above the room list: add a room, demo rooms, bring in rooms.
+	 */
+	private static function rooms_actions() {
+		$actions = array();
+		$demo    = Flexo_Booking_Demo_Rooms::ids();
+		if ( $demo && current_user_can( 'delete_flexo_rooms' ) ) {
+			$actions[] = array(
+				'label' => __( 'Remove demo rooms', 'flexo-booking' ),
+				'url'   => Flexo_Booking_Demo_Rooms::remove_url(),
+				'icon'  => 'trash',
+				'attrs' => array( 'data-flexo-confirm' => __( 'Delete the demo rooms and their sample photos?', 'flexo-booking' ) ),
+			);
+		} elseif ( current_user_can( 'publish_flexo_rooms' ) && current_user_can( 'upload_files' ) ) {
+			$actions[] = array(
+				'label' => __( 'Add demo rooms', 'flexo-booking' ),
+				'url'   => Flexo_Booking_Demo_Rooms::add_url(),
+				'icon'  => 'sparkle',
+			);
+		}
+		if ( current_user_can( 'manage_options' ) ) {
+			$actions[] = array(
+				'label' => __( 'Bring in rooms', 'flexo-booking' ),
+				'url'   => admin_url( 'admin.php?page=' . Flexo_Booking_Room_Importer::SLUG ),
+				'icon'  => 'transfer',
+			);
+		}
+		$actions[] = array(
+			'label'   => __( 'Add room', 'flexo-booking' ),
+			'url'     => admin_url( 'post-new.php?post_type=' . Flexo_Booking_Rooms::POST_TYPE ),
+			'icon'    => 'plus',
+			'primary' => true,
+		);
+		return $actions;
 	}
 
 	/**

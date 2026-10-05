@@ -204,17 +204,20 @@ class Flexo_Booking_Bookings {
 				$reason = __( 'Sold out for these dates.', 'flexo-booking' );
 			}
 
-			$average   = Flexo_Booking_Pricing::nightly_average( $quote );
+			$average = Flexo_Booking_Pricing::nightly_average( $quote );
+			// Name, text and photo in the guest's language (the room's translation).
+			$shown     = Flexo_Booking_Room_I18n::active() ? Flexo_Booking_Room_Content::room( Flexo_Booking_Room_I18n::translation_id( $room['id'] ) ) : null;
+			$shown     = $shown ? $shown : array_merge( $room, array( 'amenity_list' => Flexo_Booking_Room_Content::amenities( $room['id'] ) ) );
 			$results[] = array(
 				'id'                      => $room['id'],
 				'slug'                    => $room['slug'],
-				'title'                   => $room['title'],
-				'excerpt'                 => $room['excerpt'],
-				'image'                   => $room['image'],
+				'title'                   => $shown['title'],
+				'excerpt'                 => $shown['excerpt'],
+				'image'                   => $shown['image'],
 				'capacity'                => $room['capacity'],
 				'size'                    => $room['size'],
 				'beds'                    => $room['beds'],
-				'amenities'               => wp_list_pluck( Flexo_Booking_Room_Content::amenities( $room['id'] ), 'label' ),
+				'amenities'               => wp_list_pluck( $shown['amenity_list'], 'label' ),
 				'max_adults'              => Flexo_Booking_Children::enabled() ? $room['max_adults'] : 0,
 				'available'               => '' === $reason,
 				'reason'                  => $reason,

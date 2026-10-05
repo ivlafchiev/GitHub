@@ -467,6 +467,149 @@ wp_reset_query();
 wp_delete_post( $fp, true );
 
 /* ---------------------------------------------------------------- */
+t_section( 'Demo rooms' );
+wp_set_current_user( $admin->ID );
+$added = Flexo_Booking_Demo_Rooms::add();
+$ids   = Flexo_Booking_Demo_Rooms::ids();
+t_eq( 3, $added, 'three demo rooms added' );
+t_ok( count( $ids ) >= 3, 'demo rooms are marked as demo' );
+$d0 = Flexo_Booking_Room_Content::room( get_page_by_path( 'demo-sea-view-studio', OBJECT, Flexo_Booking_Rooms::POST_TYPE )->ID );
+t_ok( $d0['price'] > 0 && $d0['size'] > 0 && count( $d0['amenity_list'] ) >= 5 && $d0['types'], 'demo room filled in (price, size, amenities, type)' );
+t_ok( ! function_exists( 'imagecreatetruecolor' ) || count( $d0['gallery'] ) >= 2, 'demo room has sample photos' );
+t_eq( 0, Flexo_Booking_Demo_Rooms::add(), 'adding again does not duplicate them' );
+$s = Flexo_Booking_Bookings::search( t_day( 5 ), t_day( 7 ), 2, 0 );
+t_ok( ! array_intersect( $ids, wp_list_pluck( $s['rooms'], 'id' ) ), 'demo rooms are never offered to guests' );
+$photo = $d0['gallery'] ? $d0['gallery'][0] : 0;
+$gone  = Flexo_Booking_Demo_Rooms::remove();
+t_eq( count( $ids ), $gone['removed'], 'remove demo rooms' );
+t_eq( array(), Flexo_Booking_Demo_Rooms::ids(), 'no demo rooms left' );
+t_ok( ! $photo || ! get_post( $photo ), 'their sample photos are deleted too' );
+wp_set_current_user( 0 );
+
+/* ---------------------------------------------------------------- */
+t_section( 'Bring in rooms from JetEngine' );
+// JetEngine switched off: its "rooms" posts are still in the database, the post type is not registered.
+$jet_img = t7_image( 't7-jet-main' );
+$jet_g1  = t7_image( 't7-jet-g1' );
+$jet_g2  = t7_image( 't7-jet-g2' );
+$jet = array();
+foreach ( array( 't7-sea-view-double' => 'T7 Sea View Double Room', 't7-boho-family-suite' => 'T7 Boho Family Suite' ) as $slug => $title ) {
+	$jet[ $slug ] = wp_insert_post( array( 'post_type' => 'rooms', 'post_title' => $title, 'post_name' => $slug, 'post_status' => 'publish', 'post_content' => '<p>Old post text.</p>' ) );
+}
+$j = $jet['t7-sea-view-double'];
+update_post_meta( $j, 'price_per_night', '270' );
+update_post_meta( $j, 'room_size', '40 m²' );
+update_post_meta( $j, 'max_guests', '1–3' );
+update_post_meta( $j, 'beds_info', '1 King bed + sofa bed' );
+update_post_meta( $j, 'long_description', '<p>Wake up to the sight of endless blue.</p>' );
+foreach ( array( 'Sea-facing terrace', 'Air conditioning', 'High-speed WiFi', 'Daily housekeeping' ) as $i => $label ) {
+	update_post_meta( $j, 'amenity-' . ( $i + 1 ), $label );
+}
+update_post_meta( $j, 'room_gallery', $jet_g1 . ',' . $jet_g2 );
+update_post_meta( $j, 'floor', '2nd' );
+set_post_thumbnail( $j, $jet_img );
+update_post_meta( $jet['t7-boho-family-suite'], 'price_per_night', '€350' );
+update_post_meta( $jet['t7-boho-family-suite'], 'max_guests', '4 persons' );
+
+$sources = Flexo_Booking_Room_Importer::sources();
+t_ok( isset( $sources['rooms'] ) && 2 <= $sources['rooms'][1], 'JetEngine rooms found even with JetEngine off' );
+t_eq( 'rooms', Flexo_Booking_Room_Importer::default_source( $sources ), '"rooms" suggested' );
+$fields  = Flexo_Booking_Room_Importer::fields( Flexo_Booking_Room_Importer::posts( 'rooms' ) );
+$mapping = array();
+foreach ( array_keys( $fields ) as $field ) {
+	$mapping[ $field ] = Flexo_Booking_Room_Importer::suggest( $field );
+}
+t_eq( 'price', $mapping['price_per_night'], 'suggest price_per_night → price' );
+t_eq( 'size', $mapping['room_size'], 'suggest room_size → size' );
+t_eq( 'capacity', $mapping['max_guests'], 'suggest max_guests → max guests' );
+t_eq( 'beds', $mapping['beds_info'], 'suggest beds_info → beds' );
+t_eq( 'description', $mapping['long_description'], 'suggest long_description → full description' );
+t_eq( 'amenity', $mapping['amenity-1'], 'suggest amenity-N → amenity' );
+t_eq( 'gallery', $mapping['room_gallery'], 'suggest gallery' );
+$mapping['floor'] = 'detail';
+// An existing Flexo room with the same address keeps its own price.
+$pre = t_room( 't7-boho-family-suite', 'Old name', array( 'price' => 333, 'capacity' => 2, 'units' => 2 ) );
+$results = Flexo_Booking_Room_Importer::import( 'rooms', $mapping, array( 'content' => true ) );
+t_eq( 2, count( $results ), 'both rooms brought in' );
+$new = Flexo_Booking_Rooms::find( 't7-sea-view-double' );
+$r   = $new ? Flexo_Booking_Room_Content::room( $new->ID ) : null;
+t_ok( $r && 'T7 Sea View Double Room' === $r['title'], 'same name and address (slug)' );
+t_eq( 270.0, $r['price'], 'price' );
+t_eq( 40, $r['size'], 'size parsed from "40 m²"' );
+t_eq( 3, $r['capacity'], 'max guests from "1–3"' );
+t_eq( '1 King bed + sofa bed', $r['beds'], 'beds' );
+t_ok( false !== strpos( $r['description'], 'endless blue' ), 'full description from the field' );
+t_eq( array( 'Sea-facing terrace', 'Air conditioning', 'High-speed WiFi', 'Daily housekeeping' ), wp_list_pluck( $r['amenity_list'], 'label' ), 'amenities in order' );
+t_eq( array( 'sun', 'air_conditioning', 'wifi', 'cleaning' ), wp_list_pluck( $r['amenity_list'], 'icon' ), 'amenities get matching icons (ready-made amenity where the name matches)' );
+t_eq( 'air_conditioning', $r['amenity_list'][1]['key'], '"Air conditioning" becomes the ready-made amenity' );
+t_eq( array( $jet_img, $jet_g1, $jet_g2 ), $r['gallery'], 'main photo and gallery' );
+t_eq( 'Floor', $r['details'][0]['label'], 'other field as a More details line' );
+$boho = Flexo_Booking_Room_Content::room( $pre );
+t_eq( 333.0, $boho['price'], 'existing room keeps its price' );
+t_eq( 4, $boho['capacity'], 'facts updated from the old room' );
+t_eq( 'T7 Boho Family Suite', $boho['title'], 'name updated' );
+t_ok( false !== strpos( $boho['description'], 'Old post text.' ), 'post text used when no description field' );
+$again = Flexo_Booking_Room_Importer::import( 'rooms', $mapping, array( 'content' => true ) );
+t_ok( 2 === count( Flexo_Booking_Rooms::all() ) - count( array_diff( wp_list_pluck( Flexo_Booking_Rooms::all(), 'post_name' ), array( 't7-sea-view-double', 't7-boho-family-suite' ) ) ), 'bringing in again updates, no duplicates' );
+
+/* ---------------------------------------------------------------- */
+t_section( 'Import/Export of room content' );
+$file = Flexo_Booking_Portability::export();
+t_eq( 6, $file['schema'], 'export schema 6' );
+$exp = null;
+foreach ( $file['rooms'] as $row ) {
+	if ( 't7-sea-view-double' === $row['slug'] ) {
+		$exp = $row;
+	}
+}
+t_ok( $exp && isset( $exp['page'] ), 'room page content exported' );
+t_eq( 2, count( $exp['page']['gallery'] ), 'gallery exported as addresses' );
+t_eq( wp_get_attachment_url( $jet_img ), $exp['page']['main_photo']['url'], 'main photo address' );
+t_eq( 4, count( $exp['page']['amenities'] ), 'amenities exported' );
+// Import into a "fresh" room: same slug deleted first.
+wp_delete_post( $new->ID, true );
+$res = Flexo_Booking_Portability::import( array( 'format' => 'flexo-booking', 'rooms' => array( $exp ) ), array( 'settings' => false, 'images' => false, 'seasons' => false, 'closures' => false, 'rate_plans' => false, 'promo_codes' => false ) );
+$imp = Flexo_Booking_Rooms::find( 't7-sea-view-double' );
+$ri  = Flexo_Booking_Room_Content::room( $imp->ID );
+t_eq( 1, $res['rooms_created'], 'room created from the file' );
+t_eq( array( 'Sea-facing terrace', 'Air conditioning', 'High-speed WiFi', 'Daily housekeeping' ), wp_list_pluck( $ri['amenity_list'], 'label' ), 'amenities imported' );
+t_eq( 'Floor', $ri['details'][0]['label'], 'details imported' );
+t_eq( 3, count( (array) get_post_meta( $imp->ID, Flexo_Booking_Portability::MISSING_META, true ) ), 'photos not downloaded are remembered (main + 2)' );
+t_eq( array(), $ri['gallery'], 'no broken images meanwhile' );
+// "Download missing photos": same site here, so the files are found in the media library again.
+add_filter( 'pre_http_request', static function ( $pre, $args, $url ) {
+	$path = str_replace( wp_upload_dir()['baseurl'], wp_upload_dir()['basedir'], $url );
+	if ( file_exists( $path ) ) {
+		if ( ! empty( $args['filename'] ) ) {
+			copy( $path, $args['filename'] ); // Downloads are streamed to a temporary file.
+		}
+		return array( 'headers' => array( 'content-type' => 'image/png' ), 'body' => '', 'response' => array( 'code' => 200, 'message' => 'OK' ), 'cookies' => array(), 'filename' => isset( $args['filename'] ) ? $args['filename'] : null );
+	}
+	return $pre;
+}, 10, 3 );
+$got = Flexo_Booking_Portability::download_missing( $imp->ID );
+Flexo_Booking_Room_Content::forget( $imp->ID );
+$ri = Flexo_Booking_Room_Content::room( $imp->ID );
+t_eq( 3, $got, 'missing photos downloaded' );
+t_eq( 3, count( $ri['gallery'] ), 'main photo and gallery in place' );
+t_ok( ! get_post_meta( $imp->ID, Flexo_Booking_Portability::MISSING_META, true ), 'nothing missing any more' );
+t_eq( 0, Flexo_Booking_Portability::download_missing( $imp->ID ), 'nothing to download twice' );
+$old_file = array( 'format' => 'flexo-booking', 'rooms' => array( array( 'slug' => 't7-old-file', 'title' => 'T7 Old file', 'meta' => array( '_flexo_price' => 50, '_flexo_amenities' => array( 'wifi', 'tv' ) ) ) ) );
+Flexo_Booking_Portability::import( $old_file, array( 'settings' => false, 'images' => false ) );
+$of = Flexo_Booking_Rooms::find( 't7-old-file' );
+t_eq( array( 'wifi', 'tv' ), wp_list_pluck( Flexo_Booking_Room_Content::amenities( $of->ID ), 'key' ), 'files from 1.7 and earlier still import (amenity ticks)' );
+
+foreach ( array( $of->ID, $imp->ID, $pre ) as $id ) {
+	wp_delete_post( $id, true );
+}
+foreach ( $jet as $id ) {
+	wp_delete_post( $id, true );
+}
+foreach ( array( $jet_img, $jet_g1, $jet_g2 ) as $id ) {
+	wp_delete_attachment( $id, true );
+}
+
+/* ---------------------------------------------------------------- */
 foreach ( array( $old, $room, $hidden, $demo ) as $id ) {
 	wp_delete_post( $id, true );
 }

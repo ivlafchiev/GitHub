@@ -434,7 +434,7 @@ class Flexo_Booking_Frontend {
 	 * The room booking box (layout "box").
 	 */
 	private static function render_box( array $atts ) {
-		$room_id = Flexo_Booking_Room_Content::current_id( $atts['room'] );
+		$room_id = Flexo_Booking_Room_I18n::canonical_id( Flexo_Booking_Room_Content::current_id( $atts['room'] ) );
 		$post    = $room_id ? get_post( $room_id ) : null;
 		if ( ! $post || 'publish' !== $post->post_status ) {
 			if ( class_exists( 'Flexo_Booking_Elementor' ) && Flexo_Booking_Elementor::is_editing() ) {
