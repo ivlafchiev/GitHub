@@ -65,7 +65,14 @@ class Flexo_Booking_Room_Pages {
 	 * Elementor Pro single template applies.
 	 */
 	public static function template( $template ) {
-		if ( ! is_singular( Flexo_Booking_Rooms::POST_TYPE ) || is_404() || self::pro_template_applies() || wp_is_block_theme() ) {
+		if ( ! is_singular( Flexo_Booking_Rooms::POST_TYPE ) || is_404() ) {
+			return $template;
+		}
+		// The design chosen in Settings → Room pages wins over everything else.
+		if ( Flexo_Booking_Room_Design::applies() ) {
+			return Flexo_Booking_Room_Design::template_file();
+		}
+		if ( self::pro_template_applies() || wp_is_block_theme() ) {
 			return $template;
 		}
 		if ( 'single-' . Flexo_Booking_Rooms::POST_TYPE . '.php' === basename( (string) $template ) ) {
@@ -125,7 +132,7 @@ class Flexo_Booking_Room_Pages {
 	 * the room page follows the description.
 	 */
 	public static function block_theme_content( $content ) {
-		if ( function_exists( 'register_block_template' ) || ! wp_is_block_theme() || ! is_singular( Flexo_Booking_Rooms::POST_TYPE ) || ! in_the_loop() || ! is_main_query() || self::pro_template_applies() ) {
+		if ( function_exists( 'register_block_template' ) || ! wp_is_block_theme() || ! is_singular( Flexo_Booking_Rooms::POST_TYPE ) || ! in_the_loop() || ! is_main_query() || self::pro_template_applies() || Flexo_Booking_Room_Design::applies() ) {
 			return $content;
 		}
 		$room = Flexo_Booking_Room_Content::room( get_the_ID() );
@@ -418,6 +425,80 @@ class Flexo_Booking_Room_Pages {
 	 * @param array  $s    Current settings.
 	 * @param string $name Option name for the form fields.
 	 */
+	/**
+	 * Settings row: the page or Elementor template every room page uses.
+	 */
+	private static function render_design_field( array $s, $name, array $rooms ) {
+		$choices = Flexo_Booking_Room_Design::choices();
+		$chosen  = absint( $s['room_design'] );
+		$valid   = $chosen && Flexo_Booking_Room_Design::is_valid( $chosen );
+		$label   = static function ( WP_Post $post ) {
+			$title = '' !== $post->post_title ? $post->post_title : '#' . $post->ID;
+			if ( 'elementor_library' === $post->post_type ) {
+				$type  = (string) get_post_meta( $post->ID, '_elementor_template_type', true );
+				$class = class_exists( '\Elementor\Plugin' ) ? \Elementor\Plugin::$instance->documents->get_document_type( $type, false ) : false;
+				return $title . ' — ' . ( $class && method_exists( $class, 'get_title' ) ? $class::get_title() : ucwords( str_replace( '-', ' ', $type ) ) );
+			}
+			$status = get_post_status_object( $post->post_status );
+			return 'publish' === $post->post_status || ! $status ? $title : $title . ' — ' . $status->label;
+		};
+		?>
+		<tr>
+			<th scope="row"><label for="fb-room-design"><?php esc_html_e( 'Room page design', 'flexo-booking' ); ?></label></th>
+			<td>
+				<?php if ( ! did_action( 'elementor/loaded' ) ) : ?>
+					<p class="description"><?php esc_html_e( 'Needs Elementor. Until then room pages use the plugin\'s own room page.', 'flexo-booking' ); ?></p>
+				<?php else : ?>
+					<select id="fb-room-design" name="<?php echo esc_attr( $name ); ?>[room_design]">
+						<option value="0" <?php selected( $valid, false ); ?>><?php esc_html_e( 'Automatic: my Elementor Pro single template for rooms, otherwise the plugin\'s room page', 'flexo-booking' ); ?></option>
+						<?php if ( $choices['pages'] ) : ?>
+							<optgroup label="<?php esc_attr_e( 'Pages built with Elementor', 'flexo-booking' ); ?>">
+								<?php foreach ( $choices['pages'] as $post ) : ?>
+									<option value="<?php echo esc_attr( $post->ID ); ?>" <?php selected( $chosen, $post->ID ); ?>><?php echo esc_html( $label( $post ) ); ?></option>
+								<?php endforeach; ?>
+							</optgroup>
+						<?php endif; ?>
+						<?php if ( $choices['templates'] ) : ?>
+							<optgroup label="<?php esc_attr_e( 'Elementor templates', 'flexo-booking' ); ?>">
+								<?php foreach ( $choices['templates'] as $post ) : ?>
+									<option value="<?php echo esc_attr( $post->ID ); ?>" <?php selected( $chosen, $post->ID ); ?>><?php echo esc_html( $label( $post ) ); ?></option>
+								<?php endforeach; ?>
+							</optgroup>
+						<?php endif; ?>
+					</select>
+					<p class="description"><?php esc_html_e( 'Choose the page or template you designed for one room. Every room page then uses it, with that room\'s name, photos, prices, description and amenities wherever the design uses the "Flexo Booking: room" dynamic tags or the room widgets. Your header and footer stay as they are.', 'flexo-booking' ); ?></p>
+					<?php if ( $valid ) : ?>
+						<?php
+						$scan = Flexo_Booking_Room_Design::scan( $chosen );
+						$doc  = \Elementor\Plugin::$instance->documents->get( $chosen );
+						?>
+						<p>
+							<?php if ( $doc ) : ?>
+								<a href="<?php echo esc_url( $doc->get_edit_url() ); ?>"><?php esc_html_e( 'Edit it with Elementor', 'flexo-booking' ); ?></a>
+							<?php endif; ?>
+							<?php if ( $rooms ) : ?>
+								· <a href="<?php echo esc_url( get_permalink( $rooms[0] ) ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'View a room page', 'flexo-booking' ); ?></a>
+							<?php endif; ?>
+						</p>
+						<?php if ( $scan['jet'] ) : ?>
+							<div class="notice notice-warning inline"><p>
+								<?php
+								/* translators: 1: number of parts, 2: field names */
+								echo esc_html( sprintf( _n( 'This design still reads %1$d part from JetEngine fields (%2$s). It shows nothing without JetEngine: in Elementor, connect it to a "Flexo Booking: room" dynamic tag.', 'This design still reads %1$d parts from JetEngine fields (%2$s). They show nothing without JetEngine: in Elementor, connect them to the "Flexo Booking: room" dynamic tags.', count( $scan['jet'] ), 'flexo-booking' ), count( $scan['jet'] ), implode( ', ', $scan['jet'] ) ) );
+								?>
+							</p></div>
+						<?php elseif ( ! $scan['room'] ) : ?>
+							<div class="notice notice-warning inline"><p><?php esc_html_e( 'This design is not connected to room data yet, so every room would show the same texts and photos. In Elementor, connect the room parts (name, price, photos, description, amenities, buttons) to the "Flexo Booking: room" dynamic tags or use the room widgets.', 'flexo-booking' ); ?></p></div>
+						<?php endif; ?>
+					<?php elseif ( $chosen ) : ?>
+						<div class="notice notice-warning inline"><p><?php esc_html_e( 'The chosen design was deleted or is no longer built with Elementor, so room pages are back to automatic. Choose another one.', 'flexo-booking' ); ?></p></div>
+					<?php endif; ?>
+				<?php endif; ?>
+			</td>
+		</tr>
+		<?php
+	}
+
 	public static function render_settings( array $s, $name ) {
 		$home     = trailingslashit( home_url() );
 		$rooms    = Flexo_Booking_Rooms::all();
@@ -425,6 +506,7 @@ class Flexo_Booking_Room_Pages {
 		?>
 		<p class="flexo-tab-intro"><?php esc_html_e( 'Every room has its own page with its photos, description, amenities and a booking box. The design comes from your Elementor single room template.', 'flexo-booking' ); ?></p>
 		<table class="form-table" role="presentation">
+			<?php self::render_design_field( $s, $name, $rooms ); ?>
 			<tr>
 				<th scope="row"><label for="fb-room-base"><?php esc_html_e( 'Room page address', 'flexo-booking' ); ?></label></th>
 				<td>

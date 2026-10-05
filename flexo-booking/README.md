@@ -6,7 +6,7 @@ Guests pick dates and guests, see which rooms are free with the price, enter the
 
 It's one plugin that works with any theme or template. Extra features are switched on only where a property needs them, so a simple guest house still gets just *dates → room → details → booking request*.
 
-> Version **1.8.0**. Day 7 makes the plugin the single place for rooms: each room has its own page on the website with its photos, description, amenities and a booking box, filled into your Elementor Pro templates through dynamic tags (§3). Day 6 made the plugin easier to use for guests, owners and reception and added Appearance settings; 1.7.0 gave the admin screens their own, app-like design (§17). Development follows `ROADMAP.md`; technical design is in `IMPLEMENTATION_PLAN.md`.
+> Version **1.8.1**. Day 7 makes the plugin the single place for rooms: each room has its own page on the website with its photos, description, amenities and a booking box, filled into your Elementor Pro templates through dynamic tags (§3). Day 6 made the plugin easier to use for guests, owners and reception and added Appearance settings; 1.7.0 gave the admin screens their own, app-like design (§17). Development follows `ROADMAP.md`; technical design is in `IMPLEMENTATION_PLAN.md`.
 
 ---
 
@@ -51,7 +51,7 @@ It's one plugin that works with any theme or template. Extra features are switch
 - JetEngine (or another custom-field plugin) is **not** needed for rooms; rooms made with it can be brought in (§3.2).
 
 **Install:**
-1. Build the zip with `bin/build-zip.sh`, or use the provided `flexo-booking-1.8.0.zip`.
+1. Build the zip with `bin/build-zip.sh`, or use the provided `flexo-booking-1.8.1.zip`.
 2. Go to **Plugins → Add New → Upload Plugin**, choose the zip, then **Install** and **Activate**.
 3. A **Bookings** menu appears in the admin. On a new site (no rooms, no bookings) the **setup wizard** opens once (below).
 4. Check **Settings → General → Timezone**. It must be the hotel's city, because "today" and arrival dates depend on it. **Bookings → Settings → Health** warns if it isn't.
@@ -72,7 +72,7 @@ The wizard never opens by itself on a site that already has rooms or bookings, s
 
 ### Upgrading
 
-**Upgrade from any earlier version (1.0.0–1.7.0):** upload the new zip and choose **Replace current with uploaded**.
+**Upgrade from any earlier version (1.0.0–1.8.0):** upload the new zip and choose **Replace current with uploaded**.
 - The database updates itself on the next page load. No reinstall is needed, and rooms, bookings and settings are kept.
 - If an update step ever fails, a red notice appears in the admin and the step is retried automatically.
 - On staging or in scripts you can also run `wp flexo-booking migrate`.
@@ -90,6 +90,7 @@ The wizard never opens by itself on a site that already has rooms or bookings, s
   - **Every published room gets a page at `/rooms/<slug>/`** and appears in sitemaps (§3). Nothing else on the site changes: existing pages, the booking form, booking links and prices stay as they are. If the site already has pages or another post type (e.g. JetEngine rooms) under `/rooms/`, **Settings → Health** says so: pages with a room's address are no longer shown (remove them), and the other post type should be switched off – or choose another word under **Settings → Room pages**.
   - Existing amenities, sizes, beds, photos and descriptions are kept and shown in the new editor; amenities get their usual icons.
   - The database update only adds the new settings and refreshes the site's addresses once. Nothing is removed, so going back to 1.7.0 is possible (room pages then stop answering).
+- **1.8.1:** new **Room page design** setting: any page or template you designed in Elementor can be the design of every room page (§3). Fixed: *Settings → Room pages* named the site's header template as the room template (any template shown on the entire site was taken for it), which also kept *Add the starter room templates* from switching to the starter template. No database update.
 
 ---
 
@@ -202,6 +203,7 @@ Every published room has a page at **`/rooms/<slug>/`**. The word `rooms` is set
 
 What the page looks like:
 
+0. **With a page you choose** – *Settings → Room pages → Room page design*: pick any page or Elementor template you designed for one room (§3.1, *Using your own page*). Every room page uses it with that room's data. This wins over everything below.
 1. **With Elementor Pro and a single room template** (Theme Builder → Single, condition *Rooms*): your design, filled by each room through the **Flexo Booking: room** dynamic tags and the room widgets (§3.1). This is the normal FlexoHotels setup.
 2. **Without a template** (or before you make one): the plugin's own room page – name, type, "from" price, facts, gallery with lightbox, description, amenities, more details, rates and the **booking box** – in the theme's layout and fonts. It works on classic and block themes; block themes can edit it under **Appearance → Editor → Templates → Single room**.
 
@@ -242,6 +244,14 @@ Every tag has a **Room** option, **Current room (automatic)** by default: in the
    - **Room gallery** – carousel (photos side by side, height per device, arrows, dots, autoplay that stops on touch and for visitors who prefer less motion) or grid; lightbox.
    - **Room booking box** – dates and guests, then availability and the total for *this* room, and **Book now** straight to the guest details step (§14). Same Style options as the booking form.
 4. **Room lists:** Pro's **Loop Grid** or **Loop Carousel** with *Query → Source: Rooms* and the *Room card* (or your own loop item using the tags). Order follows the rooms' *Display order*; hidden and demo rooms are left out for guests. For "other rooms" on a room page, exclude the current post in the query.
+
+**Using your own page as the room design** (1.8.1). If your room design is an Elementor **page** (or a template that isn't set to show on rooms), you don't need to rebuild it:
+
+1. **Bookings → Settings → Room pages → Room page design**: choose the page (listed under *Pages built with Elementor*; drafts are listed too, so the design page needn't be public) or the template (*Elementor templates*). Save.
+2. Every room page now shows that design with the theme's header and footer, filled with each room's data wherever the design uses the **Flexo Booking: room** tags or room widgets (and core tags such as *Post Title* and *Featured Image*). Everything else in the design – hotel rules, banners, sections – stays exactly as designed and is the same on every room.
+3. The setting tells you if the design still reads **JetEngine fields** (named one by one: `price_per_night`, `long_description`…) or isn't connected to room data at all. Open it with **Edit it with Elementor** and switch those parts to the matching room tags: Room price, Full description, Room size, Guests, Beds, Room gallery / Room amenities widgets, Room booking link for buttons. While you edit the design, it shows a real room (the room with the same address as the page, otherwise the first room).
+4. The design page itself, if published, shows the room with the same address and tells search engines that the room page is the real one (canonical); otherwise it is kept out of search results. You can also keep it as a draft.
+5. Back to normal any time: choose *Automatic*. The design's ID is not exported with the settings (it only exists on this site).
 
 **Converting a template built on JetEngine:** `bin/convert-jet-room-template.py` rewrites an exported Elementor JSON so every JetEngine room field becomes the matching Flexo Booking tag or widget (photos, gallery, amenities, facts, prices, booking buttons, the rooms query). `elementor-templates/` holds the converted Azure single room template and room card, with an import guide.
 
@@ -1008,7 +1018,7 @@ wp flexo-booking import template.flexo-booking.json --images      # --skip-setti
 
 **Settings → Tracking** (with *Conversion tracking* on): the events for Tag Manager and the optional direct Meta Pixel (§23).
 
-**Settings → Room pages:** room page address (`rooms`), the *All rooms* page room pages link back to (found automatically when empty), prices on room pages ("from" price or none), the **Check availability** bar on phones, the table of your room pages, and the Elementor templates for rooms (§3).
+**Settings → Room pages:** room page design (a page or template used for every room page, or automatic), room page address (`rooms`), the *All rooms* page room pages link back to (found automatically when empty), prices on room pages ("from" price or none), the **Check availability** bar on phones, the table of your room pages, and the Elementor templates for rooms (§3).
 
 **Settings → Features:** see §2. **Settings → Health:** see §18. **Calendar sync** (§12) and **Import & export** (§24) are linked from the same tab bar.
 
@@ -1115,6 +1125,7 @@ All routes accept `locale` (e.g. `en_US`): the answer is in that language, and a
 | Room meta | `_flexo_gallery` (attachment IDs), `_flexo_view`, `_flexo_amenity_items` (`key`, `label`, `icon`; a preset with an empty label follows the translation; `_flexo_amenities` keeps the preset keys in step), `_flexo_details` (`icon`, `label`, `value`), `_flexo_hidden`, `_flexo_demo`, `_flexo_seo_title`, `_flexo_seo_description`, `_flexo_from_price` (cache) |
 | Icons | `name` (bundled Lucide icons, ISC licence, `includes/data/room-icons.php`) or `media:<attachment ID>`; `Flexo_Booking_Room_Icons::html()` |
 | The room as data | `Flexo_Booking_Room_Content::room( $id )` (texts from the translation, booking data from the main room) and `current_id()` (explicit room → the loop's post → the queried object → `flexo_booking_current_room`) |
+| Room page design (1.8.1) | `Flexo_Booking_Room_Design` (setting `room_design`): chosen page/template printed with `Elementor\Frontend::get_builder_content_for_display()` while the room is the current post (as Elementor Pro prints Theme Builder templates), CSS in the head, `elementor-page-{id}` body classes, `templates/room-design.php` (classic themes: `get_header()`/`get_footer()`; block themes: header/footer parts; Elementor Canvas: none) |
 | Pages, addresses, hidden rooms, default page, block template | `Flexo_Booking_Room_Pages`; output in `Flexo_Booking_Room_Render` (`templates/single-room.php`, `templates/room-booking-box.php`, overridable like the form templates) |
 | "From" prices | `Flexo_Booking_Room_Prices::get()`, cache per room, daily cron `flexo_booking_from_prices` |
 | Structured data, titles | `Flexo_Booking_Room_Seo` |

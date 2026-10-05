@@ -40,27 +40,83 @@ class Flexo_Booking_Elementor_Templates {
 	}
 
 	/**
-	 * A Theme Builder template already shown on room pages, if any.
+	 * Theme Builder template types for single pages (headers, footers,
+	 * archives, popups and loop items are not room templates).
+	 */
+	const SINGLE_TYPES = array( 'single', 'single-post', 'single-page' );
+
+	/**
+	 * Published Theme Builder single templates with display conditions.
+	 *
+	 * @return WP_Post[]
+	 */
+	private static function single_templates() {
+		return get_posts(
+			array(
+				'post_type'      => 'elementor_library',
+				'post_status'    => 'publish',
+				'posts_per_page' => 50,
+				// phpcs:ignore WordPress.DB.SlowDBQuery -- admin screen only.
+				'meta_query'     => array(
+					array(
+						'key'     => '_elementor_template_type',
+						'value'   => self::SINGLE_TYPES,
+						'compare' => 'IN',
+					),
+					array(
+						'key'     => '_elementor_conditions',
+						'compare' => 'EXISTS',
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * A Theme Builder single template already shown on room pages, if any.
 	 *
 	 * @return WP_Post|null
 	 */
 	public static function room_template() {
-		$posts = get_posts(
-			array(
-				'post_type'      => 'elementor_library',
-				'post_status'    => 'publish',
-				'posts_per_page' => 20,
-				'meta_key'       => '_elementor_conditions', // phpcs:ignore WordPress.DB.SlowDBQuery -- admin screen only.
-			)
-		);
-		foreach ( $posts as $post ) {
+		foreach ( self::single_templates() as $post ) {
 			foreach ( (array) get_post_meta( $post->ID, '_elementor_conditions', true ) as $condition ) {
-				if ( 0 === strpos( (string) $condition, 'include/singular/' . Flexo_Booking_Rooms::POST_TYPE ) || 'include/singular' === (string) $condition || 'include/general' === (string) $condition ) {
+				$condition = (string) $condition;
+				if ( 0 === strpos( $condition, 'include/singular/' . Flexo_Booking_Rooms::POST_TYPE ) || 'include/singular' === $condition || 'include/general' === $condition ) {
 					return $post;
 				}
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Single templates meant for rooms that are not Flexo Booking rooms –
+	 * e.g. made for JetEngine's "rooms", or for a post type this site no
+	 * longer has.
+	 *
+	 * @return array[] { post: WP_Post, type: string }
+	 */
+	public static function other_room_templates() {
+		$found = array();
+		foreach ( self::single_templates() as $post ) {
+			foreach ( (array) get_post_meta( $post->ID, '_elementor_conditions', true ) as $condition ) {
+				if ( ! preg_match( '#^include/singular/([a-z0-9_-]+)#', (string) $condition, $m ) ) {
+					continue;
+				}
+				$type = preg_replace( '/_by_author$/', '', $m[1] );
+				if ( 0 === strpos( $type, 'in_' ) || Flexo_Booking_Rooms::POST_TYPE === $type ) {
+					continue;
+				}
+				if ( ! post_type_exists( $type ) || false !== stripos( $type, 'room' ) ) {
+					$found[] = array(
+						'post' => $post,
+						'type' => $type,
+					);
+					break;
+				}
+			}
+		}
+		return $found;
 	}
 
 	public static function file_url( $key ) {
@@ -233,7 +289,15 @@ class Flexo_Booking_Elementor_Templates {
 		<p class="flexo-tab-intro">
 			<?php esc_html_e( 'Design one room page and one room card in Elementor; every room fills them with its own name, photos, description, amenities and prices. Start from your own template (connect its widgets to the "Flexo Booking: room" dynamic tags) or from the starter templates.', 'flexo-booking' ); ?>
 		</p>
-		<?php if ( $current ) : ?>
+		<?php $design = Flexo_Booking_Room_Design::id(); ?>
+		<?php if ( $design ) : ?>
+			<p>
+				<?php
+				/* translators: %s: page or template name */
+				printf( esc_html__( 'Room pages use the design "%s" chosen above.', 'flexo-booking' ), esc_html( get_the_title( $design ) ) );
+				?>
+			</p>
+		<?php elseif ( $current ) : ?>
 			<p>
 				<?php
 				/* translators: %s: template name */
@@ -247,6 +311,14 @@ class Flexo_Booking_Elementor_Templates {
 		<?php else : ?>
 			<p><?php esc_html_e( 'No Elementor template is set for rooms yet, so room pages use the plugin\'s own room page.', 'flexo-booking' ); ?></p>
 		<?php endif; ?>
+		<?php foreach ( $design ? array() : self::other_room_templates() as $other ) : ?>
+			<div class="notice notice-warning inline"><p>
+				<?php
+				/* translators: 1: template name, 2: post type name, e.g. rooms */
+				printf( esc_html__( 'Your template "%1$s" is set to show on "%2$s", which are not the Flexo Booking rooms (for example JetEngine rooms), so room pages don\'t use it. Choose it above as the room page design, or change its display condition to Rooms in Elementor.', 'flexo-booking' ), esc_html( get_the_title( $other['post'] ) ), esc_html( $other['type'] ) );
+				?>
+			</p></div>
+		<?php endforeach; ?>
 		<?php if ( self::can_install() ) : ?>
 			<p>
 				<a class="button" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=' . self::ACTION ), self::ACTION ) ); ?>"><?php echo esc_html( $current ? __( 'Add the starter templates (keep my template in use)', 'flexo-booking' ) : __( 'Add the starter room templates', 'flexo-booking' ) ); ?></a>

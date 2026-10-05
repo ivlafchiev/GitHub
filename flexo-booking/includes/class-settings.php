@@ -69,6 +69,7 @@ class Flexo_Booking_Settings {
 			'rooms_page'                    => '',
 			'room_price_display'            => 'from',
 			'room_sticky_bar'               => 1,
+			'room_design'                   => 0,
 			'email_logo'                    => '',
 			'email_color'                   => '#1f6f5c',
 			'notify_new'                    => 1,
@@ -391,6 +392,10 @@ class Flexo_Booking_Settings {
 					break;
 				case 'room_sticky_bar':
 					$clean[ $key ] = empty( $value ) ? 0 : 1;
+					break;
+				case 'room_design':
+					$value         = absint( $value );
+					$clean[ $key ] = $value && Flexo_Booking_Room_Design::is_valid( $value ) ? $value : 0;
 					break;
 				case 'room_base':
 					$value         = sanitize_title( (string) $value );

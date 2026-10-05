@@ -28,6 +28,8 @@ class Flexo_Booking_Portability {
 		$settings = Flexo_Booking_Settings::all();
 		// Site-specific: the importing site falls back to its own admin email.
 		$settings['notification_email'] = '';
+		// A page or template ID only means something on this website.
+		$settings['room_design'] = 0;
 		// The hotel's bank account is never copied to another website. Stripe
 		// keys live in their own option and are never exported either.
 		foreach ( self::site_specific_payment_settings() as $key ) {
@@ -257,6 +259,7 @@ class Flexo_Booking_Portability {
 					$incoming[ $key ] = $current[ $key ];
 				}
 			}
+			$incoming['room_design'] = $current['room_design'];
 			update_option( Flexo_Booking_Settings::OPTION, Flexo_Booking_Settings::sanitize( array_merge( $current, $incoming ) ) );
 			$stats['settings'] = 1;
 

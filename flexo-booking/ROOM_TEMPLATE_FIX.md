@@ -1,7 +1,8 @@
 # Room pages and the Elementor Pro single room template – diagnosis (Step 1)
 
-Status: **diagnosis only, nothing changed.** Waiting for approval of the plan
-at the end before Step 2.
+Status: diagnosis below. **Update 1** at the end: your answer (use your existing
+page as the design) is built in 1.8.1; the rest of Step 2 is still waiting for
+approval.
 
 **What I worked from:**
 - Your template export `elementor-3270-2026-10-04.json`, i.e. template ID **3270**.
@@ -266,3 +267,61 @@ listed once I can read the site, or from your answers below. Planned:
    `/accommodation/` like desktop? (It's hotel-wide, so I won't touch it
    without your answer.)
 8. **Elementor Pro zip:** if you want me to test in real Pro.
+
+---
+
+## Update 1 (1.8.1): your room page design, chosen in the settings
+
+**Your answer:** the room design you want to use is a page you built, and
+Settings → Room pages had no way to choose it.
+
+**Built:**
+- **Settings → Room pages → Room page design.** A list of every page built
+  with Elementor (drafts too) and every Elementor page, section and single
+  template.
+  - The chosen design is used for **every room page**, inside your theme's
+    header and footer.
+  - It is printed exactly the way Elementor Pro prints a Theme Builder
+    template: the room is the current post, so every room tag, room widget
+    and core tag (*Post Title*, *Featured Image*) shows that room's data.
+  - Its CSS loads in the page head. Dynamic styles, such as the hero
+    background from the room photo, are worked out per room.
+  - The body gets the design's `elementor-page-{id}` class, so page settings
+    apply and Hello gives it the full width.
+  - Static parts (hotel rules, banners, "Book Directly", etc.) are untouched.
+- **The chosen design wins over everything:** Theme Builder conditions and
+  the plugin's plain page. *Automatic* brings back the old behaviour.
+- **Checks next to the setting:**
+  - names every **JetEngine field** the design still reads (for template
+    3270: `price_per_night`, `long_description`, `room_size`, `max_guests`,
+    `beds_info`, `amenity-1` … `amenity-8`);
+  - warns if the design isn't connected to room data at all.
+- **Editing the design:** it shows a real room. That's the room with the same
+  address as the page, so a page called "Sea View Double Room" shows that
+  room; otherwise the first room.
+- **The design page opened on its own:** it shows the room with the same
+  address, with a canonical link to the room page; otherwise *noindex*.
+- **Fixed (bug from 1.8.0):** the settings named your **Header** template as
+  the room template.
+  - Any Theme Builder template set for the entire site was taken for it, and
+    for the same reason *Add the starter room templates* would not switch to
+    the starter template.
+  - Only single templates count now.
+  - A single template still set for JetEngine's `rooms` (or a post type the
+    site no longer has) is pointed out, with both fixes: choose it as the
+    design, or change its condition to Rooms.
+
+**Tested:** `tests/test-room-design.php`, 33/33. Run with Hello Elementor
+3.5.1 (classic theme, like your site) and with Twenty Twenty-Five (block
+theme), using Elementor 4.4 without Pro.
+
+**What it does not do by itself:**
+- **Connecting your page to the room data.** Wherever your page still has
+  JetEngine tags or typed-in text, every room shows the same thing (JetEngine
+  tags show nothing once JetEngine is gone). The setting lists those parts.
+  Switch them in Elementor, or send me the page's export (open it in
+  Elementor → ⌃ next to Update → *Save as template*, then Templates → Export)
+  and I'll convert it, changing only where the content comes from.
+- **The format options from Step 2 B** ("€270" with the currency first,
+  guests as "1–3 person", an editable size unit) and the rest of Step 2
+  (A, C, D) are still waiting for your approval.
