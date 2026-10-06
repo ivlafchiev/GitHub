@@ -125,6 +125,42 @@ class Flexo_Booking_Settings {
 			'appearance_body_font_name'       => '',
 			'appearance_panel_bg'             => '',
 			'appearance_overlay'              => 'medium',
+			// 1.9.0: Booking and Thank You pages, forms, steps, confirmation, tabs ('' = website / as before).
+			'appearance_page_bg'              => '',
+			'appearance_page_image'           => 0,
+			'appearance_page_image_effect'    => 'none',
+			'appearance_max_width'            => '',
+			'appearance_max_width_px'         => 1200,
+			'appearance_card_bg'              => '',
+			'appearance_card_border'          => '',
+			'appearance_card_no_border'       => 0,
+			'appearance_card_corners'         => '',
+			'appearance_card_shadow'          => '',
+			'appearance_spacing'              => '',
+			'appearance_heading_color'        => '',
+			'appearance_muted'                => '',
+			'appearance_button_hover'         => '',
+			'appearance_secondary'            => '',
+			'appearance_field_bg'             => '',
+			'appearance_field_border'         => '',
+			'appearance_focus'                => '',
+			'appearance_label'                => '',
+			'appearance_control_size'         => '',
+			'appearance_step_active'          => '',
+			'appearance_step_done'            => '',
+			'appearance_step_inactive'        => '',
+			'appearance_summary_bg'           => '',
+			'appearance_success'              => '',
+			'appearance_status_confirmed'     => '',
+			'appearance_status_awaiting'      => '',
+			'appearance_status_request'       => '',
+			'appearance_stay_bg'              => '',
+			'appearance_bank_bg'              => '',
+			'appearance_tab_bg'               => '',
+			'appearance_tab_active_bg'        => '',
+			'appearance_tab_text'             => '',
+			'appearance_tab_active_text'      => '',
+			'appearance_tab_corners'          => '',
 			'email_log_days'                => 90,
 			// Guest details form (Day 4, data minimisation).
 			'field_phone'                   => 'required',
@@ -288,6 +324,31 @@ class Flexo_Booking_Settings {
 				case 'appearance_bg':
 				case 'appearance_button_text':
 				case 'appearance_panel_bg':
+				case 'appearance_page_bg':
+				case 'appearance_card_bg':
+				case 'appearance_card_border':
+				case 'appearance_heading_color':
+				case 'appearance_muted':
+				case 'appearance_button_hover':
+				case 'appearance_secondary':
+				case 'appearance_field_bg':
+				case 'appearance_field_border':
+				case 'appearance_focus':
+				case 'appearance_label':
+				case 'appearance_step_active':
+				case 'appearance_step_done':
+				case 'appearance_step_inactive':
+				case 'appearance_summary_bg':
+				case 'appearance_success':
+				case 'appearance_status_confirmed':
+				case 'appearance_status_awaiting':
+				case 'appearance_status_request':
+				case 'appearance_stay_bg':
+				case 'appearance_bank_bg':
+				case 'appearance_tab_bg':
+				case 'appearance_tab_active_bg':
+				case 'appearance_tab_text':
+				case 'appearance_tab_active_text':
 					$clean[ $key ] = Flexo_Booking_Appearance::sanitize_color( $value );
 					break;
 				case 'appearance_corners':
@@ -306,6 +367,25 @@ class Flexo_Booking_Settings {
 					break;
 				case 'appearance_text_size':
 					$clean[ $key ] = array_key_exists( $value, Flexo_Booking_Appearance::text_sizes() ) ? $value : 'normal';
+					break;
+				case 'appearance_page_image':
+					$value         = absint( $value );
+					$clean[ $key ] = $value && wp_attachment_is_image( $value ) ? $value : 0;
+					break;
+				case 'appearance_card_no_border':
+					$clean[ $key ] = empty( $value ) ? 0 : 1;
+					break;
+				case 'appearance_max_width_px':
+					$clean[ $key ] = max( 600, min( 2000, absint( $value ) ? absint( $value ) : 1200 ) );
+					break;
+				case 'appearance_page_image_effect':
+				case 'appearance_max_width':
+				case 'appearance_card_corners':
+				case 'appearance_card_shadow':
+				case 'appearance_spacing':
+				case 'appearance_control_size':
+				case 'appearance_tab_corners':
+					$clean[ $key ] = Flexo_Booking_Appearance::sanitize_choice( substr( $key, 11 ), $value );
 					break;
 				case 'payment_mode':
 					$clean[ $key ] = in_array( $value, array( 'property', 'deposit', 'full' ), true ) ? $value : 'full';

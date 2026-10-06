@@ -837,6 +837,78 @@ input.flexo-code {
 	margin: 0.5em 0;
 }
 
+/* 1.9.0: folded groups on Appearance, a page's own look in Settings → Pages */
+.flexo-appearance__group {
+	margin: 0 0 12px;
+	background: var(--fx-surface, #fff);
+	border: 1px solid var(--fx-border, #c3c4c7);
+	border-radius: var(--fx-radius-md, 4px);
+}
+
+.flexo-appearance__group > summary {
+	padding: 12px 16px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.flexo-appearance__group > :not(summary) {
+	margin-inline: 16px;
+}
+
+.flexo-appearance__group[open] > summary {
+	border-bottom: 1px solid var(--fx-border, #c3c4c7);
+}
+
+.flexo-page-look {
+	margin: 16px 0;
+	padding-top: 8px;
+	border-top: 1px solid var(--fx-border, #dcdcde);
+}
+
+.flexo-page-look__own[hidden] {
+	display: none;
+}
+
+@media (min-width: 1400px) {
+	.flexo-page-look__body:has(> .flexo-page-look__own:not([hidden])) {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+		gap: 20px;
+		align-items: start;
+	}
+
+	.flexo-page-look__body .flexo-page-look__own:not([hidden]) + .flexo-page-look__preview {
+		position: sticky;
+		top: 48px;
+		margin-top: 0;
+	}
+}
+
+.flexo-page-look__preview {
+	margin-top: 12px;
+	padding: 12px;
+	background: var(--fx-surface-3, #f0f0f1);
+	border-radius: var(--fx-radius-md, 4px);
+}
+
+.flexo-page-look__preview .flexo-appearance__preview-bar {
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.flexo-page-look__frame-wrap {
+	height: 760px;
+	overflow: hidden;
+}
+
+.flexo-page-look__frame-wrap iframe {
+	display: block;
+	height: 760px;
+	border: 0;
+	background: #fff;
+	transform-origin: 0 0;
+}
+
 @media (max-width: 1100px) {
 	.flexo-appearance__layout {
 		grid-template-columns: 1fr;

@@ -1702,7 +1702,7 @@ refer to the brief's letters (A–AP).
 | REST nonces (AN, V) | Public routes are **nonce-free** (validation, honeypot `fb_website`, per-IP limits `flexo_rl_*`) – already cache-safe | Contact uses the same pattern |
 | Enquiries (I–K, W, Y) | `Guest::enquiry()`: `flexo_booking_log` row (`booking_id` 0, action `enquiry`, details JSON incl. `status` open/handled), hotel email with Reply-To, honeypot, rate limit, Today → *Needs your attention* + *Mark as answered*, deleted after `retention_months` (default 12), WP personal-data export/erase by email | Contact messages are enquiries with `details.kind = contact` (availability enquiries get `kind = availability` when missing). **No new table.** |
 | Owner texts in languages (U) | Untouched texts translated by gettext; changed texts registered with Polylang/WPML (`I18n::translatable_strings()` / `translate()`) | Page texts join the same list |
-| Appearance (O) | CSS variables on `.flexo-booking`, Custom/Match modes, bundled + Elementor global + typed fonts, panel settings, preview | Extended in Session C |
+| Appearance (O) | CSS variables on `.flexo-booking`, Custom/Match modes, bundled + Elementor global + typed fonts, panel settings, preview | Extended – **done**, pulled forward from Session C (§18.14) |
 | Overlay headers (AO) | `clearOverlayHeader()` in booking.js moves plugin pages below a header lying over them | Becomes the "auto" part of the header setting |
 | Health (Z) | Checks incl. `booking_page` (warning while the built-in page is used), `room_pages` (address clashes) | New checks below |
 | Page caching (AN) | **Nothing** (only admin/export call `nocache_headers()`) | New |
@@ -1946,8 +1946,9 @@ New checks:
 
 **Session C**
 - **Brief sections:** L, M, N, O, AF, AB, U, AJ, AK, AI/AL.
-- **Work:** widgets and shortcodes, tabs, Appearance extension and per-page
-  overrides, import/export, translations, docs, version 1.9.0, zip.
+- **Work:** widgets and shortcodes, tabs, ~~Appearance extension and per-page
+  overrides~~ (**O done**, pulled forward: §18.14), import/export,
+  translations, docs, version 1.9.0, zip.
 - **Tests:** items 76–87 and the full Definition of Done run.
 
 ### 18.11 Decisions needing your answer (conflicts with the brief or the current code)
@@ -2144,3 +2145,124 @@ Updated existing tests (intended 1.9.0 behaviour):
 6. **Preview with a sample booking**: try every case, reorder sections, switch layouts.
 7. With the Azure header, try the three header styles at 1440/1024/768/390. In Elementor Pro, check which header conditions show and try *Flexo Booking pages*.
 8. With LiteSpeed / WP Rocket / Cloudflare: check that `/thank-you/` is never served from the cache (response headers) and that Health lists no manual rule, or add the listed rules.
+
+### 18.14 Section O pulled forward: Appearance for the system pages – DONE
+
+Asked for between Sessions A and B ("the page is white and doesn't look
+good; I want everything on it customizable – a picture, a pale colour –
+from the admin, without creating pages"). Version still **1.8.3**, no
+migration (all new settings have empty defaults and are merged on save).
+
+**Why the global Appearance did not reach the pages:** its variables were
+set on `.flexo-booking` only, while the page wrapper, title, introduction,
+help boxes and the Thank You card sit outside it with fixed values. Fix:
+the same variables are also written on `.flexo-system-page`, the page
+elements read page-level variables (with the old values as fallbacks), and
+the page background goes on the page area of the built-in pages only
+(`body.flexo-system-page-body .flexo-page`, full width between header and
+footer).
+
+**A. Global (Bookings → Appearance, Custom):**
+- *Booking and Thank You pages* group (open): page background colour,
+  background picture (as it is / softened / darkened), content width
+  (as the form / narrow 960 / wide 1440 / exact 600–2000 px), card
+  background, border or none, corners, shadow, space between sections
+  (compact / as designed / spacious).
+- Folded groups:
+  - Text: heading and muted colours.
+  - Buttons and fields: hover, outline buttons, field background, border,
+    focus, labels, normal / large height.
+  - Booking steps and summary: current, done, next; summary background.
+  - Confirmation: success icon, the three status colours (text colour
+    chosen automatically), stay summary, bank box.
+  - Tabs: variables only, for Session B's tabs.
+- Every colour has *Use website colour*.
+- Preview scenes: booking form, the real Booking page and the real Thank
+  You page (header, footer, sample booking, real fields, an error, steps),
+  desktop/phone, live before saving, *Open page*.
+
+**B. Per page (Settings → Pages → card → Appearance), Booking and Thank You:**
+- *Use global appearance* on by default.
+- Off: page background colour + picture + effect, card background, main
+  and accent colour (button text automatic), heading, text, corners,
+  width, spacing. On Thank You also the success and status colours.
+- Each colour can stay on *Use global colour*.
+- Switching back to global keeps the page's choices for later.
+- *Reset to global* (confirmation) returns the defaults. It is a normal
+  button, so Enter in a field never resets.
+- Stored in `flexo_booking_pages[key][appearance]` (merged on save, so
+  other cards and other page settings never reset it). The Contact
+  defaults exist for Session B.
+- Live preview of the real page beside the settings (desktop 1280 px
+  scaled to fit, or phone 390 px), contrast warnings, *Open page*.
+- When the feature *Appearance settings* is off, the section only says how
+  to switch it on, and no page CSS is written.
+
+**C/D.** Previews post the CSS (built by the same PHP as the front end,
+via AJAX with nonce + `manage_options`) into the iframe. WCAG AA
+warnings (4.5:1), never blocking, with a suggested colour; pairs: text /
+background, button text, field text, labels, page title on the page
+background (skipped on pictures), card text, each status label.
+
+**E. Priority:** Elementor widget Style (`.elementor-N .elementor-element.elementor-element-X .flexo-booking`, 0-4-0) > the page's own look
+(`.flexo-system-page--KEY …`, 0-2-0, printed after) > global
+(`.flexo-booking` / `.flexo-system-page`, 0-1-0) > website.
+
+**F. Technical:**
+- Only what differs from the defaults is written.
+- No `!important` and no global selectors: every rule targets
+  `.flexo-booking`, `.flexo-system-page…` or `body.flexo-system-page-body… .flexo-page`.
+- booking.css defaults equal the previous values, verified pixel-identical
+  against the previous CSS (Booking and Thank You, desktop and phone).
+- Import/Export: the new settings travel with the settings; pictures go as
+  addresses (`appearance.page_image`, `appearance.pages[key].page_image_url`)
+  and are downloaded only when images are imported (otherwise the site
+  keeps its own). Older files change nothing.
+- Emails unchanged. BG: +94 strings, complete.
+
+**Files:**
+- `class-appearance.php`: settings, CSS builder, page CSS, contrast, previews.
+- `class-settings.php`: defaults and validation.
+- `class-system-pages.php`: per-page defaults, sanitiser, reset, the preview renderer.
+- `class-confirmation.php`: sample for the Appearance preview, without the preview bar.
+- `class-portability.php`.
+- `admin/class-appearance-admin.php`: groups, picture, width, scenes.
+- `admin/class-pages-admin.php`: the per-page section and AJAX.
+- `admin-appearance.js`, `admin-pages.js`, `admin.css`, `booking.css`.
+- Templates: preview hooks.
+- Languages.
+
+**Tests:**
+
+| Suite | Result |
+|---|---|
+| `test-appearance-pages.php` (new) | RESULT_UNIT |
+| `e2e/day8-appearance.js` (new) | RESULT_E2E |
+| `tests/run.sh` (all PHP suites, i18n, constants, concurrency) | RESULT_RUN |
+| e2e days 1–8 | RESULT_DAYS |
+| Upgrade 1.0.0 / 1.5.0 / 1.7.0 / 1.8.3 → this build | RESULT_UPGRADE |
+| Default look vs the previous CSS (Booking, Thank You; 1280 and 390 px) | pixel-identical |
+
+**Limitations:**
+- The per-page look covers the built-in pages; an own WordPress/Elementor
+  page is designed in Elementor (where the widget's Style tab wins anyway).
+- A picture's readability can't be measured, so no contrast warning is
+  shown on a picture background; the *soften* / *darken* effects are
+  offered instead.
+- The Contact page's look comes with the Contact page (Session B); the
+  tab variables are ready.
+- The Thank You previews show the *bank transfer* case, with the three
+  status labels side by side under it; the other cases are in *Preview
+  with a sample booking*.
+
+**Manual checks on the real site:**
+1. Bookings → Appearance → Custom → *Booking and Thank You pages*: pick a
+   pale page colour, then a beach photo with *Soften*; check both scenes.
+2. Settings → Pages → Booking → Appearance: switch off *Use global
+   appearance*, change a few colours, see the preview, save, *Open page*.
+3. The same on the Thank You card; *Preview with a sample booking* for
+   all cases.
+4. With the Azure Elementor header: the background starts under the header
+   and reaches the footer at 1440/1024/768/390.
+5. *Reset to global* on one page; the other page keeps its look.
+

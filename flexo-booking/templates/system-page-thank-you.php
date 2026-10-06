@@ -14,6 +14,9 @@ defined( 'ABSPATH' ) || exit;
 
 $flexo_shell_canvas  = false;
 $flexo_shell_content = static function () {
-	echo Flexo_Booking_System_Pages::wrap( 'thank_you', Flexo_Booking_Confirmation::render() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in the confirmation template.
+	ob_start();
+	do_action( 'flexo_booking_thank_you_bottom' );
+	$flexo_bottom = ob_get_clean();
+	echo Flexo_Booking_System_Pages::wrap( 'thank_you', Flexo_Booking_Confirmation::render() . $flexo_bottom ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in the confirmation template and by the hooked code.
 };
 require FLEXO_BOOKING_DIR . 'templates/page-shell.php';

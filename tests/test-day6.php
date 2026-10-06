@@ -393,10 +393,11 @@ preg_match_all( '/(?:^|})\s*([^{}]+)\{/', $css, $flexo_sel );
 $flexo_scoped = array_filter(
 	array_map( 'trim', $flexo_sel[1] ),
 	static function ( $sel ) {
-		return '@font-face' !== $sel && 0 !== strpos( $sel, '.flexo-booking' );
+		// 1.9.0: also the built-in Booking / Thank You pages (their wrapper and page area).
+		return '@font-face' !== $sel && 0 !== strpos( $sel, '.flexo-booking' ) && 0 !== strpos( $sel, '.flexo-system-page' ) && 0 !== strpos( $sel, 'body.flexo-system-page-body ' );
 	}
 );
-t_ok( ! $flexo_scoped && false !== strpos( $css, '--fb-primary:#123456' ) && false === strpos( $css, '!important' ), 'custom CSS only for the booking form (and its fonts), no !important' );
+t_ok( ! $flexo_scoped && false !== strpos( $css, '--fb-primary:#123456' ) && false === strpos( $css, '!important' ), 'custom CSS only for the booking form and the built-in pages (and its fonts), no !important' );
 $faces = Flexo_Booking_Appearance::font_faces( array( 'lora' ) );
 t_ok( false !== strpos( $faces, 'lora-cyrillic' ) && false === strpos( $faces, 'inter' ) && false === strpos( $faces, 'googleapis' ), 'only the chosen font, self-hosted, with Cyrillic' );
 t_eq( '#123456', Flexo_Booking_Appearance::email_color(), 'emails use the main colour' );

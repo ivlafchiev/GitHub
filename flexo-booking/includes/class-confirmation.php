@@ -414,7 +414,19 @@ class Flexo_Booking_Confirmation {
 	/**
 	 * The sample state asked for by a logged-in administrator ('' otherwise).
 	 */
+	/**
+	 * @var string Sample state forced by the Appearance preview ('' for none).
+	 */
+	private static $forced_sample = '';
+
+	public static function force_sample( $kind ) {
+		self::$forced_sample = isset( self::preview_kinds()[ $kind ] ) ? $kind : '';
+	}
+
 	public static function preview_kind() {
+		if ( '' !== self::$forced_sample ) {
+			return self::$forced_sample;
+		}
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- verified below.
 		if ( ! isset( $_GET['flexo_preview'], $_GET['_wpnonce'] ) || ! current_user_can( 'manage_options' ) ) {
 			return '';
@@ -531,6 +543,7 @@ class Flexo_Booking_Confirmation {
 		$page   = Flexo_Booking_System_Pages::get( 'thank_you' );
 		$layout = isset( $args['layout'] ) && isset( Flexo_Booking_System_Pages::thank_you_layouts()[ $args['layout'] ] ) ? $args['layout'] : $page['layout'];
 		$preview = 'thank_you' === Flexo_Booking_System_Pages::current() ? self::preview_kind() : '';
+		$bar     = '' !== $preview && '' === self::$forced_sample;
 		if ( '' !== $preview ) {
 			$view = 'generic' === $preview ? null : self::sample_view( $preview );
 		} else {
@@ -547,7 +560,7 @@ class Flexo_Booking_Confirmation {
 			'icon'     => $view ? $view['kind'] : 'generic',
 		);
 		ob_start();
-		if ( '' !== $preview ) {
+		if ( $bar ) {
 			echo self::preview_bar( $preview ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in preview_bar().
 		}
 		Flexo_Booking_Frontend::load_template( 'confirmation.php', $vars );

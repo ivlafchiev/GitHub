@@ -47,6 +47,10 @@ class Flexo_Booking_Appearance_Admin {
 					'textBg'      => __( 'Text and background colours are hard to read together (contrast %1$s:1, at least 4.5:1 is needed). Try a darker text colour, e.g. %2$s.', 'flexo-booking' ),
 					/* translators: 1: contrast ratio, 2: suggested colour */
 					'buttonText'  => __( 'Button text is hard to read on the main colour (contrast %1$s:1, at least 4.5:1 is needed). Use %2$s for the button text, or a darker main colour.', 'flexo-booking' ),
+					/* translators: 1: what is hard to read, 2: contrast ratio, 3: suggested colour */
+					'contrast'    => __( '%1$s: hard to read (contrast %2$s:1, at least 4.5:1 is needed). Try %3$s.', 'flexo-booking' ),
+					'chooseImage' => __( 'Choose a picture', 'flexo-booking' ),
+					'useImage'    => __( 'Use this picture', 'flexo-booking' ),
 					'resetSure'   => __( 'Go back to your website\'s colours and fonts? Your custom choices are removed.', 'flexo-booking' ),
 					'chooseLogo'  => __( 'Choose the logo for emails', 'flexo-booking' ),
 				),
@@ -111,6 +115,160 @@ class Flexo_Booking_Appearance_Admin {
 				<p class="description" id="<?php echo esc_attr( $id ); ?>-help"><?php echo esc_html( $help ); ?></p>
 			</td>
 		</tr>
+		<?php
+	}
+
+	/**
+	 * A choice (select) row for the 1.9.0 settings.
+	 */
+	private static function choice_row( $key, $label, $help, array $s, $name ) {
+		$choice = substr( $key, 11 );
+		$id     = 'fb-' . str_replace( '_', '-', $key );
+		?>
+		<tr>
+			<th scope="row"><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $label ); ?></label></th>
+			<td>
+				<select id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name . '[' . $key . ']' ); ?>">
+					<?php foreach ( Flexo_Booking_Appearance::choices( $choice ) as $value => $option ) : ?>
+						<option value="<?php echo esc_attr( $value ); ?>" <?php selected( (string) $s[ $key ], (string) $value ); ?>><?php echo esc_html( $option[0] ); ?></option>
+					<?php endforeach; ?>
+				</select>
+				<?php if ( 'appearance_max_width' === $key ) : ?>
+					<span class="flexo-width-px" data-flexo-show-when="<?php echo esc_attr( $id ); ?>=custom"><input type="number" min="600" max="2000" step="10" class="small-text" name="<?php echo esc_attr( $name ); ?>[appearance_max_width_px]" value="<?php echo esc_attr( $s['appearance_max_width_px'] ); ?>" aria-label="<?php esc_attr_e( 'Width in pixels', 'flexo-booking' ); ?>"> px</span>
+				<?php endif; ?>
+				<?php if ( '' !== $help ) : ?>
+					<p class="description"><?php echo esc_html( $help ); ?></p>
+				<?php endif; ?>
+			</td>
+		</tr>
+		<?php
+	}
+
+	/**
+	 * A picture from the media library (attachment ID), with "Remove".
+	 */
+	public static function image_field( $field_name, $image, $label ) {
+		$image = (int) $image;
+		?>
+		<span class="flexo-band-image" data-flexo-media>
+			<input type="hidden" name="<?php echo esc_attr( $field_name ); ?>" value="<?php echo esc_attr( $image ); ?>" data-flexo-media-id>
+			<span class="flexo-band-image__preview" data-flexo-media-preview><?php echo $image ? wp_get_attachment_image( $image, 'thumbnail' ) : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core output. ?></span>
+			<button type="button" class="button" data-flexo-media-choose><?php echo esc_html( $label ); ?></button>
+			<button type="button" class="button-link" data-flexo-media-remove <?php echo $image ? '' : 'hidden'; ?>><?php esc_html_e( 'Remove picture', 'flexo-booking' ); ?></button>
+		</span>
+		<?php
+	}
+
+	/**
+	 * Booking and Thank You pages, text, buttons and fields, steps,
+	 * summary, confirmation and tabs (1.9.0). The pages' group is open,
+	 * the others are folded.
+	 */
+	private static function render_page_groups( array $s, $name ) {
+		?>
+		<details class="flexo-appearance__group" open>
+			<summary><?php esc_html_e( 'Booking and Thank You pages', 'flexo-booking' ); ?></summary>
+			<p class="description"><?php esc_html_e( 'The whole page area between your header and footer on the built-in Booking and Thank You pages. Each page can also have its own look under Settings → Pages.', 'flexo-booking' ); ?></p>
+			<table class="form-table" role="presentation">
+				<?php self::color_row( 'appearance_page_bg', __( 'Page background', 'flexo-booking' ), __( 'Behind everything on the page – for example a pale sand or sea colour.', 'flexo-booking' ), $s, $name ); ?>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Background picture', 'flexo-booking' ); ?></th>
+					<td>
+						<?php self::image_field( $name . '[appearance_page_image]', $s['appearance_page_image'], __( 'Choose a picture', 'flexo-booking' ) ); ?>
+						<p><label for="fb-appearance-page-image-effect"><?php esc_html_e( 'Picture effect', 'flexo-booking' ); ?></label>
+							<select id="fb-appearance-page-image-effect" name="<?php echo esc_attr( $name ); ?>[appearance_page_image_effect]">
+								<?php foreach ( Flexo_Booking_Appearance::choices( 'page_image_effect' ) as $value => $option ) : ?>
+									<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $s['appearance_page_image_effect'], $value ); ?>><?php echo esc_html( $option[0] ); ?></option>
+								<?php endforeach; ?>
+							</select></p>
+						<p class="description"><?php esc_html_e( 'Covers the page area behind the cards. Soften or darken it so the text stays easy to read.', 'flexo-booking' ); ?></p>
+					</td>
+				</tr>
+				<?php
+				self::choice_row( 'appearance_max_width', __( 'Content width', 'flexo-booking' ), __( 'How wide the booking area and the confirmation can get on large screens.', 'flexo-booking' ), $s, $name );
+				self::color_row( 'appearance_card_bg', __( 'Card background', 'flexo-booking' ), __( 'The booking form, the help boxes and the confirmation sit on cards.', 'flexo-booking' ), $s, $name );
+				self::color_row( 'appearance_card_border', __( 'Card border', 'flexo-booking' ), __( 'The line around the cards.', 'flexo-booking' ), $s, $name );
+				?>
+				<tr>
+					<th scope="row"></th>
+					<td>
+						<input type="hidden" name="<?php echo esc_attr( $name ); ?>[appearance_card_no_border]" value="0">
+						<label class="flexo-inline-check"><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[appearance_card_no_border]" value="1" <?php checked( ! empty( $s['appearance_card_no_border'] ) ); ?>> <?php esc_html_e( 'No border around the cards', 'flexo-booking' ); ?></label>
+					</td>
+				</tr>
+				<?php
+				self::choice_row( 'appearance_card_corners', __( 'Card corners', 'flexo-booking' ), '', $s, $name );
+				self::choice_row( 'appearance_card_shadow', __( 'Card shadow', 'flexo-booking' ), '', $s, $name );
+				self::choice_row( 'appearance_spacing', __( 'Space between sections', 'flexo-booking' ), '', $s, $name );
+				?>
+			</table>
+		</details>
+
+		<details class="flexo-appearance__group">
+			<summary><?php esc_html_e( 'Text', 'flexo-booking' ); ?></summary>
+			<table class="form-table" role="presentation">
+				<?php
+				self::color_row( 'appearance_heading_color', __( 'Heading colour', 'flexo-booking' ), __( 'Page titles, "Your details", room names and the confirmation heading.', 'flexo-booking' ), $s, $name );
+				self::color_row( 'appearance_muted', __( 'Muted text colour', 'flexo-booking' ), __( 'Introductions, notes and small print.', 'flexo-booking' ), $s, $name );
+				?>
+			</table>
+			<p class="description"><?php esc_html_e( 'The main text colour and the fonts are set above.', 'flexo-booking' ); ?></p>
+		</details>
+
+		<details class="flexo-appearance__group">
+			<summary><?php esc_html_e( 'Buttons and fields', 'flexo-booking' ); ?></summary>
+			<table class="form-table" role="presentation">
+				<?php
+				self::color_row( 'appearance_button_hover', __( 'Button colour under the mouse', 'flexo-booking' ), __( 'Empty: the main colour, slightly lighter.', 'flexo-booking' ), $s, $name );
+				self::color_row( 'appearance_secondary', __( 'Outline buttons', 'flexo-booking' ), __( 'Buttons such as "Back" and "Add to calendar".', 'flexo-booking' ), $s, $name );
+				self::color_row( 'appearance_field_bg', __( 'Field background', 'flexo-booking' ), __( 'Where guests type their details. Empty: the background colour above.', 'flexo-booking' ), $s, $name );
+				self::color_row( 'appearance_field_border', __( 'Field border', 'flexo-booking' ), '', $s, $name );
+				self::color_row( 'appearance_focus', __( 'Field in use', 'flexo-booking' ), __( 'The outline of the field the guest is typing in.', 'flexo-booking' ), $s, $name );
+				self::color_row( 'appearance_label', __( 'Field labels', 'flexo-booking' ), '', $s, $name );
+				self::choice_row( 'appearance_control_size', __( 'Field and button height', 'flexo-booking' ), __( 'Large is easier to tap on phones.', 'flexo-booking' ), $s, $name );
+				?>
+			</table>
+		</details>
+
+		<details class="flexo-appearance__group">
+			<summary><?php esc_html_e( 'Booking steps and summary', 'flexo-booking' ); ?></summary>
+			<table class="form-table" role="presentation">
+				<?php
+				self::color_row( 'appearance_step_active', __( 'Current step', 'flexo-booking' ), '', $s, $name );
+				self::color_row( 'appearance_step_done', __( 'Completed steps', 'flexo-booking' ), '', $s, $name );
+				self::color_row( 'appearance_step_inactive', __( 'Next steps', 'flexo-booking' ), '', $s, $name );
+				self::color_row( 'appearance_summary_bg', __( 'Reservation summary', 'flexo-booking' ), __( 'Background of the stay and price summary.', 'flexo-booking' ), $s, $name );
+				?>
+			</table>
+		</details>
+
+		<details class="flexo-appearance__group">
+			<summary><?php esc_html_e( 'Confirmation (Thank You page)', 'flexo-booking' ); ?></summary>
+			<table class="form-table" role="presentation">
+				<?php
+				self::color_row( 'appearance_success', __( 'Success icon', 'flexo-booking' ), __( 'The tick at the top of the confirmation.', 'flexo-booking' ), $s, $name );
+				self::color_row( 'appearance_status_confirmed', __( 'Status: confirmed', 'flexo-booking' ), __( 'The status label\'s colour; its text turns dark or white by itself.', 'flexo-booking' ), $s, $name );
+				self::color_row( 'appearance_status_awaiting', __( 'Status: awaiting payment', 'flexo-booking' ), '', $s, $name );
+				self::color_row( 'appearance_status_request', __( 'Status: request received', 'flexo-booking' ), '', $s, $name );
+				self::color_row( 'appearance_stay_bg', __( 'Stay summary', 'flexo-booking' ), __( 'Background of the room, dates and price list.', 'flexo-booking' ), $s, $name );
+				self::color_row( 'appearance_bank_bg', __( 'Bank transfer box', 'flexo-booking' ), '', $s, $name );
+				?>
+			</table>
+		</details>
+
+		<details class="flexo-appearance__group">
+			<summary><?php esc_html_e( 'Tabs (Booking & Contact)', 'flexo-booking' ); ?></summary>
+			<p class="description"><?php esc_html_e( 'For the Booking & Contact tabs that come with the Contact page.', 'flexo-booking' ); ?></p>
+			<table class="form-table" role="presentation">
+				<?php
+				self::color_row( 'appearance_tab_bg', __( 'Tab background', 'flexo-booking' ), '', $s, $name );
+				self::color_row( 'appearance_tab_text', __( 'Tab text', 'flexo-booking' ), '', $s, $name );
+				self::color_row( 'appearance_tab_active_bg', __( 'Selected tab background', 'flexo-booking' ), '', $s, $name );
+				self::color_row( 'appearance_tab_active_text', __( 'Selected tab text', 'flexo-booking' ), '', $s, $name );
+				self::choice_row( 'appearance_tab_corners', __( 'Tab corners', 'flexo-booking' ), '', $s, $name );
+				?>
+			</table>
+		</details>
 		<?php
 	}
 
@@ -226,7 +384,8 @@ class Flexo_Booking_Appearance_Admin {
 								</td>
 							</tr>
 						</table>
-						<p class="description"><?php esc_html_e( 'Colours set in an Elementor Flexo Booking widget\'s Style tab win over these settings for that widget; these settings win over your website\'s global colours and fonts.', 'flexo-booking' ); ?></p>
+						<?php self::render_page_groups( $s, $name ); ?>
+						<p class="description"><?php esc_html_e( 'Which setting wins: an Elementor Flexo Booking widget\'s Style tab, then a page\'s own look (Settings → Pages), then these settings, then your website\'s global colours and fonts.', 'flexo-booking' ); ?></p>
 					</div>
 
 					<h2><?php esc_html_e( 'Emails', 'flexo-booking' ); ?></h2>
@@ -253,6 +412,19 @@ class Flexo_Booking_Appearance_Admin {
 				<div class="flexo-appearance__preview">
 					<div class="flexo-appearance__preview-bar">
 						<strong><?php esc_html_e( 'Preview', 'flexo-booking' ); ?></strong>
+						<span class="flexo-segmented" role="group" aria-label="<?php esc_attr_e( 'What to preview', 'flexo-booking' ); ?>">
+							<?php
+							$flexo_scenes = array(
+								'form'      => array( __( 'Booking form', 'flexo-booking' ), '' ),
+								'booking'   => array( __( 'Booking page', 'flexo-booking' ), Flexo_Booking_System_Pages::uses_builtin( 'booking' ) ? Flexo_Booking_System_Pages::builtin_url( 'booking' ) : '' ),
+								'thank_you' => array( __( 'Thank You page', 'flexo-booking' ), Flexo_Booking_System_Pages::uses_builtin( 'thank_you' ) ? Flexo_Booking_Confirmation::preview_url( 'transfer' ) : '' ),
+							);
+							foreach ( $flexo_scenes as $flexo_scene => $flexo_def ) :
+								?>
+								<button type="button" class="button<?php echo 'form' === $flexo_scene ? ' is-active' : ''; ?>" data-scene="<?php echo esc_attr( Flexo_Booking_Appearance::preview_url( $flexo_scene ) ); ?>" data-open="<?php echo esc_attr( $flexo_def[1] ); ?>" aria-pressed="<?php echo 'form' === $flexo_scene ? 'true' : 'false'; ?>"><?php echo esc_html( $flexo_def[0] ); ?></button>
+							<?php endforeach; ?>
+						</span>
+						<a class="button flexo-preview-open" href="#" target="_blank" rel="noopener" hidden><?php esc_html_e( 'Open page', 'flexo-booking' ); ?></a>
 						<span class="flexo-segmented" role="group" aria-label="<?php esc_attr_e( 'Preview width', 'flexo-booking' ); ?>">
 							<button type="button" class="button is-active" data-width="100%" aria-pressed="true"><?php esc_html_e( 'Desktop', 'flexo-booking' ); ?></button>
 							<button type="button" class="button" data-width="390px" aria-pressed="false"><?php esc_html_e( 'Phone', 'flexo-booking' ); ?></button>

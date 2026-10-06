@@ -20,6 +20,29 @@ class Flexo_Booking_Pages_Admin {
 	public static function init() {
 		add_action( 'admin_init', array( __CLASS__, 'register' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'assets' ), 20 );
+		add_action( 'wp_ajax_flexo_booking_page_look_css', array( __CLASS__, 'ajax_look_css' ) );
+	}
+
+	/**
+	 * CSS and readability problems of a page's unsaved appearance (live preview).
+	 */
+	public static function ajax_look_css() {
+		check_ajax_referer( 'flexo_booking_page_look' );
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( null, 403 );
+		}
+		$key  = isset( $_POST['page'] ) ? sanitize_key( wp_unslash( $_POST['page'] ) ) : '';
+		$look = isset( $_POST['look'] ) && is_array( $_POST['look'] ) ? map_deep( wp_unslash( $_POST['look'] ), 'sanitize_text_field' ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitised by map_deep and sanitize_appearance().
+		if ( ! in_array( $key, Flexo_Booking_System_Pages::keys(), true ) ) {
+			wp_send_json_error( null, 400 );
+		}
+		$look = Flexo_Booking_System_Pages::sanitize_appearance( $look, $key );
+		wp_send_json_success(
+			array(
+				'css'      => Flexo_Booking_Appearance::css() . Flexo_Booking_Appearance::page_css( $key, $look ),
+				'problems' => Flexo_Booking_Appearance::page_contrast_problems( $key, $look ),
+			)
+		);
 	}
 
 	public static function register() {
@@ -99,7 +122,11 @@ class Flexo_Booking_Pages_Admin {
 			'flexo-booking-admin-pages',
 			'FlexoPagesAdmin',
 			array(
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'flexo_booking_page_look' ),
 				'i18n' => array(
+					/* translators: 1: what is hard to read, 2: contrast ratio, 3: suggested colour */
+					'contrast'    => __( '%1$s: hard to read (contrast %2$s:1, at least 4.5:1 is needed). Try %3$s.', 'flexo-booking' ),
 					'chooseImage' => __( 'Choose an image', 'flexo-booking' ),
 					'useImage'    => __( 'Use this image', 'flexo-booking' ),
 					/* translators: %s: section name */
@@ -369,18 +396,169 @@ class Flexo_Booking_Pages_Admin {
 		<?php
 	}
 
-	private static function appearance_note() {
+	/**
+	 * A colour with "Use global colour" (empty = the global Appearance).
+	 */
+	private static function look_color( $key, $field, $label, $value, $help = '' ) {
+		$name  = Flexo_Booking_System_Pages::OPTION . '[' . $key . '][appearance][' . $field . ']';
+		$id    = 'fb-look-' . $key . '-' . $field;
+		$value = Flexo_Booking_Appearance::sanitize_color( $value );
+		// The picker starts from the colour the page has now (global or built in).
+		$global = array(
+			'page_bg' => 'appearance_page_bg',
+			'card_bg' => 'appearance_card_bg',
+			'primary' => 'appearance_primary',
+			'accent'  => 'appearance_accent',
+			'heading' => 'appearance_heading_color',
+			'text'    => 'appearance_text',
+			'success' => 'appearance_success',
+		);
+		$global += array_fill_keys( array( 'status_confirmed', 'status_awaiting', 'status_request' ), '' );
+		$global  = isset( $global[ $field ] ) && '' !== $global[ $field ] ? Flexo_Booking_Appearance::values()[ $global[ $field ] ] : '';
+		$start   = '' !== $global && 'custom' === Flexo_Booking_Appearance::mode() ? $global : ( in_array( $field, array( 'primary', 'accent', 'success', 'status_confirmed' ), true ) ? '#1f6f5c' : ( in_array( $field, array( 'heading', 'text' ), true ) ? '#1f2933' : '#ffffff' ) );
 		?>
-		<h3 class="flexo-page-section__title"><?php esc_html_e( 'Appearance', 'flexo-booking' ); ?></h3>
-		<p class="description">
-			<?php
-			printf(
-				/* translators: %s: link to Appearance */
-				esc_html__( 'Colours and fonts come from %s (or from your website when it is set to match it).', 'flexo-booking' ),
-				'<a href="' . esc_url( admin_url( 'admin.php?page=' . Flexo_Booking_Admin::MENU_SLUG . '-appearance' ) ) . '">' . esc_html__( 'Bookings → Appearance', 'flexo-booking' ) . '</a>'
-			);
+		<tr class="flexo-color-row">
+			<th scope="row"><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $label ); ?></label></th>
+			<td>
+				<label class="flexo-inline-check"><input type="checkbox" class="flexo-color-website" <?php checked( '' === $value ); ?>> <?php esc_html_e( 'Use global colour', 'flexo-booking' ); ?></label>
+				<span class="flexo-color-pick">
+					<input type="color" class="flexo-color-picker" value="<?php echo esc_attr( '' !== $value ? $value : $start ); ?>" aria-label="<?php echo esc_attr( $label ); ?>">
+					<input id="<?php echo esc_attr( $id ); ?>" type="text" class="flexo-color-hex code" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( $value ); ?>" placeholder="<?php echo esc_attr( $start ); ?>" maxlength="7" pattern="#?[0-9a-fA-F]{3}([0-9a-fA-F]{3})?">
+				</span>
+				<?php if ( '' !== $help ) : ?>
+					<p class="description"><?php echo esc_html( $help ); ?></p>
+				<?php endif; ?>
+			</td>
+		</tr>
+		<?php
+	}
+
+	private static function look_select( $key, $field, $label, $value, array $options ) {
+		$name = Flexo_Booking_System_Pages::OPTION . '[' . $key . '][appearance][' . $field . ']';
+		$id   = 'fb-look-' . $key . '-' . $field;
+		?>
+		<tr>
+			<th scope="row"><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $label ); ?></label></th>
+			<td>
+				<select id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>">
+					<?php foreach ( $options as $option_value => $option_label ) : ?>
+						<option value="<?php echo esc_attr( $option_value ); ?>" <?php selected( (string) $value, (string) $option_value ); ?>><?php echo esc_html( $option_label ); ?></option>
+					<?php endforeach; ?>
+				</select>
+				<?php if ( 'max_width' === $field ) : ?>
+					<?php $look = Flexo_Booking_System_Pages::get( $key )['appearance']; ?>
+					<span data-flexo-show-when="<?php echo esc_attr( $id ); ?>=custom"><input type="number" min="600" max="2000" step="10" class="small-text" name="<?php echo esc_attr( Flexo_Booking_System_Pages::OPTION . '[' . $key . '][appearance][max_width_px]' ); ?>" value="<?php echo esc_attr( $look['max_width_px'] ); ?>" aria-label="<?php esc_attr_e( 'Width in pixels', 'flexo-booking' ); ?>"> px</span>
+				<?php endif; ?>
+			</td>
+		</tr>
+		<?php
+	}
+
+	/**
+	 * Appearance of a built-in page: the global Appearance, or the page's
+	 * own colours, background, corners, width and spacing – with a live
+	 * preview of the real page.
+	 */
+	private static function appearance_section( $key ) {
+		$page   = Flexo_Booking_System_Pages::get( $key );
+		$look   = $page['appearance'];
+		$base   = Flexo_Booking_System_Pages::OPTION . '[' . $key . '][appearance]';
+		$labels = static function ( $choice, $first ) {
+			$out = array();
+			foreach ( Flexo_Booking_Appearance::choices( $choice ) as $value => $option ) {
+				$out[ $value ] = '' === $value ? $first : $option[0];
+			}
+			return $out;
+		};
+		$corners = array( '' => __( 'As in Appearance', 'flexo-booking' ) );
+		foreach ( Flexo_Booking_Appearance::corners() as $value => $corner ) {
+			$corners[ $value ] = $corner[0];
+		}
+		$open = 'thank_you' === $key ? Flexo_Booking_Confirmation::preview_url( 'transfer' ) : Flexo_Booking_System_Pages::builtin_url( $key );
+		if ( ! Flexo_Booking_Appearance::enabled() ) {
 			?>
-		</p>
+			<div class="flexo-page-look">
+				<h3 class="flexo-page-section__title"><?php esc_html_e( 'Appearance', 'flexo-booking' ); ?></h3>
+				<p class="description">
+					<?php
+					printf(
+						/* translators: %s: link to Settings → Features */
+						esc_html__( 'This page matches your website. To choose its background, colours and width, switch on "Appearance settings" under %s.', 'flexo-booking' ),
+						'<a href="' . esc_url( admin_url( 'admin.php?page=' . Flexo_Booking_Admin::MENU_SLUG . '-settings&tab=features' ) ) . '">' . esc_html__( 'Settings → Features', 'flexo-booking' ) . '</a>'
+					);
+					?>
+				</p>
+			</div>
+			<?php
+			return;
+		}
+		?>
+		<div class="flexo-page-look" data-flexo-look="<?php echo esc_attr( $key ); ?>">
+			<h3 class="flexo-page-section__title"><?php esc_html_e( 'Appearance', 'flexo-booking' ); ?></h3>
+			<p class="description">
+				<?php
+				printf(
+					/* translators: %s: link to Bookings → Appearance */
+					esc_html__( 'By default this page looks like everything set under %s. Switch it off to give this page its own background, colours, corners, width and spacing.', 'flexo-booking' ),
+					'<a href="' . esc_url( admin_url( 'admin.php?page=' . Flexo_Booking_Admin::MENU_SLUG . '-appearance' ) ) . '">' . esc_html__( 'Bookings → Appearance', 'flexo-booking' ) . '</a>'
+				);
+				?>
+			</p>
+			<input type="hidden" name="<?php echo esc_attr( $base ); ?>[use_global]" value="0">
+			<p><?php echo Flexo_Booking_Admin_UI::switch_html( __( 'Use global appearance', 'flexo-booking' ), 'name="' . esc_attr( $base ) . '[use_global]" value="1" data-flexo-look-global', ! empty( $look['use_global'] ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in switch_html(). ?></p>
+			<div class="flexo-page-look__body">
+			<div class="flexo-page-look__own" data-flexo-look-own>
+				<div class="flexo-appearance__warnings" role="status" aria-live="polite"></div>
+				<table class="form-table" role="presentation">
+					<?php self::look_color( $key, 'page_bg', __( 'Page background', 'flexo-booking' ), $look['page_bg'], __( 'Behind everything between your header and footer.', 'flexo-booking' ) ); ?>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Background picture', 'flexo-booking' ); ?></th>
+						<td>
+							<?php Flexo_Booking_Appearance_Admin::image_field( $base . '[page_image]', $look['page_image'], __( 'Choose a picture', 'flexo-booking' ) ); ?>
+							<p><label for="fb-look-<?php echo esc_attr( $key ); ?>-effect"><?php esc_html_e( 'Picture effect', 'flexo-booking' ); ?></label>
+								<select id="fb-look-<?php echo esc_attr( $key ); ?>-effect" name="<?php echo esc_attr( $base ); ?>[page_image_effect]">
+									<?php foreach ( Flexo_Booking_Appearance::choices( 'page_image_effect' ) as $value => $option ) : ?>
+										<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $look['page_image_effect'], $value ); ?>><?php echo esc_html( $option[0] ); ?></option>
+									<?php endforeach; ?>
+								</select></p>
+						</td>
+					</tr>
+					<?php
+					self::look_color( $key, 'card_bg', __( 'Card background', 'flexo-booking' ), $look['card_bg'] );
+					self::look_color( $key, 'primary', __( 'Main colour', 'flexo-booking' ), $look['primary'], __( 'Buttons and selected steps. Button text turns dark or white by itself.', 'flexo-booking' ) );
+					self::look_color( $key, 'accent', __( 'Accent colour', 'flexo-booking' ), $look['accent'] );
+					self::look_color( $key, 'heading', __( 'Heading colour', 'flexo-booking' ), $look['heading'] );
+					self::look_color( $key, 'text', __( 'Text colour', 'flexo-booking' ), $look['text'] );
+					self::look_select( $key, 'corners', __( 'Corners', 'flexo-booking' ), $look['corners'], $corners );
+					self::look_select( $key, 'max_width', __( 'Content width', 'flexo-booking' ), $look['max_width'], $labels( 'max_width', __( 'As in Appearance', 'flexo-booking' ) ) );
+					self::look_select( $key, 'spacing', __( 'Space between sections', 'flexo-booking' ), $look['spacing'], $labels( 'spacing', __( 'As in Appearance', 'flexo-booking' ) ) );
+					if ( 'thank_you' === $key ) {
+						self::look_color( $key, 'success', __( 'Success icon', 'flexo-booking' ), $look['success'] );
+						self::look_color( $key, 'status_confirmed', __( 'Status: confirmed', 'flexo-booking' ), $look['status_confirmed'] );
+						self::look_color( $key, 'status_awaiting', __( 'Status: awaiting payment', 'flexo-booking' ), $look['status_awaiting'] );
+						self::look_color( $key, 'status_request', __( 'Status: request received', 'flexo-booking' ), $look['status_request'] );
+					}
+					?>
+				</table>
+				<input type="hidden" name="<?php echo esc_attr( $base ); ?>[reset]" value="0" data-flexo-look-reset-field>
+				<p><button type="button" class="button" data-flexo-look-reset data-confirm="<?php esc_attr_e( 'Remove this page\'s own colours, background, width and spacing and use the global appearance again?', 'flexo-booking' ); ?>"><?php esc_html_e( 'Reset to global', 'flexo-booking' ); ?></button></p>
+			</div>
+			<div class="flexo-page-look__preview">
+				<div class="flexo-appearance__preview-bar">
+					<strong><?php esc_html_e( 'Preview', 'flexo-booking' ); ?></strong>
+					<span class="flexo-segmented" role="group" aria-label="<?php esc_attr_e( 'Preview width', 'flexo-booking' ); ?>">
+						<button type="button" class="button is-active" data-look-width="1280" aria-pressed="true"><?php esc_html_e( 'Desktop', 'flexo-booking' ); ?></button>
+						<button type="button" class="button" data-look-width="390" aria-pressed="false"><?php esc_html_e( 'Phone', 'flexo-booking' ); ?></button>
+					</span>
+					<a class="button" href="<?php echo esc_url( $open ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Open page', 'flexo-booking' ); ?></a>
+				</div>
+				<div class="flexo-page-look__frame-wrap">
+					<iframe title="<?php esc_attr_e( 'Preview of the page', 'flexo-booking' ); ?>" data-src="<?php echo esc_url( Flexo_Booking_Appearance::preview_url( $key, $key ) ); ?>" data-flexo-look-frame></iframe>
+				</div>
+				<p class="description"><?php esc_html_e( 'The real page with your header and footer and a sample booking. Changes show here at once; save to put them on the website.', 'flexo-booking' ); ?></p>
+			</div>
+		</div>
+			</div>
 		<?php
 	}
 
@@ -418,7 +596,7 @@ class Flexo_Booking_Pages_Admin {
 				<?php self::render_fields( $s ); ?>
 
 				<div class="flexo-if-builtin" data-flexo-for="booking">
-					<?php self::appearance_note(); ?>
+					<?php self::appearance_section( 'booking' ); ?>
 					<div class="flexo-advanced">
 						<h3 class="flexo-page-section__title"><?php esc_html_e( 'Search engines and caching', 'flexo-booking' ); ?></h3>
 						<table class="form-table" role="presentation">
@@ -593,7 +771,7 @@ class Flexo_Booking_Pages_Admin {
 					<input type="hidden" name="<?php echo esc_attr( $name ); ?>[shown][]" value="">
 
 					<?php self::layout_choice( 'thank_you', Flexo_Booking_System_Pages::thank_you_layouts(), $page['layout'], $opt ); ?>
-					<?php self::appearance_note(); ?>
+					<?php self::appearance_section( 'thank_you' ); ?>
 					<p class="description"><?php esc_html_e( 'The Thank You page is never kept by caching plugins and never shown in search engines.', 'flexo-booking' ); ?></p>
 				</div>
 			</details>

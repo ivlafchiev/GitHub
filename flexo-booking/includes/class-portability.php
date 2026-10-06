@@ -30,6 +30,9 @@ class Flexo_Booking_Portability {
 		$settings['notification_email'] = '';
 		// A page or template ID only means something on this website.
 		$settings['room_design'] = 0;
+		// 1.9.0: background pictures travel as addresses (an ID is site-specific).
+		$page_image                        = (int) $settings['appearance_page_image'];
+		$settings['appearance_page_image'] = 0;
 		// The hotel's bank account is never copied to another website. Stripe
 		// keys live in their own option and are never exported either.
 		foreach ( self::site_specific_payment_settings() as $key ) {
@@ -48,7 +51,22 @@ class Flexo_Booking_Portability {
 			'rooms'       => array(),
 			'closures'    => array(),
 			'promo_codes' => array(),
+			// 1.9.0: the look of the built-in Booking and Thank You pages.
+			'appearance'  => array(
+				'page_image' => $page_image ? (string) wp_get_attachment_url( $page_image ) : '',
+				'pages'      => array(),
+			),
 		);
+		foreach ( Flexo_Booking_System_Pages::keys() as $key ) {
+			$look = Flexo_Booking_System_Pages::get( $key )['appearance'];
+			$data['appearance']['pages'][ $key ] = array_merge(
+				$look,
+				array(
+					'page_image'     => 0,
+					'page_image_url' => $look['page_image'] ? (string) wp_get_attachment_url( $look['page_image'] ) : '',
+				)
+			);
+		}
 
 		$plan_names = array();
 		foreach ( Flexo_Booking_Rate_Plans::all() as $plan ) {
@@ -260,6 +278,36 @@ class Flexo_Booking_Portability {
 				}
 			}
 			$incoming['room_design'] = $current['room_design'];
+			// Background pictures: downloaded when images are imported, else
+			// this site keeps its own.
+			$incoming['appearance_page_image'] = $current['appearance_page_image'];
+			if ( isset( $data['appearance'] ) && is_array( $data['appearance'] ) ) {
+				$url = isset( $data['appearance']['page_image'] ) ? (string) $data['appearance']['page_image'] : '';
+				if ( $options['images'] && '' !== $url ) {
+					$downloaded                        = self::download( $url );
+					$incoming['appearance_page_image'] = $downloaded ? $downloaded : $current['appearance_page_image'];
+				} elseif ( '' === $url && array_key_exists( 'page_image', $data['appearance'] ) && $options['images'] ) {
+					$incoming['appearance_page_image'] = 0;
+				}
+				$pages = array();
+				foreach ( isset( $data['appearance']['pages'] ) && is_array( $data['appearance']['pages'] ) ? $data['appearance']['pages'] : array() as $key => $look ) {
+					if ( ! is_array( $look ) || ! in_array( $key, Flexo_Booking_System_Pages::keys(), true ) ) {
+						continue;
+					}
+					$own                = Flexo_Booking_System_Pages::get( $key )['appearance'];
+					$url                = isset( $look['page_image_url'] ) ? (string) $look['page_image_url'] : '';
+					$look['page_image'] = $own['page_image'];
+					if ( $options['images'] ) {
+						$downloaded         = '' === $url ? 0 : self::download( $url );
+						$look['page_image'] = '' === $url ? 0 : ( $downloaded ? $downloaded : $own['page_image'] );
+					}
+					unset( $look['page_image_url'], $look['reset'] );
+					$pages[ $key ] = array( 'appearance' => $look );
+				}
+				if ( $pages ) {
+					Flexo_Booking_System_Pages::update( $pages );
+				}
+			}
 			update_option( Flexo_Booking_Settings::OPTION, Flexo_Booking_Settings::sanitize( array_merge( $current, $incoming ) ) );
 			$stats['settings'] = 1;
 

@@ -184,6 +184,7 @@ class Flexo_Booking_System_Pages {
 				'meta_description' => '',
 				// Page caches may keep a copy (the page holds no private data).
 				'cacheable'        => 1,
+				'appearance'       => self::appearance_defaults(),
 			),
 			'thank_you'        => array(
 				'enabled'          => 1,
@@ -209,6 +210,7 @@ class Flexo_Booking_System_Pages {
 				'directions_label' => '',
 				'generic_title'    => '',
 				'generic_text'     => '',
+				'appearance'       => self::appearance_defaults(),
 			),
 			'contact'          => array(
 				'enabled'          => 1,
@@ -219,8 +221,76 @@ class Flexo_Booking_System_Pages {
 				'indexable'        => 1,
 				'meta_description' => '',
 				'cacheable'        => 1,
+				'appearance'       => self::appearance_defaults(),
 			),
 		);
+	}
+
+	/**
+	 * A page's own appearance: off by default (the global Appearance is used).
+	 */
+	public static function appearance_defaults() {
+		return array(
+			'use_global'        => 1,
+			'page_bg'           => '',
+			'page_image'        => 0,
+			'page_image_effect' => 'none',
+			'card_bg'           => '',
+			'primary'           => '',
+			'accent'            => '',
+			'heading'           => '',
+			'text'              => '',
+			'corners'           => '',
+			'max_width'         => '',
+			'max_width_px'      => 1200,
+			'spacing'           => '',
+			'success'           => '',
+			'status_confirmed'  => '',
+			'status_awaiting'   => '',
+			'status_request'    => '',
+		);
+	}
+
+	/**
+	 * Cleans a page's appearance settings (complete set, defaults for anything missing).
+	 */
+	public static function sanitize_appearance( $input, $key = '' ) {
+		$input = is_array( $input ) ? $input : array();
+		$clean = self::appearance_defaults();
+		foreach ( $clean as $name => $default ) {
+			if ( ! array_key_exists( $name, $input ) ) {
+				continue;
+			}
+			$value = $input[ $name ];
+			switch ( $name ) {
+				case 'use_global':
+					$clean[ $name ] = empty( $value ) ? 0 : 1;
+					break;
+				case 'page_image':
+					$value          = absint( $value );
+					$clean[ $name ] = $value && wp_attachment_is_image( $value ) ? $value : 0;
+					break;
+				case 'page_image_effect':
+				case 'max_width':
+				case 'spacing':
+					$clean[ $name ] = Flexo_Booking_Appearance::sanitize_choice( $name, $value );
+					break;
+				case 'max_width_px':
+					$clean[ $name ] = max( 600, min( 2000, absint( $value ) ? absint( $value ) : 1200 ) );
+					break;
+				case 'corners':
+					$clean[ $name ] = is_string( $value ) && array_key_exists( $value, Flexo_Booking_Appearance::corners() ) ? $value : '';
+					break;
+				default:
+					$clean[ $name ] = Flexo_Booking_Appearance::sanitize_color( is_scalar( $value ) ? $value : '' );
+			}
+		}
+		if ( 'thank_you' !== $key ) {
+			foreach ( array( 'success', 'status_confirmed', 'status_awaiting', 'status_request' ) as $name ) {
+				$clean[ $name ] = '';
+			}
+		}
+		return $clean;
 	}
 
 	/**
@@ -414,7 +484,7 @@ class Flexo_Booking_System_Pages {
 			$clean['layout'] = in_array( $input['layout'], $layouts, true ) ? $input['layout'] : $defaults['layout'];
 		}
 		foreach ( $defaults as $name => $default ) {
-			if ( ! isset( $input[ $name ] ) || in_array( $name, array( 'source', 'page_id', 'enabled', 'slug', 'old_slugs', 'layout', 'order', 'hidden' ), true ) ) {
+			if ( ! isset( $input[ $name ] ) || in_array( $name, array( 'source', 'page_id', 'enabled', 'slug', 'old_slugs', 'layout', 'order', 'hidden', 'appearance' ), true ) ) {
 				continue;
 			}
 			if ( is_int( $default ) ) {
@@ -432,6 +502,14 @@ class Flexo_Booking_System_Pages {
 			if ( isset( $texts[ $key ][ $name ] ) && '' !== $clean[ $name ] && $clean[ $name ] === $texts[ $key ][ $name ] ) {
 				$clean[ $name ] = '';
 			}
+		}
+		$saved_look          = isset( $current['appearance'] ) && is_array( $current['appearance'] ) ? $current['appearance'] : array();
+		$clean['appearance'] = self::sanitize_appearance( $saved_look, $key );
+		if ( isset( $input['appearance'] ) && is_array( $input['appearance'] ) ) {
+			// "Reset to global": back to the defaults; otherwise merged with the saved values.
+			$clean['appearance'] = ! empty( $input['appearance']['reset'] )
+				? self::appearance_defaults()
+				: self::sanitize_appearance( array_merge( $clean['appearance'], $input['appearance'] ), $key );
 		}
 		if ( 'thank_you' === $key ) {
 			$sections = self::SECTIONS;
@@ -800,6 +878,38 @@ class Flexo_Booking_System_Pages {
 	}
 
 	/**
+	 * Prints a built-in page for the Appearance preview: the real template,
+	 * the website's header and footer, without the saved appearance (the
+	 * preview brings the unsaved one).
+	 */
+	public static function preview( $key ) {
+		self::$current = $key;
+		Flexo_Booking_Page_Cache::protect( 'preview' );
+		add_filter( 'body_class', array( __CLASS__, 'body_class' ) );
+		add_action(
+			'wp_enqueue_scripts',
+			static function () {
+				wp_enqueue_style( 'flexo-booking' );
+				wp_enqueue_script( 'flexo-booking' );
+				Flexo_Booking_Frontend::localize();
+				$css = self::header_css();
+				if ( '' !== $css ) {
+					wp_add_inline_style( 'flexo-booking', $css );
+				}
+			}
+		);
+		include self::template_file( $key );
+	}
+
+	/**
+	 * @return string The template that prints a built-in page.
+	 */
+	private static function template_file( $key ) {
+		self::$current = $key;
+		return self::template();
+	}
+
+	/**
 	 * Booking and Contact may be kept by page caches (decision 1 of the 1.9.0 plan).
 	 */
 	public static function cacheable( $key ) {
@@ -828,7 +938,8 @@ class Flexo_Booking_System_Pages {
 		Flexo_Booking_Appearance::enqueue();
 		wp_enqueue_script( 'flexo-booking' );
 		Flexo_Booking_Frontend::localize();
-		$css = self::header_css();
+		// The page's own appearance (after the global one, so it wins on this page).
+		$css = self::header_css() . Flexo_Booking_Appearance::page_css( self::$current );
 		if ( '' !== $css ) {
 			wp_add_inline_style( 'flexo-booking', $css );
 		}

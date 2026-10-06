@@ -56,8 +56,12 @@
 			var box = document.createElement( 'div' );
 			box.className = 'notice notice-warning inline flexo-contrast-warning';
 			var text = document.createElement( 'p' );
-			var template = p.pair === 'text_bg' ? cfg.i18n.textBg : cfg.i18n.buttonText;
-			text.textContent = String( template ).replace( '%1$s', p.ratio ).replace( '%2$s', p.suggestion );
+			if ( p.pair === 'text_bg' || p.pair === 'button_text' ) {
+				var template = p.pair === 'text_bg' ? cfg.i18n.textBg : cfg.i18n.buttonText;
+				text.textContent = String( template ).replace( '%1$s', p.ratio ).replace( '%2$s', p.suggestion );
+			} else {
+				text.textContent = String( cfg.i18n.contrast ).replace( '%1$s', p.label ).replace( '%2$s', p.ratio ).replace( '%3$s', p.suggestion );
+			}
 			box.appendChild( text );
 			warnings.appendChild( box );
 		} );
@@ -131,6 +135,70 @@
 	frame.addEventListener( 'load', function () {
 		send( lastCss );
 		refresh();
+	} );
+
+	// What the preview shows: the booking form, the Booking page or the Thank You page.
+	var openLink = document.querySelector( '.flexo-preview-open' );
+	document.querySelectorAll( '.flexo-appearance__preview-bar [data-scene]' ).forEach( function ( btn ) {
+		btn.addEventListener( 'click', function () {
+			document.querySelectorAll( '.flexo-appearance__preview-bar [data-scene]' ).forEach( function ( b ) {
+				b.classList.toggle( 'is-active', b === btn );
+				b.setAttribute( 'aria-pressed', b === btn ? 'true' : 'false' );
+			} );
+			frame.src = btn.getAttribute( 'data-scene' );
+			if ( openLink ) {
+				openLink.hidden = ! btn.getAttribute( 'data-open' );
+				openLink.href = btn.getAttribute( 'data-open' ) || '#';
+			}
+		} );
+	} );
+
+	// Background picture from the media library.
+	form.querySelectorAll( '[data-flexo-media]' ).forEach( function ( box ) {
+		var input = box.querySelector( '[data-flexo-media-id]' );
+		var preview = box.querySelector( '[data-flexo-media-preview]' );
+		var remove = box.querySelector( '[data-flexo-media-remove]' );
+		var media;
+		box.querySelector( '[data-flexo-media-choose]' ).addEventListener( 'click', function () {
+			if ( ! window.wp || ! window.wp.media ) {
+				return;
+			}
+			if ( ! media ) {
+				media = window.wp.media( { title: cfg.i18n.chooseImage, button: { text: cfg.i18n.useImage }, library: { type: 'image' }, multiple: false } );
+				media.on( 'select', function () {
+					var item = media.state().get( 'selection' ).first().toJSON();
+					var size = item.sizes && item.sizes.thumbnail ? item.sizes.thumbnail : item;
+					input.value = item.id;
+					preview.innerHTML = '';
+					var img = document.createElement( 'img' );
+					img.src = size.url;
+					img.alt = '';
+					preview.appendChild( img );
+					remove.hidden = false;
+					refresh();
+				} );
+			}
+			media.open();
+		} );
+		remove.addEventListener( 'click', function () {
+			input.value = '0';
+			preview.innerHTML = '';
+			remove.hidden = true;
+			refresh();
+		} );
+	} );
+
+	// A field shown only for one choice ("Exact width" → pixels).
+	form.querySelectorAll( '[data-flexo-show-when]' ).forEach( function ( node ) {
+		var rule = node.getAttribute( 'data-flexo-show-when' ).split( '=' );
+		var select = document.getElementById( rule[ 0 ] );
+		function update() {
+			node.hidden = ! select || select.value !== rule[ 1 ];
+		}
+		if ( select ) {
+			select.addEventListener( 'change', update );
+		}
+		update();
 	} );
 
 	// Preview width.

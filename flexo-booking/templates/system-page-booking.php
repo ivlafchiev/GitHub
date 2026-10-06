@@ -75,6 +75,7 @@ $flexo_shell_content = static function () {
 				<?php endif; ?>
 			</div>
 		<?php endif; ?>
+		<?php do_action( 'flexo_booking_page_bottom', $view ); ?>
 	</div>
 	<?php
 	// .flexo-builtin-booking: the 1.8.3 class, kept for themes' CSS.

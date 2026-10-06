@@ -26,7 +26,7 @@ It's one plugin that works with any theme or template. Extra features are switch
 12. [Calendar sync (Booking.com, Airbnb…)](#12-calendar-sync-bookingcom-airbnb)
 13. [The booking calendar](#13-the-booking-calendar)
 14. [Putting the booking form on the site](#14-putting-the-booking-form-on-the-site)
-15. [Appearance of the booking form](#15-appearance-of-the-booking-form)
+15. [Appearance of the booking form and the built-in pages](#15-appearance-of-the-booking-form-and-the-built-in-pages)
 16. [Guest booking page (manage booking)](#16-guest-booking-page-manage-booking)
 17. [Daily use: managing bookings](#17-daily-use-managing-bookings)
 18. [Health check and help](#18-health-check-and-help)
@@ -715,13 +715,15 @@ The calendar is for inventory and reservations only. It has no housekeeping or r
 
 **Caching:** the Thank You page, the own Thank You page and every address with a guest key (`fb_key`, `fb_t`, `fb_manage`, `fb_done`, `fb_payment`) are never cached: no-store headers, `DONOTCACHEPAGE` (WP Super Cache, W3 Total Cache, WP Rocket and most others), LiteSpeed Cache's API and WP Rocket's excluded addresses. The Booking page holds no private data and may be cached (switch under *Search engines and caching*); bookings need no nonce, so they work on cached pages. **Cloudflare or server caches:** add a rule *Bypass cache* for URI path `/thank-you/*` (your Thank You address, in every language) and for query strings containing `fb_key=`, `fb_t=`, `fb_manage=`, `fb_done=` or `fb_payment=`. Health lists active caching plugins and the rules to add where the plugin can't do it itself.
 
+**Appearance of the page:** each card has an **Appearance** part. **Use global appearance** (on by default) takes everything from Bookings → Appearance (§15). Switch it off to give that page its own **page background** (a colour and/or a picture, softened or darkened), **card background**, **main** and **accent colour**, **heading** and **text colour**, **corners**, **content width** and **space between sections** – on the Thank You page also the **success icon** and the three **status colours**. Any colour can stay on *Use global colour*. A live preview of the real page (your header and footer, a sample booking) sits beside the settings in desktop or phone width and changes before you save; **Open page** opens the real one. Hard-to-read combinations get a warning with a suggested colour (saving is never blocked). **Reset to global** removes the page's own look. So one page can be designed differently – a sand-coloured Booking page with a beach photo, for example – without creating WordPress pages.
+
 **Search engines:** the built-in Booking page gets the title *Book your stay – Hotel name*, an editable description, a canonical address and is listed in the WordPress sitemap (and Yoast SEO's page sitemap); switch indexing off per page. Titles, descriptions, canonicals and robots are also handed to Yoast SEO and Rank Math through their filters (Rank Math sitemaps: add `/booking/` by hand if you want it listed). The Thank You page is always *noindex, nofollow*, without canonical, never in sitemaps.
 
 ---
 
-## 15. Appearance of the booking form
+## 15. Appearance of the booking form and the built-in pages
 
-**Bookings → Appearance** (feature *Appearance settings*, on by default).
+**Bookings → Appearance** (feature *Appearance settings*, on by default; switching it off also switches off the pages' own look in §14.1).
 
 - **Match my website** (default, and what every upgraded site keeps): the form uses the website's Elementor global colours and fonts, or the theme's. Nothing is added.
 - **Custom:** choose
@@ -730,18 +732,22 @@ The calendar is for inventory and reservations only. It has no housekeeping or r
   - **Fonts** for headings and text: *Website font*; **your website's Elementor global fonts** (e.g. *Primary – DM Sans*, as set in Elementor Site Settings → Global Fonts); one of **Inter, Roboto, Open Sans, Manrope, Montserrat, Lora, Playfair Display**, which are part of the plugin, include Cyrillic and are loaded from the hotel's own website – **never from Google** (GDPR), only the chosen ones and only on pages with the form; or **Another font** – type the name of any font the website already loads (theme, Elementor, a fonts plugin).
   - **"Check availability" panel** (§3): **panel background** and how dark the **page behind the panel** is. Its title uses the headings font, its text, buttons and corners the settings above.
   - **Text size:** small, normal or large.
-- **Live preview** beside the settings, with the real form and the "Check availability" panel in your site's styles, in desktop or phone width. Changes show before saving.
-- **Contrast warnings** when text and background, or button text and the main colour, are hard to read (below 4.5:1), with a suggested colour.
+- **Booking and Thank You pages** (1.9.0, open by default): the whole area between header and footer on the built-in pages – **page background** colour and **background picture** (as it is, softened or darkened so text stays readable), **content width** (as the booking form, narrow, wide or an exact width), **cards** (background, border or none, corners, shadow) and **space between sections**.
+- Folded groups for the details (1.9.0): **Text** (heading and muted text colours), **Buttons and fields** (button colour under the mouse, outline buttons, field background, border, field in use, labels, normal or large height), **Booking steps and summary** (current, completed and upcoming steps, summary background), **Confirmation** (success icon, status colours for *confirmed*, *awaiting payment*, *request received* – their text turns dark or white by itself – stay summary and bank transfer box) and **Tabs** (for the Booking & Contact tabs that come with the Contact page).
+- Every colour has **Use website colour**; empty settings add nothing, so **an upgraded site looks exactly as before** until something is chosen.
+- **Live preview** beside the settings, with the real form and the "Check availability" panel in your site's styles – or the real **Booking page** or **Thank You page** with your header and footer and a sample booking – in desktop or phone width. Changes show before saving; **Open page** opens the real page.
+- **Contrast warnings** when text and background, button text and the main colour, field text, labels, page title on the page background, card text or a status label are hard to read (below 4.5:1), with a suggested colour. They never block saving.
 - **Reset to website style** (after a confirmation) goes back to *Match my website*.
 - **Emails:** logo and email colour are set here too (in Custom style, emails use the main colour).
-- **Only the booking form and the emails change.** The settings are CSS variables on `.flexo-booking`, so the rest of the website is never affected.
+- **Only the booking form, the built-in pages and the emails change.** The settings are CSS variables on `.flexo-booking` and the built-in pages (`.flexo-system-page`, and the page area of those pages only); no `!important`, and the rest of the website is never affected. Emails keep their own logo and colour.
 
 **Which setting wins** (highest first):
 1. The **Style tab of an Elementor Flexo Booking widget** – for that widget only.
-2. **Appearance → Custom** – for every booking form on the site.
-3. The **website's global colours and fonts** (Elementor Site Settings or the theme).
+2. A **page's own look** (Settings → Pages → Appearance, §14.1) – for that built-in page only.
+3. **Appearance → Custom** – for every booking form and built-in page on the site.
+4. The **website's global colours and fonts** (Elementor Site Settings or the theme).
 
-The Appearance settings travel with **Import & export** (§24).
+The Appearance settings and each page's own look travel with **Import & export** (§24); background pictures go as addresses and are downloaded when *images* are imported (otherwise the importing site keeps its own).
 
 ---
 

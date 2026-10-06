@@ -20,6 +20,24 @@
 	--fb-font: var(--e-global-typography-text-font-family, inherit);
 	--fb-heading-font: var(--e-global-typography-primary-font-family, inherit);
 	--fb-error: #b42318;
+	/* 1.9.0: set from Bookings → Appearance or a page's own appearance; these are the defaults. */
+	--fb-heading-color: var(--fb-text);
+	--fb-label: var(--fb-text);
+	--fb-field-border: var(--fb-border);
+	--fb-focus: var(--fb-primary);
+	--fb-secondary: var(--fb-primary);
+	--fb-control-h: 46px;
+	--fb-step-active: var(--fb-primary);
+	--fb-step-done: var(--fb-primary);
+	--fb-step-inactive: var(--fb-border);
+	--fb-summary-bg: color-mix(in srgb, var(--fb-primary) 8%, transparent);
+	--fb-success: var(--fb-primary);
+	--fb-bank-bg: var(--fb-field-bg);
+	--fb-tab-bg: color-mix(in srgb, var(--fb-text) 6%, var(--fb-bg));
+	--fb-tab-active-bg: var(--fb-primary);
+	--fb-tab-text: var(--fb-text);
+	--fb-tab-active-text: var(--fb-primary-contrast);
+	--fb-tab-radius: var(--fb-radius);
 
 	box-sizing: border-box;
 	color: var(--fb-text);
@@ -45,7 +63,7 @@
 .flexo-booking .fb-step-title,
 .flexo-booking .fb-room__title {
 	font-family: var(--fb-heading-font);
-	color: var(--fb-text);
+	color: var(--fb-heading-color);
 	margin: 0 0 12px;
 }
 
@@ -80,7 +98,7 @@
 .flexo-booking label {
 	font-size: 0.875em;
 	font-weight: 600;
-	color: var(--fb-text);
+	color: var(--fb-label);
 }
 
 .flexo-booking input[type="date"],
@@ -90,12 +108,12 @@
 .flexo-booking select,
 .flexo-booking textarea {
 	width: 100%;
-	min-height: 46px;
+	min-height: var(--fb-control-h);
 	padding: 10px 12px;
 	font: inherit;
 	color: var(--fb-text);
 	background: var(--fb-field-bg);
-	border: 1px solid var(--fb-border);
+	border: 1px solid var(--fb-field-border);
 	border-radius: calc(var(--fb-radius) * 0.75);
 	outline: none;
 	transition: border-color 0.15s, box-shadow 0.15s;
@@ -104,8 +122,8 @@
 .flexo-booking input:focus,
 .flexo-booking select:focus,
 .flexo-booking textarea:focus {
-	border-color: var(--fb-primary);
-	box-shadow: 0 0 0 3px color-mix(in srgb, var(--fb-primary) 25%, transparent);
+	border-color: var(--fb-focus);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--fb-focus) 25%, transparent);
 }
 
 /* Buttons */
@@ -113,7 +131,7 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	min-height: 46px;
+	min-height: var(--fb-control-h);
 	padding: 10px 22px;
 	font: inherit;
 	font-weight: 600;
@@ -128,7 +146,12 @@
 }
 
 .flexo-booking .fb-button:hover:not(:disabled) {
-	filter: brightness(1.08);
+	filter: var(--fb-button-hover-filter, brightness(1.08));
+}
+
+.flexo-booking .fb-button:not(.fb-button--ghost):hover:not(:disabled) {
+	background: var(--fb-button-hover, var(--fb-primary));
+	border-color: var(--fb-button-hover, var(--fb-primary));
 }
 
 .flexo-booking .fb-button:focus-visible {
@@ -142,8 +165,9 @@
 }
 
 .flexo-booking .fb-button--ghost {
-	color: var(--fb-primary);
+	color: var(--fb-secondary);
 	background: transparent;
+	border-color: var(--fb-secondary);
 }
 
 /* Notices */
@@ -251,7 +275,7 @@
 	margin-bottom: var(--fb-gap);
 	padding: 12px 14px;
 	border-radius: calc(var(--fb-radius) * 0.75);
-	background: color-mix(in srgb, var(--fb-primary) 8%, transparent);
+	background: var(--fb-summary-bg);
 }
 
 .flexo-booking .fb-summary__row {
@@ -680,7 +704,7 @@
 .flexo-booking .fb-bank {
 	margin-top: var(--fb-gap);
 	padding: 14px 16px;
-	background: var(--fb-field-bg);
+	background: var(--fb-bank-bg);
 	border: 1px solid var(--fb-border);
 	border-radius: calc(var(--fb-radius) * 0.75);
 }
@@ -1071,7 +1095,7 @@
 	gap: 8px;
 	min-width: 0;
 	padding-top: 8px;
-	border-top: 3px solid var(--fb-border);
+	border-top: 3px solid var(--fb-step-inactive);
 	font-size: 0.875em;
 	color: var(--fb-muted);
 }
@@ -1098,8 +1122,12 @@
 
 .flexo-booking .fb-steps__item.is-done,
 .flexo-booking .fb-steps__item.is-current {
-	border-top-color: var(--fb-primary);
+	border-top-color: var(--fb-step-done);
 	color: var(--fb-text);
+}
+
+.flexo-booking .fb-steps__item.is-current {
+	border-top-color: var(--fb-step-active);
 }
 
 .flexo-booking .fb-steps__item.is-current {
@@ -1108,8 +1136,12 @@
 
 .flexo-booking .fb-steps__item.is-current .fb-steps__num,
 .flexo-booking .fb-steps__item.is-done .fb-steps__num {
-	background: var(--fb-primary);
+	background: var(--fb-step-done);
 	color: var(--fb-primary-contrast);
+}
+
+.flexo-booking .fb-steps__item.is-current .fb-steps__num {
+	background: var(--fb-step-active);
 }
 
 /* Date fields (the picker's buttons) */
@@ -1127,7 +1159,7 @@
 
 .flexo-booking .fb-date {
 	width: 100%;
-	min-height: 46px;
+	min-height: var(--fb-control-h);
 	padding: 10px 12px;
 	font: inherit;
 	text-align: left;
@@ -1603,7 +1635,7 @@
 	align-items: center;
 	justify-content: center;
 	min-width: 5.5em;
-	min-height: 46px;
+	min-height: var(--fb-control-h);
 	padding: 0 22px 0 12px;
 	background: var(--fb-field-bg);
 	border: 1px solid var(--fb-border);
@@ -2203,9 +2235,11 @@ html.flexo-book-dialog-open {
 
 .flexo-system-page {
 	box-sizing: border-box;
-	max-width: 1200px;
+	max-width: var(--fb-sp-max, 1200px);
 	margin: 0 auto;
-	padding: 32px 16px 56px;
+	padding: var(--fb-sp-pad-top, 32px) 16px var(--fb-sp-pad-bottom, 56px);
+	color: var(--fb-text, inherit);
+	font-family: var(--fb-font, inherit);
 }
 
 .flexo-system-page *,
@@ -2215,16 +2249,17 @@ html.flexo-book-dialog-open {
 }
 
 .flexo-system-page--thank-you {
-	max-width: 1040px;
+	max-width: var(--fb-sp-max, 1040px);
 }
 
 .flexo-sp-head {
 	max-width: 760px;
-	margin: 0 0 24px;
+	margin: 0 0 var(--fb-sp-gap, 24px);
 }
 
 .flexo-sp-title {
 	margin: 0 0 8px;
+	color: var(--fb-heading-color, inherit);
 	font-family: var(--fb-heading-font, inherit);
 	font-size: clamp(1.75rem, 1.35rem + 1.6vw, 2.5rem);
 	line-height: 1.15;
@@ -2233,17 +2268,19 @@ html.flexo-book-dialog-open {
 .flexo-sp-intro {
 	margin: 0;
 	font-size: 1.0625em;
-	color: color-mix(in srgb, currentColor 78%, transparent);
+	color: var(--fb-muted, color-mix(in srgb, currentColor 78%, transparent));
 }
 
 .flexo-sp-intro > :last-child {
 	margin-bottom: 0;
 }
 
-/* The booking form as one contained card. */
+/* The booking form as one contained card (card settings in Appearance). */
 .flexo-sp-booking__form > .flexo-booking {
-	border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
-	box-shadow: 0 18px 40px -32px color-mix(in srgb, currentColor 45%, transparent);
+	background: var(--fb-card-bg, var(--fb-bg));
+	border: 1px solid var(--fb-card-border, color-mix(in srgb, currentColor 12%, transparent));
+	border-radius: var(--fb-card-radius, var(--fb-radius));
+	box-shadow: var(--fb-card-shadow, 0 18px 40px -32px color-mix(in srgb, currentColor 45%, transparent));
 }
 
 /* Wide: a centred column, the summary under the steps. */
@@ -2270,8 +2307,8 @@ html.flexo-book-dialog-open {
 
 .flexo-sp-extras {
 	display: grid;
-	gap: 16px;
-	margin-top: 24px;
+	gap: var(--fb-sp-gap-s, 16px);
+	margin-top: var(--fb-sp-gap, 24px);
 }
 
 @media (min-width: 768px) {
@@ -2282,8 +2319,10 @@ html.flexo-book-dialog-open {
 
 .flexo-sp-box {
 	padding: 20px;
-	border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
-	border-radius: 8px;
+	background: var(--fb-card-bg, transparent);
+	border: 1px solid var(--fb-card-border, color-mix(in srgb, currentColor 12%, transparent));
+	border-radius: var(--fb-card-radius, 8px);
+	box-shadow: var(--fb-card-shadow, none);
 }
 
 .flexo-sp-reassure__list {
@@ -2306,7 +2345,7 @@ html.flexo-book-dialog-open {
 	top: 0.3em;
 	width: 7px;
 	height: 12px;
-	border: solid var(--e-global-color-accent, var(--e-global-color-primary, #1f6f5c));
+	border: solid var(--fb-primary, var(--e-global-color-accent, var(--e-global-color-primary, #1f6f5c)));
 	border-width: 0 2px 2px 0;
 	transform: rotate(45deg);
 }
@@ -2314,7 +2353,7 @@ html.flexo-book-dialog-open {
 .flexo-sp-secure {
 	margin: 12px 0 0;
 	font-size: 0.9375em;
-	color: color-mix(in srgb, currentColor 75%, transparent);
+	color: var(--fb-muted, color-mix(in srgb, currentColor 75%, transparent));
 }
 
 .flexo-sp-reassure__list + .flexo-sp-secure {
@@ -2324,6 +2363,7 @@ html.flexo-book-dialog-open {
 
 .flexo-sp-help__title {
 	margin: 0 0 6px;
+	color: var(--fb-heading-color, inherit);
 	font-family: var(--fb-heading-font, inherit);
 	font-size: 1.2em;
 	font-weight: 600;
@@ -2409,6 +2449,14 @@ html.flexo-book-dialog-open {
 	padding: var(--fb-padding, 24px);
 }
 
+/* On the Thank You page the confirmation is the page's card (card settings in Appearance). */
+.flexo-system-page .flexo-booking.flexo-confirmation {
+	background: var(--fb-card-bg, var(--fb-bg));
+	border: var(--fb-card-border-w, 0) solid var(--fb-card-border, transparent);
+	border-radius: var(--fb-card-radius, var(--fb-radius));
+	box-shadow: var(--fb-card-shadow, none);
+}
+
 .flexo-confirmation__hero {
 	padding: 4px 0 24px;
 	text-align: center;
@@ -2425,7 +2473,7 @@ html.flexo-book-dialog-open {
 	width: 56px;
 	height: 56px;
 	border-radius: 50%;
-	background: color-mix(in srgb, var(--fb-primary) 14%, var(--fb-bg));
+	background: color-mix(in srgb, var(--fb-success) 14%, var(--fb-bg));
 }
 
 .flexo-confirmation__icon::after {
@@ -2435,7 +2483,7 @@ html.flexo-book-dialog-open {
 	top: 14px;
 	width: 12px;
 	height: 22px;
-	border: solid var(--fb-primary);
+	border: solid var(--fb-success);
 	border-width: 0 3px 3px 0;
 	transform: rotate(45deg);
 }
@@ -2445,8 +2493,8 @@ html.flexo-book-dialog-open {
 	top: 14px;
 	width: 28px;
 	height: 28px;
-	border: 3px solid color-mix(in srgb, var(--fb-primary) 30%, transparent);
-	border-top-color: var(--fb-primary);
+	border: 3px solid color-mix(in srgb, var(--fb-success) 30%, transparent);
+	border-top-color: var(--fb-success);
 	border-radius: 50%;
 	transform: none;
 	animation: flexo-ty-spin 1s linear infinite;
@@ -2479,7 +2527,7 @@ html.flexo-book-dialog-open {
 
 .flexo-confirmation__title {
 	margin: 12px 0 8px;
-	color: var(--fb-text);
+	color: var(--fb-heading-color);
 	font-family: var(--fb-heading-font);
 	font-size: clamp(1.5rem, 1.2rem + 1.3vw, 2.25rem);
 	line-height: 1.2;
@@ -2515,7 +2563,7 @@ html.flexo-book-dialog-open {
 .flexo-confirmation__body,
 .flexo-confirmation__main {
 	display: grid;
-	gap: 24px;
+	gap: var(--fb-sp-gap, 24px);
 	min-width: 0;
 }
 
@@ -2550,6 +2598,9 @@ html.flexo-book-dialog-open {
 .flexo-booking .fb-ty-details {
 	display: grid;
 	margin: 0;
+	padding: var(--fb-stay-pad, 0);
+	background: var(--fb-stay-bg, transparent);
+	border-radius: calc(var(--fb-radius) * 0.75);
 }
 
 .flexo-booking .fb-ty-row {
@@ -2612,16 +2663,21 @@ html.flexo-book-dialog-open {
 	display: inline-block;
 	padding: 2px 10px;
 	border-radius: 999px;
-	background: color-mix(in srgb, var(--fb-primary) 14%, var(--fb-bg));
+	background: var(--fb-status-confirmed-bg, color-mix(in srgb, var(--fb-primary) 14%, var(--fb-bg)));
+	color: var(--fb-status-confirmed-text, inherit);
 	font-size: 0.875em;
 	font-weight: 600;
 }
 
-.flexo-booking .fb-ty-badge--request,
 .flexo-booking .fb-ty-badge--transfer,
 .flexo-booking .fb-ty-badge--pending {
-	background: #fff4e5;
-	color: #6b4100;
+	background: var(--fb-status-awaiting-bg, #fff4e5);
+	color: var(--fb-status-awaiting-text, #6b4100);
+}
+
+.flexo-booking .fb-ty-badge--request {
+	background: var(--fb-status-request-bg, #fff4e5);
+	color: var(--fb-status-request-text, #6b4100);
 }
 
 .flexo-booking .fb-ty-badge--problem {
@@ -2631,7 +2687,7 @@ html.flexo-book-dialog-open {
 
 .flexo-booking .fb-ty-block__title {
 	margin: 0 0 8px;
-	color: var(--fb-text);
+	color: var(--fb-heading-color);
 	font-family: var(--fb-heading-font);
 	font-size: 1.2em;
 	font-weight: 600;
