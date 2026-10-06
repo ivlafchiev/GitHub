@@ -241,6 +241,24 @@ class Flexo_Booking_Room_Icons {
 	}
 
 	/**
+	 * An icon as an address usable as a CSS mask: the uploaded file, or the
+	 * bundled icon as an SVG data address (1.9.0, for Elementor's Icon List).
+	 *
+	 * @param string $ref Icon reference.
+	 */
+	public static function mask_url( $ref ) {
+		if ( preg_match( '/^media:(\d+)$/', (string) $ref, $m ) ) {
+			$url = wp_get_attachment_image_url( (int) $m[1], 'thumbnail' );
+			$url = $url ? $url : wp_get_attachment_url( (int) $m[1] );
+			if ( $url ) {
+				return (string) $url;
+			}
+			$ref = 'check';
+		}
+		return 'data:image/svg+xml,' . rawurlencode( self::svg( (string) $ref ) );
+	}
+
+	/**
 	 * Data for the admin icon picker: groups with icons (name, label, svg).
 	 */
 	public static function picker_data() {

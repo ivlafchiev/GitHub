@@ -87,6 +87,9 @@ class Flexo_Booking_Frontend {
 					'noRooms'      => __( 'No rooms are available for these dates. Please try different dates.', 'flexo-booking' ),
 					'showAll'      => __( 'Show other rooms', 'flexo-booking' ),
 					'select'       => __( 'Select', 'flexo-booking' ),
+					// 1.9.0: the room card's button says what it does.
+					'selectRoom'   => __( 'Select this room', 'flexo-booking' ),
+					'notBookedYet' => __( 'Nothing is booked yet', 'flexo-booking' ),
 					'unavailable'  => __( 'Unavailable', 'flexo-booking' ),
 					'perNight'     => __( 'per night', 'flexo-booking' ),
 					/* translators: %s: average price per night */

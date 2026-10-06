@@ -199,6 +199,44 @@ t_ok( false !== strpos( $html2, 'flexo-room-gallery--empty' ), 'room without pho
 t_ok( false === strpos( $html2, 'flexo-room-amenities flexo-room-list' ), 'room without amenities: no empty list' );
 
 /* ---------------------------------------------------------------- */
+t_section( '1.9.0: amenities in an Icon List, price without a space' );
+$list_doc = t7e_document(
+	'T7E icon list',
+	array(
+		t7e_widget(
+			'il00001',
+			'icon-list',
+			array(
+				'icon_list' => array(
+					array( '_id' => 'a1', 'text' => 'x', 'selected_icon' => array( 'value' => 'fas fa-umbrella-beach', 'library' => 'fa-solid' ), '__dynamic__' => array( 'text' => t7e_tag( 'flexo-room-amenities' ) ) ),
+					array( '_id' => 'a2', 'text' => 'Daily housekeeping', 'selected_icon' => array( 'value' => 'fas fa-broom', 'library' => 'fa-solid' ) ),
+				),
+			)
+		),
+		t7e_widget( 'h0000p1', 'heading', array( 'title' => 'x' ), array( 'title' => t7e_tag( 'flexo-room-price' ) ) ),
+		t7e_widget( 'h0000p2', 'heading', array( 'title' => 'x' ), array( 'title' => t7e_tag( 'flexo-room-price', array( 'spacing' => 'settings' ) ) ) ),
+	)
+);
+update_option( Flexo_Booking_Settings::OPTION, Flexo_Booking_Settings::sanitize( array_merge( Flexo_Booking_Settings::all(), array( 'currency_position' => 'after' ) ) ) );
+$html = t7e_render( $list_doc, $room );
+preg_match_all( '#<li class="elementor-icon-list-item[^"]*"[^>]*>(.*?)</li>#s', $html, $rows );
+$texts = array_map( static function ( $row ) { return preg_match( '#<span class="elementor-icon-list-text">(.*?)</span>#s', $row, $m ) ? trim( wp_strip_all_tags( $m[1] ) ) : ''; }, $rows[1] );
+t_eq( array( 'Free Wi-Fi', 'Rain shower XL', 'Sea view', 'Daily housekeeping' ), $texts, 'Icon List: one item per amenity, then the list\'s own items' );
+t_eq( 3, substr_count( $html, '<i class="flexo-icon-list-icon" style="--flexo-icon:url(&quot;data:image/svg+xml,' ), 'each amenity has its own icon (from the room editor)' );
+t_ok( false !== strpos( $rows[1][1], rawurlencode( 'M7 21' ) ) || 1 === preg_match( '#data:image/svg\+xml,%3Csvg#', $rows[1][1] ), 'the icon is the plugin\'s SVG' );
+t_ok( false === strpos( $html, 'flexo-room-list__item' ) && false === strpos( $html, 'umbrella-beach' ), 'no nested list and no placeholder icon left' );
+t_ok( false !== strpos( $rows[1][3], 'broom' ), 'the list\'s own items keep their icons' );
+t_ok( false === strpos( $html, '<b>XL</b>' ) && false === strpos( $html, 'javascript:' ), 'amenity names escaped' );
+t_ok( false !== strpos( $html, '>145€</h2>' ), 'Room price: no space before the currency by default' );
+t_ok( false !== strpos( $html, '>145 €</h2>' ), 'Room price: "As in Bookings → Settings" keeps the space' );
+update_option( Flexo_Booking_Settings::OPTION, Flexo_Booking_Settings::sanitize( array_merge( Flexo_Booking_Settings::all(), array( 'currency_position' => 'before_space' ) ) ) );
+t_eq( '€145', Flexo_Booking_Money::format_compact( 145 ), 'symbol before: no space either' );
+t_eq( '€ 145', Flexo_Booking_Money::format( 145, null, true ), 'the booking form keeps the site\'s setting' );
+update_option( Flexo_Booking_Settings::OPTION, Flexo_Booking_Settings::sanitize( array_merge( Flexo_Booking_Settings::all(), array( 'currency_position' => 'before' ) ) ) );
+t_eq( '<i class="flexo-icon-list-icon" style="" aria-hidden="true"></i>', Flexo_Booking_Elementor::icon_list_icon( 'javascript:alert(1)' ), 'icon address: only SVG data or http(s)' );
+wp_delete_post( $list_doc, true );
+
+/* ---------------------------------------------------------------- */
 t_section( 'Starter templates (as Theme Builder / Loop items render them)' );
 t_eq( defined( 'ELEMENTOR_PRO_VERSION' ), Flexo_Booking_Elementor_Templates::can_install(), 'one-click install offered only with Elementor Pro' );
 $single = Flexo_Booking_Elementor_Templates::data( 'single', array( '{{flexo_room_card}}' => '4321' ) );

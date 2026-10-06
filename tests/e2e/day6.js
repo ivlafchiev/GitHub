@@ -250,7 +250,7 @@ const contrastOf = ( p, sel ) => p.evaluate( ( s ) => {
 	await k.keyboard.press( 'Enter' );
 	await k.waitForSelector( '.fb-room' );
 	ok( await k.evaluate( () => document.activeElement.classList.contains( 'fb-results__title' ) ), 'focus moves to the room list heading' );
-	ok( await tabTo( () => /^Select:/.test( document.activeElement.getAttribute( 'aria-label' ) || '' ) ), 'Tab reaches "Select"' );
+	ok( await tabTo( () => /^Select this room:/.test( document.activeElement.getAttribute( 'aria-label' ) || '' ) ), 'Tab reaches "Select this room"' );
 	await k.keyboard.press( 'Enter' );
 	await k.waitForSelector( '.fb-details:not([hidden])' );
 	ok( await k.evaluate( () => document.activeElement.classList.contains( 'fb-step-title' ) ), 'focus moves to "Your details"' );

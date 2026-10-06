@@ -1873,10 +1873,12 @@
 			: ( room.price_average_formatted || room.price_formatted ) + ' ' + t.perNight;
 		side.appendChild( el( 'span', 'fb-room__meta fb-room__avg', nightly ) );
 		var plans = room.plans || [];
-		var btn = button( 'fb-button', room.available ? ( plans.length > 1 ? t.chooseRate : t.select ) : t.unavailable );
+		var action = plans.length > 1 ? t.chooseRate : ( t.selectRoom || t.select );
+		var btn = button( 'fb-button fb-room__select', room.available ? action : t.unavailable );
 		btn.disabled = ! room.available;
 		if ( room.available ) {
-			btn.setAttribute( 'aria-label', ( plans.length > 1 ? t.chooseRate : t.select ) + ': ' + room.title );
+			btn.appendChild( el( 'span', 'fb-room__select-arrow', '→' ) ).setAttribute( 'aria-hidden', 'true' );
+			btn.setAttribute( 'aria-label', action + ': ' + room.title );
 		}
 		if ( plans.length > 1 ) {
 			btn.setAttribute( 'aria-expanded', 'false' );
@@ -1889,6 +1891,9 @@
 			}
 		} );
 		side.appendChild( btn );
+		if ( room.available && t.notBookedYet ) {
+			side.appendChild( el( 'span', 'fb-room__select-hint', t.notBookedYet ) );
+		}
 		card.appendChild( side );
 		return card;
 	};

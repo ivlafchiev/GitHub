@@ -90,6 +90,8 @@ class Flexo_Booking_Room_Render {
 	 *     @type string $icon_html        One icon for every amenity (already rendered HTML).
 	 *     @type bool   $original_colours Uploaded icons keep their own colours.
 	 *     @type int    $limit            0 = all.
+	 *     @type bool   $data             Add each icon as data-flexo-icon, so Elementor's
+	 *                                    Icon List can show the amenities as its own items.
 	 * }
 	 */
 	public static function amenities( array $items, array $args = array() ) {
@@ -100,6 +102,7 @@ class Flexo_Booking_Room_Render {
 				'icon_html'        => '',
 				'original_colours' => false,
 				'limit'            => 0,
+				'data'             => false,
 			),
 			$args
 		);
@@ -111,7 +114,7 @@ class Flexo_Booking_Room_Render {
 		}
 		$out = '<ul class="flexo-room-list flexo-room-amenities flexo-room-list--' . esc_attr( $args['layout'] ) . '">';
 		foreach ( $items as $item ) {
-			$out .= '<li class="flexo-room-list__item">';
+			$out .= $args['data'] ? '<li class="flexo-room-list__item" data-flexo-icon="' . esc_attr( Flexo_Booking_Room_Icons::mask_url( $item['icon'] ) ) . '">' : '<li class="flexo-room-list__item">';
 			if ( $args['icons'] ) {
 				$icon = '' !== $args['icon_html'] ? $args['icon_html'] : Flexo_Booking_Room_Icons::html( $item['icon'], 'flexo-room-icon', $args['original_colours'] );
 				$out .= '<span class="flexo-room-list__icon">' . $icon . '</span>';

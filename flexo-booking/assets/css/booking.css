@@ -257,6 +257,27 @@
 	text-align: right;
 }
 
+/* 1.9.0: the room's button says what it does ("Select this room →"). */
+.flexo-booking .fb-room__select {
+	gap: 8px;
+	min-width: 168px;
+	margin-top: 4px;
+}
+
+.flexo-booking .fb-room__select-arrow {
+	transition: transform 0.15s ease;
+}
+
+.flexo-booking .fb-room__select:hover .fb-room__select-arrow,
+.flexo-booking .fb-room__select:focus-visible .fb-room__select-arrow {
+	transform: translateX(3px);
+}
+
+.flexo-booking .fb-room__select-hint {
+	font-size: 0.75em;
+	color: var(--fb-muted);
+}
+
 .flexo-booking .fb-room__total-label {
 	font-size: 0.8125em;
 	color: var(--fb-muted);
@@ -694,6 +715,10 @@
 @media (prefers-reduced-motion: reduce) {
 	.flexo-booking .fb-success__message--pending::before {
 		animation: none;
+	}
+
+	.flexo-booking .fb-room__select-arrow {
+		transition: none;
 	}
 }
 

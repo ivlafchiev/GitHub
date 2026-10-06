@@ -254,6 +254,19 @@ class Flexo_Booking_Room_Price_Tag extends Flexo_Booking_Room_Text_Tag {
 				),
 			)
 		);
+		$this->add_control(
+			'spacing',
+			array(
+				'label'     => __( 'Space before or after the currency', 'flexo-booking' ),
+				'type'      => Controls_Manager::SELECT,
+				'default'   => 'none',
+				'options'   => array(
+					'none'     => __( 'No space (190€)', 'flexo-booking' ),
+					'settings' => __( 'As in Bookings → Settings', 'flexo-booking' ),
+				),
+				'condition' => array( 'format' => 'money' ),
+			)
+		);
 	}
 
 	/**
@@ -281,7 +294,11 @@ class Flexo_Booking_Room_Price_Tag extends Flexo_Booking_Room_Text_Tag {
 		if ( 'number' === $this->get_settings( 'format' ) ) {
 			return esc_html( Flexo_Booking_Money::format_number( (float) $amount, true ) );
 		}
-		return esc_html( Flexo_Booking_Money::format( (float) $amount, null, true ) );
+		if ( 'settings' === $this->get_settings( 'spacing' ) ) {
+			return esc_html( Flexo_Booking_Money::format( (float) $amount, null, true ) );
+		}
+		// 1.9.0 default: the symbol right next to the number, on its usual side.
+		return esc_html( Flexo_Booking_Money::format_compact( (float) $amount ) );
 	}
 }
 
@@ -352,7 +369,9 @@ class Flexo_Booking_Room_Amenities_Tag extends Flexo_Booking_Room_Text_Tag {
 			return implode( '<br>', $names );
 		}
 		Flexo_Booking_Room_Render::enqueue();
-		return Flexo_Booking_Room_Render::amenities( $items );
+		// In an Icon List item the amenities become the list's own items (see
+		// Flexo_Booking_Elementor::icon_list()); elsewhere they show as a list.
+		return Flexo_Booking_Room_Render::amenities( $items, array( 'data' => true ) );
 	}
 }
 

@@ -77,6 +77,18 @@ class Flexo_Booking_Money {
 	}
 
 	/**
+	 * Like format() with whole amounts short, but without a space between
+	 * the number and the symbol ("190€", "€190"), e.g. for price badges.
+	 *
+	 * @param float $amount
+	 */
+	public static function format_compact( $amount ) {
+		$number = self::format_number( $amount, true );
+		$symbol = (string) Flexo_Booking_Settings::get( 'currency_symbol' );
+		return in_array( Flexo_Booking_Settings::get( 'currency_position' ), array( 'before', 'before_space' ), true ) ? $symbol . $number : $number . $symbol;
+	}
+
+	/**
 	 * The amount alone in the site's number format, e.g. "1 234,50".
 	 *
 	 * @param float $amount

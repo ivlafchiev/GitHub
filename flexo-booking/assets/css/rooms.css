@@ -661,3 +661,15 @@
 .flexo-room-availability.is-unavailable {
 	color: var(--flexo-no, #b42318);
 }
+
+/* Amenities as Elementor Icon List items (1.9.0): the plugin's icon, drawn
+ * in the list's icon colour and at its icon size (Elementor sets both on
+ * the icon element, like for its own icons). */
+.elementor-icon-list-icon .flexo-icon-list-icon {
+	display: inline-block;
+	min-width: 1em;
+	height: 1em;
+	background-color: currentColor;
+	-webkit-mask: var(--flexo-icon) center / contain no-repeat;
+	mask: var(--flexo-icon) center / contain no-repeat;
+}

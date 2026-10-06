@@ -244,8 +244,8 @@ Design **one room page and one room card**; every room fills them with its own d
 |---|---|---|
 | Room name, Room type, Short description, Full description | Text | Separator between types |
 | Room size, Beds, View, Guests (capacity) | Text | Size with unit (24 m²) or number only; guests as "Up to 4 guests (max. 2 adults)", "4 guests" or a number (max guests / adults / children) |
-| Room price | Price per night | Base, weekend or **From price**; with currency or number only |
-| Amenities | Text | Names separated by commas, one per line, or one amenity by position |
+| Room price | Price per night | Base, weekend or **From price**; with currency or number only. **No space** between the number and the currency by default (*190€*, or *€190* when the symbol goes first); *As in Bookings → Settings* uses the site's money format (*190 €*) |
+| Amenities | Text | **List with icons** (default), names separated by commas, one per line, or one amenity by position. In an Elementor **Icon List**, put the tag in one item: it becomes **one item per amenity, each with the icon chosen in the room editor**, drawn in the list's icon colour and size and with its text style and spacing (also in the editor). The item's own icon is not used, and the list's other items stay as they are – remove items you typed by hand before, so amenities don't show twice |
 | Room detail (More details) | Text | A detail by name (e.g. *Floor*) or position; value only, or "name: value" |
 | Availability for the searched dates | Text | When the page was opened from a search (dates in the address): *Available · 390 € for 2 nights* or *Not available for your dates*; empty otherwise. Optionally without the total. |
 | Room main photo, Room gallery | Image / gallery | Main, 2nd, 3rd or 4th photo; a neutral placeholder when a room has none |
@@ -409,7 +409,7 @@ Use a minus sign for a lower price. Percentages never apply to other plans, disc
 | All Inclusive | +35 per guest per night | 510.00 |
 | Non-refundable | −10 % | 270.00 |
 
-**What guests see:** the room card shows the price **"from"** the cheapest plan. After *Select*, the plans are listed with their description, **✓ Refundable** / **✕ Non-refundable** and total, each with a *Choose* button. If a room offers only **one** plan, the choice is skipped. The summary then shows the room, the plan, nights, each price line, the total and the cancellation text, which is also in the guest's emails.
+**What guests see:** the room card shows the price **"from"** the cheapest plan. After *Choose your rate* (rooms with one plan: *Select this room*), the plans are listed with their description, **✓ Refundable** / **✕ Non-refundable** and total, each with a *Choose* button. If a room offers only **one** plan, the choice is skipped. The summary then shows the room, the plan, nights, each price line, the total and the cancellation text, which is also in the guest's emails.
 
 **Changing or deleting a plan** never changes existing bookings: each booking keeps the plan's name, price and cancellation text as they were when it was made. Switching the feature off hides the plans; rooms are then booked at their normal price.
 
@@ -699,6 +699,8 @@ The calendar is for inventory and reservations only. It has no housekeeping or r
 - Default addresses: `/booking/` and `/thank-you/`; change them under *Customize → Address* (Latin letters, numbers, dashes). An old address keeps working and leads to the new one (301, also with a language in front such as `/en/booking/`).
 - **An existing page, post or other content at the same address always wins** – a built-in page is only shown where WordPress has nothing. Settings → Pages and Health then explain the clash and the two fixes: change the address, or choose that page as your own page. Nothing is added to WordPress's address rules and nothing needs "flushing".
 - The Booking page can't be switched off (only built-in / own). If a chosen own booking page is deleted or unpublished, guests get the built-in page meanwhile. On sites with plain permalinks the built-in pages are at `/?flexo_page=booking`.
+
+**Room cards in the booking form** end with a clear button – **Select this room →** (or **Choose your rate →** when the room has several rates) – and the line *Nothing is booked yet*, so guests know a click only takes them to the next step.
 
 **Booking page:** title, introduction, booking steps, reservation summary, "why book here" points, a secure-payment note (card payments) and a help box with the hotel's phone and email – each can be hidden, and empty texts use the standard text in the guest's language. Layouts: **Classic** (summary next to the steps) and **Wide** (centred, summary under the steps). The form itself is the same one as the widget and the shortcode. *Guest details form*: labels, example texts, help texts and the order of name, email, phone and special requests; name and email are always required, phone stays *Required / Optional / Not asked*, special requests *Optional / Not asked*. Privacy consent and invoice requests keep their own settings.
 

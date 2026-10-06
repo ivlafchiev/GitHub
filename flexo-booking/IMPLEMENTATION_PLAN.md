@@ -2266,3 +2266,38 @@ background (skipped on pictures), card text, each status label.
    and reaches the footer at 1440/1024/768/390.
 5. *Reset to global* on one page; the other page keeps its look.
 
+
+### 18.15 Fixes from the client's review (after §18.14)
+
+1. **Amenity icons in Elementor's Icon List.**
+   - *Problem:* the Amenities tag put inside one Icon List item showed the names without icons, indented as a list inside a list. Elementor escapes Icon List texts with `wp_kses_post()`, which removes the SVG icons.
+   - *Fix:* each amenity carries its icon as data (`data-flexo-icon`: the bundled SVG as a data address, or the uploaded icon's address). `Flexo_Booking_Elementor::icon_list()` (filter `elementor/widget/render_content`) turns that item into **one Icon List item per amenity**.
+   - The icon is an `<i>` drawn as a CSS mask, so it takes the list's icon colour (hover too), size and spacing like Elementor's own icons. Line icons are never filled solid by Elementor's SVG `fill`.
+   - In the editor, `assets/js/elementor-preview.js` does the same on `frontend/element_ready/icon-list.default`.
+   - The list's other items are untouched; the item's own placeholder icon is not used.
+2. **Room price tag without a space:**
+   - New option *Space before or after the currency*: **No space (190€)** by default, or *As in Bookings → Settings*.
+   - `Flexo_Booking_Money::format_compact()`.
+   - The booking form and emails keep the site's format.
+3. **Empty room buttons and "undefined" in the Elementor editor:**
+   - *Cause:* the editor draws widgets through its own requests, so the booking form's texts (`FlexoBookingConfig`) were never added to the preview. The form's script therefore had no labels.
+   - *Fix:* they are now added on `elementor/preview/enqueue_scripts`. The website itself was not affected.
+4. **Clearer room button:**
+   - The button now says **Select this room →** (or **Choose your rate →**), is at least 168 px wide, and the arrow moves on hover (not with reduced motion).
+   - A muted *Nothing is booked yet* under it.
+   - `aria-label` "Select this room: <room>".
+
+Tests:
+- `test-day7-elementor.php`: +11 checks, covering:
+  - one Icon List item per amenity, in order, each with its own icon;
+  - no nested list and no placeholder icon;
+  - the list's own items keep their icons;
+  - names escaped and icon addresses limited;
+  - price with no space by default and the site format as an option.
+- `e2e/day6.js`: the button's accessible name.
+- BG: +5 strings.
+- Full regression after these fixes:
+  - `tests/run.sh`: ALL PASSED (day7-elementor 96).
+  - e2e days 2–5, 7, 8 and day8-appearance passed in the full run.
+  - Day 1 found the new hint sharing the price line's class (fixed: own class `fb-room__select-hint`), then passed 37/37.
+  - Day 6 timed out once in the full run and passed 117/117 on its own.
