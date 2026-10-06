@@ -1,0 +1,4168 @@
+{
+ "wp-dashboard@1280": {
+  "docOverflow": 0,
+  "over": [
+   "g→851",
+   "path→21",
+   "ellipse→851"
+  ],
+  "submenuPad": "12px/13px",
+  "fontSizes": [
+   "13px",
+   "14px",
+   "16.9px",
+   "20px",
+   "23px",
+   "48px"
+  ],
+  "buttonHeights": [
+   15,
+   20,
+   24,
+   32,
+   40
+  ],
+  "buttonRadii": [
+   "0px 0px 4px 4px",
+   "2px",
+   "0px"
+  ],
+  "fonts": [
+   "-apple-system",
+   "dashicons"
+  ],
+  "notices": 3,
+  "errors": []
+ },
+ "today@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "16px",
+   "17px",
+   "26px",
+   "28px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "bookings-list@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "bookings-list-empty-search@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "booking-details@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "16px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "booking-details-cancel-dialog@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "16px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "booking-not-found@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [],
+  "buttonRadii": [],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 2,
+  "errors": []
+ },
+ "add-booking@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "calendar@1280": {
+  "docOverflow": 0,
+  "over": [
+   "div.fbc→221",
+   "div.fbc-row.fbc-row--head→221",
+   "div.fbc-track→221",
+   "div.fbc-day→31",
+   "span.fbc-day__name→31",
+   "span.fbc-day__num→31",
+   "div.fbc-day→69",
+   "span.fbc-day__name→69",
+   "span.fbc-day__num→69",
+   "div.fbc-day→107",
+   "span.fbc-day__name→107",
+   "span.fbc-day__num→107"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "10px",
+   "11px",
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "20px",
+   "26px"
+  ],
+  "buttonHeights": [
+   30,
+   38,
+   57
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px",
+   "14px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "calendar-dialog@1280": {
+  "docOverflow": 0,
+  "over": [
+   "div.fbc→221",
+   "div.fbc-row.fbc-row--head→221",
+   "div.fbc-track→221",
+   "div.fbc-day→31",
+   "span.fbc-day__name→31",
+   "span.fbc-day__num→31",
+   "div.fbc-day→69",
+   "span.fbc-day__name→69",
+   "span.fbc-day__num→69",
+   "div.fbc-day→107",
+   "span.fbc-day__name→107",
+   "span.fbc-day__num→107"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "10px",
+   "11px",
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "20px",
+   "26px"
+  ],
+  "buttonHeights": [
+   30,
+   38,
+   57
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px",
+   "14px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "rooms-list@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   16,
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 3,
+  "errors": []
+ },
+ "room-editor@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "11px",
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "16px",
+   "18px",
+   "20px",
+   "23.8px",
+   "26px"
+  ],
+  "buttonHeights": [
+   24,
+   29,
+   30,
+   32,
+   34,
+   36,
+   38,
+   40,
+   100,
+   195
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px",
+   "2px",
+   "10px",
+   "999px"
+  ],
+  "fonts": [
+   "\"Flexo UI\"",
+   "Arial"
+  ],
+  "notices": 3,
+  "errors": []
+ },
+ "room-editor-icon-dialog@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "11px",
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "16px",
+   "18px",
+   "20px",
+   "23.8px",
+   "26px"
+  ],
+  "buttonHeights": [
+   24,
+   29,
+   30,
+   32,
+   34,
+   36,
+   38,
+   40,
+   100,
+   195
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px",
+   "2px",
+   "10px",
+   "999px"
+  ],
+  "fonts": [
+   "\"Flexo UI\"",
+   "Arial"
+  ],
+  "notices": 3,
+  "errors": []
+ },
+ "add-room@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "11px",
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "18px",
+   "20px",
+   "23.8px",
+   "26px"
+  ],
+  "buttonHeights": [
+   24,
+   29,
+   30,
+   32,
+   34,
+   38,
+   40,
+   100,
+   195
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px",
+   "2px",
+   "10px",
+   "999px"
+  ],
+  "fonts": [
+   "\"Flexo UI\"",
+   "Arial"
+  ],
+  "notices": 3,
+  "errors": []
+ },
+ "seasonal-prices@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "closed-dates@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "rates@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "promo-codes@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "calendar-sync@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "emails@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "emails-edit-open@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "appearance-match@1280": {
+  "docOverflow": 0,
+  "over": [
+   "span.flexo-segmented→137",
+   "button.button.is-active→61",
+   "button.button→134"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "appearance-custom@1280": {
+  "docOverflow": 0,
+  "over": [
+   "span.flexo-segmented→137",
+   "button.button.is-active→61",
+   "button.button→134"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "appearance-custom-booking-page-preview@1280": {
+  "docOverflow": 0,
+  "over": [
+   "span.flexo-segmented→137",
+   "button.button.is-active→61",
+   "button.button→134"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-hotel@1280": {
+  "docOverflow": 0,
+  "over": [
+   "a.nav-tab→136"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-hotel-saved-notice@1280": {
+  "docOverflow": 0,
+  "over": [
+   "a.nav-tab→136"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-booking-rules@1280": {
+  "docOverflow": 0,
+  "over": [
+   "a.nav-tab→136"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-room-pages@1280": {
+  "docOverflow": 0,
+  "over": [
+   "a.nav-tab→136"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-pages@1280": {
+  "docOverflow": 0,
+  "over": [
+   "a.nav-tab→136"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "16px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   36,
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-pages-customize-open@1280": {
+  "docOverflow": 0,
+  "over": [
+   "a.nav-tab→136"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "16px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   36,
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-payments@1280": {
+  "docOverflow": 0,
+  "over": [
+   "a.nav-tab→136"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-taxes@1280": {
+  "docOverflow": 0,
+  "over": [
+   "a.nav-tab→136"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-privacy@1280": {
+  "docOverflow": 0,
+  "over": [
+   "a.nav-tab→136"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-tracking@1280": {
+  "docOverflow": 0,
+  "over": [
+   "a.nav-tab→136"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-features@1280": {
+  "docOverflow": 0,
+  "over": [
+   "a.nav-tab→136"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-health@1280": {
+  "docOverflow": 0,
+  "over": [
+   "a.nav-tab→136"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "import-export@1280": {
+  "docOverflow": 0,
+  "over": [
+   "a.nav-tab.nav-tab-active→136"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "bring-in-rooms@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [],
+  "buttonRadii": [],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "help@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "agency@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": null,
+  "fontSizes": [],
+  "buttonHeights": [],
+  "buttonRadii": [],
+  "fonts": [],
+  "notices": 0,
+  "errors": []
+ },
+ "wizard-start@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-hotel@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-mode@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-room@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-page@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-emails@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-look@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-test@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wp-dashboard@1440": {
+  "docOverflow": 0,
+  "over": [
+   "g→865",
+   "ellipse→865"
+  ],
+  "submenuPad": "12px/13px",
+  "fontSizes": [
+   "13px",
+   "14px",
+   "16.9px",
+   "20px",
+   "23px",
+   "48px"
+  ],
+  "buttonHeights": [
+   15,
+   20,
+   24,
+   32,
+   40
+  ],
+  "buttonRadii": [
+   "0px 0px 4px 4px",
+   "2px",
+   "0px"
+  ],
+  "fonts": [
+   "-apple-system",
+   "dashicons"
+  ],
+  "notices": 3,
+  "errors": []
+ },
+ "today@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "16px",
+   "17px",
+   "26px",
+   "28px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "bookings-list@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "bookings-list-empty-search@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "booking-details@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "16px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "booking-details-cancel-dialog@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "16px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "booking-not-found@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [],
+  "buttonRadii": [],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 2,
+  "errors": []
+ },
+ "add-booking@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "calendar@1440": {
+  "docOverflow": 0,
+  "over": [
+   "div.fbc→61",
+   "div.fbc-row.fbc-row--head→61",
+   "div.fbc-track→61",
+   "div.fbc-day→23",
+   "span.fbc-day__name→23",
+   "span.fbc-day__num→23",
+   "div.fbc-day.is-weekend→61",
+   "span.fbc-day__name→61",
+   "span.fbc-day__num→61",
+   "div.fbc-row→61",
+   "button.fbc-cell→23",
+   "button.fbc-cell.is-weekend→61"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "10px",
+   "11px",
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "20px",
+   "26px"
+  ],
+  "buttonHeights": [
+   30,
+   38,
+   57
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px",
+   "14px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "calendar-dialog@1440": {
+  "docOverflow": 0,
+  "over": [
+   "div.fbc→61",
+   "div.fbc-row.fbc-row--head→61",
+   "div.fbc-track→61",
+   "div.fbc-day→23",
+   "span.fbc-day__name→23",
+   "span.fbc-day__num→23",
+   "div.fbc-day.is-weekend→61",
+   "span.fbc-day__name→61",
+   "span.fbc-day__num→61",
+   "div.fbc-row→61",
+   "button.fbc-cell→23",
+   "button.fbc-cell.is-weekend→61"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "10px",
+   "11px",
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "20px",
+   "26px"
+  ],
+  "buttonHeights": [
+   30,
+   38,
+   57
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px",
+   "14px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "rooms-list@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   16,
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 3,
+  "errors": []
+ },
+ "room-editor@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "11px",
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "16px",
+   "18px",
+   "20px",
+   "23.8px",
+   "26px"
+  ],
+  "buttonHeights": [
+   24,
+   29,
+   30,
+   32,
+   34,
+   36,
+   38,
+   40,
+   110,
+   195
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px",
+   "2px",
+   "10px",
+   "999px"
+  ],
+  "fonts": [
+   "\"Flexo UI\"",
+   "Arial"
+  ],
+  "notices": 3,
+  "errors": []
+ },
+ "room-editor-icon-dialog@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "11px",
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "16px",
+   "18px",
+   "20px",
+   "23.8px",
+   "26px"
+  ],
+  "buttonHeights": [
+   24,
+   29,
+   30,
+   32,
+   34,
+   36,
+   38,
+   40,
+   110,
+   195
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px",
+   "2px",
+   "10px",
+   "999px"
+  ],
+  "fonts": [
+   "\"Flexo UI\"",
+   "Arial"
+  ],
+  "notices": 3,
+  "errors": []
+ },
+ "add-room@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "11px",
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "18px",
+   "20px",
+   "23.8px",
+   "26px"
+  ],
+  "buttonHeights": [
+   24,
+   29,
+   30,
+   32,
+   34,
+   38,
+   40,
+   110,
+   195
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px",
+   "2px",
+   "10px",
+   "999px"
+  ],
+  "fonts": [
+   "\"Flexo UI\"",
+   "Arial"
+  ],
+  "notices": 3,
+  "errors": []
+ },
+ "seasonal-prices@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "closed-dates@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "rates@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "promo-codes@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "calendar-sync@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "emails@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "emails-edit-open@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "appearance-match@1440": {
+  "docOverflow": 0,
+  "over": [
+   "span.flexo-segmented→54",
+   "button.button→51"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "appearance-custom@1440": {
+  "docOverflow": 0,
+  "over": [
+   "span.flexo-segmented→54",
+   "button.button→51"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "appearance-custom-booking-page-preview@1440": {
+  "docOverflow": 0,
+  "over": [
+   "span.flexo-segmented→54",
+   "button.button→51"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-hotel@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-hotel-saved-notice@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-booking-rules@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-room-pages@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-pages@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "16px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   36,
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-pages-customize-open@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "16px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   36,
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-payments@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-taxes@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-privacy@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-tracking@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-features@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-health@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "import-export@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "bring-in-rooms@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [],
+  "buttonRadii": [],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "help@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "agency@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": null,
+  "fontSizes": [],
+  "buttonHeights": [],
+  "buttonRadii": [],
+  "fonts": [],
+  "notices": 0,
+  "errors": []
+ },
+ "wizard-start@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-hotel@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-mode@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-room@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-page@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-emails@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-look@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-test@1440": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wp-dashboard@1920": {
+  "docOverflow": 0,
+  "over": [
+   "g→944",
+   "ellipse→944"
+  ],
+  "submenuPad": "12px/13px",
+  "fontSizes": [
+   "13px",
+   "14px",
+   "16.9px",
+   "20px",
+   "23px",
+   "48px"
+  ],
+  "buttonHeights": [
+   15,
+   20,
+   24,
+   32,
+   40
+  ],
+  "buttonRadii": [
+   "0px 0px 4px 4px",
+   "2px",
+   "0px"
+  ],
+  "fonts": [
+   "-apple-system",
+   "dashicons"
+  ],
+  "notices": 3,
+  "errors": []
+ },
+ "today@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "16px",
+   "17px",
+   "26px",
+   "28px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "bookings-list@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "bookings-list-empty-search@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "booking-details@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "16px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "booking-details-cancel-dialog@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "16px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "booking-not-found@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [],
+  "buttonRadii": [],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 2,
+  "errors": []
+ },
+ "add-booking@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "calendar@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "10px",
+   "11px",
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "20px",
+   "26px"
+  ],
+  "buttonHeights": [
+   30,
+   38,
+   57
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px",
+   "14px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "calendar-dialog@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "10px",
+   "11px",
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "20px",
+   "26px"
+  ],
+  "buttonHeights": [
+   30,
+   38,
+   57
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px",
+   "14px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "rooms-list@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   16,
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 3,
+  "errors": []
+ },
+ "room-editor@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "11px",
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "16px",
+   "18px",
+   "20px",
+   "23.8px",
+   "26px"
+  ],
+  "buttonHeights": [
+   24,
+   29,
+   30,
+   32,
+   34,
+   36,
+   38,
+   40,
+   96,
+   195
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px",
+   "2px",
+   "10px",
+   "999px"
+  ],
+  "fonts": [
+   "\"Flexo UI\"",
+   "Arial"
+  ],
+  "notices": 3,
+  "errors": []
+ },
+ "room-editor-icon-dialog@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "11px",
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "16px",
+   "18px",
+   "20px",
+   "23.8px",
+   "26px"
+  ],
+  "buttonHeights": [
+   24,
+   29,
+   30,
+   32,
+   34,
+   36,
+   38,
+   40,
+   96,
+   195
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px",
+   "2px",
+   "10px",
+   "999px"
+  ],
+  "fonts": [
+   "\"Flexo UI\"",
+   "Arial"
+  ],
+  "notices": 3,
+  "errors": []
+ },
+ "add-room@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "11px",
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "18px",
+   "20px",
+   "23.8px",
+   "26px"
+  ],
+  "buttonHeights": [
+   24,
+   29,
+   30,
+   32,
+   34,
+   38,
+   40,
+   96,
+   195
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px",
+   "2px",
+   "10px",
+   "999px"
+  ],
+  "fonts": [
+   "\"Flexo UI\"",
+   "Arial"
+  ],
+  "notices": 3,
+  "errors": []
+ },
+ "seasonal-prices@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "closed-dates@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "rates@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "promo-codes@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "calendar-sync@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "emails@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "emails-edit-open@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "appearance-match@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "appearance-custom@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "appearance-custom-booking-page-preview@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-hotel@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-hotel-saved-notice@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-booking-rules@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-room-pages@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-pages@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "16px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   36,
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-pages-customize-open@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "16px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   36,
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-payments@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-taxes@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-privacy@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-tracking@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-features@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-health@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "import-export@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "bring-in-rooms@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [],
+  "buttonRadii": [],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "help@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "agency@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": null,
+  "fontSizes": [],
+  "buttonHeights": [],
+  "buttonRadii": [],
+  "fonts": [],
+  "notices": 0,
+  "errors": []
+ },
+ "wizard-start@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-hotel@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-mode@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-room@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-page@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-emails@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-look@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "wizard-test@1920": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   17,
+   38
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "today@390": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "20px/16px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "16px",
+   "17px",
+   "23px",
+   "24px"
+  ],
+  "buttonHeights": [
+   40,
+   44
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "bookings-list@390": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "20px/16px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "16px",
+   "23px"
+  ],
+  "buttonHeights": [
+   40,
+   44
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "booking-details@390": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "20px/16px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "16px",
+   "23px"
+  ],
+  "buttonHeights": [
+   40,
+   44
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "calendar@390": {
+  "docOverflow": 0,
+  "over": [
+   "div.fbc→757",
+   "div.fbc-row.fbc-row--head→757",
+   "div.fbc-track→757",
+   "div.fbc-day→9",
+   "span.fbc-day__name→9",
+   "span.fbc-day__num→9",
+   "div.fbc-day.is-weekend→43",
+   "span.fbc-day__name→43",
+   "span.fbc-day__num→43",
+   "div.fbc-day.is-weekend→77",
+   "span.fbc-day__name→77",
+   "span.fbc-day__num→77"
+  ],
+  "submenuPad": "20px/16px",
+  "fontSizes": [
+   "10px",
+   "11px",
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "16px",
+   "20px",
+   "23px"
+  ],
+  "buttonHeights": [
+   30,
+   44,
+   57
+  ],
+  "buttonRadii": [
+   "8px",
+   "0px",
+   "14px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ }
+}

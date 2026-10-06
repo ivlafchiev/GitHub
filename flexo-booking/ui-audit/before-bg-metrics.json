@@ -1,0 +1,191 @@
+{
+ "today@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "16px",
+   "17px",
+   "26px",
+   "28px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "bookings-list@1280": {
+  "docOverflow": 27,
+  "over": [
+   "table.widefat.striped→27",
+   "thead→26",
+   "tr→26",
+   "th→26",
+   "tbody→26",
+   "tr.flexo-booking-row.flexo-booking-row--confirmed→26",
+   "td.flexo-actions→26",
+   "tr.flexo-booking-row.flexo-booking-row--pending→26",
+   "tr.flexo-booking-row.flexo-booking-row--cancelled→26",
+   "a.button.button-small→8"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "booking-details@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12.5px",
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "16px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "appearance-custom@1280": {
+  "docOverflow": 0,
+  "over": [
+   "span.flexo-segmented→95",
+   "button.button→92",
+   "a.button.flexo-preview-open→256",
+   "span.flexo-segmented→454",
+   "button.button.is-active→361",
+   "button.button→451"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   32,
+   38,
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-hotel@1280": {
+  "docOverflow": 0,
+  "over": [
+   "a.nav-tab→84",
+   "a.nav-tab→191",
+   "a.nav-tab→432",
+   "a.nav-tab→591"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14px",
+   "15px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-features@1280": {
+  "docOverflow": 0,
+  "over": [
+   "a.nav-tab.nav-tab-active→84",
+   "a.nav-tab→191",
+   "a.nav-tab→432",
+   "a.nav-tab→591"
+  ],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "13.5px",
+   "13px",
+   "14.5px",
+   "14px",
+   "15px",
+   "17px",
+   "26px"
+  ],
+  "buttonHeights": [
+   40
+  ],
+  "buttonRadii": [
+   "8px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ }
+}
