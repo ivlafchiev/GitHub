@@ -2236,11 +2236,11 @@ background (skipped on pictures), card text, each status label.
 
 | Suite | Result |
 |---|---|
-| `test-appearance-pages.php` (new) | RESULT_UNIT |
-| `e2e/day8-appearance.js` (new) | RESULT_E2E |
-| `tests/run.sh` (all PHP suites, i18n, constants, concurrency) | RESULT_RUN |
-| e2e days 1–8 | RESULT_DAYS |
-| Upgrade 1.0.0 / 1.5.0 / 1.7.0 / 1.8.3 → this build | RESULT_UPGRADE |
+| `test-appearance-pages.php` (new) | 107 passed |
+| `e2e/day8-appearance.js` (new) | 46 passed (incl. 360/390/768/1024/1440 px) |
+| `tests/run.sh` (all PHP suites, i18n, constants, concurrency) | all suites passed – pricing parity 8, seasons 46, features 30, regression 43, iCal 66, day3 122, day4 93, day5 258, day6 110, day7 193, day7-elementor 85, room design 35, booking page 22, system pages 112, confirmation 70, booking fields 36, appearance pages 107, i18n 18, constants 6, 3 concurrency races. `test-day6` was updated: custom CSS may now also target the built-in pages (still scoped). The first run of the new suite failed because an earlier suite leaves the *Appearance settings* feature off; the suite now switches it on itself. |
+| e2e days 1–8 | day1 37, day2 51, day3 63, day4 49, day5 167, day6 117, day7 61, day8 46 – all passed (day 7 timed out once on a `networkidle` wait for an Elementor page that loads blocked outside resources; passed in full on rerun) |
+| Upgrade 1.0.0 / 1.5.0 / 1.7.0 / 1.8.3 → this build | 38 passed each (new: every page uses the global look, no page CSS, nothing new in the global CSS) |
 | Default look vs the previous CSS (Booking, Thank You; 1280 and 390 px) | pixel-identical |
 
 **Limitations:**

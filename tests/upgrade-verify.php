@@ -71,6 +71,12 @@ if ( class_exists( 'Flexo_Booking_System_Pages' ) && ! empty( $fixture['pages'] 
 		t_ok( $hit && (int) $fixture['pages'][ $slug ] === $hit['id'] && ! Flexo_Booking_System_Pages::route_active( $key ), "/{$slug}/: the existing page wins" );
 	}
 	t_eq( 'publish', get_post_status( $fixture['pages']['contact'] ), 'no page deleted or changed' );
+	// Appearance for the system pages: nothing new until the hotel chooses something.
+	foreach ( array( 'booking', 'thank_you', 'contact' ) as $key ) {
+		t_ok( ! empty( $pages[ $key ]['appearance']['use_global'] ) && '' === Flexo_Booking_Appearance::page_css( $key ), $key . ': uses the global look, no page CSS' );
+	}
+	$css = Flexo_Booking_Appearance::css();
+	t_ok( false === strpos( $css, 'flexo-page{' ) && false === strpos( $css, '--fb-card-' ) && false === strpos( $css, '--fb-sp-' ), 'no page background, cards or spacing added' );
 }
 
 t_done();
