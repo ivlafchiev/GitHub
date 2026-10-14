@@ -78,7 +78,7 @@ class Flexo_Booking_Payments_Admin {
 								<span class="flexo-badge flexo-badge--conflict"><?php esc_html_e( 'Not set up', 'flexo-booking' ); ?></span>
 								<?php esc_html_e( 'Enter your Stripe secret key and webhook signing secret below.', 'flexo-booking' ); ?>
 							<?php else : ?>
-								<span class="flexo-status flexo-status--confirmed">✓ <?php echo esc_html( $stripe->is_live() ? __( 'Ready – live payments', 'flexo-booking' ) : __( 'Ready – test mode (no real money)', 'flexo-booking' ) ); ?></span>
+								<span class="flexo-status flexo-status--confirmed"><?php echo esc_html( $stripe->is_live() ? __( 'Ready – live payments', 'flexo-booking' ) : __( 'Ready – test mode (no real money)', 'flexo-booking' ) ); ?></span>
 							<?php endif; ?>
 						</p>
 					<?php endif; ?>
@@ -88,7 +88,7 @@ class Flexo_Booking_Payments_Admin {
 								<span class="flexo-badge flexo-badge--conflict"><?php esc_html_e( 'Not set up', 'flexo-booking' ); ?></span>
 								<?php esc_html_e( 'Enter the beneficiary and IBAN below.', 'flexo-booking' ); ?>
 							<?php else : ?>
-								<span class="flexo-status flexo-status--confirmed">✓ <?php esc_html_e( 'Ready', 'flexo-booking' ); ?></span>
+								<span class="flexo-status flexo-status--confirmed"><?php esc_html_e( 'Ready', 'flexo-booking' ); ?></span>
 							<?php endif; ?>
 						</p>
 					<?php endif; ?>
@@ -239,7 +239,7 @@ class Flexo_Booking_Payments_Admin {
 	 */
 	public static function badge( array $b ) {
 		if ( $b['payment_conflict'] ) {
-			return '<span class="flexo-badge flexo-badge--conflict">⚠ ' . esc_html__( 'Payment conflict', 'flexo-booking' ) . '</span>';
+			return '<span class="flexo-badge flexo-badge--conflict">' . esc_html__( 'Payment conflict', 'flexo-booking' ) . '</span>';
 		}
 		if ( '' === $b['payment_method'] || 'blocked' === $b['status'] ) {
 			return '';
@@ -251,14 +251,13 @@ class Flexo_Booking_Payments_Admin {
 		if ( '' === $label ) {
 			return '';
 		}
-		$icon  = 'bank_transfer' === $b['payment_method'] ? '🏦' : '💳';
 		$class = in_array( $b['payment_status'], array( 'paid', 'deposit_paid' ), true ) ? 'flexo-badge--paid' : ( in_array( $b['payment_status'], array( 'failed', 'expired' ), true ) ? 'flexo-badge--unpaid' : 'flexo-badge--pay' );
 		$extra = '';
 		if ( 'awaiting_payment' === $b['status'] && ! empty( $b['payment_due_at'] ) ) {
 			/* translators: %s: date */
 			$extra = ' · ' . sprintf( __( 'until %s', 'flexo-booking' ), mysql2date( 'd.m.', $b['payment_due_at'] ) );
 		}
-		return '<span class="flexo-badge ' . esc_attr( $class ) . '">' . $icon . ' ' . esc_html( $label . $extra ) . '</span>';
+		return '<span class="flexo-badge ' . esc_attr( $class ) . '">' . esc_html( $label . $extra ) . '</span>';
 	}
 
 	/**
@@ -297,7 +296,7 @@ class Flexo_Booking_Payments_Admin {
 		}
 		?>
 		<div class="flexo-conflicts flexo-payment-conflicts" id="flexo-payment-conflicts">
-			<h2>⚠ <?php esc_html_e( 'Payments received for rooms that are no longer free', 'flexo-booking' ); ?></h2>
+			<h2><?php esc_html_e( 'Payments received for rooms that are no longer free', 'flexo-booking' ); ?></h2>
 			<p><?php esc_html_e( 'These guests paid after their reservation had expired (or was cancelled) and the room was taken meanwhile. They were not confirmed, so nothing is double-booked. Contact the guest: offer another room or dates, or refund the payment in Stripe. Then mark the conflict as resolved.', 'flexo-booking' ); ?></p>
 			<table class="widefat">
 				<thead><tr>

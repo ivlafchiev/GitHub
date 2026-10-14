@@ -847,7 +847,8 @@ class Flexo_Booking_Appearance {
 						<div class="fb-room__side">
 							<span class="fb-room__total-label"><?php echo esc_html( sprintf( /* translators: %d: nights */ _n( 'Total for %d night', 'Total for %d nights', 3, 'flexo-booking' ), 3 ) ); ?></span>
 							<strong class="fb-room__total"><?php echo esc_html( Flexo_Booking_Money::format( 360, $currency ) ); ?></strong>
-							<button type="button" class="fb-button"><?php esc_html_e( 'Select', 'flexo-booking' ); ?></button>
+							<button type="button" class="fb-button fb-room__select"><?php esc_html_e( 'Select this room', 'flexo-booking' ); ?><span class="fb-room__select-arrow" aria-hidden="true">→</span></button>
+							<span class="fb-room__select-hint"><?php esc_html_e( 'Nothing is booked yet', 'flexo-booking' ); ?></span>
 						</div>
 					</article>
 				</div>
@@ -939,7 +940,8 @@ class Flexo_Booking_Appearance {
 						<div class="fb-room__side">
 							<span class="fb-room__total-label"><?php echo esc_html( sprintf( /* translators: %d: nights */ _n( 'Total for %d night', 'Total for %d nights', 3, 'flexo-booking' ), 3 ) ); ?></span>
 							<strong class="fb-room__total"><?php echo esc_html( Flexo_Booking_Money::format( 360, $flexo_currency ) ); ?></strong>
-							<button type="button" class="fb-button"><?php esc_html_e( 'Select', 'flexo-booking' ); ?></button>
+							<button type="button" class="fb-button fb-room__select"><?php esc_html_e( 'Select this room', 'flexo-booking' ); ?><span class="fb-room__select-arrow" aria-hidden="true">→</span></button>
+							<span class="fb-room__select-hint"><?php esc_html_e( 'Nothing is booked yet', 'flexo-booking' ); ?></span>
 						</div>
 						<div class="fb-plans">
 							<h5 class="fb-plans__title"><?php esc_html_e( 'Choose your rate', 'flexo-booking' ); ?></h5>

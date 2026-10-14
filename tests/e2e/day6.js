@@ -79,6 +79,32 @@ const contrastOf = ( p, sel ) => p.evaluate( ( s ) => {
 	return ( Math.max( a, b ) + 0.05 ) / ( Math.min( a, b ) + 0.05 );
 }, sel );
 
+// A colour field: switch it to "Custom" when needed, then type the code.
+async function setColor( p, key, value ) {
+	const row = p.locator( `.flexo-color-row:has([name$="[${ key }]"])` );
+	const group = p.locator( 'details.flexo-appearance__group', { has: row } );
+	if ( await group.count() && ! await group.evaluate( ( d ) => d.open ) ) {
+		await group.locator( 'summary' ).click();
+	}
+	if ( ! await row.locator( '.fx-color__hex' ).isVisible() ) {
+		await row.locator( '.fx-seg__opt', { hasText: 'Custom' } ).click();
+	}
+	await row.locator( '.fx-color__hex' ).fill( value );
+}
+
+// Saving: forms marked data-fx-save="ajax" save in the background (no page
+// load; the form fires "fx:saved"), the others submit and load a new page.
+async function save( p, sel = '#submit' ) {
+	const ajax = await p.$eval( sel, ( b ) => !! b.form && 'ajax' === b.form.getAttribute( 'data-fx-save' ) ).catch( () => false );
+	if ( ! ajax ) {
+		await Promise.all( [ p.waitForNavigation(), p.click( sel ) ] );
+		return;
+	}
+	const done = p.evaluate( () => new Promise( ( r ) => document.addEventListener( 'fx:saved', () => r(), { once: true } ) ) );
+	await p.click( sel );
+	await done;
+}
+
 ( async () => {
 	const browser = await chromium.launch();
 	const errors = [];
@@ -341,7 +367,8 @@ const contrastOf = ( p, sel ) => p.evaluate( ( s ) => {
 	ok( ! ( await text( a, '.flexo-bookings-table' ) ).includes( 'Request Guest' ), 'filter: website bookings only' );
 	await a.goto( BASE + `/wp-admin/admin.php?page=flexo-booking-list&arrival_from=${ day( 99 ) }&arrival_to=${ day( 101 ) }` );
 	ok( ( await text( a, '.flexo-bookings-table' ) ).includes( 'Request Guest' ), 'filter: arrival dates' );
-	await a.locator( '.flexo-bookings-table tr', { hasText: reqRef } ).locator( 'a', { hasText: 'Cancel' } ).click();
+	await a.locator( '.flexo-bookings-table tr', { hasText: reqRef } ).locator( '[aria-haspopup]' ).click();
+	await a.locator( '.flexo-bookings-table tr', { hasText: reqRef } ).locator( '[role=menuitem]', { hasText: 'Cancel' } ).click();
 	await a.waitForSelector( 'dialog[open]' );
 	ok( ( await a.textContent( 'dialog[open] p' ) ).includes( 'The guest receives a cancellation email' ), 'cancel dialog states the consequence' );
 	await Promise.all( [ a.waitForNavigation(), a.click( 'dialog[open] [data-yes]' ) ] );
@@ -368,7 +395,7 @@ const contrastOf = ( p, sel ) => p.evaluate( ( s ) => {
 	await a.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-help#help-transfer' );
 	ok( await a.evaluate( () => document.getElementById( 'help-transfer' ).open ), 'help link opens the right guide' );
 	await a.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-settings&tab=children' );
-	ok( ( await a.textContent( '.nav-tab-active' ) ).includes( 'Booking rules' ), 'old tab address opens the new tab' );
+	ok( ( await a.textContent( '.fx-subnav__link[aria-current=page]' ) ).includes( 'Booking rules' ), 'old tab address opens the new tab' );
 
 	section( 'Roles' );
 	const st = await login( browser, 'staff', 390 );
@@ -405,19 +432,19 @@ const contrastOf = ( p, sel ) => p.evaluate( ( s ) => {
 	ok( ! ( await front.$( '#flexo-booking-inline-css' ) ), 'Match: no extra CSS on the page' );
 	await a.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-appearance' );
 	await a.check( '[name$="[appearance_mode]"][value=custom]' );
-	await a.fill( '.flexo-color-row:has([name$="[appearance_text]"]) .flexo-color-hex', '#dddddd' );
-	await a.fill( '.flexo-color-row:has([name$="[appearance_bg]"]) .flexo-color-hex', '#ffffff' );
+	await setColor( a, 'appearance_text', '#dddddd' );
+	await setColor( a, 'appearance_bg', '#ffffff' );
 	await a.waitForSelector( '.flexo-contrast-warning', { timeout: 5000 } ).catch( () => {} );
 	ok( ( await text( a, '.flexo-appearance__warnings' ) ).includes( 'hard to read' ), 'contrast warning with a suggestion' );
-	await a.fill( '.flexo-color-row:has([name$="[appearance_text]"]) .flexo-color-hex', '#1f2933' );
-	await a.fill( '.flexo-color-row:has([name$="[appearance_primary]"]) .flexo-color-hex', '#1f5f8b' );
+	await setColor( a, 'appearance_text', '#1f2933' );
+	await setColor( a, 'appearance_primary', '#1f5f8b' );
 	await a.selectOption( '[name$="[appearance_heading_font]"]', 'lora' );
 	await a.waitForTimeout( 1200 );
 	ok( ( await text( a, '.flexo-appearance__warnings' ) ) === '', 'warning gone with readable colours' );
 	const frame = a.frameLocator( '#flexo-appearance-frame' );
 	const previewBtn = await frame.locator( '.flexo-booking .fb-button' ).first().evaluate( ( b ) => getComputedStyle( b ).backgroundColor );
 	ok( previewBtn === 'rgb(31, 95, 139)', 'live preview uses the new main colour' );
-	await Promise.all( [ a.waitForNavigation(), a.click( '#flexo-appearance-form [type=submit]' ) ] );
+	await save( a, '#flexo-appearance-form [type=submit]' );
 	await front.goto( BASE + '/booking/' );
 	const customBtn = await front.evaluate( () => getComputedStyle( document.querySelector( '.fb-search [type=submit]' ) ).backgroundColor );
 	ok( customBtn === previewBtn && customBtn !== matchBtn, 'front end matches the preview' );
@@ -432,7 +459,9 @@ const contrastOf = ( p, sel ) => p.evaluate( ( s ) => {
 	const exported = wp( 'echo wp_json_encode( Flexo_Booking_Portability::export()["settings"]["appearance_primary"] );' );
 	ok( exported.includes( '#1f5f8b' ), 'Appearance in Import/Export' );
 	await a.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-appearance' );
-	await Promise.all( [ a.waitForNavigation(), a.click( '.flexo-reset-appearance' ) ] );
+	await a.click( '.flexo-reset-appearance' );
+	await a.waitForSelector( 'dialog[open]' );
+	await Promise.all( [ a.waitForNavigation(), a.click( 'dialog[open] [data-yes]' ) ] );
 	ok( wp( 'echo Flexo_Booking_Appearance::mode();' ) === 'match', 'reset (after confirmation) goes back to "Match"' );
 
 	const ignored = errors.filter( ( e ) => /Unexpected token|elementor/i.test( e ) );

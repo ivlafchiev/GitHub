@@ -381,10 +381,11 @@ class Flexo_Booking_Wizard {
 			<?php if ( isset( $_GET['flexo_msg'] ) && 'test_sent' === $_GET['flexo_msg'] ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
 				<div class="notice notice-success"><p><?php esc_html_e( 'Test email sent. Check your inbox (and the spam folder).', 'flexo-booking' ); ?></p></div>
 			<?php endif; ?>
+			<div class="flexo-wizard__body">
 			<ol class="flexo-wizard__steps" aria-label="<?php esc_attr_e( 'Setup steps', 'flexo-booking' ); ?>">
 				<?php foreach ( $steps as $key => $label ) : ?>
 					<li class="<?php echo esc_attr( trim( ( in_array( $key, $state['done'], true ) ? 'is-done ' : '' ) . ( $key === $step ? 'is-current' : '' ) ) ); ?>"<?php echo $key === $step ? ' aria-current="step"' : ''; ?>>
-						<a href="<?php echo esc_url( self::url( $key ) ); ?>"><?php echo esc_html( $label ); ?></a>
+						<a href="<?php echo esc_url( self::url( $key ) ); ?>"><span><?php echo esc_html( $label ); ?></span></a>
 					</li>
 				<?php endforeach; ?>
 			</ol>
@@ -533,6 +534,7 @@ class Flexo_Booking_Wizard {
 					<button type="submit" name="go" value="later" class="button-link" formnovalidate><?php esc_html_e( 'Finish later', 'flexo-booking' ); ?></button>
 				</p>
 			</form>
+			</div>
 		</div>
 		<?php
 	}

@@ -85,6 +85,7 @@ require_once FLEXO_BOOKING_DIR . 'includes/admin/class-health.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-pages-admin.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-help.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-admin-ui.php';
+require_once FLEXO_BOOKING_DIR . 'includes/admin/class-admin-components.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-wizard.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-room-editor.php';
 require_once FLEXO_BOOKING_DIR . 'includes/admin/class-demo-rooms.php';

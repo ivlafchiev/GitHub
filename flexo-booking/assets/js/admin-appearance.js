@@ -1,7 +1,8 @@
 /**
- * Bookings → Appearance: colour pickers with hex inputs, "Use website
- * colour", live preview (the CSS comes from the server, built exactly like
- * on the real form), contrast warnings, preview width and reset.
+ * Bookings → Appearance: live preview (the CSS comes from the server, built
+ * exactly like on the real form), contrast warnings, what the preview shows
+ * and at which width. Colour fields, saving and the reset confirmation come
+ * from the shared admin script (flexo-admin.js).
  */
 ( function () {
 	'use strict';
@@ -15,14 +16,6 @@
 	var warnings = form.querySelector( '.flexo-appearance__warnings' );
 	var lastCss = '';
 	var timer = null;
-
-	function normalise( value ) {
-		value = String( value || '' ).trim();
-		if ( value && value.charAt( 0 ) !== '#' ) {
-			value = '#' + value;
-		}
-		return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test( value ) ? value.toLowerCase() : '';
-	}
 
 	function mode() {
 		var checked = form.querySelector( '[name$="[appearance_mode]"]:checked' );
@@ -86,72 +79,64 @@
 		}, 250 );
 	}
 
-	// Colour rows: picker ↔ hex, and "Use website colour".
-	form.querySelectorAll( '.flexo-color-row' ).forEach( function ( row ) {
-		var website = row.querySelector( '.flexo-color-website' );
-		var picker = row.querySelector( '.flexo-color-picker' );
-		var hex = row.querySelector( '.flexo-color-hex' );
-		function sync() {
-			// Typing or picking a colour unticks "Use website colour".
-			row.querySelector( '.flexo-color-pick' ).classList.toggle( 'is-off', website.checked );
-		}
-		website.addEventListener( 'change', function () {
-			if ( website.checked ) {
-				hex.value = '';
-			} else {
-				hex.value = picker.value;
-			}
-			sync();
-			refresh();
-		} );
-		picker.addEventListener( 'input', function () {
-			hex.value = picker.value;
-			website.checked = false;
-			sync();
-			refresh();
-		} );
-		hex.addEventListener( 'input', function () {
-			var v = normalise( hex.value );
-			if ( v ) {
-				if ( v.length === 7 ) {
-					picker.value = v;
-				}
-				website.checked = false;
-				sync();
-				refresh();
-			}
-		} );
-		hex.addEventListener( 'blur', function () {
-			var v = normalise( hex.value );
-			hex.value = v;
-			website.checked = v === '';
-			sync();
-			refresh();
-		} );
-		sync();
-	} );
-
 	form.addEventListener( 'change', refresh );
+	form.addEventListener( 'input', function ( e ) {
+		if ( e.target.classList.contains( 'fx-color__hex' ) ) {
+			refresh();
+		}
+	} );
 	frame.addEventListener( 'load', function () {
 		send( lastCss );
 		refresh();
 	} );
 
 	// What the preview shows: the booking form, the Booking page or the Thank You page.
-	var openLink = document.querySelector( '.flexo-preview-open' );
-	document.querySelectorAll( '.flexo-appearance__preview-bar [data-scene]' ).forEach( function ( btn ) {
+	var bar = document.querySelector( '.flexo-appearance__preview-bar' );
+	var wrap = frame.parentNode;
+	var openLink = bar.querySelector( '.flexo-preview-open' );
+	var scenes = Array.prototype.slice.call( bar.querySelectorAll( '[data-scene]' ) );
+	var sceneSelect = bar.querySelector( '[data-fx-scene-select]' );
+	var width = 1280;
+	scenes.forEach( function ( btn, i ) {
 		btn.addEventListener( 'click', function () {
-			document.querySelectorAll( '.flexo-appearance__preview-bar [data-scene]' ).forEach( function ( b ) {
-				b.classList.toggle( 'is-active', b === btn );
-				b.setAttribute( 'aria-pressed', b === btn ? 'true' : 'false' );
-			} );
-			frame.src = btn.getAttribute( 'data-scene' );
+			if ( frame.getAttribute( 'src' ) !== btn.getAttribute( 'data-scene' ) ) {
+				frame.src = btn.getAttribute( 'data-scene' );
+			}
+			if ( sceneSelect ) {
+				sceneSelect.value = String( i );
+			}
 			if ( openLink ) {
 				openLink.hidden = ! btn.getAttribute( 'data-open' );
 				openLink.href = btn.getAttribute( 'data-open' ) || '#';
 			}
 		} );
 	} );
+	if ( sceneSelect ) {
+		sceneSelect.addEventListener( 'change', function () {
+			var btn = scenes[ parseInt( sceneSelect.value, 10 ) ];
+			if ( btn ) {
+				btn.click();
+			}
+		} );
+	}
+
+	// Preview width: a real desktop (1280 px, scaled to fit) or a phone (390 px).
+	function fit() {
+		if ( window.FlexoUI && window.FlexoUI.fitFrame ) {
+			window.FlexoUI.fitFrame( wrap, frame, width );
+		}
+	}
+	bar.querySelectorAll( '[data-width]' ).forEach( function ( btn ) {
+		btn.addEventListener( 'click', function () {
+			bar.querySelectorAll( '[data-width]' ).forEach( function ( b ) {
+				b.setAttribute( 'aria-pressed', b === btn ? 'true' : 'false' );
+			} );
+			width = '390px' === btn.getAttribute( 'data-width' ) ? 390 : 1280;
+			fit();
+		} );
+	} );
+	window.addEventListener( 'resize', fit );
+	fit();
 
 	// Background picture from the media library.
 	form.querySelectorAll( '[data-flexo-media]' ).forEach( function ( box ) {
@@ -201,17 +186,6 @@
 		update();
 	} );
 
-	// Preview width.
-	document.querySelectorAll( '.flexo-appearance__preview-bar [data-width]' ).forEach( function ( btn ) {
-		btn.addEventListener( 'click', function () {
-			document.querySelectorAll( '.flexo-appearance__preview-bar [data-width]' ).forEach( function ( b ) {
-				b.classList.toggle( 'is-active', b === btn );
-				b.setAttribute( 'aria-pressed', b === btn ? 'true' : 'false' );
-			} );
-			frame.style.width = btn.getAttribute( 'data-width' );
-		} );
-	} );
-
 	// Email logo from the media library.
 	var logoBtn = form.querySelector( '.flexo-choose-logo' );
 	if ( logoBtn && window.wp && window.wp.media ) {
@@ -237,12 +211,12 @@
 		} );
 	} );
 
-	var reset = document.querySelector( '.flexo-reset-appearance' );
-	if ( reset ) {
-		reset.addEventListener( 'click', function ( e ) {
-			if ( ! window.confirm( cfg.i18n.resetSure ) ) {
-				e.preventDefault();
-			}
+	// The email colour's code next to its picker.
+	var emailColor = form.querySelector( '#fb-email-color' );
+	var emailHex = form.querySelector( '[data-flexo-email-hex]' );
+	if ( emailColor && emailHex ) {
+		emailColor.addEventListener( 'input', function () {
+			emailHex.textContent = emailColor.value.toUpperCase();
 		} );
 	}
 

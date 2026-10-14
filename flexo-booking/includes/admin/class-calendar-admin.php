@@ -52,8 +52,6 @@ class Flexo_Booking_Calendar_Admin {
 		if ( false === strpos( $hook, self::SLUG ) ) {
 			return;
 		}
-		wp_enqueue_style( 'flexo-booking-admin', FLEXO_BOOKING_URL . 'assets/css/admin.css', array(), FLEXO_BOOKING_VERSION );
-		wp_enqueue_style( 'flexo-booking-admin-calendar', FLEXO_BOOKING_URL . 'assets/css/admin-calendar.css', array(), FLEXO_BOOKING_VERSION );
 		wp_enqueue_script( 'flexo-booking-admin-calendar', FLEXO_BOOKING_URL . 'assets/js/admin-calendar.js', array(), FLEXO_BOOKING_VERSION, true );
 		wp_localize_script(
 			'flexo-booking-admin-calendar',
@@ -235,26 +233,13 @@ class Flexo_Booking_Calendar_Admin {
 
 		if ( $blocked ) {
 			$kind  = 'blocked';
-			$icon  = '⛔';
 			$label = __( 'Blocked', 'flexo-booking' ) . ( $b['notes'] ? ' – ' . $b['notes'] : '' );
 			$type  = __( 'Blocked dates (by staff)', 'flexo-booking' );
 		} else {
 			$kind  = $b['status'];
-			$icons = array(
-				'confirmed'        => '✓',
-				'pending'          => '⏳',
-				'cancelled'        => '⊘',
-				'pending_payment'  => '💳',
-				'awaiting_payment' => '🏦',
-			);
-			$icon  = isset( $icons[ $b['status'] ] ) ? $icons[ $b['status'] ] : '•';
-			$label = ( $staff ? '✎ ' : '' ) . $name;
+			$label = $name;
 			$type  = $staff ? __( 'Booking added by staff', 'flexo-booking' ) : __( 'Website booking', 'flexo-booking' );
 		}
-		if ( $conflict ) {
-			$icon = '⚠ ' . $icon;
-		}
-
 		$lines = array(
 			array( __( 'Type', 'flexo-booking' ), $type ),
 			array( __( 'Reference', 'flexo-booking' ), $b['reference'] ),
@@ -311,6 +296,7 @@ class Flexo_Booking_Calendar_Admin {
 				'label'   => __( 'Cancel booking', 'flexo-booking' ),
 				'url'     => self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'cancelled' ) ),
 				'confirm' => __( 'Cancel this booking? The guest will be notified by email.', 'flexo-booking' ),
+				'danger'  => true,
 			);
 		}
 		if ( $blocked ) {
@@ -318,6 +304,7 @@ class Flexo_Booking_Calendar_Admin {
 				'label'   => __( 'Remove block', 'flexo-booking' ),
 				'url'     => self::action_url( 'flexo_booking_delete', $b['id'] ),
 				'confirm' => __( 'Remove this block? The dates become available again.', 'flexo-booking' ),
+				'danger'  => true,
 			);
 		}
 		if ( ! $blocked ) {
@@ -337,7 +324,6 @@ class Flexo_Booking_Calendar_Admin {
 			'conflict' => $conflict,
 			'start'    => $b['check_in'],
 			'end'      => $b['check_out'],
-			'icon'     => $icon,
 			'label'    => $label,
 			'title'    => $type . ': ' . $name . ', ' . Flexo_Booking_Dates::display( $b['check_in'] ) . ' – ' . Flexo_Booking_Dates::display( $b['check_out'] ) . ' (' . Flexo_Booking_Bookings::status_label( $b['status'] ) . ')',
 			'dialog'   => array(
@@ -384,7 +370,6 @@ class Flexo_Booking_Calendar_Admin {
 			'conflict' => (bool) $event['conflict'],
 			'start'    => $event['date_from'],
 			'end'      => $event['date_to'],
-			'icon'     => $conflict ? '⚠ ⇄' : '⇄',
 			'label'    => $name,
 			'title'    => ( $event['conflict'] ? __( 'Conflict', 'flexo-booking' ) . ' – ' : '' ) . __( 'External booking', 'flexo-booking' ) . ': ' . $name . ', ' . Flexo_Booking_Dates::display( $event['date_from'] ) . ' – ' . Flexo_Booking_Dates::display( $event['date_to'] ),
 			'dialog'   => array(
@@ -403,7 +388,6 @@ class Flexo_Booking_Calendar_Admin {
 			'conflict' => false,
 			'start'    => $closure['date_from'],
 			'end'      => Flexo_Booking_Dates::add_days( $closure['date_to'], 1 ),
-			'icon'     => '✕',
 			'label'    => '' !== $closure['label'] ? $closure['label'] : __( 'Closed', 'flexo-booking' ),
 			'title'    => __( 'Closed', 'flexo-booking' ) . ': ' . $message,
 			'dialog'   => array(
@@ -452,7 +436,7 @@ class Flexo_Booking_Calendar_Admin {
 		}
 		if ( Flexo_Booking_ICal::enabled() ) {
 			foreach ( Flexo_Booking_ICal::events_between( Flexo_Booking_Dates::add_days( $today, -1 ), Flexo_Booking_Dates::add_days( $today, 1 ) ) as $event ) {
-				$text = '⇄ ' . $event['calendar_name'] . ' – ' . get_the_title( $event['room_id'] );
+				$text = $event['calendar_name'] . ' – ' . get_the_title( $event['room_id'] );
 				if ( $event['date_from'] === $today ) {
 					$out['arrivals'][] = $text;
 				} elseif ( $event['date_to'] === $today ) {
@@ -521,15 +505,35 @@ class Flexo_Booking_Calendar_Admin {
 			</div>
 
 			<div class="fbc-toolbar">
-				<a class="button" href="<?php echo esc_url( $url( $first->modify( '-1 month' )->format( 'Y-m' ) ) ); ?>" aria-label="<?php esc_attr_e( 'Previous month', 'flexo-booking' ); ?>">‹</a>
-				<a class="button" href="<?php echo esc_url( $url( wp_date( 'Y-m' ) ) ); ?>"><?php esc_html_e( 'Today', 'flexo-booking' ); ?></a>
-				<a class="button" href="<?php echo esc_url( $url( $first->modify( '+1 month' )->format( 'Y-m' ) ) ); ?>" aria-label="<?php esc_attr_e( 'Next month', 'flexo-booking' ); ?>">›</a>
+				<span class="fbc-toolbar__months">
+					<a class="button fx-icon-btn fx-icon-btn--bordered" href="<?php echo esc_url( $url( $first->modify( '-1 month' )->format( 'Y-m' ) ) ); ?>" aria-label="<?php esc_attr_e( 'Previous month', 'flexo-booking' ); ?>" data-fx-tip="<?php esc_attr_e( 'Previous month', 'flexo-booking' ); ?>"><?php echo Flexo_Booking_Admin_UI::icon( 'chevron-left' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?></a>
+					<a class="button" href="<?php echo esc_url( $url( wp_date( 'Y-m' ) ) ); ?>"><?php esc_html_e( 'Today', 'flexo-booking' ); ?></a>
+					<a class="button fx-icon-btn fx-icon-btn--bordered" href="<?php echo esc_url( $url( $first->modify( '+1 month' )->format( 'Y-m' ) ) ); ?>" aria-label="<?php esc_attr_e( 'Next month', 'flexo-booking' ); ?>" data-fx-tip="<?php esc_attr_e( 'Next month', 'flexo-booking' ); ?>"><?php echo Flexo_Booking_Admin_UI::icon( 'chevron-right' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?></a>
+				</span>
 				<h2 class="fbc-month"><?php echo esc_html( wp_date( 'F Y', $first->getTimestamp() ) ); ?></h2>
-				<form method="get" class="fbc-options">
-					<input type="hidden" name="page" value="<?php echo esc_attr( self::SLUG ); ?>">
-					<input type="hidden" name="month" value="<?php echo esc_attr( $month ); ?>">
-					<label><input type="checkbox" name="cancelled" value="1" <?php checked( $show_cancelled ); ?> onchange="this.form.submit()"> <?php esc_html_e( 'Show cancelled', 'flexo-booking' ); ?></label>
-				</form>
+				<div class="fbc-options">
+					<form method="get" class="fbc-options__form">
+						<input type="hidden" name="page" value="<?php echo esc_attr( self::SLUG ); ?>">
+						<input type="hidden" name="month" value="<?php echo esc_attr( $month ); ?>">
+						<label class="fx-check"><input type="checkbox" name="cancelled" value="1" <?php checked( $show_cancelled ); ?> onchange="this.form.submit()"> <?php esc_html_e( 'Show cancelled', 'flexo-booking' ); ?></label>
+					</form>
+					<?php if ( $data['rows'] ) : ?>
+						<span class="fbc-scrollers" hidden>
+							<button type="button" class="button fx-icon-btn fx-icon-btn--bordered" data-fbc-scroll="-1" aria-label="<?php esc_attr_e( 'Earlier days', 'flexo-booking' ); ?>" data-fx-tip="<?php esc_attr_e( 'Earlier days', 'flexo-booking' ); ?>"><?php echo Flexo_Booking_Admin_UI::icon( 'chevron-left' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?></button>
+							<button type="button" class="button fx-icon-btn fx-icon-btn--bordered" data-fbc-scroll="1" aria-label="<?php esc_attr_e( 'Later days', 'flexo-booking' ); ?>" data-fx-tip="<?php esc_attr_e( 'Later days', 'flexo-booking' ); ?>" data-fx-tip-end><?php echo Flexo_Booking_Admin_UI::icon( 'chevron-right' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?></button>
+						</span>
+						<?php
+						echo Flexo_Booking_UI::seg_buttons_html( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in the helper.
+							array(
+								array( 'label' => __( 'Grid', 'flexo-booking' ), 'icon' => 'grid', 'pressed' => true, 'attrs' => array( 'data-fbc-view' => 'grid' ) ),
+								array( 'label' => __( 'Agenda', 'flexo-booking' ), 'icon' => 'agenda', 'attrs' => array( 'data-fbc-view' => 'agenda' ) ),
+							),
+							__( 'Calendar view', 'flexo-booking' ),
+							'fbc-views'
+						);
+						?>
+					<?php endif; ?>
+				</div>
 			</div>
 
 			<?php if ( ! $data['rows'] ) : ?>
@@ -596,7 +600,7 @@ class Flexo_Booking_Calendar_Admin {
 										style="grid-column: <?php echo (int) $item['col'][0]; ?> / <?php echo (int) $item['col'][1]; ?>; grid-row: <?php echo (int) ( $item['lane'] + 1 ); ?>"
 										title="<?php echo esc_attr( $item['title'] ); ?>"
 										data-dialog="<?php echo esc_attr( wp_json_encode( $item['dialog'] ) ); ?>">
-										<span class="fbc-item__icon" aria-hidden="true"><?php echo esc_html( $item['icon'] ); ?></span>
+										<span class="fbc-item__icon" aria-hidden="true"></span>
 										<span class="fbc-item__label"><?php echo esc_html( $item['label'] ); ?></span>
 										<span class="screen-reader-text"><?php echo esc_html( $item['title'] ); ?></span>
 									</button>
@@ -606,38 +610,91 @@ class Flexo_Booking_Calendar_Admin {
 					<?php endforeach; ?>
 				</div>
 			</div>
+			<?php self::agenda( $data ); ?>
 			<?php endif; ?>
 
 			<ul class="fbc-legend" aria-label="<?php esc_attr_e( 'Legend', 'flexo-booking' ); ?>">
-				<li><span class="fbc-swatch fbc-item--confirmed">✓</span> <?php esc_html_e( 'Confirmed', 'flexo-booking' ); ?></li>
-				<li><span class="fbc-swatch fbc-item--pending">⏳</span> <?php esc_html_e( 'Pending (waiting for you)', 'flexo-booking' ); ?></li>
+				<li><span class="fbc-swatch fbc-item--confirmed" aria-hidden="true"></span> <?php esc_html_e( 'Confirmed', 'flexo-booking' ); ?></li>
+				<li><span class="fbc-swatch fbc-item--pending" aria-hidden="true"></span> <?php esc_html_e( 'Pending (waiting for you)', 'flexo-booking' ); ?></li>
 				<?php if ( Flexo_Booking_Features::is_enabled( 'online_payment' ) ) : ?>
-					<li><span class="fbc-swatch fbc-item--pending_payment">💳</span> <?php esc_html_e( 'Held while the guest pays by card', 'flexo-booking' ); ?></li>
+					<li><span class="fbc-swatch fbc-item--pending_payment" aria-hidden="true"></span> <?php esc_html_e( 'Held while the guest pays by card', 'flexo-booking' ); ?></li>
 				<?php endif; ?>
 				<?php if ( Flexo_Booking_Features::is_enabled( 'bank_transfer' ) ) : ?>
-					<li><span class="fbc-swatch fbc-item--awaiting_payment">🏦</span> <?php esc_html_e( 'Waiting for bank transfer', 'flexo-booking' ); ?></li>
+					<li><span class="fbc-swatch fbc-item--awaiting_payment" aria-hidden="true"></span> <?php esc_html_e( 'Waiting for bank transfer', 'flexo-booking' ); ?></li>
 				<?php endif; ?>
-				<li><span class="fbc-swatch fbc-item--confirmed">✎</span> <?php esc_html_e( 'Added by staff', 'flexo-booking' ); ?></li>
-				<li><span class="fbc-swatch fbc-item--blocked">⛔</span> <?php esc_html_e( 'Blocked by staff', 'flexo-booking' ); ?></li>
+				<li><span class="fbc-swatch fbc-item--confirmed fbc-item--staff" aria-hidden="true"></span> <?php esc_html_e( 'Added by staff', 'flexo-booking' ); ?></li>
+				<li><span class="fbc-swatch fbc-item--blocked" aria-hidden="true"></span> <?php esc_html_e( 'Blocked by staff', 'flexo-booking' ); ?></li>
 				<?php if ( $data['sync'] ) : ?>
-					<li><span class="fbc-swatch fbc-item--external">⇄</span> <?php esc_html_e( 'From an external calendar (Booking.com, Airbnb…)', 'flexo-booking' ); ?></li>
-					<li><span class="fbc-swatch fbc-item--conflict">⚠</span> <?php esc_html_e( 'Conflict – possible double booking', 'flexo-booking' ); ?></li>
+					<li><span class="fbc-swatch fbc-item--external" aria-hidden="true"></span> <?php esc_html_e( 'From an external calendar (Booking.com, Airbnb…)', 'flexo-booking' ); ?></li>
+					<li><span class="fbc-swatch fbc-item--conflict" aria-hidden="true"></span> <?php esc_html_e( 'Conflict – possible double booking', 'flexo-booking' ); ?></li>
 				<?php endif; ?>
-				<li><span class="fbc-swatch fbc-item--closed">✕</span> <?php esc_html_e( 'Closed period', 'flexo-booking' ); ?></li>
+				<li><span class="fbc-swatch fbc-item--closed" aria-hidden="true"></span> <?php esc_html_e( 'Closed period', 'flexo-booking' ); ?></li>
 				<?php if ( $show_cancelled ) : ?>
-					<li><span class="fbc-swatch fbc-item--cancelled">⊘</span> <?php esc_html_e( 'Cancelled', 'flexo-booking' ); ?></li>
+					<li><span class="fbc-swatch fbc-item--cancelled" aria-hidden="true"></span> <?php esc_html_e( 'Cancelled', 'flexo-booking' ); ?></li>
 				<?php endif; ?>
-				<li><span class="fbc-swatch fbc-swatch--full"></span> <?php esc_html_e( 'Fully booked day', 'flexo-booking' ); ?></li>
+				<li><span class="fbc-swatch fbc-swatch--full fbc-swatch--free" aria-hidden="true">2/3</span> <?php esc_html_e( 'Rooms still free of the total (rooms with several identical units)', 'flexo-booking' ); ?></li>
+				<li><span class="fbc-swatch fbc-swatch--full" aria-hidden="true">0</span> <?php esc_html_e( 'Fully booked day', 'flexo-booking' ); ?></li>
 				<li class="flexo-muted"><?php esc_html_e( 'Click a booking for details, or an empty day to add a booking or block dates.', 'flexo-booking' ); ?></li>
 			</ul>
 
 			<dialog class="fbc-dialog" id="fbc-dialog" aria-labelledby="fbc-dialog-title">
-				<form method="dialog" class="fbc-dialog__close"><button class="button-link" aria-label="<?php esc_attr_e( 'Close', 'flexo-booking' ); ?>">✕</button></form>
+				<form method="dialog" class="fbc-dialog__close"><button class="button fx-icon-btn" aria-label="<?php esc_attr_e( 'Close', 'flexo-booking' ); ?>"><?php echo Flexo_Booking_Admin_UI::icon( 'x' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?></button></form>
 				<h2 id="fbc-dialog-title"></h2>
 				<p class="fbc-dialog__sub"></p>
 				<dl class="fbc-dialog__lines"></dl>
 				<div class="fbc-dialog__actions"></div>
 			</dialog>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Agenda: the month's bookings as a list by arrival date (phones, or
+	 * when chosen). The same details open as from the grid.
+	 */
+	private static function agenda( array $data ) {
+		$items = array();
+		foreach ( $data['rows'] as $row ) {
+			foreach ( $row['items'] as $item ) {
+				$item['room'] = $row['room']['title'];
+				$items[]      = $item;
+			}
+		}
+		usort(
+			$items,
+			static function ( $a, $b ) {
+				return strcmp( $a['start'] . $a['room'], $b['start'] . $b['room'] );
+			}
+		);
+		$by_day = array();
+		foreach ( $items as $item ) {
+			$day              = max( $item['start'], $data['first'] );
+			$by_day[ $day ][] = $item;
+		}
+		?>
+		<div class="fbc-agenda" hidden>
+			<?php if ( ! $by_day ) : ?>
+				<p class="flexo-empty-note"><?php esc_html_e( 'No bookings this month.', 'flexo-booking' ); ?></p>
+			<?php endif; ?>
+			<?php foreach ( $by_day as $day => $day_items ) : ?>
+				<section class="fbc-agenda__day<?php echo $day === $data['today'] ? ' is-today' : ''; ?>">
+					<h3 class="fbc-agenda__date"><?php echo esc_html( wp_date( 'l, ' . get_option( 'date_format' ), ( new DateTimeImmutable( $day, wp_timezone() ) )->getTimestamp() ) ); ?></h3>
+					<ul class="fbc-agenda__list">
+						<?php foreach ( $day_items as $item ) : ?>
+							<li>
+								<button type="button" class="fbc-agenda__item" data-kind="<?php echo esc_attr( $item['kind'] ); ?>"<?php echo $item['staff'] ? ' data-staff' : ''; ?><?php echo $item['conflict'] ? ' data-conflict' : ''; ?> data-dialog="<?php echo esc_attr( wp_json_encode( $item['dialog'] ) ); ?>">
+									<span class="fbc-item__icon" aria-hidden="true"></span>
+									<span class="fbc-agenda__text">
+										<strong><?php echo esc_html( $item['label'] ); ?></strong>
+										<span><?php echo esc_html( $item['room'] . ' · ' . Flexo_Booking_Dates::display( $item['start'] ) . ' – ' . Flexo_Booking_Dates::display( $item['end'] ) ); ?></span>
+									</span>
+									<span class="screen-reader-text"><?php echo esc_html( $item['title'] ); ?></span>
+								</button>
+							</li>
+						<?php endforeach; ?>
+					</ul>
+				</section>
+			<?php endforeach; ?>
 		</div>
 		<?php
 	}

@@ -1,7 +1,7 @@
 <?php
 /**
  * Settings → Health: is everything a hotel needs working? Each check says
- * ✓ / ⚠ / ✕ and how to fix it. "Copy system report" gives FlexoHotels
+ * OK / check / problem and how to fix it. "Copy system report" gives FlexoHotels
  * support the technical facts – without keys, bank details or guest data.
  *
  * @package FlexoBooking
@@ -381,9 +381,9 @@ class Flexo_Booking_Health {
 	public static function render() {
 		$checks = self::checks();
 		$icons  = array(
-			'ok'      => '✓',
-			'warning' => '⚠',
-			'error'   => '✕',
+			'ok'      => 'check',
+			'warning' => 'alert',
+			'error'   => 'x',
 		);
 		$words  = array(
 			'ok'      => __( 'OK', 'flexo-booking' ),
@@ -405,7 +405,7 @@ class Flexo_Booking_Health {
 		<ul class="flexo-health">
 			<?php foreach ( $checks as $check ) : ?>
 				<li class="flexo-health__item flexo-health__item--<?php echo esc_attr( $check['status'] ); ?>" id="flexo-health-<?php echo esc_attr( $check['id'] ); ?>">
-					<span class="flexo-health__icon" aria-hidden="true"><?php echo esc_html( $icons[ $check['status'] ] ); ?></span>
+					<span class="flexo-health__icon" aria-hidden="true"><?php echo Flexo_Booking_Admin_UI::icon( $icons[ $check['status'] ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?></span>
 					<div class="flexo-health__body">
 						<strong><?php echo esc_html( $check['title'] ); ?></strong>
 						<span class="screen-reader-text"><?php echo esc_html( $words[ $check['status'] ] ); ?>:</span>

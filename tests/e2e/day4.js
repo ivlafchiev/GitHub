@@ -69,6 +69,19 @@ async function fillGuest( p, name, email ) {
 	await p.fill( '[name=guest_phone]', '+359 888 555 666' );
 }
 
+// Saving: forms marked data-fx-save="ajax" save in the background (no page
+// load; the form fires "fx:saved"), the others submit and load a new page.
+async function save( p, sel = '#submit' ) {
+	const ajax = await p.$eval( sel, ( b ) => !! b.form && 'ajax' === b.form.getAttribute( 'data-fx-save' ) ).catch( () => false );
+	if ( ! ajax ) {
+		await Promise.all( [ p.waitForNavigation(), p.click( sel ) ] );
+		return;
+	}
+	const done = p.evaluate( () => new Promise( ( r ) => document.addEventListener( 'fx:saved', () => r(), { once: true } ) ) );
+	await p.click( sel );
+	await done;
+}
+
 ( async () => {
 	const browser = await chromium.launch();
 	const errors = [];
@@ -170,7 +183,7 @@ async function fillGuest( p, name, email ) {
 	section( 'Admin: booking with invoice and consent' );
 	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-list' );
 	const row = admin.locator( '.flexo-bookings-table tr', { hasText: ref } );
-	ok( ( await row.textContent() ).includes( 'Invoice' ), 'list: 🧾 Invoice badge' );
+	ok( ( await row.textContent() ).includes( 'Invoice' ), 'list: Invoice badge' );
 	await Promise.all( [ admin.waitForNavigation(), row.locator( 'strong a' ).click() ] );
 	const view = await text( admin, '.flexo-booking-view' );
 	ok( view.includes( 'Invoice requested' ) && view.includes( 'Lake Tours OOD' ) && view.includes( '201234567' ) && view.includes( 'BG201234567' ), 'details: invoice (company, EIK, VAT)' );
@@ -187,7 +200,8 @@ async function fillGuest( p, name, email ) {
 	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-list' );
 	await Promise.all( [ admin.waitForNavigation(), admin.locator( '.flexo-bookings-table tr', { hasText: ref } ).locator( 'strong a' ).click() ] );
 	// Day 6: the page's own dialog says what will happen before anything is removed.
-	await admin.click( '.flexo-booking-view a:has-text("Remove personal data")' );
+	await admin.click( '.flexo-actionbar [aria-haspopup]' );
+	await admin.click( '.flexo-actionbar [role=menuitem]:has-text("Remove personal data")' );
 	await Promise.all( [ admin.waitForNavigation(), admin.click( '.flexo-dialog [data-yes]' ) ] );
 	const anon = await text( admin, '.flexo-booking-view' );
 	ok( anon.includes( 'personal data was removed' ) && anon.includes( 'Guest (personal data removed)' ) && ! anon.includes( 'Elena' ) && ! anon.includes( 'Lake Tours' ), 'name, contact and invoice removed' );
@@ -195,7 +209,7 @@ async function fillGuest( p, name, email ) {
 
 	section( 'Admin: settings and emails' );
 	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-settings' );
-	const tabs = await text( admin, '.nav-tab-wrapper' );
+	const tabs = await text( admin, '.fx-subnav__groups' );
 	// Day 6: invoices share a tab with taxes; emails have their own menu entry.
 	ok( [ 'Privacy', 'invoices', 'Tracking' ].every( ( t ) => tabs.includes( t ) ), 'tabs: Privacy, Taxes & invoices, Tracking' );
 	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-settings&tab=emails' );
@@ -203,7 +217,7 @@ async function fillGuest( p, name, email ) {
 	ok( ! ( await admin.content() ).includes( 'email_awaiting_deposit' ), 'Day 5 payment templates not shown yet' );
 	await admin.check( '[name="flexo_booking_settings[email_review_enabled]"][type=checkbox]' );
 	await admin.fill( '[name="flexo_booking_settings[review_link]"]', 'https://g.page/r/lake/review' );
-	await Promise.all( [ admin.waitForNavigation(), admin.click( '#submit' ) ] );
+	await save( admin );
 	ok( 'https://g.page/r/lake/review' === await admin.inputValue( '[name="flexo_booking_settings[review_link]"]' ) && await admin.isChecked( '[name="flexo_booking_settings[email_review_enabled]"][type=checkbox]' ), 'review request switched on with its link' );
 	await admin.fill( '[name=test_email]', 'owner@hotel.test' );
 	await Promise.all( [ admin.waitForNavigation(), admin.click( '#flexo-test-email [type=submit]' ) ] );
@@ -224,8 +238,8 @@ async function fillGuest( p, name, email ) {
 	for ( const f of [ 'privacy_consent', 'invoice_request', 'tracking' ] ) {
 		await admin.uncheck( `input[name="features[]"][value=${ f }]` );
 	}
-	await Promise.all( [ admin.waitForNavigation(), admin.click( '#submit' ) ] );
-	const tabsOff = await text( admin, '.nav-tab-wrapper' );
+	await save( admin );
+	const tabsOff = await text( admin, '.fx-subnav__groups' );
 	ok( ! tabsOff.includes( 'Privacy' ) && ! tabsOff.includes( 'Invoices' ) && ! tabsOff.includes( 'Tracking' ), 'tabs gone' );
 	await guest.evaluate( () => sessionStorage.removeItem( 'e2e_events' ) );
 	await toDetails( guest, 60, 62 );
@@ -239,7 +253,7 @@ async function fillGuest( p, name, email ) {
 	for ( const f of [ 'privacy_consent', 'invoice_request', 'tracking' ] ) {
 		await admin.check( `input[name="features[]"][value=${ f }]` );
 	}
-	await Promise.all( [ admin.waitForNavigation(), admin.click( '#submit' ) ] );
+	await save( admin );
 
 	ok( errors.length === 0, 'no JavaScript errors' + ( errors.length ? ': ' + errors.join( '; ' ) : '' ) );
 	console.log( `\nResult: ${ pass } passed, ${ fail } failed` );

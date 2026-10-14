@@ -154,9 +154,14 @@ const look = ( frame ) => frame.evaluate( () => {
 	ok( inFrame.pageBg === now.pageBg && inFrame.card === 'rgb(255, 250, 243)' && inFrame.title === 'rgb(43, 29, 18)', 'preview shows the saved look (background, card, heading)' );
 	ok( 'rgb(138, 75, 42)' === inFrame.button, 'preview: the same button colour as the real page' );
 	ok( 0 === await frame.locator( '.flexo-preview-bar' ).count(), 'no sample-booking bar in the preview' );
-	await box.locator( '#fb-look-booking-card_bg' ).fill( '#e3f2fd' );
-	await box.locator( '#fb-look-booking-text' ).fill( '#cccccc' );
-	await box.locator( '#fb-look-booking-text' ).blur();
+	for ( const [ id, value ] of [ [ '#fb-look-booking-card_bg', '#e3f2fd' ], [ '#fb-look-booking-text', '#cccccc' ] ] ) {
+		const field = box.locator( '.fx-color', { has: a.locator( id ) } );
+		if ( ! await field.locator( id ).isVisible() ) {
+			await field.locator( '.fx-seg__opt', { hasText: 'Custom' } ).click();
+		}
+		await field.locator( id ).fill( value );
+		await field.locator( id ).blur();
+	}
 	await a.waitForTimeout( 1500 );
 	const live = await look( a.frames().find( ( f ) => /flexo_booking_preview=booking/.test( f.url() ) ) );
 	ok( 'rgb(227, 242, 253)' === live.card, 'a change shows in the preview at once' );
@@ -177,8 +182,9 @@ const look = ( frame ) => frame.evaluate( () => {
 	if ( ! await a.locator( '[data-flexo-remember="booking"]' ).evaluate( ( d ) => d.open ) ) {
 		await a.click( '[data-flexo-remember="booking"] > summary' );
 	}
-	a.once( 'dialog', ( d ) => d.accept() );
-	await Promise.all( [ a.waitForNavigation(), a.locator( '[data-flexo-look="booking"] [data-flexo-look-reset]' ).click() ] );
+	await a.locator( '[data-flexo-look="booking"] [data-flexo-look-reset]' ).click();
+	await a.waitForSelector( 'dialog[open]' );
+	await Promise.all( [ a.waitForNavigation(), a.click( 'dialog[open] [data-yes]' ) ] );
 	ok( '1' === wp( 'echo Flexo_Booking_System_Pages::get( "booking" )["appearance"]["use_global"];' ), '"Reset to global": the page uses the global look again' );
 	await p.goto( BASE + '/booking/', { waitUntil: 'load' } );
 	now = await look( p );
@@ -190,6 +196,14 @@ const look = ( frame ) => frame.evaluate( () => {
 	await a.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-appearance', { waitUntil: 'load' } );
 	await a.click( '.flexo-appearance__preview-bar [data-scene*="flexo_booking_preview=booking"]' );
 	await a.frameLocator( '#flexo-appearance-frame' ).locator( '.flexo-sp-booking' ).waitFor();
+	// The page colours are in the folded "Booking and Thank You pages" group; switch the colour to "Custom".
+	const pagesGroup = a.locator( 'details.flexo-appearance__group', { has: a.locator( '#fb-appearance-page-bg' ) } );
+	if ( ! await pagesGroup.evaluate( ( d ) => d.open ) ) {
+		await pagesGroup.locator( 'summary' ).click();
+	}
+	if ( ! await a.isVisible( '#fb-appearance-page-bg' ) ) {
+		await a.locator( '.fx-color', { has: a.locator( '#fb-appearance-page-bg' ) } ).locator( '.fx-seg__opt', { hasText: 'Custom' } ).click();
+	}
 	await a.fill( '#fb-appearance-page-bg', '#dff0e6' );
 	await a.locator( '#fb-appearance-page-bg' ).blur();
 	await a.waitForTimeout( 1500 );

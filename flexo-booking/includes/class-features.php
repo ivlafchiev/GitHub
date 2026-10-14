@@ -323,7 +323,7 @@ class Flexo_Booking_Features {
 		$modes   = self::booking_modes();
 		$mode    = self::booking_mode();
 		?>
-		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="flexo-features">
+		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="flexo-features" id="flexo-features-form" data-fx-save="reload">
 			<input type="hidden" name="action" value="flexo_booking_save_features">
 			<?php wp_nonce_field( 'flexo_booking_save_features' ); ?>
 
@@ -378,7 +378,7 @@ class Flexo_Booking_Features {
 				</section>
 			<?php endforeach; ?>
 
-			<?php submit_button( __( 'Save features', 'flexo-booking' ) ); ?>
+			<?php Flexo_Booking_UI::save_bar( array( 'label' => __( 'Save features', 'flexo-booking' ) ) ); ?>
 		</form>
 		<?php
 	}

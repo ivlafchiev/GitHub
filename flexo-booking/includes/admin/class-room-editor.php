@@ -737,15 +737,10 @@ class Flexo_Booking_Room_Editor {
 
 	public static function assets( $hook ) {
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		if ( 'edit.php' === $hook && $screen && Flexo_Booking_Rooms::POST_TYPE === $screen->post_type ) {
-			wp_enqueue_style( 'flexo-booking-admin-room', FLEXO_BOOKING_URL . 'assets/css/admin-room.css', array( 'flexo-booking-admin' ), FLEXO_BOOKING_VERSION );
-			return;
-		}
 		if ( ! in_array( $hook, array( 'post.php', 'post-new.php' ), true ) || ! self::is_room_screen() ) {
 			return;
 		}
 		wp_enqueue_media();
-		wp_enqueue_style( 'flexo-booking-admin-room', FLEXO_BOOKING_URL . 'assets/css/admin-room.css', array( 'flexo-booking-admin' ), FLEXO_BOOKING_VERSION );
 		wp_enqueue_script( 'flexo-booking-admin-room', FLEXO_BOOKING_URL . 'assets/js/admin-room.js', array( 'jquery', 'jquery-ui-sortable' ), FLEXO_BOOKING_VERSION, true );
 		wp_localize_script(
 			'flexo-booking-admin-room',

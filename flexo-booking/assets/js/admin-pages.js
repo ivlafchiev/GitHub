@@ -146,14 +146,6 @@
 
 	/* A page's own Appearance and its live preview ---------------------- */
 
-	function normalise( value ) {
-		value = String( value || '' ).trim();
-		if ( value && value.charAt( 0 ) !== '#' ) {
-			value = '#' + value;
-		}
-		return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test( value ) ? value.toLowerCase() : '';
-	}
-
 	function bindLook( box ) {
 		var key = box.getAttribute( 'data-flexo-look' );
 		var global = box.querySelector( '[data-flexo-look-global]' );
@@ -211,45 +203,6 @@
 			}, 250 );
 		}
 
-		// Colour rows: picker ↔ hex, and "Use global colour".
-		own.querySelectorAll( '.flexo-color-row' ).forEach( function ( row ) {
-			var inherit = row.querySelector( '.flexo-color-website' );
-			var picker = row.querySelector( '.flexo-color-picker' );
-			var hex = row.querySelector( '.flexo-color-hex' );
-			function sync() {
-				row.querySelector( '.flexo-color-pick' ).classList.toggle( 'is-off', inherit.checked );
-			}
-			inherit.addEventListener( 'change', function () {
-				hex.value = inherit.checked ? '' : picker.value;
-				sync();
-			} );
-			picker.addEventListener( 'input', function () {
-				hex.value = picker.value;
-				inherit.checked = false;
-				sync();
-				refresh();
-			} );
-			hex.addEventListener( 'input', function () {
-				var v = normalise( hex.value );
-				if ( v ) {
-					if ( v.length === 7 ) {
-						picker.value = v;
-					}
-					inherit.checked = false;
-					sync();
-					refresh();
-				}
-			} );
-			hex.addEventListener( 'blur', function () {
-				var v = normalise( hex.value );
-				hex.value = v;
-				inherit.checked = v === '';
-				sync();
-				refresh();
-			} );
-			sync();
-		} );
-
 		// A field shown only for one choice ("Exact width" → pixels).
 		own.querySelectorAll( '[data-flexo-show-when]' ).forEach( function ( node ) {
 			var rule = node.getAttribute( 'data-flexo-show-when' ).split( '=' );
@@ -263,20 +216,12 @@
 			update();
 		} );
 
-		// "Reset to global": forget this page's own look and save.
-		box.querySelector( '[data-flexo-look-reset]' ).addEventListener( 'click', function () {
-			if ( window.confirm( this.getAttribute( 'data-confirm' ) ) ) {
-				box.querySelector( '[data-flexo-look-reset-field]' ).value = '1';
-				var form = box.closest( 'form' );
-				if ( form.requestSubmit ) {
-					form.requestSubmit();
-				} else {
-					form.submit();
-				}
+		box.addEventListener( 'change', refresh );
+		box.addEventListener( 'input', function ( e ) {
+			if ( e.target.classList.contains( 'fx-color__hex' ) ) {
+				refresh();
 			}
 		} );
-
-		box.addEventListener( 'change', refresh );
 		frame.addEventListener( 'load', function () {
 			if ( null !== lastCss ) {
 				send( lastCss );
@@ -288,16 +233,13 @@
 		var wrap = frame.parentNode;
 		var width = 1280;
 		function fit() {
-			var scale = Math.min( 1, ( wrap.clientWidth || width ) / width );
-			frame.style.width = width + 'px';
-			frame.style.height = Math.round( 760 / scale ) + 'px';
-			frame.style.transform = scale < 1 ? 'scale(' + scale + ')' : '';
-			frame.style.marginInline = scale < 1 ? '0' : 'auto';
+			if ( window.FlexoUI && window.FlexoUI.fitFrame ) {
+				window.FlexoUI.fitFrame( wrap, frame, width );
+			}
 		}
 		box.querySelectorAll( '[data-look-width]' ).forEach( function ( btn ) {
 			btn.addEventListener( 'click', function () {
 				box.querySelectorAll( '[data-look-width]' ).forEach( function ( b ) {
-					b.classList.toggle( 'is-active', b === btn );
 					b.setAttribute( 'aria-pressed', b === btn ? 'true' : 'false' );
 				} );
 				width = parseInt( btn.getAttribute( 'data-look-width' ), 10 ) || 1280;

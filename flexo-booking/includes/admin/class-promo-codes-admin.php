@@ -13,7 +13,6 @@ class Flexo_Booking_Promo_Codes_Admin {
 
 	public static function init() {
 		add_action( 'admin_menu', array( __CLASS__, 'menu' ), 10 );
-		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'assets' ) );
 		add_action( 'admin_post_flexo_booking_save_promo', array( __CLASS__, 'handle_save' ) );
 		add_action( 'admin_post_flexo_booking_delete_promo', array( __CLASS__, 'handle_delete' ) );
 		add_action( 'admin_post_flexo_booking_toggle_promo', array( __CLASS__, 'handle_toggle' ) );
@@ -22,12 +21,6 @@ class Flexo_Booking_Promo_Codes_Admin {
 	public static function menu() {
 		if ( Flexo_Booking_Promo_Codes::enabled() ) {
 			add_submenu_page( Flexo_Booking_Admin::MENU_SLUG, __( 'Promo codes', 'flexo-booking' ), __( 'Promo codes', 'flexo-booking' ), Flexo_Booking_Admin::cap( 'prices' ), self::SLUG, array( __CLASS__, 'render' ) );
-		}
-	}
-
-	public static function assets( $hook ) {
-		if ( false !== strpos( $hook, self::SLUG ) ) {
-			Flexo_Booking_Seasons_Admin::enqueue_datepicker();
 		}
 	}
 
@@ -202,13 +195,13 @@ class Flexo_Booking_Promo_Codes_Admin {
 							</td>
 							<td>
 								<?php if ( ! $promo['active'] ) : ?>
-									<span class="flexo-status flexo-status--cancelled">○ <?php esc_html_e( 'Switched off', 'flexo-booking' ); ?></span>
+									<span class="flexo-status flexo-status--cancelled"><?php esc_html_e( 'Switched off', 'flexo-booking' ); ?></span>
 								<?php elseif ( $expired ) : ?>
-									<span class="flexo-status flexo-status--cancelled">⌛ <?php esc_html_e( 'Expired', 'flexo-booking' ); ?></span>
+									<span class="flexo-status flexo-status--cancelled"><?php esc_html_e( 'Expired', 'flexo-booking' ); ?></span>
 								<?php elseif ( $full ) : ?>
-									<span class="flexo-status flexo-status--pending">■ <?php esc_html_e( 'Fully used', 'flexo-booking' ); ?></span>
+									<span class="flexo-status flexo-status--pending"><?php esc_html_e( 'Fully used', 'flexo-booking' ); ?></span>
 								<?php else : ?>
-									<span class="flexo-status flexo-status--confirmed">✓ <?php esc_html_e( 'Active', 'flexo-booking' ); ?></span>
+									<span class="flexo-status flexo-status--confirmed"><?php esc_html_e( 'Active', 'flexo-booking' ); ?></span>
 								<?php endif; ?>
 							</td>
 							<td class="flexo-actions">

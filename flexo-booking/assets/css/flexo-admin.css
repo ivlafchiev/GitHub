@@ -1,0 +1,7027 @@
+/**
+ * Flexo Booking – admin design system (one stylesheet for every plugin screen).
+ *
+ * Loaded only on Flexo Booking screens (Flexo_Booking_Admin_UI::assets()).
+ * Every rule starts with the root class body.flexo-admin-ui and targets the
+ * plugin's own markup inside the page container (.wrap), the app bar or a
+ * layer the plugin adds to the page (.fx-layer: dialogs, menus, toasts).
+ * Nothing here targets WordPress's admin menu, admin bar, footer or bare
+ * elements outside those containers. WordPress markup that appears inside
+ * the plugin's screens (room list table, room editor boxes, notices) is
+ * styled in section 7, scoped the same way.
+ *
+ * Build screens with the components (PHP: Flexo_Booking_UI, README "Admin
+ * design system"); only genuine layout differences get screen rules (6).
+ *
+ *  1 Fonts          5 Components (alphabetical blocks, see headers)
+ *  2 Tokens         6 Screen layouts
+ *  3 Base           7 WordPress markup inside plugin screens
+ *  4 Layout         8 Responsive and motion
+ */
+
+/* 1 · Fonts ============================================================= */
+
+/* Inter (OFL), bundled: Latin + Cyrillic, never loaded from Google. */
+@font-face {
+	font-family: "Flexo UI";
+	font-style: normal;
+	font-weight: 100 900;
+	font-display: swap;
+	src: url("../fonts/inter/inter-latin-wght-normal.woff2") format("woff2");
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+	font-family: "Flexo UI";
+	font-style: normal;
+	font-weight: 100 900;
+	font-display: swap;
+	src: url("../fonts/inter/inter-latin-ext-wght-normal.woff2") format("woff2");
+	unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+	font-family: "Flexo UI";
+	font-style: normal;
+	font-weight: 100 900;
+	font-display: swap;
+	src: url("../fonts/inter/inter-cyrillic-wght-normal.woff2") format("woff2");
+	unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+/* 2 · Tokens ============================================================ */
+
+body.flexo-admin-ui {
+	/* Neutrals (cool grey). Text colours are AA on white and on gray-50. */
+	--fx-gray-0: #ffffff;
+	--fx-gray-25: #fafbfc;
+	--fx-gray-50: #f5f7f9;
+	--fx-gray-100: #edf0f3;
+	--fx-gray-200: #e1e6eb;
+	--fx-gray-300: #c9d1d9;
+	--fx-gray-400: #98a3ae;
+	--fx-gray-500: #5c6876;
+	--fx-gray-700: #3a4552;
+	--fx-gray-900: #111a24;
+
+	/* Brand (FlexoHotels teal). */
+	--fx-primary-50: #e9f4f3;
+	--fx-primary-100: #d0e8e5;
+	--fx-primary-500: #13837c;
+	--fx-primary-600: #0f6e6a;
+	--fx-primary-700: #0b5854;
+	--fx-primary-800: #08423f;
+
+	/* Feedback: text / background / border / solid. */
+	--fx-success-text: #0f6b43;
+	--fx-success-bg: #e8f6ee;
+	--fx-success-border: #a9dcc0;
+	--fx-success-solid: #16a067;
+	--fx-warning-text: #7d4a00;
+	--fx-warning-bg: #fff5e1;
+	--fx-warning-border: #f1cf8b;
+	--fx-warning-solid: #d18a10;
+	--fx-danger-text: #a51d2a;
+	--fx-danger-bg: #fdecee;
+	--fx-danger-border: #f2bcc2;
+	--fx-danger-solid: #c4303d;
+	--fx-info-text: #1c4f94;
+	--fx-info-bg: #ebf2fc;
+	--fx-info-border: #b8cff0;
+	--fx-info-solid: #2f6fd0;
+	--fx-violet-text: #5b3f9a;
+	--fx-violet-bg: #f1ecfa;
+	--fx-violet-border: #d3c6ee;
+
+	/* Semantic aliases used by the components. */
+	--fx-canvas: var(--fx-gray-50);
+	--fx-surface: var(--fx-gray-0);
+	--fx-surface-subtle: var(--fx-gray-25);
+	--fx-surface-muted: var(--fx-gray-100);
+	--fx-border: var(--fx-gray-200);
+	--fx-border-strong: var(--fx-gray-300);
+	/* Edges of fields, checkboxes and switches: at least 3:1 against the page (WCAG 1.4.11). */
+	--fx-border-control: #85909c;
+	--fx-text: var(--fx-gray-900);
+	--fx-text-secondary: var(--fx-gray-700);
+	--fx-text-muted: var(--fx-gray-500);
+	--fx-text-placeholder: #6a7582;
+	--fx-primary: var(--fx-primary-600);
+	--fx-primary-hover: var(--fx-primary-700);
+	--fx-primary-active: var(--fx-primary-800);
+	--fx-primary-soft: var(--fx-primary-50);
+	--fx-on-primary: #ffffff;
+
+	/* Type: Inter, six sizes. */
+	--fx-font: "Flexo UI", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	--fx-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+	--fx-text-xs: 12px;
+	--fx-text-sm: 13px;
+	--fx-text-md: 14px;
+	--fx-text-lg: 16px;
+	--fx-text-xl: 20px;
+	--fx-text-2xl: 24px;
+	--fx-leading-xs: 16px;
+	--fx-leading-sm: 20px;
+	--fx-leading-md: 20px;
+	--fx-leading-lg: 24px;
+	--fx-leading-xl: 28px;
+	--fx-leading-2xl: 32px;
+
+	/* Spacing (4 px base). */
+	--fx-space-1: 4px;
+	--fx-space-2: 8px;
+	--fx-space-3: 12px;
+	--fx-space-4: 16px;
+	--fx-space-5: 24px;
+	--fx-space-6: 32px;
+	--fx-space-7: 48px;
+
+	/* Radii, borders, shadows, focus. */
+	--fx-radius-sm: 6px;
+	--fx-radius-md: 8px;
+	--fx-radius-lg: 12px;
+	--fx-radius-full: 999px;
+	--fx-shadow-xs: 0 1px 2px rgba(17, 26, 36, 0.05);
+	--fx-shadow-sm: 0 4px 12px -2px rgba(17, 26, 36, 0.1), 0 2px 4px -2px rgba(17, 26, 36, 0.06);
+	--fx-shadow-lg: 0 24px 48px -12px rgba(17, 26, 36, 0.28);
+	--fx-ring-color: rgba(15, 110, 106, 0.32);
+	--fx-ring: 0 0 0 3px var(--fx-ring-color);
+	--fx-outline: 2px solid var(--fx-primary);
+
+	/* Controls. */
+	--fx-control-h: 36px;
+	--fx-control-h-sm: 32px;
+	--fx-control-h-lg: 40px;
+
+	/* Motion and layers (all below WordPress's admin bar and menus). */
+	--fx-ease: cubic-bezier(0.2, 0, 0, 1);
+	--fx-fast: 150ms;
+	--fx-slow: 200ms;
+	--fx-z-sticky: 10;
+	--fx-z-savebar: 20;
+	--fx-z-popover: 30;
+	--fx-z-toast: 40;
+
+	/* Page. */
+	--fx-page-max: 1280px;
+	--fx-page-narrow: 960px;
+	--fx-gutter: 32px;
+	--fx-label-col: 280px;
+
+	background: var(--fx-canvas);
+}
+
+/* 3 · Base (inside the plugin's containers only) ======================== */
+
+.flexo-admin-ui :is(.wrap, .flexo-appbar, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) {
+	font-family: var(--fx-font);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	font-feature-settings: "cv11", "ss01";
+}
+
+.flexo-admin-ui .wrap {
+	box-sizing: border-box;
+	max-width: var(--fx-page-max);
+	margin: var(--fx-space-5) var(--fx-gutter) var(--fx-space-6) var(--fx-space-3);
+	color: var(--fx-text);
+	font-size: var(--fx-text-md);
+	line-height: var(--fx-leading-md);
+}
+
+.flexo-admin-ui .wrap.fx-page--narrow {
+	max-width: var(--fx-page-narrow);
+}
+
+.flexo-admin-ui .wrap *,
+.flexo-admin-ui .wrap *::before,
+.flexo-admin-ui .wrap *::after {
+	box-sizing: border-box;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) :is(p, li, td, th, label, dd, dt, legend) {
+	font-size: var(--fx-text-md);
+	line-height: var(--fx-leading-md);
+}
+
+.flexo-admin-ui .wrap :is(h2, h3, h4) {
+	margin: 0;
+	padding: 0;
+	color: var(--fx-text);
+	font-weight: 600;
+	letter-spacing: -0.005em;
+}
+
+.flexo-admin-ui .wrap h2 {
+	font-size: var(--fx-text-lg);
+	line-height: var(--fx-leading-lg);
+}
+
+.flexo-admin-ui .wrap h3 {
+	font-size: var(--fx-text-md);
+	line-height: var(--fx-leading-md);
+}
+
+.flexo-admin-ui .wrap h4 {
+	font-size: var(--fx-text-sm);
+	line-height: var(--fx-leading-sm);
+}
+
+.flexo-admin-ui .wrap p {
+	margin: 0 0 var(--fx-space-3);
+}
+
+.flexo-admin-ui .wrap p:last-child {
+	margin-bottom: 0;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) a {
+	color: var(--fx-primary);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 2px;
+	transition: color var(--fx-fast) var(--fx-ease);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) a:hover {
+	color: var(--fx-primary-hover);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-appbar) a:focus {
+	box-shadow: none;
+	outline: 0;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-appbar) a:focus-visible {
+	border-radius: 4px;
+	outline: var(--fx-outline);
+	outline-offset: 2px;
+}
+
+.flexo-admin-ui .wrap :is(.description, p.description, .flexo-muted, .fx-muted) {
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+	font-style: normal;
+	line-height: var(--fx-leading-sm);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) code {
+	padding: 1px 6px;
+	border: 1px solid var(--fx-border);
+	border-radius: 4px;
+	background: var(--fx-surface-subtle);
+	color: var(--fx-text-secondary);
+	font-family: var(--fx-mono);
+	font-size: var(--fx-text-xs);
+	line-height: var(--fx-leading-xs);
+	overflow-wrap: anywhere;
+}
+
+.flexo-admin-ui .wrap hr:not(.wp-header-end) {
+	margin: var(--fx-space-5) 0;
+	border: 0;
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .wrap hr.wp-header-end {
+	margin: 0;
+	border: 0;
+	visibility: hidden;
+}
+
+.flexo-admin-ui .wrap :is(ul, ol) {
+	margin: 0;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-appbar) .flexo-icon {
+	display: inline-block;
+	flex: 0 0 auto;
+	width: 20px;
+	height: 20px;
+	vertical-align: middle;
+}
+
+.flexo-admin-ui .wrap :is(.fx-num, .flexo-num) {
+	font-variant-numeric: tabular-nums;
+	text-align: right;
+	white-space: nowrap;
+}
+
+/* Long values (emails, addresses, URLs) wrap instead of overflowing. */
+.flexo-admin-ui .wrap :is(.flexo-url, .fx-break) {
+	overflow-wrap: anywhere;
+}
+
+/* 3.1 Form controls ------------------------------------------------------ */
+
+:where(.flexo-admin-ui :is(.wrap, .fx-layer)) :is(input[type="text"], input:not([type]), input[type="email"], input[type="url"], input[type="tel"], input[type="number"], input[type="search"], input[type="password"], input[type="date"], input[type="time"], select, textarea) {
+	box-sizing: border-box;
+	max-width: 100%;
+	min-height: var(--fx-control-h);
+	margin: 0;
+	padding: 0 var(--fx-space-3);
+	border: 1px solid var(--fx-border-control);
+	border-radius: var(--fx-radius-sm);
+	background-color: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs);
+	color: var(--fx-text);
+	font-family: inherit;
+	font-size: var(--fx-text-md);
+	line-height: 1.4;
+	vertical-align: middle;
+	transition: border-color var(--fx-fast) var(--fx-ease), box-shadow var(--fx-fast) var(--fx-ease);
+}
+
+/* :not([hidden]) gives these the weight of WordPress's own ".wp-core-ui select". */
+:where(.flexo-admin-ui :is(.wrap, .fx-layer)) select:not([hidden]) {
+	max-width: 100%;
+	padding-right: 36px;
+	background-position: right 10px top 50%;
+	background-size: 16px 16px;
+	cursor: pointer;
+}
+
+:where(.flexo-admin-ui :is(.wrap, .fx-layer)) textarea:not([hidden]) {
+	width: 100%;
+	min-height: 88px;
+	padding: var(--fx-space-2) var(--fx-space-3);
+	line-height: var(--fx-leading-md);
+	resize: vertical;
+}
+
+:where(.flexo-admin-ui :is(.wrap, .fx-layer)) :is(input[type="text"], input:not([type]), input[type="email"], input[type="url"], input[type="tel"], input[type="number"], input[type="search"], input[type="password"], input[type="date"], input[type="time"], select, textarea):hover {
+	border-color: var(--fx-gray-500);
+}
+
+:where(.flexo-admin-ui :is(.wrap, .fx-layer)) :is(input[type="text"], input:not([type]), input[type="email"], input[type="url"], input[type="tel"], input[type="number"], input[type="search"], input[type="password"], input[type="date"], input[type="time"], select, textarea):focus {
+	border-color: var(--fx-primary);
+	box-shadow: var(--fx-ring);
+	outline: 2px solid transparent;
+}
+
+:where(.flexo-admin-ui :is(.wrap, .fx-layer)) :is(input, textarea)::placeholder {
+	color: var(--fx-text-placeholder);
+	opacity: 1;
+}
+
+:where(.flexo-admin-ui :is(.wrap, .fx-layer)) :is(input, select, textarea):disabled {
+	border-color: var(--fx-border);
+	background-color: var(--fx-surface-muted);
+	box-shadow: none;
+	color: var(--fx-text-muted);
+	cursor: not-allowed;
+}
+
+:where(.flexo-admin-ui :is(.wrap, .fx-layer)) input[readonly] {
+	background-color: var(--fx-surface-subtle);
+	color: var(--fx-text-secondary);
+}
+
+:where(.flexo-admin-ui :is(.wrap, .fx-layer)) :is(input, select, textarea)[aria-invalid="true"] {
+	border-color: var(--fx-danger-solid);
+}
+
+:where(.flexo-admin-ui :is(.wrap, .fx-layer)) :is(input, select, textarea)[aria-invalid="true"]:focus {
+	box-shadow: 0 0 0 3px rgba(196, 48, 61, 0.24);
+}
+
+/* Field widths: xs 80 · sm 160 · md 320 · lg 520 · full. */
+:where(.flexo-admin-ui .wrap) :is(input.tiny-text, .fx-w-xs) {
+	width: 80px;
+}
+
+:where(.flexo-admin-ui .wrap) :is(input.small-text, .fx-w-sm) {
+	width: 96px;
+}
+
+:where(.flexo-admin-ui .wrap) .fx-w-sm.fx-w-sm {
+	width: 160px;
+}
+
+:where(.flexo-admin-ui .wrap) :is(input.regular-text, select.regular-text, textarea.regular-text, .fx-w-md) {
+	width: 320px;
+}
+
+:where(.flexo-admin-ui .wrap) :is(.fx-w-lg) {
+	width: 520px;
+}
+
+:where(.flexo-admin-ui .wrap) :is(input.large-text, textarea.large-text, .fx-w-full) {
+	width: 100%;
+}
+
+/* File field: the button looks like a secondary button. */
+:where(.flexo-admin-ui .wrap) input[type="file"] {
+	max-width: 100%;
+	color: var(--fx-text-muted);
+	font-family: inherit;
+	font-size: var(--fx-text-sm);
+}
+
+:where(.flexo-admin-ui .wrap) input[type="file"]::file-selector-button {
+	height: var(--fx-control-h);
+	margin-right: var(--fx-space-3);
+	padding: 0 var(--fx-space-4);
+	border: 1px solid var(--fx-border-strong);
+	border-radius: var(--fx-radius-sm);
+	background: var(--fx-surface);
+	color: var(--fx-text);
+	font-family: inherit;
+	font-size: var(--fx-text-md);
+	font-weight: 500;
+	cursor: pointer;
+}
+
+/* Checkbox and radio: 16 px, aligned with the first line of their label. */
+:where(.flexo-admin-ui :is(.wrap, .fx-layer)) :is(input[type="checkbox"], input[type="radio"]) {
+	flex: 0 0 auto;
+	width: 16px;
+	min-width: 16px;
+	height: 16px;
+	margin: 0 var(--fx-space-2) 0 0;
+	border: 1.5px solid var(--fx-border-control);
+	background: var(--fx-surface);
+	box-shadow: none;
+	vertical-align: -3px;
+	transition: background-color var(--fx-fast) var(--fx-ease), border-color var(--fx-fast) var(--fx-ease);
+}
+
+:where(.flexo-admin-ui :is(.wrap, .fx-layer)) input[type="checkbox"] {
+	border-radius: 4px;
+}
+
+:where(.flexo-admin-ui :is(.wrap, .fx-layer)) :is(input[type="checkbox"], input[type="radio"]):hover {
+	border-color: var(--fx-primary);
+}
+
+:where(.flexo-admin-ui :is(.wrap, .fx-layer)) :is(input[type="checkbox"], input[type="radio"]):focus {
+	border-color: var(--fx-border-control);
+	box-shadow: none;
+	outline: 0;
+}
+
+:where(.flexo-admin-ui :is(.wrap, .fx-layer)) :is(input[type="checkbox"], input[type="radio"]):focus-visible {
+	border-color: var(--fx-primary);
+	box-shadow: var(--fx-ring);
+}
+
+:where(.flexo-admin-ui :is(.wrap, .fx-layer)) input[type="checkbox"]:checked {
+	border-color: var(--fx-primary);
+	background: var(--fx-primary);
+}
+
+:where(.flexo-admin-ui :is(.wrap, .fx-layer)) input[type="checkbox"]:checked::before {
+	content: "";
+	float: none;
+	display: block;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.8 8.3l2.7 2.6 5.7-5.8' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 12px 12px no-repeat;
+}
+
+:where(.flexo-admin-ui :is(.wrap, .fx-layer)) input[type="radio"]:checked {
+	border-color: var(--fx-primary);
+	background: var(--fx-surface);
+}
+
+:where(.flexo-admin-ui :is(.wrap, .fx-layer)) input[type="radio"]:checked::before {
+	content: "";
+	float: none;
+	display: block;
+	width: 8px;
+	height: 8px;
+	margin: 2.5px auto 0;
+	border-radius: 50%;
+	background: var(--fx-primary);
+}
+
+:where(.flexo-admin-ui :is(.wrap, .fx-layer)) :is(input[type="checkbox"], input[type="radio"]):disabled {
+	border-color: var(--fx-gray-300);
+	background: var(--fx-surface-muted);
+	cursor: not-allowed;
+}
+
+/* Colour input (used inside the colour field). */
+:where(.flexo-admin-ui .wrap) input[type="color"] {
+	width: var(--fx-control-h);
+	height: var(--fx-control-h);
+	padding: 3px;
+	border: 1px solid var(--fx-border-strong);
+	border-radius: var(--fx-radius-sm);
+	background: var(--fx-surface);
+	cursor: pointer;
+}
+
+/* Labels above fields (stacked form layout). */
+.flexo-admin-ui :is(.wrap, .fx-layer) :is(.fx-label, .flexo-field-label) {
+	display: block;
+	margin: 0 0 var(--fx-space-1);
+	color: var(--fx-text);
+	font-size: var(--fx-text-md);
+	font-weight: 500;
+	line-height: var(--fx-leading-md);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .fx-required {
+	margin-left: 2px;
+	color: var(--fx-danger-text);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .fx-help {
+	margin: var(--fx-space-1) 0 0;
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+	line-height: var(--fx-leading-sm);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .fx-error {
+	display: flex;
+	gap: var(--fx-space-1);
+	margin: var(--fx-space-1) 0 0;
+	color: var(--fx-danger-text);
+	font-size: var(--fx-text-sm);
+	line-height: var(--fx-leading-sm);
+}
+
+/* A field with a unit before or after it: [EUR | 120] or [3 | nights]. */
+.flexo-admin-ui .wrap :is(.fx-input-group, .flexo-input-unit) {
+	display: inline-flex;
+	align-items: stretch;
+	max-width: 100%;
+	vertical-align: middle;
+}
+
+.flexo-admin-ui .wrap :is(.fx-input-group, .flexo-input-unit) > :is(input, select) {
+	position: relative;
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.flexo-admin-ui .wrap :is(.fx-input-group, .flexo-input-unit) > :is(input, select):not(:last-child) {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+.flexo-admin-ui .wrap :is(.fx-input-group, .flexo-input-unit) > :is(input, select):not(:first-child) {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+.flexo-admin-ui .wrap :is(.fx-input-group, .flexo-input-unit) > :is(input, select):focus {
+	z-index: 1;
+}
+
+.flexo-admin-ui .wrap :is(.fx-input-group__addon, .flexo-input-unit > span) {
+	display: inline-flex;
+	flex: 0 0 auto;
+	align-items: center;
+	padding: 0 var(--fx-space-3);
+	border: 1px solid var(--fx-border-strong);
+	background: var(--fx-surface-subtle);
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+	white-space: nowrap;
+}
+
+.flexo-admin-ui .wrap :is(.fx-input-group__addon, .flexo-input-unit > span):first-child {
+	border-right: 0;
+	border-radius: var(--fx-radius-sm) 0 0 var(--fx-radius-sm);
+}
+
+.flexo-admin-ui .wrap :is(.fx-input-group__addon, .flexo-input-unit > span):last-child {
+	border-left: 0;
+	border-radius: 0 var(--fx-radius-sm) var(--fx-radius-sm) 0;
+}
+
+/* Several small fields and words on one line ("Minimum [2] Maximum [30] nights"). */
+.flexo-admin-ui .wrap :is(.fx-inline, .flexo-inline-form) {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-2) var(--fx-space-3);
+}
+
+.flexo-admin-ui .wrap :is(.fx-inline, .flexo-inline-form) > label {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--fx-space-2);
+}
+
+/* A vertical list of checkboxes or radios with their labels. */
+.flexo-admin-ui .wrap .fx-checks {
+	display: grid;
+	gap: var(--fx-space-2);
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.flexo-admin-ui .wrap :is(.fx-check, .fx-checks > label, .flexo-inline-check) {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--fx-space-2);
+	margin: 0;
+	color: var(--fx-text);
+	line-height: var(--fx-leading-md);
+	cursor: pointer;
+}
+
+.flexo-admin-ui .wrap :is(.fx-check, .fx-checks > label, .flexo-inline-check) > :is(input[type="checkbox"], input[type="radio"]) {
+	margin: 2px 0 0;
+}
+
+/* 3.2 Buttons ----------------------------------------------------------- */
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--fx-space-2);
+	box-sizing: border-box;
+	min-height: var(--fx-control-h);
+	height: auto;
+	margin: 0;
+	padding: 0 var(--fx-space-4);
+	border: 1px solid var(--fx-border-strong);
+	border-radius: var(--fx-radius-sm);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs);
+	color: var(--fx-text);
+	font-family: inherit;
+	font-size: var(--fx-text-md);
+	font-weight: 500;
+	line-height: 1.2;
+	text-decoration: none;
+	text-shadow: none;
+	vertical-align: middle;
+	white-space: nowrap;
+	cursor: pointer;
+	transition: background-color var(--fx-fast) var(--fx-ease), border-color var(--fx-fast) var(--fx-ease), color var(--fx-fast) var(--fx-ease), box-shadow var(--fx-fast) var(--fx-ease);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) :is(input, button).button {
+	display: inline-block;
+	line-height: calc(var(--fx-control-h) - 2px);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) button.button:has(> svg, > .flexo-icon) {
+	display: inline-flex;
+	line-height: 1.2;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .button:hover {
+	border-color: var(--fx-gray-400);
+	background: var(--fx-surface-subtle);
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .button:active {
+	background: var(--fx-surface-muted);
+	transform: none;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .button:focus {
+	border-color: var(--fx-border-strong);
+	box-shadow: var(--fx-shadow-xs);
+	outline: 0;
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .button:focus-visible {
+	box-shadow: var(--fx-ring);
+	outline: 0;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .button .flexo-icon {
+	width: 16px;
+	height: 16px;
+	margin-left: -2px;
+}
+
+/* Primary */
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .button-primary,
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .button-primary:focus {
+	border-color: var(--fx-primary);
+	background: var(--fx-primary);
+	color: var(--fx-on-primary);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .button-primary:hover {
+	border-color: var(--fx-primary-hover);
+	background: var(--fx-primary-hover);
+	color: var(--fx-on-primary);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .button-primary:active {
+	border-color: var(--fx-primary-active);
+	background: var(--fx-primary-active);
+	color: var(--fx-on-primary);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .button-primary:focus-visible {
+	box-shadow: 0 0 0 2px var(--fx-surface), 0 0 0 4px var(--fx-primary);
+}
+
+/* Tertiary (text button) */
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) :is(.button-link, .fx-btn-tertiary) {
+	min-height: auto;
+	padding: 0;
+	border: 0;
+	background: none;
+	box-shadow: none;
+	color: var(--fx-primary);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .button.fx-btn-tertiary {
+	min-height: var(--fx-control-h);
+	padding: 0 var(--fx-space-3);
+	border-color: transparent;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) :is(.button-link, .fx-btn-tertiary):hover {
+	border-color: transparent;
+	background: var(--fx-primary-soft);
+	color: var(--fx-primary-hover);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .button-link:hover {
+	background: none;
+	text-decoration: underline;
+}
+
+/* Danger: filled (confirmations) and quiet (menus, secondary places). */
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .button.fx-btn-danger {
+	border-color: var(--fx-danger-solid);
+	background: var(--fx-danger-solid);
+	color: #fff;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .button.fx-btn-danger:hover {
+	border-color: var(--fx-danger-text);
+	background: var(--fx-danger-text);
+	color: #fff;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .button.fx-btn-danger:focus-visible {
+	box-shadow: 0 0 0 2px var(--fx-surface), 0 0 0 4px var(--fx-danger-solid);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) :is(.button.flexo-danger, .button-link-delete, .button.fx-btn-danger-quiet) {
+	border-color: var(--fx-border-strong);
+	background: var(--fx-surface);
+	color: var(--fx-danger-text);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) :is(.button.flexo-danger, .button-link-delete, .button.fx-btn-danger-quiet):hover {
+	border-color: var(--fx-danger-border);
+	background: var(--fx-danger-bg);
+	color: var(--fx-danger-text);
+}
+
+/* Sizes */
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog) .button.button-small {
+	min-height: var(--fx-control-h-sm);
+	padding: 0 var(--fx-space-3);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog) :is(input, button).button.button-small {
+	line-height: calc(var(--fx-control-h-sm) - 2px);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog) .button.button-hero,
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog) .button.button-large {
+	min-height: var(--fx-control-h-lg);
+	padding: 0 var(--fx-space-5);
+}
+
+/* Disabled and loading */
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .button:is([disabled], :disabled, .disabled, [aria-disabled="true"]),
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .button:is([disabled], :disabled, .disabled, [aria-disabled="true"]):is(:hover, :focus, :active) {
+	border-color: var(--fx-border);
+	background: var(--fx-surface-muted);
+	box-shadow: none;
+	color: var(--fx-text-placeholder);
+	cursor: not-allowed;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog) .button.is-loading,
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog) .button.is-loading:is(:hover, :focus) {
+	position: relative;
+	color: transparent;
+	pointer-events: none;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog) .button.is-loading::after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 16px;
+	height: 16px;
+	margin: -8px 0 0 -8px;
+	border: 2px solid currentColor;
+	border-color: var(--fx-text-muted) transparent var(--fx-text-muted) var(--fx-text-muted);
+	border-radius: 50%;
+	animation: fx-spin 0.8s linear infinite;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog) .button-primary.is-loading::after {
+	border-color: #fff transparent #fff #fff;
+}
+
+@keyframes fx-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* Icon button: square, with a tooltip/label. */
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-appbar, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .fx-icon-btn {
+	display: inline-grid;
+	flex: 0 0 auto;
+	place-items: center;
+	width: var(--fx-control-h);
+	height: var(--fx-control-h);
+	margin: 0;
+	padding: 0;
+	border: 1px solid transparent;
+	border-radius: var(--fx-radius-sm);
+	background: transparent;
+	color: var(--fx-text-secondary);
+	text-decoration: none;
+	cursor: pointer;
+	transition: background-color var(--fx-fast) var(--fx-ease), color var(--fx-fast) var(--fx-ease);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-appbar, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .fx-icon-btn:hover {
+	background: var(--fx-surface-muted);
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-appbar, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .fx-icon-btn:focus {
+	box-shadow: none;
+	outline: 0;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-appbar, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .fx-icon-btn:focus-visible {
+	box-shadow: var(--fx-ring);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-appbar, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .fx-icon-btn--bordered {
+	border-color: var(--fx-border-strong);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-appbar, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) .fx-icon-btn .flexo-icon {
+	width: 18px;
+	height: 18px;
+}
+
+/* A row of buttons. */
+.flexo-admin-ui :is(.wrap, .fx-layer) :is(.fx-actions, .flexo-actionbar, .flexo-dialog__actions, .fbc-dialog__actions, .flexo-wizard__buttons, .flexo-blank__actions) {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-2);
+	margin: 0;
+	padding: 0;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .fx-actions--end {
+	justify-content: flex-end;
+}
+
+/* Hidden stays hidden, whatever display a component sets. */
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) :is(.button, .fx-seg, .fx-menu, .flexo-switch, .fx-inline, .fx-datefield, .fx-row, .fx-card, .flexo-input-unit)[hidden] {
+	display: none;
+}
+
+/* 4 · Layout ============================================================ */
+
+/* 4.1 Page header: back link · title · one-line description · actions. */
+.flexo-admin-ui .wrap .flexo-page-head {
+	margin: 0 0 var(--fx-space-5);
+}
+
+.flexo-admin-ui .wrap .flexo-page-head__back {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--fx-space-1);
+	margin: 0 0 var(--fx-space-2);
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.flexo-admin-ui .wrap .flexo-page-head__back:hover {
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .wrap .flexo-page-head__back .flexo-icon {
+	width: 16px;
+	height: 16px;
+}
+
+.flexo-admin-ui .wrap .flexo-page-head__row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--fx-space-3) var(--fx-space-5);
+}
+
+.flexo-admin-ui .wrap .flexo-page-head__main {
+	display: flex;
+	flex: 1 1 360px;
+	align-items: flex-start;
+	min-width: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-page-head__icon {
+	display: none;
+}
+
+.flexo-admin-ui .wrap .flexo-page-head__text {
+	min-width: 0;
+}
+
+.flexo-admin-ui .wrap h1.flexo-page-head__title {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-2) var(--fx-space-3);
+	margin: 0;
+	padding: 0;
+	color: var(--fx-text);
+	font-size: var(--fx-text-2xl);
+	font-weight: 600;
+	line-height: var(--fx-leading-2xl);
+	letter-spacing: -0.015em;
+}
+
+.flexo-admin-ui .wrap .flexo-page-head__intro {
+	max-width: 72ch;
+	margin: var(--fx-space-1) 0 0;
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-md);
+	line-height: var(--fx-leading-md);
+}
+
+.flexo-admin-ui .wrap .flexo-page-head__actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .flexo-page-head__actions .page-title-action {
+	position: static;
+	top: auto;
+	margin: 0;
+}
+
+/* Help link next to a title. */
+.flexo-admin-ui .wrap .flexo-help-link {
+	display: inline-grid;
+	place-items: center;
+	width: 22px;
+	height: 22px;
+	border: 1px solid var(--fx-border-strong);
+	border-radius: 50%;
+	background: var(--fx-surface);
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-xs);
+	font-weight: 600;
+	letter-spacing: 0;
+	line-height: 1;
+	text-decoration: none;
+}
+
+.flexo-admin-ui .wrap .flexo-help-link:hover {
+	border-color: var(--fx-primary);
+	color: var(--fx-primary);
+}
+
+/* 4.2 Section tabs (one style everywhere: underlined). */
+.flexo-admin-ui .wrap .flexo-section-nav,
+.flexo-admin-ui .wrap .fx-tabs {
+	display: flex;
+	gap: var(--fx-space-1);
+	margin: var(--fx-space-5) 0 0;
+	padding: 0;
+	border-bottom: 1px solid var(--fx-border);
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scrollbar-width: none;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-section-nav, .fx-tabs)::-webkit-scrollbar {
+	display: none;
+}
+
+.flexo-admin-ui .wrap .flexo-section-nav::after {
+	display: none;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-section-nav .nav-tab, .fx-tabs__tab) {
+	float: none;
+	display: inline-flex;
+	flex: 0 0 auto;
+	align-items: center;
+	gap: var(--fx-space-2);
+	min-height: 44px;
+	margin: 0 0 -1px;
+	padding: 0 var(--fx-space-3);
+	border: 0;
+	border-bottom: 2px solid transparent;
+	border-radius: 0;
+	background: transparent;
+	color: var(--fx-text-muted);
+	font-family: inherit;
+	font-size: var(--fx-text-md);
+	font-weight: 500;
+	line-height: var(--fx-leading-md);
+	text-decoration: none;
+	white-space: nowrap;
+	cursor: pointer;
+	transition: color var(--fx-fast) var(--fx-ease), border-color var(--fx-fast) var(--fx-ease);
+}
+
+.flexo-admin-ui .wrap :is(.flexo-section-nav .nav-tab, .fx-tabs__tab):hover {
+	border-bottom-color: var(--fx-border-strong);
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .wrap :is(.flexo-section-nav .nav-tab-active, .fx-tabs__tab[aria-selected="true"], .fx-tabs__tab.is-active),
+.flexo-admin-ui .wrap :is(.flexo-section-nav .nav-tab-active, .fx-tabs__tab[aria-selected="true"], .fx-tabs__tab.is-active):hover {
+	border-bottom-color: var(--fx-primary);
+	background: transparent;
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .wrap :is(.flexo-section-nav .nav-tab, .fx-tabs__tab):focus {
+	box-shadow: none;
+	outline: 0;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-section-nav .nav-tab, .fx-tabs__tab):focus-visible {
+	border-radius: var(--fx-radius-sm) var(--fx-radius-sm) 0 0;
+	box-shadow: inset 0 0 0 2px var(--fx-primary);
+}
+
+/* 4.3 Settings sub-navigation (left column) and its layout. */
+.flexo-admin-ui .wrap:has(> .fx-subnav) {
+	display: grid;
+	grid-template-columns: 216px minmax(0, 1fr);
+	grid-auto-rows: min-content;
+	column-gap: var(--fx-space-6);
+	align-items: start;
+}
+
+.flexo-admin-ui .wrap:has(> .fx-subnav) > * {
+	grid-column: 2;
+	min-width: 0;
+}
+
+.flexo-admin-ui .wrap:has(> .fx-subnav) > .flexo-page-head {
+	grid-column: 1 / -1;
+}
+
+.flexo-admin-ui .wrap:has(> .fx-subnav) > .fx-subnav {
+	grid-column: 1;
+	grid-row: 2 / span 40;
+	position: sticky;
+	top: calc(32px + var(--fx-space-5));
+}
+
+.flexo-admin-ui .wrap .fx-subnav {
+	display: flex;
+	flex-direction: column;
+	gap: var(--fx-space-4);
+	margin: 0;
+}
+
+.flexo-admin-ui .wrap .fx-subnav__title {
+	margin: 0 0 var(--fx-space-1);
+	padding: 0 var(--fx-space-3);
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-xs);
+	font-weight: 600;
+	line-height: var(--fx-leading-xs);
+}
+
+.flexo-admin-ui .wrap .fx-subnav ul {
+	display: grid;
+	gap: 2px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.flexo-admin-ui .wrap .fx-subnav li {
+	margin: 0;
+}
+
+.flexo-admin-ui .wrap .fx-subnav__link {
+	display: flex;
+	align-items: center;
+	gap: var(--fx-space-2);
+	min-height: 36px;
+	padding: 0 var(--fx-space-3);
+	border-radius: var(--fx-radius-sm);
+	color: var(--fx-text-secondary);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.flexo-admin-ui .wrap .fx-subnav__link:hover {
+	background: var(--fx-surface-muted);
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .wrap .fx-subnav__link[aria-current="page"] {
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs), inset 0 0 0 1px var(--fx-border);
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .wrap .fx-subnav__link[aria-current="page"]::before {
+	content: "";
+	width: 3px;
+	height: 16px;
+	margin-left: -6px;
+	border-radius: 2px;
+	background: var(--fx-primary);
+}
+
+.flexo-admin-ui .wrap .fx-subnav__select {
+	display: none;
+}
+
+.flexo-admin-ui .wrap .fx-subnav__groups {
+	display: flex;
+	flex-direction: column;
+	gap: var(--fx-space-4);
+}
+
+/* 4.4 Cards. */
+.flexo-admin-ui .wrap :is(.flexo-card, .flexo-tools-card, .fx-card) {
+	box-sizing: border-box;
+	max-width: none;
+	margin: 0 0 var(--fx-space-5);
+	padding: var(--fx-space-5);
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-lg);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs);
+}
+
+.flexo-admin-ui .wrap :is(.flexo-card, .flexo-tools-card, .fx-card):last-child {
+	margin-bottom: 0;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-card, .flexo-tools-card, .fx-card) > h2:first-child {
+	margin: 0 0 var(--fx-space-1);
+}
+
+.flexo-admin-ui .wrap :is(.flexo-card, .flexo-tools-card, .fx-card) > h2:first-child + :is(p, .description) {
+	margin: 0 0 var(--fx-space-4);
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+	line-height: var(--fx-leading-sm);
+}
+
+.flexo-admin-ui .wrap :is(.flexo-card__head, .fx-card__head) {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--fx-space-2) var(--fx-space-4);
+	margin: 0 0 var(--fx-space-4);
+}
+
+.flexo-admin-ui .wrap :is(.flexo-card__head, .fx-card__head) h2,
+.flexo-admin-ui .wrap .fx-card__title {
+	display: flex;
+	align-items: center;
+	gap: var(--fx-space-2);
+	margin: 0;
+	font-size: var(--fx-text-lg);
+	font-weight: 600;
+	line-height: var(--fx-leading-lg);
+}
+
+.flexo-admin-ui .wrap :is(.flexo-card__head, .fx-card__head) h2 .flexo-icon {
+	width: 18px;
+	height: 18px;
+	color: var(--fx-text-muted);
+}
+
+.flexo-admin-ui .wrap .fx-card__desc {
+	margin: var(--fx-space-1) 0 0;
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+	line-height: var(--fx-leading-sm);
+}
+
+.flexo-admin-ui .wrap .fx-card__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .fx-card--flush {
+	padding: 0;
+	overflow: hidden;
+}
+
+.flexo-admin-ui .wrap .fx-card--flush > :is(.fx-card__head, .flexo-card__head) {
+	margin: 0;
+	padding: var(--fx-space-5) var(--fx-space-5) var(--fx-space-4);
+}
+
+/* Collapsible card (<details class="fx-card fx-card--collapsible">). */
+.flexo-admin-ui .wrap details.fx-card {
+	padding: 0;
+}
+
+.flexo-admin-ui .wrap details.fx-card > summary {
+	display: flex;
+	align-items: center;
+	gap: var(--fx-space-3);
+	min-height: 56px;
+	padding: var(--fx-space-4) var(--fx-space-5);
+	border-radius: var(--fx-radius-lg);
+	cursor: pointer;
+	list-style: none;
+}
+
+.flexo-admin-ui .wrap details.fx-card > summary::-webkit-details-marker {
+	display: none;
+}
+
+.flexo-admin-ui .wrap details.fx-card > summary:hover {
+	background: var(--fx-surface-subtle);
+}
+
+.flexo-admin-ui .wrap details.fx-card > summary:focus {
+	outline: 0;
+}
+
+.flexo-admin-ui .wrap details.fx-card > summary:focus-visible {
+	box-shadow: inset 0 0 0 2px var(--fx-primary);
+}
+
+.flexo-admin-ui .wrap details.fx-card > summary .fx-card__summary-text {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.flexo-admin-ui .wrap details.fx-card > summary::after {
+	content: "";
+	flex: 0 0 auto;
+	width: 16px;
+	height: 16px;
+	background: var(--fx-text-muted);
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+	transition: transform var(--fx-fast) var(--fx-ease);
+}
+
+.flexo-admin-ui .wrap details.fx-card[open] > summary::after {
+	transform: rotate(180deg);
+}
+
+.flexo-admin-ui .wrap details.fx-card[open] > summary {
+	border-bottom: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-lg) var(--fx-radius-lg) 0 0;
+}
+
+.flexo-admin-ui .wrap details.fx-card > .fx-card__body {
+	padding: var(--fx-space-2) var(--fx-space-5) var(--fx-space-5);
+}
+
+/* 4.5 Settings rows: label + description left, control right. */
+.flexo-admin-ui .wrap .fx-rows {
+	margin: 0;
+}
+
+.flexo-admin-ui .wrap .fx-row {
+	display: grid;
+	grid-template-columns: minmax(0, var(--fx-label-col)) minmax(0, 1fr);
+	gap: var(--fx-space-2) var(--fx-space-6);
+	align-items: start;
+	padding: var(--fx-space-4) 0;
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .wrap :is(.fx-rows, .fx-card__body, .flexo-card, .fx-card) > .fx-row:first-child,
+.flexo-admin-ui .wrap .fx-card__head + .fx-row,
+.flexo-admin-ui .wrap .fx-rows > .fx-row:first-child {
+	padding-top: 0;
+	border-top: 0;
+}
+
+.flexo-admin-ui .wrap .fx-row:last-child {
+	padding-bottom: 0;
+}
+
+.flexo-admin-ui .wrap .fx-row[hidden] {
+	display: none;
+}
+
+.flexo-admin-ui .wrap .fx-row__head {
+	min-width: 0;
+	padding-top: 7px;
+}
+
+.flexo-admin-ui .wrap .fx-row__label {
+	display: block;
+	margin: 0;
+	color: var(--fx-text);
+	font-size: var(--fx-text-md);
+	font-weight: 500;
+	line-height: var(--fx-leading-md);
+}
+
+.flexo-admin-ui .wrap .fx-row__desc {
+	margin: 2px 0 0;
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+	line-height: var(--fx-leading-sm);
+}
+
+.flexo-admin-ui .wrap .fx-row__control {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--fx-space-2);
+	min-width: 0;
+}
+
+.flexo-admin-ui .wrap .fx-row__control > :is(input[type="text"], input[type="email"], input[type="url"], input[type="number"], select, textarea).fx-w-full {
+	align-self: stretch;
+}
+
+.flexo-admin-ui .wrap .fx-row__control > .fx-help {
+	margin: 0;
+}
+
+.flexo-admin-ui .wrap .fx-row--stack {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+/* WordPress's form-table inside a card looks like the rows above. Fixed
+   layout: long select options or URLs can't push the table wider than the card. */
+.flexo-admin-ui .wrap .form-table {
+	width: 100%;
+	table-layout: fixed;
+	margin: 0;
+	border: 0;
+	border-collapse: collapse;
+	background: none;
+	box-shadow: none;
+}
+
+.flexo-admin-ui .wrap .form-table > tbody > tr > th,
+.flexo-admin-ui .wrap .form-table > tr > th {
+	width: var(--fx-label-col);
+	padding: var(--fx-space-4) var(--fx-space-6) var(--fx-space-4) 0;
+	color: var(--fx-text);
+	font-size: var(--fx-text-md);
+	font-weight: 500;
+	line-height: var(--fx-leading-md);
+	vertical-align: top;
+}
+
+.flexo-admin-ui .wrap .form-table > tbody > tr > th > label {
+	font-weight: 500;
+}
+
+.flexo-admin-ui .wrap .form-table > tbody > tr > td,
+.flexo-admin-ui .wrap .form-table > tr > td {
+	padding: var(--fx-space-3) 0;
+	vertical-align: top;
+}
+
+.flexo-admin-ui .wrap .form-table > tbody > tr + tr > :is(th, td) {
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .wrap .form-table > tbody > tr:first-child > th {
+	padding-top: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .form-table > tbody > tr:first-child > td {
+	padding-top: 0;
+}
+
+.flexo-admin-ui .wrap .form-table > tbody > tr:last-child > :is(th, td) {
+	padding-bottom: 0;
+}
+
+.flexo-admin-ui .wrap .form-table td > p {
+	margin: var(--fx-space-2) 0 0;
+}
+
+.flexo-admin-ui .wrap .form-table td > p:first-child {
+	margin-top: 0;
+}
+
+.flexo-admin-ui .wrap .form-table td > .description,
+.flexo-admin-ui .wrap .form-table td > p.description {
+	margin-top: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .form-table td fieldset label {
+	margin: 0;
+	line-height: var(--fx-leading-md);
+}
+
+/* Lists of choices in a settings row: one per line. */
+.flexo-admin-ui .wrap .form-table td :is(fieldset > label.flexo-feature-choice, > label.flexo-feature-choice) {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--fx-space-2);
+	margin: 0 0 var(--fx-space-2);
+	line-height: var(--fx-leading-md);
+}
+
+.flexo-admin-ui .wrap .form-table td :is(fieldset > label.flexo-feature-choice, > label.flexo-feature-choice) > input:is([type="checkbox"], [type="radio"]) {
+	flex: 0 0 auto;
+	margin: 2px 0 0;
+}
+
+.flexo-admin-ui .wrap .form-table tr[hidden] {
+	display: none;
+}
+
+/* "Show advanced settings": hidden rows. */
+.flexo-admin-ui .wrap :is(tr, .fx-row).flexo-advanced {
+	display: none;
+}
+
+.flexo-admin-ui.flexo-advanced-on .wrap tr.flexo-advanced {
+	display: table-row;
+}
+
+.flexo-admin-ui.flexo-advanced-on .wrap .fx-row.flexo-advanced {
+	display: grid;
+}
+
+/* Narrow cards (side-by-side layouts, phones): label above the control. */
+.flexo-admin-ui .wrap :is(.fx-card, .flexo-card, .flexo-tools-card) {
+	container: fx-card / inline-size;
+}
+
+@container fx-card (max-width: 620px) {
+	.flexo-admin-ui .wrap .fx-row {
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--fx-space-2);
+	}
+
+	.flexo-admin-ui .wrap .fx-row__head {
+		padding-top: 0;
+	}
+
+	.flexo-admin-ui .wrap .form-table:not(.flexo-detail-table) > tbody > tr > :is(th, td) {
+		display: block;
+		width: auto;
+	}
+
+	.flexo-admin-ui .wrap .form-table:not(.flexo-detail-table) > tbody > tr > th {
+		padding: var(--fx-space-4) 0 var(--fx-space-1);
+	}
+
+	.flexo-admin-ui .wrap .form-table:not(.flexo-detail-table) > tbody > tr > td {
+		padding: 0 0 var(--fx-space-4);
+		border-top: 0;
+	}
+}
+
+/* 4.6 Grids. */
+.flexo-admin-ui .wrap .fx-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+	gap: var(--fx-space-4);
+}
+
+.flexo-admin-ui .wrap .fx-grid--2 {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.flexo-admin-ui .wrap .fx-grid--3 {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.flexo-admin-ui .wrap .fx-stack {
+	display: flex;
+	flex-direction: column;
+	gap: var(--fx-space-5);
+}
+
+.flexo-admin-ui .wrap .fx-stack > * {
+	margin: 0;
+}
+
+.flexo-admin-ui .wrap .fx-section-title {
+	margin: var(--fx-space-6) 0 var(--fx-space-3);
+	font-size: var(--fx-text-lg);
+	font-weight: 600;
+	line-height: var(--fx-leading-lg);
+}
+
+.flexo-admin-ui .wrap .fx-section-title:first-child {
+	margin-top: 0;
+}
+
+.flexo-admin-ui .wrap .fx-section-desc,
+.flexo-admin-ui .wrap .flexo-tab-intro {
+	max-width: 72ch;
+	margin: calc(-1 * var(--fx-space-2)) 0 var(--fx-space-4);
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-md);
+}
+
+.flexo-admin-ui .wrap .flexo-tab-intro {
+	margin-top: 0;
+}
+
+/* 4.7 Sticky save bar: in the form's flow (reserves its own space). */
+.flexo-admin-ui .wrap :is(.fx-savebar, form p.submit) {
+	position: sticky;
+	bottom: 0;
+	z-index: var(--fx-z-savebar);
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--fx-space-3);
+	margin: var(--fx-space-5) calc(-1 * var(--fx-space-3)) 0;
+	padding: var(--fx-space-3);
+	border: 1px solid var(--fx-border);
+	border-bottom: 0;
+	border-radius: var(--fx-radius-lg) var(--fx-radius-lg) 0 0;
+	background: var(--fx-surface);
+	box-shadow: 0 -6px 16px -10px rgba(17, 26, 36, 0.18);
+}
+
+.flexo-admin-ui .wrap :is(.flexo-card, .flexo-tools-card, .fx-card, .flexo-dialog) form p.submit {
+	position: static;
+	margin: var(--fx-space-4) 0 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	box-shadow: none;
+	justify-content: flex-start;
+}
+
+.flexo-admin-ui .wrap .fx-savebar__status {
+	display: flex;
+	flex: 1 1 auto;
+	align-items: center;
+	gap: var(--fx-space-2);
+	min-width: 0;
+	margin: 0;
+	padding-left: var(--fx-space-1);
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .fx-savebar__dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--fx-gray-300);
+}
+
+.flexo-admin-ui .wrap .fx-savebar.is-dirty .fx-savebar__status {
+	color: var(--fx-text);
+	font-weight: 500;
+}
+
+.flexo-admin-ui .wrap .fx-savebar.is-dirty .fx-savebar__dot {
+	background: var(--fx-warning-solid);
+}
+
+.flexo-admin-ui .wrap .fx-savebar__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap :is(.fx-savebar, form p.submit) .button {
+	min-height: var(--fx-control-h-lg);
+}
+
+.flexo-admin-ui .wrap :is(.fx-savebar, form p.submit) :is(input, button).button {
+	line-height: calc(var(--fx-control-h-lg) - 2px);
+}
+
+/* 5 · Components ======================================================== */
+
+/* 5.1 Badges and status pills (same colours everywhere, icon + label). */
+.flexo-admin-ui :is(.wrap, .fx-layer, .fbc-dialog) :is(.flexo-badge, .flexo-status, .fx-badge, .flexo-chip, .flexo-count, .fbc-count) {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	min-height: 22px;
+	padding: 0 var(--fx-space-2);
+	border-radius: var(--fx-radius-full);
+	background: var(--fx-surface-muted);
+	color: var(--fx-text-secondary);
+	font-size: var(--fx-text-xs);
+	font-weight: 500;
+	line-height: var(--fx-leading-xs);
+	white-space: nowrap;
+	vertical-align: middle;
+	text-decoration: none;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .fbc-dialog) :is(.flexo-chip, .fbc-count) {
+	justify-content: center;
+	min-width: 22px;
+	font-variant-numeric: tabular-nums;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .flexo-count {
+	justify-content: center;
+	min-width: 20px;
+	min-height: 20px;
+	padding: 0 6px;
+	background: var(--fx-danger-solid);
+	color: #fff;
+	font-weight: 600;
+}
+
+/* Status icon drawn as a mask (keeps markup unchanged). */
+.flexo-admin-ui :is(.wrap, .fx-layer, .fbc-dialog) .flexo-status::before {
+	content: "";
+	flex: 0 0 auto;
+	width: 12px;
+	height: 12px;
+	border-radius: 0;
+	background: currentColor;
+	-webkit-mask: var(--fx-status-icon, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3C/svg%3E")) center / contain no-repeat;
+	mask: var(--fx-status-icon, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3C/svg%3E")) center / contain no-repeat;
+}
+
+body.flexo-admin-ui {
+	--fx-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+	--fx-icon-clock: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8.5'/%3E%3Cpath d='M12 7.5V12l3 2'/%3E%3C/svg%3E");
+	--fx-icon-card: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5.5' width='18' height='13' rx='2'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
+	--fx-icon-bank: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 9.5 12 4l9 5.5M5 10v7M9.5 10v7M14.5 10v7M19 10v7M3.5 20h17'/%3E%3C/svg%3E");
+	--fx-icon-lock: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='10.5' width='14' height='10' rx='2'/%3E%3Cpath d='M8 10.5V8a4 4 0 0 1 8 0v2.5'/%3E%3C/svg%3E");
+	--fx-icon-x: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6 6 18'/%3E%3C/svg%3E");
+	--fx-icon-alert: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.3 4.5 2.9 17.5A2 2 0 0 0 4.6 20.5h14.8a2 2 0 0 0 1.7-3L13.7 4.5a2 2 0 0 0-3.4 0z'/%3E%3Cpath d='M12 9.5v4M12 17h.01'/%3E%3C/svg%3E");
+	--fx-icon-arrows: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 4v13M3.5 13.5 7 17l3.5-3.5M17 20V7M13.5 10.5 17 7l3.5 3.5'/%3E%3C/svg%3E");
+	--fx-icon-pen: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20h4L19 9l-4-4L4 16z'/%3E%3C/svg%3E");
+	--fx-icon-globe: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8.5'/%3E%3Cpath d='M3.5 12h17M12 3.5c2.3 2.3 3.5 5.2 3.5 8.5s-1.2 6.2-3.5 8.5c-2.3-2.3-3.5-5.2-3.5-8.5s1.2-6.2 3.5-8.5z'/%3E%3C/svg%3E");
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .fbc-dialog) :is(.flexo-status--confirmed, .flexo-badge--ok, .flexo-badge--paid, .flexo-badge--promo, .fx-badge--success) {
+	--fx-status-icon: var(--fx-icon-check);
+	background: var(--fx-success-bg);
+	color: var(--fx-success-text);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .fbc-dialog) :is(.flexo-status--pending, .flexo-status--awaiting_payment, .flexo-badge--warning, .flexo-badge--pay, .flexo-badge--invoice, .fx-badge--warning) {
+	--fx-status-icon: var(--fx-icon-clock);
+	background: var(--fx-warning-bg);
+	color: var(--fx-warning-text);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .fbc-dialog) .flexo-status--awaiting_payment {
+	--fx-status-icon: var(--fx-icon-bank);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .fbc-dialog) :is(.flexo-status--pending_payment, .flexo-badge--website, .fx-badge--info) {
+	--fx-status-icon: var(--fx-icon-card);
+	background: var(--fx-info-bg);
+	color: var(--fx-info-text);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .fbc-dialog) .flexo-badge--website {
+	--fx-status-icon: var(--fx-icon-globe);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .fbc-dialog) :is(.flexo-status--blocked, .flexo-badge--blocked) {
+	--fx-status-icon: var(--fx-icon-lock);
+	background: var(--fx-gray-100);
+	color: var(--fx-gray-700);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .fbc-dialog) :is(.flexo-badge--external, .flexo-badge--staff, .fx-badge--violet) {
+	--fx-status-icon: var(--fx-icon-arrows);
+	background: var(--fx-violet-bg);
+	color: var(--fx-violet-text);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .fbc-dialog) .flexo-badge--staff {
+	--fx-status-icon: var(--fx-icon-pen);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .fbc-dialog) :is(.flexo-status--cancelled, .flexo-status--expired, .flexo-badge--muted, .fx-badge--muted) {
+	--fx-status-icon: var(--fx-icon-x);
+	background: var(--fx-gray-100);
+	color: var(--fx-gray-500);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .fbc-dialog) :is(.flexo-status--error, .flexo-badge--conflict, .flexo-badge--unpaid, .fx-badge--danger) {
+	--fx-status-icon: var(--fx-icon-alert);
+	background: var(--fx-danger-bg);
+	color: var(--fx-danger-text);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .flexo-badge--unpaid {
+	--fx-status-icon: var(--fx-icon-clock);
+}
+
+/* Badges with their own icon in the markup don't get a second one. */
+.flexo-admin-ui :is(.wrap, .fx-layer) .flexo-badge :is(svg, .flexo-icon) {
+	width: 12px;
+	height: 12px;
+}
+
+/* 5.2 Notices (WordPress notices inside the plugin's pages, compact). */
+.flexo-admin-ui .wrap :is(.notice, div.updated, div.error) {
+	position: relative;
+	display: block;
+	margin: 0 0 var(--fx-space-4);
+	padding: var(--fx-space-3) var(--fx-space-4) var(--fx-space-3) 44px;
+	border: 1px solid var(--fx-info-border);
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-info-bg);
+	box-shadow: none;
+	color: var(--fx-text);
+	font-size: var(--fx-text-sm);
+	line-height: var(--fx-leading-sm);
+}
+
+.flexo-admin-ui .wrap :is(.notice, div.updated, div.error)::before {
+	content: "";
+	position: absolute;
+	top: 14px;
+	left: var(--fx-space-4);
+	width: 16px;
+	height: 16px;
+	background: var(--fx-info-text);
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 11v5M12 8h.01'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 11v5M12 8h.01'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* Notices from other plugins that bring their own icon (e.g. Elementor's): no second icon. */
+.flexo-admin-ui .wrap .notice:has(> [class*="__aside"], > [class*="-icon"]:first-child) {
+	display: flex;
+	gap: var(--fx-space-3);
+	padding-left: var(--fx-space-4);
+}
+
+.flexo-admin-ui .wrap .notice:has(> [class*="__aside"], > [class*="-icon"]:first-child)::before {
+	display: none;
+}
+
+.flexo-admin-ui .wrap :is(.notice, div.updated, div.error) :is(p, li) {
+	margin: 0 0 var(--fx-space-1);
+	padding: 0;
+	font-size: var(--fx-text-sm);
+	line-height: var(--fx-leading-sm);
+}
+
+.flexo-admin-ui .wrap :is(.notice, div.updated, div.error) :is(p, li):last-child {
+	margin-bottom: 0;
+}
+
+.flexo-admin-ui .wrap :is(.notice, div.updated, div.error) :is(h2, h3) {
+	margin: 0 0 var(--fx-space-1);
+	font-size: var(--fx-text-md);
+	line-height: var(--fx-leading-md);
+}
+
+.flexo-admin-ui .wrap :is(.notice-success, div.updated) {
+	border-color: var(--fx-success-border);
+	background: var(--fx-success-bg);
+}
+
+.flexo-admin-ui .wrap :is(.notice-success, div.updated)::before {
+	background: var(--fx-success-text);
+	-webkit-mask-image: var(--fx-icon-check);
+	mask-image: var(--fx-icon-check);
+}
+
+.flexo-admin-ui .wrap .notice-warning {
+	border-color: var(--fx-warning-border);
+	background: var(--fx-warning-bg);
+}
+
+.flexo-admin-ui .wrap .notice-warning::before {
+	background: var(--fx-warning-text);
+	-webkit-mask-image: var(--fx-icon-alert);
+	mask-image: var(--fx-icon-alert);
+}
+
+.flexo-admin-ui .wrap :is(.notice-error, div.error) {
+	border-color: var(--fx-danger-border);
+	background: var(--fx-danger-bg);
+}
+
+.flexo-admin-ui .wrap :is(.notice-error, div.error)::before {
+	background: var(--fx-danger-text);
+	-webkit-mask-image: var(--fx-icon-alert);
+	mask-image: var(--fx-icon-alert);
+}
+
+.flexo-admin-ui .wrap .notice.is-dismissible {
+	padding-right: 44px;
+}
+
+.flexo-admin-ui .wrap .notice-dismiss {
+	top: 6px;
+	right: 6px;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	border-radius: var(--fx-radius-sm);
+}
+
+.flexo-admin-ui .wrap .notice-dismiss::before {
+	width: 20px;
+	height: 20px;
+	margin: 6px;
+	color: var(--fx-text-muted);
+	font-size: 16px;
+	line-height: 20px;
+}
+
+.flexo-admin-ui .wrap .notice-dismiss:hover {
+	background: rgba(17, 26, 36, 0.06);
+}
+
+.flexo-admin-ui .wrap .notice-dismiss:hover::before {
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .wrap .notice-dismiss:focus {
+	box-shadow: var(--fx-ring);
+	outline: 0;
+}
+
+/* Inline notices inside cards keep the card's spacing. */
+.flexo-admin-ui .wrap :is(.flexo-card, .flexo-tools-card, .fx-card) :is(.notice, .fx-notice) {
+	margin: 0 0 var(--fx-space-4);
+}
+
+.flexo-admin-ui .wrap .flexo-notice-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-2);
+	margin-top: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .flexo-notice-actions .button {
+	min-height: var(--fx-control-h-sm);
+	padding: 0 var(--fx-space-3);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-notice-dismiss {
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-notice-list {
+	margin: var(--fx-space-1) 0 0 var(--fx-space-5);
+	list-style: disc;
+}
+
+/* 5.3 Toasts. */
+.flexo-admin-ui .fx-toasts {
+	position: fixed;
+	right: var(--fx-space-5);
+	bottom: var(--fx-space-5);
+	z-index: calc(var(--fx-z-toast) + 9000);
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: var(--fx-space-2);
+	pointer-events: none;
+}
+
+.flexo-admin-ui .fx-toast {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--fx-space-3);
+	max-width: min(420px, calc(100vw - 32px));
+	padding: var(--fx-space-3) var(--fx-space-4);
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-gray-900);
+	box-shadow: var(--fx-shadow-lg);
+	color: #fff;
+	font-size: var(--fx-text-md);
+	line-height: var(--fx-leading-md);
+	pointer-events: auto;
+	animation: fx-toast-in var(--fx-slow) var(--fx-ease);
+}
+
+.flexo-admin-ui .fx-toast .flexo-icon {
+	width: 18px;
+	height: 18px;
+	margin-top: 1px;
+	color: #6fe0ae;
+}
+
+.flexo-admin-ui .fx-toast--error {
+	background: var(--fx-danger-text);
+}
+
+.flexo-admin-ui .fx-toast--error .flexo-icon {
+	color: #fff;
+}
+
+.flexo-admin-ui .fx-toast__close {
+	margin: -4px -8px -4px 0;
+	padding: 4px 8px;
+	border: 0;
+	border-radius: var(--fx-radius-sm);
+	background: none;
+	color: rgba(255, 255, 255, 0.75);
+	font: inherit;
+	font-size: 18px;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.flexo-admin-ui .fx-toast__close:hover,
+.flexo-admin-ui .fx-toast__close:focus-visible {
+	background: rgba(255, 255, 255, 0.12);
+	color: #fff;
+	outline: 0;
+}
+
+@keyframes fx-toast-in {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+}
+
+/* 5.4 Tables. */
+/* Wide tables scroll inside their own box, never the page. */
+.flexo-admin-ui .wrap .fx-table-scroll {
+	max-width: 100%;
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+}
+
+.flexo-admin-ui .wrap .fx-table-scroll > table {
+	min-width: 720px;
+}
+
+.flexo-admin-ui .wrap :is(table.widefat, .fx-table) {
+	width: 100%;
+	margin: 0 0 var(--fx-space-5);
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-lg);
+	border-collapse: separate;
+	border-spacing: 0;
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs);
+	overflow: hidden;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-card, .flexo-tools-card, .fx-card) :is(table.widefat, .fx-table) {
+	margin: 0;
+	box-shadow: none;
+}
+
+.flexo-admin-ui .wrap :is(table.widefat, .fx-table) :is(thead th, thead td) {
+	padding: 10px var(--fx-space-4);
+	border-bottom: 1px solid var(--fx-border);
+	background: var(--fx-surface-subtle);
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+	font-weight: 500;
+	line-height: var(--fx-leading-sm);
+	letter-spacing: 0;
+	text-align: left;
+	text-transform: none;
+	white-space: nowrap;
+}
+
+.flexo-admin-ui .wrap :is(table.widefat, .fx-table) thead th :is(a, a span) {
+	color: var(--fx-text-muted);
+}
+
+.flexo-admin-ui .wrap :is(table.widefat, .fx-table) :is(tbody td, tbody th) {
+	padding: var(--fx-space-3) var(--fx-space-4);
+	color: var(--fx-text);
+	font-size: var(--fx-text-md);
+	line-height: var(--fx-leading-md);
+	vertical-align: top;
+}
+
+.flexo-admin-ui .wrap :is(table.widefat, .fx-table) tbody tr + tr > :is(td, th) {
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .wrap :is(table.widefat, .fx-table) :is(tfoot th, tfoot td) {
+	padding: var(--fx-space-3) var(--fx-space-4);
+	border-top: 1px solid var(--fx-border);
+	background: var(--fx-surface-subtle);
+}
+
+.flexo-admin-ui .wrap :is(.striped > tbody > :nth-child(odd), .alternate) {
+	background-color: transparent;
+}
+
+.flexo-admin-ui .wrap :is(table.widefat, .fx-table) > tbody > tr:hover {
+	background-color: var(--fx-surface-subtle);
+}
+
+.flexo-admin-ui .wrap :is(table.widefat, .fx-table) :is(.flexo-num, .fx-num, th.flexo-num, td.flexo-num) {
+	text-align: right;
+}
+
+.flexo-admin-ui .wrap :is(table.widefat, .fx-table) td :is(.row-title, strong a) {
+	color: var(--fx-text);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.flexo-admin-ui .wrap :is(table.widefat, .fx-table) td :is(.row-title, strong a):hover {
+	color: var(--fx-primary);
+}
+
+.flexo-admin-ui .wrap :is(table.widefat, .fx-table) .flexo-empty-row,
+.flexo-admin-ui .wrap :is(table.widefat, .fx-table) td.colspanchange {
+	padding: var(--fx-space-6) var(--fx-space-4);
+	color: var(--fx-text-muted);
+	text-align: center;
+}
+
+.flexo-admin-ui .wrap .flexo-past td {
+	color: var(--fx-text-muted);
+}
+
+/* Compact tables inside cards (price breakdown, payments). */
+.flexo-admin-ui .wrap :is(table.widefat.flexo-price-table, table.widefat.flexo-mini-table) {
+	border-radius: var(--fx-radius-md);
+	box-shadow: none;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-mini-table, .flexo-price-table) :is(tbody td, tbody th, tfoot td, tfoot th) {
+	padding: 10px var(--fx-space-3);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-price-table tfoot strong {
+	font-size: var(--fx-text-lg);
+}
+
+.flexo-admin-ui .wrap .flexo-price-line--discount .flexo-num {
+	color: var(--fx-success-text);
+}
+
+/* Description list: label / value rows (booking details, payments). */
+.flexo-admin-ui .wrap :is(.flexo-detail-table, .fx-dl) {
+	width: 100%;
+	margin: 0;
+	border-collapse: collapse;
+}
+
+.flexo-admin-ui .wrap .flexo-detail-table > tbody > tr > th {
+	width: 36%;
+	max-width: 160px;
+	padding: 10px var(--fx-space-3) 10px 0;
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+	font-weight: 400;
+	text-align: left;
+	vertical-align: top;
+}
+
+.flexo-admin-ui .wrap .flexo-detail-table > tbody > tr > td {
+	padding: 10px 0;
+	color: var(--fx-text);
+	font-weight: 500;
+	overflow-wrap: anywhere;
+}
+
+.flexo-admin-ui .wrap .flexo-detail-table > tbody > tr + tr > :is(th, td) {
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .wrap .flexo-detail-table > tbody > tr:first-child > :is(th, td) {
+	padding-top: 0;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .fbc-dialog) .fx-dl,
+.flexo-admin-ui .fbc-dialog .fbc-dialog__lines {
+	display: grid;
+	grid-template-columns: max-content minmax(0, 1fr);
+	gap: var(--fx-space-2) var(--fx-space-4);
+	margin: 0 0 var(--fx-space-4);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .fbc-dialog) :is(.fx-dl, .fbc-dialog__lines) dt {
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer, .fbc-dialog) :is(.fx-dl, .fbc-dialog__lines) dd {
+	margin: 0;
+	color: var(--fx-text);
+	overflow-wrap: anywhere;
+}
+
+/* 5.5 Filter bar. */
+.flexo-admin-ui .wrap :is(.flexo-filters, .fx-filters) {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-2);
+	margin: 0 0 var(--fx-space-4);
+	padding: var(--fx-space-3);
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-lg);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs);
+}
+
+.flexo-admin-ui .wrap .flexo-filters__search {
+	position: relative;
+	display: inline-flex;
+	flex: 1 1 240px;
+	min-width: 200px;
+}
+
+.flexo-admin-ui .wrap .flexo-filters__search .flexo-icon {
+	position: absolute;
+	top: 50%;
+	left: 10px;
+	width: 16px;
+	height: 16px;
+	color: var(--fx-text-muted);
+	transform: translateY(-50%);
+	pointer-events: none;
+}
+
+.flexo-admin-ui .wrap .flexo-filters__search input[type="search"] {
+	width: 100%;
+	padding-left: 34px;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-filters, .fx-filters) select {
+	flex: 0 1 180px;
+	min-width: 140px;
+}
+
+.flexo-admin-ui .wrap .flexo-filters__dates {
+	display: inline-flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: var(--fx-space-2);
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-filters__dates input {
+	width: 150px;
+}
+
+.flexo-admin-ui .wrap .flexo-filters__check {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--fx-space-2);
+	color: var(--fx-text-secondary);
+	white-space: nowrap;
+}
+
+.flexo-admin-ui .wrap .flexo-filters__check input {
+	margin: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-filters__buttons {
+	display: inline-flex;
+	gap: var(--fx-space-2);
+	margin-left: auto;
+}
+
+.flexo-admin-ui .wrap .flexo-results-count {
+	margin: 0 0 var(--fx-space-2);
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+}
+
+/* Small view switch above a list ("Bookings on this website · From external calendars"). */
+.flexo-admin-ui .wrap :is(.subsubsub, .flexo-views) {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--fx-space-1);
+	float: none;
+	margin: 0 0 var(--fx-space-3);
+	padding: 3px;
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-surface-muted);
+	color: transparent;
+	font-size: var(--fx-text-sm);
+	width: max-content;
+	max-width: 100%;
+}
+
+.flexo-admin-ui .wrap :is(.subsubsub, .flexo-views) li {
+	margin: 0;
+	color: transparent;
+	font-size: 0;
+}
+
+.flexo-admin-ui .wrap :is(.subsubsub, .flexo-views) a {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--fx-space-1);
+	min-height: 28px;
+	padding: 0 var(--fx-space-3);
+	border-radius: var(--fx-radius-sm);
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.flexo-admin-ui .wrap :is(.subsubsub, .flexo-views) a .count {
+	color: inherit;
+	font-weight: 400;
+}
+
+.flexo-admin-ui .wrap :is(.subsubsub, .flexo-views) a:hover {
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .wrap :is(.subsubsub, .flexo-views) a.current {
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs);
+	color: var(--fx-text);
+}
+
+/* 5.6 Empty state. */
+.flexo-admin-ui .wrap :is(.flexo-blank, .fx-empty) {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--fx-space-2);
+	padding: var(--fx-space-7) var(--fx-space-5);
+	text-align: center;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-blank__icon, .fx-empty__icon) {
+	display: grid;
+	place-items: center;
+	width: 56px;
+	height: 56px;
+	margin-bottom: var(--fx-space-2);
+	border-radius: 50%;
+	background: var(--fx-primary-soft);
+	color: var(--fx-primary);
+}
+
+.flexo-admin-ui .wrap :is(.flexo-blank__icon, .fx-empty__icon) .flexo-icon {
+	width: 24px;
+	height: 24px;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-blank, .fx-empty) :is(h2, h3) {
+	margin: 0;
+	font-size: var(--fx-text-lg);
+	line-height: var(--fx-leading-lg);
+}
+
+.flexo-admin-ui .wrap :is(.flexo-blank, .fx-empty) p {
+	max-width: 48ch;
+	margin: 0;
+	color: var(--fx-text-muted);
+}
+
+.flexo-admin-ui .wrap .flexo-blank__actions {
+	justify-content: center;
+	margin-top: var(--fx-space-3);
+}
+
+/* A dashed placeholder for an empty list inside a card. */
+.flexo-admin-ui .wrap :is(.flexo-today__empty, .flexo-empty-note, .fx-empty-inline) {
+	margin: 0;
+	padding: var(--fx-space-4);
+	border: 1px dashed var(--fx-border-strong);
+	border-radius: var(--fx-radius-md);
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+	text-align: center;
+}
+
+/* 5.7 Dialogs (confirmations and forms). */
+.flexo-admin-ui :is(.flexo-dialog, .fbc-dialog, .flexo-icon-dialog, .fx-dialog) {
+	box-sizing: border-box;
+	width: min(520px, calc(100vw - 32px));
+	max-width: none;
+	max-height: calc(100vh - 64px);
+	padding: 0;
+	border: 0;
+	border-radius: var(--fx-radius-lg);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-lg);
+	color: var(--fx-text);
+	overflow: hidden;
+}
+
+.flexo-admin-ui :is(.flexo-dialog, .fbc-dialog, .flexo-icon-dialog, .fx-dialog)[open] {
+	display: flex;
+	flex-direction: column;
+	animation: fx-dialog-in var(--fx-slow) var(--fx-ease);
+}
+
+.flexo-admin-ui :is(.flexo-dialog, .fbc-dialog, .flexo-icon-dialog, .fx-dialog)::backdrop {
+	background: rgba(17, 26, 36, 0.48);
+}
+
+@keyframes fx-dialog-in {
+	from {
+		opacity: 0;
+		transform: translateY(8px) scale(0.98);
+	}
+}
+
+.flexo-admin-ui :is(.flexo-dialog, .fx-dialog) > :is(h2, .fx-dialog__title),
+.flexo-admin-ui .fbc-dialog > h2 {
+	margin: 0;
+	padding: var(--fx-space-5) 56px var(--fx-space-2) var(--fx-space-5);
+	color: var(--fx-text);
+	font-size: var(--fx-text-xl);
+	font-weight: 600;
+	line-height: var(--fx-leading-xl);
+}
+
+.flexo-admin-ui :is(.flexo-dialog, .fx-dialog) > :is(p, .fx-dialog__body) {
+	margin: 0;
+	padding: 0 var(--fx-space-5) var(--fx-space-5);
+	color: var(--fx-text-secondary);
+	font-size: var(--fx-text-md);
+	line-height: var(--fx-leading-md);
+	overflow-y: auto;
+}
+
+.flexo-admin-ui :is(.flexo-dialog, .fx-dialog) :is(.flexo-dialog__actions, .fx-dialog__footer) {
+	justify-content: flex-end;
+	margin: 0;
+	padding: var(--fx-space-4) var(--fx-space-5);
+	border-top: 1px solid var(--fx-border);
+	background: var(--fx-surface-subtle);
+}
+
+.flexo-admin-ui .fx-dialog__close,
+.flexo-admin-ui .fbc-dialog__close button,
+.flexo-admin-ui .flexo-icon-dialog__close {
+	position: absolute;
+	top: var(--fx-space-4);
+	right: var(--fx-space-4);
+	display: grid;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	border: 0;
+	border-radius: var(--fx-radius-sm);
+	background: transparent;
+	color: var(--fx-text-muted);
+	font-size: 20px;
+	line-height: 1;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.flexo-admin-ui :is(.fx-dialog__close, .fbc-dialog__close button, .flexo-icon-dialog__close):hover {
+	background: var(--fx-surface-muted);
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui :is(.fx-dialog__close, .fbc-dialog__close button, .flexo-icon-dialog__close):focus-visible {
+	box-shadow: var(--fx-ring);
+	outline: 0;
+}
+
+/* 5.8 Menu ("⋯" and other drop-downs). */
+.flexo-admin-ui :is(.wrap, .fx-layer, .flexo-appbar) .fx-menu {
+	position: relative;
+	display: inline-flex;
+}
+
+.flexo-admin-ui .fx-menu__panel {
+	position: absolute;
+	top: calc(100% + 6px);
+	right: 0;
+	z-index: var(--fx-z-popover);
+	display: flex;
+	flex-direction: column;
+	min-width: 220px;
+	max-width: 320px;
+	padding: var(--fx-space-1);
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-sm);
+}
+
+.flexo-admin-ui .fx-menu__panel[hidden] {
+	display: none;
+}
+
+.flexo-admin-ui .fx-menu--start .fx-menu__panel {
+	right: auto;
+	left: 0;
+}
+
+.flexo-admin-ui .fx-menu__item,
+.flexo-admin-ui .fx-menu__panel > :is(a, button) {
+	display: flex;
+	align-items: center;
+	gap: var(--fx-space-2);
+	width: 100%;
+	min-height: 36px;
+	padding: 0 var(--fx-space-3);
+	border: 0;
+	border-radius: var(--fx-radius-sm);
+	background: none;
+	color: var(--fx-text);
+	font-family: inherit;
+	font-size: var(--fx-text-md);
+	text-align: left;
+	text-decoration: none;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.flexo-admin-ui .fx-menu__item .flexo-icon {
+	width: 16px;
+	height: 16px;
+	color: var(--fx-text-muted);
+}
+
+.flexo-admin-ui :is(.fx-menu__item, .fx-menu__panel > a, .fx-menu__panel > button):is(:hover, :focus) {
+	background: var(--fx-surface-muted);
+	box-shadow: none;
+	color: var(--fx-text);
+	outline: 0;
+}
+
+.flexo-admin-ui .fx-menu__panel > .fx-menu__item--danger,
+.flexo-admin-ui .fx-menu__panel > .fx-menu__item--danger .flexo-icon {
+	color: var(--fx-danger-text);
+}
+
+.flexo-admin-ui .fx-menu__panel > .fx-menu__item--danger:is(:hover, :focus) {
+	background: var(--fx-danger-bg);
+	color: var(--fx-danger-text);
+}
+
+.flexo-admin-ui .fx-menu__sep {
+	height: 1px;
+	margin: var(--fx-space-1) 0;
+	background: var(--fx-border);
+}
+
+/* 5.9 Tooltip (title-free: data-fx-tip on icon buttons). */
+.flexo-admin-ui [data-fx-tip] {
+	position: relative;
+}
+
+.flexo-admin-ui [data-fx-tip]::after {
+	content: attr(data-fx-tip);
+	position: absolute;
+	top: calc(100% + 6px);
+	left: 50%;
+	z-index: var(--fx-z-popover);
+	padding: 4px 8px;
+	border-radius: var(--fx-radius-sm);
+	background: var(--fx-gray-900);
+	color: #fff;
+	font-family: var(--fx-font);
+	font-size: var(--fx-text-xs);
+	font-weight: 500;
+	line-height: var(--fx-leading-xs);
+	white-space: nowrap;
+	opacity: 0;
+	pointer-events: none;
+	transform: translate(-50%, -2px);
+	transition: opacity var(--fx-fast) var(--fx-ease) 0s, transform var(--fx-fast) var(--fx-ease) 0s;
+}
+
+.flexo-admin-ui [data-fx-tip]:is(:hover, :focus-visible):not([aria-expanded="true"])::after {
+	opacity: 1;
+	transform: translate(-50%, 0);
+	transition-delay: 400ms;
+}
+
+.flexo-admin-ui [data-fx-tip][data-fx-tip-end]::after {
+	right: 0;
+	left: auto;
+	transform: translate(0, -2px);
+}
+
+.flexo-admin-ui [data-fx-tip][data-fx-tip-end]:is(:hover, :focus-visible)::after {
+	transform: translate(0, 0);
+}
+
+/* 5.10 Segmented control. */
+.flexo-admin-ui :is(.wrap, .fx-layer) :is(.fx-seg, .flexo-segmented) {
+	display: inline-flex;
+	flex: 0 1 auto;
+	flex-wrap: wrap;
+	max-width: 100%;
+	gap: 2px;
+	padding: 3px;
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-surface-muted);
+	vertical-align: middle;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .fx-seg__opt {
+	position: relative;
+	display: inline-flex;
+	margin: 0;
+	cursor: pointer;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .fx-seg__opt > input {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: 0;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) :is(.fx-seg__opt > span, .fx-seg__btn, .flexo-segmented .button) {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	min-height: 28px;
+	padding: 0 var(--fx-space-3);
+	border: 0;
+	border-radius: var(--fx-radius-sm);
+	background: transparent;
+	box-shadow: none;
+	color: var(--fx-text-muted);
+	font-family: inherit;
+	font-size: var(--fx-text-sm);
+	font-weight: 500;
+	line-height: 1.2;
+	white-space: nowrap;
+	cursor: pointer;
+	transition: background-color var(--fx-fast) var(--fx-ease), color var(--fx-fast) var(--fx-ease);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) :is(.fx-seg__opt > span, .fx-seg__btn, .flexo-segmented .button):hover {
+	border: 0;
+	background: transparent;
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) :is(.fx-seg__opt > input:checked + span, .fx-seg__btn[aria-pressed="true"], .fx-seg__btn[aria-checked="true"], .flexo-segmented .button.is-active),
+.flexo-admin-ui :is(.wrap, .fx-layer) :is(.fx-seg__opt > input:checked + span, .fx-seg__btn[aria-pressed="true"], .fx-seg__btn[aria-checked="true"], .flexo-segmented .button.is-active):hover {
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs), 0 0 0 1px var(--fx-border);
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .fx-seg__opt > input:focus-visible + span,
+.flexo-admin-ui :is(.wrap, .fx-layer) :is(.fx-seg__btn, .flexo-segmented .button):focus-visible {
+	box-shadow: 0 0 0 2px var(--fx-primary);
+	outline: 0;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) :is(.fx-seg__opt > span, .fx-seg__btn) .flexo-icon {
+	width: 16px;
+	height: 16px;
+}
+
+/* 5.11 Colour field: "Website colour | Custom". */
+.flexo-admin-ui .wrap .fx-color {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-2) var(--fx-space-3);
+	min-width: 0;
+}
+
+.flexo-admin-ui .wrap .fx-color__value {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-2);
+	min-height: var(--fx-control-h);
+}
+
+.flexo-admin-ui .wrap .fx-color__value[hidden] {
+	display: none;
+}
+
+.flexo-admin-ui .wrap .fx-swatch {
+	flex: 0 0 auto;
+	width: 24px;
+	height: 24px;
+	border-radius: var(--fx-radius-sm);
+	background: var(--fx-swatch, transparent);
+	box-shadow: inset 0 0 0 1px rgba(17, 26, 36, 0.14);
+}
+
+.flexo-admin-ui .wrap .fx-color__name {
+	color: var(--fx-text);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .fx-color__hexlabel {
+	color: var(--fx-text-muted);
+	font-family: var(--fx-mono);
+	font-size: var(--fx-text-xs);
+	text-transform: uppercase;
+}
+
+.flexo-admin-ui .wrap .fx-color__note {
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .fx-color__picker {
+	width: var(--fx-control-h);
+	height: var(--fx-control-h);
+	padding: 3px;
+}
+
+.flexo-admin-ui .wrap .fx-color__hex {
+	width: 104px;
+	font-family: var(--fx-mono);
+	font-size: var(--fx-text-sm);
+	text-transform: uppercase;
+}
+
+.flexo-admin-ui .wrap .fx-color__hex::placeholder {
+	text-transform: none;
+}
+
+/* 5.12 Radio cards (selectable cards). */
+.flexo-admin-ui .wrap :is(.fx-choices, .flexo-mode-choice) {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+	gap: var(--fx-space-3);
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.flexo-admin-ui .wrap :is(.fx-choices, .flexo-mode-choice) > legend {
+	margin: 0 0 var(--fx-space-2);
+	padding: 0;
+	color: var(--fx-text);
+	font-size: var(--fx-text-md);
+	font-weight: 500;
+}
+
+.flexo-admin-ui .wrap .fx-choices--stack {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.flexo-admin-ui .wrap :is(.fx-choice, .flexo-choice-card, .flexo-appearance__modes .flexo-feature-choice) {
+	position: relative;
+	display: grid;
+	grid-template-columns: 16px minmax(0, 1fr);
+	column-gap: var(--fx-space-3);
+	row-gap: 2px;
+	align-items: start;
+	margin: 0;
+	padding: var(--fx-space-4);
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-lg);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs);
+	color: var(--fx-text);
+	cursor: pointer;
+	transition: border-color var(--fx-fast) var(--fx-ease), background-color var(--fx-fast) var(--fx-ease), box-shadow var(--fx-fast) var(--fx-ease);
+}
+
+.flexo-admin-ui .wrap :is(.fx-choice, .flexo-choice-card, .flexo-appearance__modes .flexo-feature-choice):hover {
+	border-color: var(--fx-border-strong);
+}
+
+.flexo-admin-ui .wrap :is(.fx-choice, .flexo-choice-card, .flexo-appearance__modes .flexo-feature-choice):has(input:checked) {
+	border-color: var(--fx-primary);
+	background: var(--fx-primary-soft);
+	box-shadow: inset 0 0 0 1px var(--fx-primary);
+}
+
+.flexo-admin-ui .wrap :is(.fx-choice, .flexo-choice-card, .flexo-appearance__modes .flexo-feature-choice):has(input:focus-visible) {
+	box-shadow: inset 0 0 0 1px var(--fx-primary), var(--fx-ring);
+}
+
+/* The radio sits on the first line of the title (line height 20 → offset 2). */
+.flexo-admin-ui .wrap :is(.fx-choice, .flexo-choice-card, .flexo-appearance__modes .flexo-feature-choice) > input:is([type="radio"], [type="checkbox"]) {
+	position: static;
+	grid-row: 1 / span 3;
+	grid-column: 1;
+	margin: 2px 0 0;
+}
+
+.flexo-admin-ui .wrap :is(.fx-choice, .flexo-choice-card, .flexo-appearance__modes .flexo-feature-choice) > :not(input) {
+	grid-column: 2;
+	min-width: 0;
+}
+
+.flexo-admin-ui .wrap :is(.fx-choice__title, .flexo-choice-card strong, .flexo-appearance__modes .flexo-feature-choice strong) {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-2);
+	margin: 0;
+	color: var(--fx-text);
+	font-size: var(--fx-text-md);
+	font-weight: 600;
+	line-height: var(--fx-leading-md);
+}
+
+.flexo-admin-ui .wrap :is(.fx-choice__desc, .flexo-choice-card > span, .flexo-appearance__modes .flexo-feature-choice small, .flexo-appearance__modes .flexo-feature-choice .description) {
+	display: block;
+	margin: 0;
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+	line-height: var(--fx-leading-sm);
+}
+
+.flexo-admin-ui .wrap .fx-choice__extra {
+	margin-top: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .fx-choice__body {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+/* 5.13 Switch. */
+.flexo-admin-ui :is(.wrap, .fx-layer) .flexo-switch {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: var(--fx-space-3);
+	min-height: 24px;
+	margin: 0;
+	cursor: pointer;
+	user-select: none;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .flexo-switch input[type="checkbox"] {
+	position: absolute;
+	z-index: 1;
+	width: 36px;
+	min-width: 0;
+	height: 20px;
+	margin: 0;
+	border: 0;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .flexo-switch__track {
+	position: relative;
+	flex: 0 0 auto;
+	width: 36px;
+	height: 20px;
+	border-radius: var(--fx-radius-full);
+	background: var(--fx-border-control);
+	transition: background-color var(--fx-fast) var(--fx-ease);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .flexo-switch__track::after {
+	content: "";
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	background: #fff;
+	box-shadow: 0 1px 2px rgba(17, 26, 36, 0.3);
+	transition: transform var(--fx-fast) var(--fx-ease);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .flexo-switch:hover .flexo-switch__track {
+	background: var(--fx-gray-500);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .flexo-switch input:checked + .flexo-switch__track {
+	background: var(--fx-primary);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .flexo-switch:hover input:checked + .flexo-switch__track {
+	background: var(--fx-primary-hover);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .flexo-switch input:checked + .flexo-switch__track::after {
+	transform: translateX(16px);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .flexo-switch input:focus-visible + .flexo-switch__track {
+	box-shadow: var(--fx-ring);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .flexo-switch input:disabled + .flexo-switch__track {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .flexo-switch__label {
+	color: var(--fx-text);
+	font-size: var(--fx-text-md);
+	font-weight: 500;
+	line-height: var(--fx-leading-md);
+}
+
+/* 5.14 Toggle cards (Features). */
+.flexo-admin-ui .wrap .flexo-feature-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+	grid-auto-rows: 1fr;
+	gap: var(--fx-space-3);
+}
+
+.flexo-admin-ui .wrap .flexo-feature-card {
+	position: relative;
+	display: grid;
+	grid-template-columns: 36px minmax(0, 1fr) auto;
+	gap: var(--fx-space-3);
+	align-items: start;
+	margin: 0;
+	padding: var(--fx-space-4);
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-lg);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs);
+	transition: border-color var(--fx-fast) var(--fx-ease);
+}
+
+.flexo-admin-ui .wrap .flexo-feature-card:has(input:checked) {
+	border-color: var(--fx-primary-100);
+}
+
+.flexo-admin-ui .wrap .flexo-feature-card__icon {
+	display: grid;
+	place-items: center;
+	width: 36px;
+	height: 36px;
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-surface-muted);
+	color: var(--fx-text-muted);
+	transition: background-color var(--fx-fast) var(--fx-ease), color var(--fx-fast) var(--fx-ease);
+}
+
+.flexo-admin-ui .wrap .flexo-feature-card__icon .flexo-icon {
+	width: 18px;
+	height: 18px;
+}
+
+.flexo-admin-ui .wrap .flexo-feature-card:has(input:checked) .flexo-feature-card__icon {
+	background: var(--fx-primary-soft);
+	color: var(--fx-primary);
+}
+
+.flexo-admin-ui .wrap .flexo-feature-card__text {
+	min-width: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-feature-card h3 {
+	margin: 0 0 2px;
+	font-size: var(--fx-text-md);
+	font-weight: 600;
+	line-height: var(--fx-leading-md);
+}
+
+.flexo-admin-ui .wrap .flexo-feature-card p {
+	margin: 0;
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+	line-height: var(--fx-leading-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-feature-card__switch {
+	padding-top: 2px;
+}
+
+.flexo-admin-ui .wrap .flexo-feature--soon {
+	opacity: 0.6;
+}
+
+.flexo-admin-ui .wrap .flexo-feature-group {
+	margin: 0 0 var(--fx-space-6);
+}
+
+.flexo-admin-ui .wrap .flexo-feature-group:last-of-type {
+	margin-bottom: var(--fx-space-5);
+}
+
+.flexo-admin-ui .wrap .flexo-feature-group > h2 {
+	margin: 0 0 var(--fx-space-3);
+}
+
+/* 5.15 Status rows (Health). */
+.flexo-admin-ui .wrap :is(.flexo-health, .fx-status-list) {
+	margin: 0 0 var(--fx-space-5);
+	padding: 0;
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-lg);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs);
+	list-style: none;
+	overflow: hidden;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-health__item, .fx-status-row) {
+	display: grid;
+	grid-template-columns: 32px minmax(0, 1fr) auto;
+	gap: var(--fx-space-3) var(--fx-space-4);
+	align-items: center;
+	margin: 0;
+	padding: var(--fx-space-4) var(--fx-space-5);
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .wrap :is(.flexo-health__item, .fx-status-row):first-child {
+	border-top: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-health__icon {
+	display: grid;
+	flex: 0 0 auto;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	background: var(--fx-success-bg);
+	color: var(--fx-success-text);
+}
+
+.flexo-admin-ui .wrap .flexo-health__icon .flexo-icon {
+	width: 16px;
+	height: 16px;
+	stroke-width: 2.2;
+}
+
+.flexo-admin-ui .wrap .flexo-health__item--warning .flexo-health__icon {
+	background: var(--fx-warning-bg);
+	color: var(--fx-warning-text);
+}
+
+.flexo-admin-ui .wrap .flexo-health__item--error .flexo-health__icon {
+	background: var(--fx-danger-bg);
+	color: var(--fx-danger-text);
+}
+
+.flexo-admin-ui .wrap .flexo-health__body {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-health__body strong {
+	font-weight: 600;
+}
+
+.flexo-admin-ui .wrap .flexo-health__body > span,
+.flexo-admin-ui .wrap .flexo-health__body > p {
+	margin: 0;
+	color: var(--fx-text-secondary);
+	font-size: var(--fx-text-sm);
+	line-height: var(--fx-leading-sm);
+	overflow-wrap: anywhere;
+}
+
+/* 5.16 Disclosure (one expandable pattern for details elements in content). */
+.flexo-admin-ui .wrap :is(details.fx-disclosure, .flexo-payment-more, .flexo-placeholders, .flexo-page-card__customize, .flexo-help__guide, .flexo-email-card__edit) > summary {
+	display: flex;
+	align-items: center;
+	gap: var(--fx-space-2);
+	list-style: none;
+	cursor: pointer;
+}
+
+.flexo-admin-ui .wrap :is(details.fx-disclosure, .flexo-payment-more, .flexo-placeholders, .flexo-page-card__customize, .flexo-help__guide, .flexo-email-card__edit) > summary::-webkit-details-marker {
+	display: none;
+}
+
+.flexo-admin-ui .wrap :is(details.fx-disclosure, .flexo-payment-more, .flexo-placeholders, .flexo-page-card__customize, .flexo-help__guide) > summary::before {
+	content: "";
+	flex: 0 0 auto;
+	width: 16px;
+	height: 16px;
+	background: currentColor;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 6 6 6-6 6'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 6 6 6-6 6'/%3E%3C/svg%3E") center / contain no-repeat;
+	transition: transform var(--fx-fast) var(--fx-ease);
+}
+
+.flexo-admin-ui .wrap :is(details.fx-disclosure, .flexo-payment-more, .flexo-placeholders, .flexo-page-card__customize, .flexo-help__guide)[open] > summary::before {
+	transform: rotate(90deg);
+}
+
+.flexo-admin-ui .wrap :is(details.fx-disclosure, .flexo-payment-more, .flexo-placeholders, .flexo-page-card__customize) > summary {
+	min-height: 36px;
+	color: var(--fx-primary);
+	font-weight: 500;
+}
+
+.flexo-admin-ui .wrap :is(details.fx-disclosure, .flexo-payment-more, .flexo-placeholders, .flexo-page-card__customize) > summary:hover {
+	color: var(--fx-primary-hover);
+}
+
+.flexo-admin-ui .wrap :is(details.fx-disclosure, .flexo-payment-more, .flexo-placeholders, .flexo-page-card__customize, .flexo-help__guide, .flexo-email-card__edit) > summary:focus {
+	outline: 0;
+}
+
+.flexo-admin-ui .wrap :is(details.fx-disclosure, .flexo-payment-more, .flexo-placeholders, .flexo-page-card__customize, .flexo-help__guide, .flexo-email-card__edit) > summary:focus-visible {
+	border-radius: var(--fx-radius-sm);
+	box-shadow: 0 0 0 2px var(--fx-primary);
+}
+
+/* 5.17 Skeleton. */
+.flexo-admin-ui :is(.wrap, .fx-layer) .fx-skeleton {
+	display: block;
+	border-radius: var(--fx-radius-sm);
+	background: linear-gradient(90deg, var(--fx-gray-100) 0%, var(--fx-gray-50) 50%, var(--fx-gray-100) 100%);
+	background-size: 200% 100%;
+	animation: fx-shimmer 1.2s linear infinite;
+}
+
+@keyframes fx-shimmer {
+	to {
+		background-position: -200% 0;
+	}
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .fx-skeleton-group {
+	display: grid;
+	gap: var(--fx-space-2);
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .fx-skeleton-group > .fx-skeleton {
+	height: 12px;
+}
+
+.flexo-admin-ui :is(.wrap, .fx-layer) .fx-skeleton-group > .fx-skeleton:last-child {
+	width: 60%;
+}
+
+/* 5.18 Avatar, meter, stat. */
+.flexo-admin-ui .wrap .flexo-avatar {
+	display: grid;
+	flex: 0 0 auto;
+	place-items: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	background: var(--fx-primary-soft);
+	color: var(--fx-primary);
+	font-size: var(--fx-text-xs);
+	font-weight: 600;
+	letter-spacing: 0.02em;
+}
+
+.flexo-admin-ui .wrap .flexo-meter {
+	display: block;
+	height: 6px;
+	margin-top: var(--fx-space-2);
+	border-radius: 3px;
+	background: var(--fx-surface-muted);
+	overflow: hidden;
+}
+
+.flexo-admin-ui .wrap .flexo-meter span {
+	display: block;
+	height: 100%;
+	border-radius: 3px;
+	background: var(--fx-primary);
+}
+
+/* 5.19 Code / copy field. */
+.flexo-admin-ui .wrap .flexo-copy {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .flexo-copy input {
+	flex: 1 1 280px;
+	min-width: 0;
+	font-family: var(--fx-mono);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-code {
+	font-family: var(--fx-mono);
+	letter-spacing: 0.02em;
+}
+
+.flexo-admin-ui .wrap input.flexo-code {
+	text-transform: uppercase;
+}
+
+/* 5.20 Date and time picker (pop-over calendar for admin date fields). */
+.flexo-admin-ui .fx-datefield {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	vertical-align: middle;
+}
+
+.flexo-admin-ui .wrap .fx-datefield > input {
+	width: 150px;
+	padding-right: 36px;
+}
+
+.flexo-admin-ui .wrap .fx-datefield--time > input {
+	width: 104px;
+}
+
+.flexo-admin-ui .fx-datefield__btn {
+	position: absolute;
+	top: 50%;
+	right: 4px;
+	display: grid;
+	place-items: center;
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	border: 0;
+	border-radius: var(--fx-radius-sm);
+	background: none;
+	color: var(--fx-text-muted);
+	cursor: pointer;
+	transform: translateY(-50%);
+}
+
+.flexo-admin-ui .fx-datefield__btn:hover {
+	background: var(--fx-surface-muted);
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .fx-datefield__btn:focus-visible {
+	box-shadow: var(--fx-ring);
+	outline: 0;
+}
+
+.flexo-admin-ui .fx-datefield__btn .flexo-icon {
+	width: 16px;
+	height: 16px;
+}
+
+.flexo-admin-ui .fx-picker {
+	position: absolute;
+	z-index: calc(var(--fx-z-popover) + 9000);
+	width: 280px;
+	padding: var(--fx-space-3);
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-sm);
+	color: var(--fx-text);
+	font-family: var(--fx-font);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .fx-picker[hidden] {
+	display: none;
+}
+
+.flexo-admin-ui .fx-picker__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin: 0 0 var(--fx-space-2);
+}
+
+.flexo-admin-ui .fx-picker__month {
+	font-size: var(--fx-text-md);
+	font-weight: 600;
+}
+
+.flexo-admin-ui .fx-picker__nav {
+	display: grid;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	border: 0;
+	border-radius: var(--fx-radius-sm);
+	background: none;
+	color: var(--fx-text-secondary);
+	font-size: 18px;
+	cursor: pointer;
+}
+
+.flexo-admin-ui .fx-picker__nav:hover {
+	background: var(--fx-surface-muted);
+}
+
+.flexo-admin-ui .fx-picker__nav:focus-visible {
+	box-shadow: var(--fx-ring);
+	outline: 0;
+}
+
+.flexo-admin-ui .fx-picker__grid {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	gap: 2px;
+}
+
+.flexo-admin-ui .fx-picker__dow {
+	padding: 4px 0;
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-xs);
+	text-align: center;
+}
+
+.flexo-admin-ui .fx-picker__day {
+	height: 34px;
+	padding: 0;
+	border: 0;
+	border-radius: var(--fx-radius-sm);
+	background: none;
+	color: var(--fx-text);
+	font-family: inherit;
+	font-size: var(--fx-text-sm);
+	font-variant-numeric: tabular-nums;
+	cursor: pointer;
+}
+
+.flexo-admin-ui .fx-picker__day:hover {
+	background: var(--fx-surface-muted);
+}
+
+.flexo-admin-ui .fx-picker__day:disabled {
+	color: var(--fx-gray-300);
+	cursor: not-allowed;
+	text-decoration: line-through;
+}
+
+.flexo-admin-ui .fx-picker__day:focus-visible {
+	box-shadow: inset 0 0 0 2px var(--fx-primary);
+	outline: 0;
+}
+
+.flexo-admin-ui .fx-picker__day.is-other {
+	color: var(--fx-text-placeholder);
+}
+
+.flexo-admin-ui .fx-picker__day.is-today {
+	box-shadow: inset 0 0 0 1px var(--fx-border-strong);
+	font-weight: 600;
+}
+
+.flexo-admin-ui .fx-picker__day:is([aria-selected="true"], [aria-pressed="true"]) {
+	background: var(--fx-primary);
+	color: var(--fx-on-primary);
+}
+
+.flexo-admin-ui .fx-picker__foot {
+	display: flex;
+	justify-content: space-between;
+	margin-top: var(--fx-space-2);
+	padding-top: var(--fx-space-2);
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .fx-picker__foot button {
+	padding: 4px 8px;
+	border: 0;
+	border-radius: var(--fx-radius-sm);
+	background: none;
+	color: var(--fx-primary);
+	font: inherit;
+	font-weight: 500;
+	cursor: pointer;
+}
+
+.flexo-admin-ui .fx-picker__foot button:hover {
+	background: var(--fx-primary-soft);
+}
+
+.flexo-admin-ui .fx-times {
+	max-height: 240px;
+	width: 120px;
+	padding: var(--fx-space-1);
+	overflow-y: auto;
+}
+
+.flexo-admin-ui .fx-times button {
+	display: block;
+	width: 100%;
+	padding: 6px 10px;
+	border: 0;
+	border-radius: var(--fx-radius-sm);
+	background: none;
+	color: var(--fx-text);
+	font: inherit;
+	font-variant-numeric: tabular-nums;
+	text-align: left;
+	cursor: pointer;
+}
+
+.flexo-admin-ui .fx-times button:is(:hover, :focus-visible) {
+	background: var(--fx-surface-muted);
+	outline: 0;
+}
+
+.flexo-admin-ui .fx-times button[aria-selected="true"] {
+	background: var(--fx-primary-soft);
+	color: var(--fx-primary-hover);
+	font-weight: 600;
+}
+
+/* 5.21 Toolbar: left group + right group, never wraps mid-group. */
+.flexo-admin-ui .wrap .fx-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--fx-space-3);
+	min-width: 0;
+	container-type: inline-size;
+}
+
+.flexo-admin-ui .wrap .fx-toolbar__start,
+.flexo-admin-ui .wrap .fx-toolbar__end {
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: var(--fx-space-2);
+	min-width: 0;
+}
+
+.flexo-admin-ui .wrap .fx-toolbar__start {
+	flex: 1 1 auto;
+}
+
+.flexo-admin-ui .wrap .fx-toolbar__end {
+	flex: 0 0 auto;
+}
+
+/* Tabs inside a toolbar (what to preview). */
+.flexo-admin-ui .wrap .fx-toolbar .fx-tabs {
+	margin: 0;
+	border-bottom: 0;
+}
+
+.flexo-admin-ui .wrap .fx-toolbar .fx-tabs__tab {
+	min-height: 36px;
+	padding: 0 var(--fx-space-2);
+	border-bottom-width: 2px;
+}
+
+.flexo-admin-ui .wrap .fx-toolbar__select {
+	display: none;
+}
+
+/* The toolbar folds its tabs into a select when it gets narrow. */
+@container (max-width: 480px) {
+	.flexo-admin-ui .wrap .fx-toolbar__start > .fx-tabs {
+		display: none;
+	}
+
+	.flexo-admin-ui .wrap .fx-toolbar__start > .fx-toolbar__select {
+		display: block;
+	}
+
+	.flexo-admin-ui .wrap .fx-toolbar__select select {
+		min-height: var(--fx-control-h-sm);
+	}
+}
+
+.flexo-admin-ui .wrap .fx-card__headtext {
+	min-width: 0;
+}
+
+/* 5.22 Sortable list rows (sections, fields, amenities). */
+.flexo-admin-ui .wrap .flexo-sortable {
+	display: grid;
+	gap: var(--fx-space-2);
+	margin: var(--fx-space-2) 0 var(--fx-space-3);
+	padding: 0;
+	list-style: none;
+}
+
+.flexo-admin-ui .wrap .flexo-sortable__item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-2) var(--fx-space-3);
+	margin: 0;
+	padding: var(--fx-space-2) var(--fx-space-3);
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-surface);
+}
+
+.flexo-admin-ui .wrap .flexo-sortable__buttons {
+	display: inline-flex;
+	gap: var(--fx-space-1);
+	margin-left: auto;
+}
+
+.flexo-admin-ui .wrap .flexo-sortable__move {
+	width: var(--fx-control-h-sm);
+	min-width: var(--fx-control-h-sm);
+	min-height: var(--fx-control-h-sm);
+	padding: 0;
+	line-height: 1;
+}
+
+/* 5.23 History timeline. */
+.flexo-admin-ui .wrap .flexo-history__list {
+	position: relative;
+	margin: 0;
+	padding: 0 0 0 22px;
+	list-style: none;
+}
+
+.flexo-admin-ui .wrap .flexo-history__list::before {
+	content: "";
+	position: absolute;
+	top: 6px;
+	bottom: 6px;
+	left: 5px;
+	width: 2px;
+	border-radius: 1px;
+	background: var(--fx-border);
+}
+
+.flexo-admin-ui .wrap .flexo-history__list li {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	margin: 0 0 var(--fx-space-3);
+}
+
+.flexo-admin-ui .wrap .flexo-history__list li:last-child {
+	margin-bottom: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-history__list li::before {
+	content: "";
+	position: absolute;
+	top: 6px;
+	left: -22px;
+	width: 8px;
+	height: 8px;
+	border: 2px solid var(--fx-surface);
+	border-radius: 50%;
+	background: var(--fx-primary);
+	box-shadow: 0 0 0 1px var(--fx-primary-100);
+}
+
+.flexo-admin-ui .wrap .flexo-history__text {
+	font-weight: 500;
+}
+
+.flexo-admin-ui .wrap .flexo-history__list time {
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+	font-variant-numeric: tabular-nums;
+}
+
+/* 5.24 App bar (top of every plugin screen). */
+.flexo-admin-ui .flexo-appbar {
+	box-sizing: border-box;
+	margin-left: -20px;
+	padding: 0 0 0 20px;
+	border-bottom: 1px solid var(--fx-border);
+	background: var(--fx-surface);
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .flexo-appbar *,
+.flexo-admin-ui .flexo-appbar *::before,
+.flexo-admin-ui .flexo-appbar *::after {
+	box-sizing: border-box;
+}
+
+.flexo-admin-ui .flexo-appbar__row {
+	display: flex;
+	align-items: center;
+	gap: var(--fx-space-4);
+	max-width: calc(var(--fx-page-max) + var(--fx-space-3) + var(--fx-gutter));
+	min-height: 60px;
+	margin: 0 auto;
+	padding: 0 var(--fx-gutter) 0 var(--fx-space-3);
+}
+
+.flexo-admin-ui .flexo-appbar__brand {
+	display: inline-flex;
+	flex: 0 1 auto;
+	align-items: center;
+	gap: var(--fx-space-3);
+	min-width: 0;
+	color: var(--fx-text);
+	text-decoration: none;
+}
+
+.flexo-admin-ui .flexo-appbar__brand:hover {
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .flexo-appbar__logo {
+	display: grid;
+	flex: 0 0 auto;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-primary);
+	color: #fff;
+}
+
+.flexo-admin-ui .flexo-appbar__logo .flexo-icon {
+	width: 18px;
+	height: 18px;
+}
+
+.flexo-admin-ui .flexo-appbar__titles {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	line-height: 1.25;
+}
+
+.flexo-admin-ui .flexo-appbar__product {
+	font-size: var(--fx-text-md);
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.flexo-admin-ui .flexo-appbar__site {
+	max-width: 200px;
+	overflow: hidden;
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-xs);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.flexo-admin-ui .flexo-appbar__search {
+	position: relative;
+	flex: 1 1 200px;
+	min-width: 140px;
+	max-width: 440px;
+	margin: 0 0 0 var(--fx-space-2);
+}
+
+.flexo-admin-ui .flexo-appbar__search-icon {
+	position: absolute;
+	top: 50%;
+	left: 10px;
+	width: 16px;
+	height: 16px;
+	color: var(--fx-text-muted);
+	transform: translateY(-50%);
+	pointer-events: none;
+}
+
+.flexo-admin-ui .flexo-appbar__search input[type="search"] {
+	box-sizing: border-box;
+	width: 100%;
+	height: var(--fx-control-h);
+	min-height: var(--fx-control-h);
+	margin: 0;
+	padding: 0 var(--fx-space-3) 0 34px;
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-sm);
+	background: var(--fx-surface-subtle);
+	box-shadow: none;
+	color: var(--fx-text);
+	font-family: inherit;
+	font-size: var(--fx-text-md);
+}
+
+.flexo-admin-ui .flexo-appbar__search input[type="search"]:hover {
+	border-color: var(--fx-border-strong);
+}
+
+.flexo-admin-ui .flexo-appbar__search input[type="search"]:focus {
+	border-color: var(--fx-primary);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-ring);
+	outline: 0;
+}
+
+.flexo-admin-ui .flexo-appbar__actions {
+	display: flex;
+	flex: 0 0 auto;
+	align-items: center;
+	gap: var(--fx-space-1);
+	margin-left: auto;
+}
+
+.flexo-admin-ui .flexo-appbar__icon {
+	position: relative;
+	display: grid;
+	place-items: center;
+	width: var(--fx-control-h);
+	height: var(--fx-control-h);
+	border-radius: var(--fx-radius-sm);
+	color: var(--fx-text-secondary);
+	text-decoration: none;
+	transition: background-color var(--fx-fast) var(--fx-ease), color var(--fx-fast) var(--fx-ease);
+}
+
+.flexo-admin-ui .flexo-appbar__icon:hover {
+	background: var(--fx-surface-muted);
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .flexo-appbar__icon:focus {
+	box-shadow: none;
+	outline: 0;
+}
+
+.flexo-admin-ui .flexo-appbar__icon:focus-visible {
+	box-shadow: var(--fx-ring);
+}
+
+.flexo-admin-ui .flexo-appbar__icon .flexo-icon {
+	width: 18px;
+	height: 18px;
+}
+
+.flexo-admin-ui .flexo-appbar__badge {
+	position: absolute;
+	top: 2px;
+	right: 0;
+	min-width: 16px;
+	height: 16px;
+	padding: 0 4px;
+	border: 2px solid var(--fx-surface);
+	border-radius: 8px;
+	background: var(--fx-danger-solid);
+	color: #fff;
+	font-size: 10px;
+	font-weight: 600;
+	line-height: 12px;
+	text-align: center;
+	box-sizing: content-box;
+}
+
+.flexo-admin-ui .flexo-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--fx-space-2);
+	height: var(--fx-control-h);
+	margin-left: var(--fx-space-2);
+	padding: 0 var(--fx-space-4);
+	border: 1px solid transparent;
+	border-radius: var(--fx-radius-sm);
+	font-size: var(--fx-text-md);
+	font-weight: 500;
+	line-height: 1;
+	text-decoration: none;
+	white-space: nowrap;
+	transition: background-color var(--fx-fast) var(--fx-ease);
+}
+
+.flexo-admin-ui .flexo-btn--primary,
+.flexo-admin-ui .flexo-btn--primary:visited {
+	background: var(--fx-primary);
+	color: #fff;
+}
+
+.flexo-admin-ui .flexo-btn--primary:hover {
+	background: var(--fx-primary-hover);
+	color: #fff;
+}
+
+.flexo-admin-ui .flexo-btn:focus {
+	box-shadow: none;
+	outline: 0;
+}
+
+.flexo-admin-ui .flexo-btn:focus-visible {
+	box-shadow: 0 0 0 2px var(--fx-surface), 0 0 0 4px var(--fx-primary);
+}
+
+.flexo-admin-ui .flexo-btn .flexo-icon {
+	width: 16px;
+	height: 16px;
+}
+
+/* Section menu inside the app bar: only on phones (WordPress's menu is folded away there). */
+.flexo-admin-ui .flexo-appbar__nav {
+	display: none;
+}
+
+/* 6 · Screen layouts (only genuine layout differences) =================== */
+
+/* 6.1 Today. */
+.flexo-admin-ui .wrap .flexo-kpis {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: var(--fx-space-4);
+	margin: 0 0 var(--fx-space-5);
+}
+
+.flexo-admin-ui .wrap .flexo-kpi {
+	display: flex;
+	flex-direction: column;
+	gap: var(--fx-space-1);
+	min-height: 112px;
+	padding: var(--fx-space-4) var(--fx-space-5);
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-lg);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs);
+	color: var(--fx-text);
+	text-decoration: none;
+	transition: border-color var(--fx-fast) var(--fx-ease), box-shadow var(--fx-fast) var(--fx-ease);
+}
+
+.flexo-admin-ui .wrap a.flexo-kpi:hover {
+	border-color: var(--fx-border-strong);
+	box-shadow: var(--fx-shadow-sm);
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .wrap .flexo-kpi__icon {
+	display: grid;
+	place-items: center;
+	width: 28px;
+	height: 28px;
+	border-radius: var(--fx-radius-sm);
+	background: var(--fx-surface-muted);
+	color: var(--fx-text-secondary);
+}
+
+.flexo-admin-ui .wrap .flexo-kpi__icon .flexo-icon {
+	width: 16px;
+	height: 16px;
+}
+
+.flexo-admin-ui .wrap .flexo-kpi__body {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-kpi__value {
+	order: 2;
+	font-size: var(--fx-text-2xl);
+	font-weight: 600;
+	line-height: var(--fx-leading-2xl);
+	letter-spacing: -0.02em;
+	font-variant-numeric: tabular-nums;
+}
+
+.flexo-admin-ui .wrap .flexo-kpi__label {
+	order: 1;
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+	font-weight: 500;
+	line-height: var(--fx-leading-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-kpi__sub {
+	order: 3;
+	margin-top: auto;
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-xs);
+}
+
+.flexo-admin-ui .wrap .flexo-kpi :is(.flexo-meter) {
+	order: 4;
+}
+
+.flexo-admin-ui .wrap .flexo-kpi {
+	position: relative;
+}
+
+.flexo-admin-ui .wrap .flexo-kpi .flexo-kpi__icon {
+	position: absolute;
+	top: var(--fx-space-4);
+	right: var(--fx-space-4);
+}
+
+.flexo-admin-ui .wrap .flexo-today__layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 320px;
+	gap: var(--fx-space-5);
+	align-items: start;
+}
+
+.flexo-admin-ui .wrap .flexo-today__layout > * {
+	min-width: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-today__main,
+.flexo-admin-ui .wrap .flexo-today__side {
+	display: flex;
+	flex-direction: column;
+	gap: var(--fx-space-5);
+}
+
+.flexo-admin-ui .wrap :is(.flexo-today__main, .flexo-today__side) > * {
+	margin: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-today__grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--fx-space-5);
+}
+
+.flexo-admin-ui .wrap .flexo-today__grid > * {
+	margin: 0;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-today__attention, .flexo-today__card) {
+	scroll-margin-top: 48px;
+}
+
+.flexo-admin-ui .wrap .flexo-today__allclear {
+	display: flex;
+	align-items: center;
+	gap: var(--fx-space-3);
+	padding: var(--fx-space-3) var(--fx-space-4);
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-success-bg);
+	color: var(--fx-success-text);
+	font-weight: 500;
+}
+
+.flexo-admin-ui .wrap .flexo-today__allclear-icon {
+	display: grid;
+	place-items: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	background: var(--fx-success-solid);
+	color: #fff;
+}
+
+.flexo-admin-ui .wrap .flexo-today__allclear-icon .flexo-icon {
+	width: 16px;
+	height: 16px;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-attention, .flexo-today__list) {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.flexo-admin-ui .wrap .flexo-attention__item {
+	display: grid;
+	grid-template-columns: 36px minmax(0, 1fr) auto;
+	gap: var(--fx-space-3);
+	align-items: center;
+	margin: 0;
+	padding: var(--fx-space-3) 0;
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .wrap .flexo-attention__item:first-child {
+	padding-top: 0;
+	border-top: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-attention__item:last-child {
+	padding-bottom: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-attention__icon {
+	display: grid;
+	place-items: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	background: var(--fx-info-bg);
+	color: var(--fx-info-text);
+}
+
+.flexo-admin-ui .wrap .flexo-attention__icon .flexo-icon {
+	width: 18px;
+	height: 18px;
+}
+
+.flexo-admin-ui .wrap .flexo-attention__item.is-warning .flexo-attention__icon {
+	background: var(--fx-warning-bg);
+	color: var(--fx-warning-text);
+}
+
+.flexo-admin-ui .wrap .flexo-attention__item.is-danger .flexo-attention__icon {
+	background: var(--fx-danger-bg);
+	color: var(--fx-danger-text);
+}
+
+.flexo-admin-ui .wrap .flexo-attention__text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-attention__text strong {
+	font-weight: 600;
+}
+
+.flexo-admin-ui .wrap .flexo-attention__text span {
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+	line-height: var(--fx-leading-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-attention__actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .flexo-today__item {
+	display: grid;
+	grid-template-columns: 36px minmax(0, 1fr) auto;
+	gap: var(--fx-space-3);
+	align-items: center;
+	margin: 0;
+	padding: var(--fx-space-3) 0;
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .wrap .flexo-today__item:first-child {
+	padding-top: 0;
+	border-top: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-today__item:last-child {
+	padding-bottom: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-today__who {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	min-width: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-today__who a {
+	color: var(--fx-text);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.flexo-admin-ui .wrap .flexo-today__who a:hover {
+	color: var(--fx-primary);
+}
+
+.flexo-admin-ui .wrap .flexo-today__who :is(span, small) {
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-today__meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .flexo-today__stats {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-stat {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--fx-space-3);
+	padding: var(--fx-space-3) 0;
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .wrap .flexo-stat:first-child {
+	padding-top: 0;
+	border-top: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-stat:last-child {
+	padding-bottom: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-stat__label {
+	color: var(--fx-text-secondary);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-stat__label::first-letter {
+	text-transform: uppercase;
+}
+
+.flexo-admin-ui .wrap .flexo-stat__value {
+	margin: 0;
+	color: var(--fx-text);
+	font-size: var(--fx-text-lg);
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+}
+
+.flexo-admin-ui .wrap .flexo-shortcuts {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.flexo-admin-ui .wrap .flexo-shortcuts h2 {
+	margin: 0 0 var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .flexo-shortcuts a {
+	display: flex;
+	align-items: center;
+	gap: var(--fx-space-3);
+	margin: 0 calc(-1 * var(--fx-space-2));
+	padding: var(--fx-space-2);
+	border-radius: var(--fx-radius-sm);
+	color: var(--fx-text-secondary);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.flexo-admin-ui .wrap .flexo-shortcuts a:hover {
+	background: var(--fx-surface-muted);
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .wrap .flexo-shortcuts .flexo-icon {
+	width: 18px;
+	height: 18px;
+	color: var(--fx-text-muted);
+}
+
+/* 6.2 Bookings list. */
+.flexo-admin-ui .wrap .flexo-bookings-table td a[href^="mailto:"] {
+	overflow-wrap: anywhere;
+}
+
+.flexo-admin-ui .wrap .flexo-bookings-table td.flexo-actions {
+	display: table-cell;
+}
+
+.flexo-admin-ui .wrap .flexo-bookings-table td.flexo-actions > * {
+	vertical-align: middle;
+}
+
+.flexo-admin-ui .wrap .flexo-bookings-table .flexo-amount {
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.flexo-admin-ui .wrap .flexo-bookings-table :is(td, th):is(.column-total, [data-colname]):is(.flexo-num) {
+	text-align: right;
+}
+
+.flexo-admin-ui .wrap .flexo-bookings-table .flexo-ref {
+	display: block;
+	color: var(--fx-text);
+	font-weight: 600;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.flexo-admin-ui .wrap .flexo-bookings-table td.flexo-actions {
+	width: 1%;
+	white-space: nowrap;
+}
+
+.flexo-admin-ui .wrap .flexo-bookings-table .flexo-actions {
+	text-align: right;
+}
+
+.flexo-admin-ui .wrap .flexo-bookings-table .flexo-actions .button {
+	margin: 0 0 0 var(--fx-space-1);
+}
+
+.flexo-admin-ui .wrap .flexo-notes {
+	display: block;
+	max-width: 280px;
+	margin-top: 2px;
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+	white-space: pre-line;
+}
+
+.flexo-admin-ui .wrap .flexo-breakdown {
+	margin: var(--fx-space-1) 0 0;
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-xs);
+	white-space: pre-line;
+}
+
+.flexo-admin-ui .wrap .flexo-conflicts {
+	margin: 0 0 var(--fx-space-5);
+	padding: var(--fx-space-5);
+	border: 1px solid var(--fx-danger-border);
+	border-radius: var(--fx-radius-lg);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs);
+}
+
+.flexo-admin-ui .wrap .flexo-conflicts h2 {
+	margin: 0 0 var(--fx-space-2);
+	color: var(--fx-danger-text);
+}
+
+/* 6.3 Booking details. */
+.flexo-admin-ui .wrap .flexo-booking-view__layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 360px;
+	gap: var(--fx-space-5);
+	align-items: start;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-booking-view__main, .flexo-booking-view__side) {
+	display: flex;
+	flex-direction: column;
+	gap: var(--fx-space-5);
+	min-width: 0;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-booking-view__main, .flexo-booking-view__side, .flexo-booking-view__grid) > * {
+	margin: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-booking-view__grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--fx-space-5);
+	align-items: start;
+}
+
+.flexo-admin-ui .wrap .flexo-booking-view h1 .flexo-status {
+	font-size: var(--fx-text-sm);
+	letter-spacing: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-contact {
+	display: inline-flex;
+	gap: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .flexo-resend {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-2);
+	margin-top: var(--fx-space-3);
+}
+
+.flexo-admin-ui .wrap .flexo-resend select {
+	flex: 1 1 160px;
+}
+
+.flexo-admin-ui .wrap .flexo-staff-notes textarea {
+	width: 100%;
+}
+
+.flexo-admin-ui .wrap .flexo-guest-request {
+	max-width: none;
+}
+
+.flexo-admin-ui .wrap .flexo-payments-card .flexo-payment-history {
+	margin: var(--fx-space-3) 0;
+}
+
+.flexo-admin-ui .wrap .flexo-payments-card :is(.flexo-payment-row--refund, .flexo-payment-row--attempt) td {
+	color: var(--fx-danger-text);
+}
+
+.flexo-admin-ui .wrap .flexo-payments-card .flexo-payment-form {
+	margin: var(--fx-space-3) 0 0;
+}
+
+.flexo-admin-ui .wrap .flexo-payments-card .flexo-payment-more {
+	margin-top: var(--fx-space-3);
+}
+
+/* 6.4 Emails. */
+.flexo-admin-ui .wrap .flexo-email-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	margin: 0;
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-lg);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs);
+	overflow: hidden;
+}
+
+.flexo-admin-ui .wrap .flexo-email-card {
+	margin: 0;
+	padding: var(--fx-space-4) var(--fx-space-5);
+	border: 0;
+	border-top: 1px solid var(--fx-border);
+	border-radius: 0;
+	background: none;
+	box-shadow: none;
+	scroll-margin-top: 48px;
+}
+
+.flexo-admin-ui .wrap .flexo-email-card:first-child {
+	border-top: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-email-card__head {
+	display: grid;
+	grid-template-columns: 32px minmax(0, 1fr);
+	gap: var(--fx-space-3);
+	align-items: start;
+}
+
+.flexo-admin-ui .wrap .flexo-email-card__icon {
+	display: grid;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-surface-muted);
+	color: var(--fx-text-secondary);
+}
+
+.flexo-admin-ui .wrap .flexo-email-card__icon .flexo-icon {
+	width: 16px;
+	height: 16px;
+}
+
+.flexo-admin-ui .wrap .flexo-email-card h3 {
+	margin: 0;
+	font-size: var(--fx-text-md);
+	font-weight: 600;
+}
+
+.flexo-admin-ui .wrap .flexo-email-card__title p {
+	margin: 2px 0 0;
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-email-card > :is(.flexo-inline-form, .description, .fx-inline) {
+	margin: var(--fx-space-3) 0 0 44px;
+}
+
+.flexo-admin-ui .wrap .flexo-email-card__edit {
+	margin: var(--fx-space-3) 0 0 44px;
+}
+
+.flexo-admin-ui .wrap .flexo-email-card__edit > summary {
+	justify-content: space-between;
+	gap: var(--fx-space-3);
+	min-height: 36px;
+	padding: 0 var(--fx-space-3);
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-surface-subtle);
+}
+
+.flexo-admin-ui .wrap .flexo-email-card__edit > summary:hover {
+	border-color: var(--fx-border-strong);
+}
+
+.flexo-admin-ui .wrap .flexo-email-card__subject {
+	min-width: 0;
+	overflow: hidden;
+	color: var(--fx-text-secondary);
+	font-size: var(--fx-text-sm);
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.flexo-admin-ui .wrap .flexo-email-card__toggle {
+	flex: 0 0 auto;
+	color: var(--fx-primary);
+	font-size: var(--fx-text-sm);
+	font-weight: 500;
+}
+
+.flexo-admin-ui .wrap .flexo-email-card__edit[open] > summary {
+	margin-bottom: var(--fx-space-3);
+}
+
+.flexo-admin-ui .wrap .flexo-email-card__edit[open] .flexo-email-card__subject {
+	visibility: hidden;
+}
+
+.flexo-admin-ui .wrap .flexo-email-card__edit :is(.flexo-field-label, .fx-label) {
+	margin-top: var(--fx-space-3);
+}
+
+.flexo-admin-ui .wrap .flexo-email-card textarea {
+	font-family: var(--fx-mono);
+	font-size: var(--fx-text-sm);
+	line-height: var(--fx-leading-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-placeholders {
+	margin: 0 0 var(--fx-space-4);
+}
+
+.flexo-admin-ui .wrap .flexo-placeholders > p,
+.flexo-admin-ui .wrap .flexo-placeholders > div {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--fx-space-2);
+	margin: var(--fx-space-2) 0 0;
+}
+
+.flexo-admin-ui .wrap .flexo-placeholders code {
+	cursor: copy;
+}
+
+.flexo-admin-ui .wrap .flexo-email-log td {
+	vertical-align: top;
+}
+
+.flexo-admin-ui .wrap .flexo-tracking-events {
+	margin: var(--fx-space-3) 0;
+}
+
+/* 6.5 Appearance and page looks (split layout with a live preview). */
+.flexo-admin-ui .wrap .flexo-appearance__layout {
+	display: grid;
+	grid-template-columns: minmax(0, 45fr) minmax(0, 55fr);
+	gap: var(--fx-space-5);
+	align-items: start;
+}
+
+.flexo-admin-ui .wrap .flexo-appearance__settings {
+	min-width: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-appearance__preview {
+	position: sticky;
+	top: calc(32px + var(--fx-space-4));
+	display: flex;
+	flex-direction: column;
+	height: calc(100vh - 32px - var(--fx-space-4) * 2);
+	min-height: 520px;
+	margin: 0;
+	padding: 0;
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-lg);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs);
+	overflow: hidden;
+}
+
+.flexo-admin-ui .wrap .flexo-appearance__preview-bar {
+	flex: 0 0 auto;
+	padding: var(--fx-space-2) var(--fx-space-3) 0;
+	border-bottom: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .wrap .flexo-appearance__frame-wrap {
+	position: relative;
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow: hidden;
+	background: var(--fx-surface-muted);
+}
+
+.flexo-admin-ui .wrap .flexo-appearance__frame-wrap iframe {
+	display: block;
+	border: 0;
+	background: #fff;
+	transform-origin: 0 0;
+}
+
+.flexo-admin-ui .wrap .flexo-appearance__frame-wrap.is-phone {
+	padding: var(--fx-space-4);
+}
+
+.flexo-admin-ui .wrap .flexo-appearance__frame-wrap.is-phone iframe {
+	border-radius: 24px;
+	box-shadow: 0 0 0 6px var(--fx-gray-900), var(--fx-shadow-lg);
+}
+
+.flexo-admin-ui .wrap .flexo-appearance__frame-wrap.is-loading::before {
+	content: "";
+	position: absolute;
+	inset: var(--fx-space-4);
+	z-index: 1;
+	border-radius: var(--fx-radius-md);
+	background: linear-gradient(90deg, var(--fx-gray-100) 0%, var(--fx-gray-50) 50%, var(--fx-gray-100) 100%);
+	background-size: 200% 100%;
+	animation: fx-shimmer 1.2s linear infinite;
+}
+
+.flexo-admin-ui .wrap .flexo-appearance__frame-wrap .fx-skeleton {
+	position: absolute;
+	inset: var(--fx-space-4);
+}
+
+.flexo-admin-ui .wrap .flexo-appearance__preview-note {
+	flex: 0 0 auto;
+	margin: 0;
+	padding: var(--fx-space-2) var(--fx-space-4);
+	border-top: 1px solid var(--fx-border);
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-xs);
+	line-height: var(--fx-leading-xs);
+}
+
+.flexo-admin-ui .wrap .flexo-appearance__warnings:empty {
+	display: none;
+}
+
+.flexo-admin-ui .wrap .flexo-appearance__warnings {
+	display: grid;
+	gap: var(--fx-space-2);
+	margin: 0 0 var(--fx-space-4);
+}
+
+.flexo-admin-ui .wrap .flexo-appearance__warnings .notice {
+	margin: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-corner__sample {
+	display: inline-block;
+	width: 20px;
+	height: 14px;
+	border: 2px solid currentColor;
+}
+
+.flexo-admin-ui .wrap .fx-preview-toggle {
+	display: none;
+}
+
+/* 6.6 Settings → Pages. */
+.flexo-admin-ui .wrap .flexo-page-card__head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--fx-space-3) var(--fx-space-5);
+}
+
+.flexo-admin-ui .wrap .flexo-page-card__head h2 {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .flexo-page-card__head .description {
+	margin: var(--fx-space-1) 0 0;
+}
+
+.flexo-admin-ui .wrap .flexo-page-card__status {
+	display: flex;
+	align-items: center;
+	gap: var(--fx-space-2);
+	margin: var(--fx-space-3) 0 0;
+	padding: var(--fx-space-2) var(--fx-space-3);
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-success-bg);
+	color: var(--fx-success-text);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-page-card__status--warning {
+	background: var(--fx-warning-bg);
+	color: var(--fx-warning-text);
+}
+
+.flexo-admin-ui .wrap .flexo-page-card__status--off {
+	background: var(--fx-surface-muted);
+	color: var(--fx-text-muted);
+}
+
+.flexo-admin-ui .wrap .flexo-page-card__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .flexo-page-card__customize {
+	margin-top: var(--fx-space-4);
+	padding-top: var(--fx-space-2);
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .wrap .flexo-page-section__title {
+	margin: var(--fx-space-5) 0 var(--fx-space-2);
+	font-size: var(--fx-text-md);
+	font-weight: 600;
+}
+
+.flexo-admin-ui .wrap .flexo-section-list__label {
+	flex: 1 1 auto;
+}
+
+.flexo-admin-ui .wrap .flexo-field-item {
+	display: block;
+}
+
+.flexo-admin-ui .wrap .flexo-field-item__head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-2) var(--fx-space-3);
+}
+
+.flexo-admin-ui .wrap .flexo-field-item__texts {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: var(--fx-space-2) var(--fx-space-3);
+	margin-top: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .flexo-field-item__texts label {
+	display: grid;
+	gap: var(--fx-space-1);
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-field-item__texts input {
+	width: 100%;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-device-row, .flexo-color-pair) {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--fx-space-2) var(--fx-space-5);
+}
+
+.flexo-admin-ui .wrap .flexo-device-row label {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .flexo-device-row label span {
+	min-width: 64px;
+	color: var(--fx-text-secondary);
+}
+
+.flexo-admin-ui .wrap .flexo-band-image {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-2) var(--fx-space-3);
+}
+
+.flexo-admin-ui .wrap .flexo-band-image__preview:empty {
+	display: none;
+}
+
+.flexo-admin-ui .wrap .flexo-band-image__preview img {
+	display: block;
+	width: 80px;
+	height: 56px;
+	object-fit: cover;
+	border-radius: var(--fx-radius-sm);
+	box-shadow: inset 0 0 0 1px rgba(17, 26, 36, 0.1);
+}
+
+.flexo-admin-ui .wrap .flexo-pages-form [hidden] {
+	display: none;
+}
+
+.flexo-admin-ui .wrap .flexo-page-look {
+	margin: var(--fx-space-5) 0 0;
+	padding-top: var(--fx-space-4);
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .wrap .flexo-page-look__own[hidden] {
+	display: none;
+}
+
+.flexo-admin-ui .wrap .flexo-page-look__body:has(> .flexo-page-look__own:not([hidden])) {
+	display: grid;
+	grid-template-columns: minmax(0, 45fr) minmax(0, 55fr);
+	gap: var(--fx-space-5);
+	align-items: start;
+}
+
+.flexo-admin-ui .wrap .flexo-page-look__preview {
+	margin-top: var(--fx-space-3);
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-lg);
+	background: var(--fx-surface);
+	overflow: hidden;
+}
+
+.flexo-admin-ui .wrap .flexo-page-look__body:has(> .flexo-page-look__own:not([hidden])) > .flexo-page-look__preview {
+	position: sticky;
+	top: calc(32px + var(--fx-space-4));
+	margin-top: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-page-look__preview .flexo-appearance__preview-bar {
+	padding: var(--fx-space-2) var(--fx-space-3) 0;
+	border-bottom: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .wrap .flexo-page-look__frame-wrap {
+	height: 640px;
+	overflow: hidden;
+	background: var(--fx-surface-muted);
+}
+
+.flexo-admin-ui .wrap .flexo-page-look__frame-wrap iframe {
+	display: block;
+	border: 0;
+	background: #fff;
+	transform-origin: 0 0;
+}
+
+.flexo-admin-ui .wrap .flexo-url-field {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 2px;
+	max-width: 100%;
+}
+
+.flexo-admin-ui .wrap .flexo-url-field input[type="text"] {
+	width: 11em;
+	min-width: 0;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-url-field__home, .flexo-url-field__rest) {
+	color: var(--fx-text-muted);
+	overflow-wrap: anywhere;
+}
+
+/* 6.7 Help. */
+.flexo-admin-ui .wrap .flexo-help__guides {
+	display: grid;
+	gap: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .flexo-help__guide {
+	margin: 0;
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-lg);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs);
+	overflow: hidden;
+}
+
+.flexo-admin-ui .wrap .flexo-help__guide > summary {
+	min-height: 52px;
+	padding: 0 var(--fx-space-5);
+	font-weight: 600;
+}
+
+.flexo-admin-ui .wrap .flexo-help__guide > summary:hover {
+	background: var(--fx-surface-subtle);
+}
+
+.flexo-admin-ui .wrap .flexo-help__guide > :not(summary) {
+	margin: 0 var(--fx-space-5) var(--fx-space-4) calc(var(--fx-space-5) + 24px);
+}
+
+.flexo-admin-ui .wrap .flexo-help__guide li {
+	margin-bottom: var(--fx-space-1);
+}
+
+.flexo-admin-ui .wrap .flexo-help__contact {
+	margin: 0;
+	font-size: var(--fx-text-md);
+}
+
+/* 6.8 Setup wizard (stepper left, step right). */
+.flexo-admin-ui .wrap .flexo-wizard__body {
+	display: grid;
+	grid-template-columns: 240px minmax(0, 720px);
+	gap: var(--fx-space-6);
+	align-items: start;
+}
+
+.flexo-admin-ui .wrap .flexo-wizard__steps {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	counter-reset: flexo-step;
+}
+
+.flexo-admin-ui .wrap .flexo-wizard__steps li {
+	margin: 0;
+	counter-increment: flexo-step;
+}
+
+.flexo-admin-ui .wrap .flexo-wizard__steps a {
+	display: flex;
+	align-items: center;
+	gap: var(--fx-space-3);
+	min-height: 40px;
+	padding: 0 var(--fx-space-3);
+	border-radius: var(--fx-radius-sm);
+	color: var(--fx-text-secondary);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.flexo-admin-ui .wrap .flexo-wizard__steps a:hover {
+	background: var(--fx-surface-muted);
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .wrap .flexo-wizard__steps a::before {
+	content: counter(flexo-step);
+	display: grid;
+	flex: 0 0 auto;
+	place-items: center;
+	width: 24px;
+	height: 24px;
+	border: 1px solid var(--fx-border-strong);
+	border-radius: 50%;
+	background: var(--fx-surface);
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-xs);
+	font-weight: 600;
+}
+
+.flexo-admin-ui .wrap .flexo-wizard__steps .is-done a::before {
+	content: "";
+	border-color: var(--fx-success-solid);
+	background: var(--fx-success-solid) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.8 8.3l2.7 2.6 5.7-5.8' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 12px no-repeat;
+}
+
+.flexo-admin-ui .wrap .flexo-wizard__steps .is-current a {
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs), inset 0 0 0 1px var(--fx-border);
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .wrap .flexo-wizard__steps .is-current a::before {
+	border-color: var(--fx-primary);
+	background: var(--fx-primary);
+	color: #fff;
+}
+
+.flexo-admin-ui .wrap .flexo-wizard__card {
+	max-width: 720px;
+}
+
+.flexo-admin-ui .wrap .flexo-wizard__buttons {
+	margin-top: var(--fx-space-5);
+	padding-top: var(--fx-space-4);
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .wrap .flexo-wizard__arrived {
+	padding: var(--fx-space-3) var(--fx-space-4);
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-success-bg);
+	color: var(--fx-success-text);
+	font-weight: 500;
+}
+
+/* 6.9 Calendar sync, rates, promo codes, seasons, closed dates. */
+.flexo-admin-ui .wrap .flexo-sync-room__head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .flexo-sync-room h3 {
+	margin: var(--fx-space-4) 0 var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .flexo-sync-error {
+	max-width: 360px;
+	color: var(--fx-danger-text);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-sync-add {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: var(--fx-space-2);
+	margin-top: var(--fx-space-3);
+}
+
+.flexo-admin-ui .wrap .flexo-sync-add label {
+	display: flex;
+	flex-direction: column;
+	gap: var(--fx-space-1);
+	color: var(--fx-text-secondary);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-sync-add__url {
+	flex: 1 1 280px;
+}
+
+.flexo-admin-ui .wrap .flexo-check {
+	display: inline-flex;
+	align-items: center;
+	margin: 0 var(--fx-space-4) var(--fx-space-2) 0;
+}
+
+.flexo-admin-ui .wrap .flexo-plan-rooms {
+	max-width: 560px;
+}
+
+.flexo-admin-ui .wrap .flexo-season-summary {
+	margin: 0 0 var(--fx-space-2);
+}
+
+/* 6.10 Calendar. */
+.flexo-admin-ui .wrap.flexo-calendar-page {
+	--fbc-room-w: 200px;
+	--fbc-day-w: 40px;
+	--fbc-bar: 28px;
+	--fbc-line: var(--fx-border);
+}
+
+.flexo-admin-ui .wrap .fbc-today {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: var(--fx-space-4);
+	margin: 0 0 var(--fx-space-5);
+}
+
+.flexo-admin-ui .wrap .fbc-today__panel {
+	padding: var(--fx-space-4) var(--fx-space-5);
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-lg);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs);
+}
+
+.flexo-admin-ui .wrap .fbc-today__panel h2 {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin: 0 0 var(--fx-space-2);
+	font-size: var(--fx-text-md);
+}
+
+.flexo-admin-ui .wrap .fbc-today__panel :is(ul, p) {
+	margin: 0;
+	color: var(--fx-text-secondary);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .fbc-today__panel li {
+	margin: 0 0 2px;
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .fbc-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-2);
+	margin: 0 0 var(--fx-space-3);
+}
+
+.flexo-admin-ui .wrap .fbc-month {
+	margin: 0 var(--fx-space-3);
+	font-size: var(--fx-text-xl);
+	font-weight: 600;
+	line-height: var(--fx-leading-xl);
+}
+
+.flexo-admin-ui .wrap .fbc-options {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-3);
+	margin-left: auto;
+}
+
+.flexo-admin-ui .wrap .fbc-scroll {
+	position: relative;
+	max-width: 100%;
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-lg);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs);
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scrollbar-color: var(--fx-gray-300) transparent;
+}
+
+.flexo-admin-ui .wrap .fbc {
+	min-width: calc(var(--fbc-room-w) + var(--fbc-days) * var(--fbc-day-w));
+}
+
+.flexo-admin-ui .wrap .fbc-row {
+	display: grid;
+	grid-template-columns: var(--fbc-room-w) minmax(0, 1fr);
+	border-bottom: 1px solid var(--fbc-line);
+}
+
+.flexo-admin-ui .wrap .fbc-row:last-child {
+	border-bottom: 0;
+}
+
+.flexo-admin-ui .wrap .fbc-room {
+	position: sticky;
+	left: 0;
+	z-index: 3;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 0;
+	min-width: 0;
+	padding: var(--fx-space-2) var(--fx-space-3);
+	border-right: 1px solid var(--fbc-line);
+	background: var(--fx-surface);
+	font-size: var(--fx-text-sm);
+	line-height: var(--fx-leading-sm);
+	overflow-wrap: anywhere;
+}
+
+.flexo-admin-ui .wrap .fbc-room strong {
+	font-weight: 600;
+}
+
+.flexo-admin-ui .wrap .fbc-room :is(span, small) {
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-xs);
+}
+
+.flexo-admin-ui .wrap .fbc-row--head,
+.flexo-admin-ui .wrap .fbc-row--head .fbc-room {
+	background: var(--fx-surface-subtle);
+}
+
+.flexo-admin-ui .wrap .fbc-row--head .fbc-room {
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-xs);
+	font-weight: 500;
+}
+
+.flexo-admin-ui .wrap .fbc-track {
+	position: relative;
+	display: grid;
+	grid-template-columns: repeat(calc(var(--fbc-days) * 2), minmax(0, 1fr));
+	grid-template-rows: repeat(var(--fbc-lanes, 1), var(--fbc-bar)) 16px;
+	row-gap: 3px;
+	padding: 4px 0 2px;
+}
+
+.flexo-admin-ui .wrap .fbc-row--head .fbc-track {
+	grid-template-rows: auto;
+	padding: 0;
+}
+
+.flexo-admin-ui .wrap .fbc-day {
+	display: flex;
+	flex-direction: column;
+	padding: var(--fx-space-1) 0;
+	border-left: 1px solid var(--fbc-line);
+	color: var(--fx-text-muted);
+	font-size: 11px;
+	line-height: 14px;
+	text-align: center;
+}
+
+.flexo-admin-ui .wrap .fbc-day__num {
+	color: var(--fx-text);
+	font-size: var(--fx-text-sm);
+	font-weight: 600;
+	line-height: 18px;
+}
+
+.flexo-admin-ui .wrap :is(.fbc-day, .fbc-cell).is-weekend {
+	background: var(--fx-surface-subtle);
+}
+
+.flexo-admin-ui .wrap .fbc-day.is-today {
+	background: var(--fx-primary);
+	color: rgba(255, 255, 255, 0.85);
+}
+
+.flexo-admin-ui .wrap .fbc-day.is-today .fbc-day__num {
+	color: #fff;
+}
+
+.flexo-admin-ui .wrap .fbc-cell {
+	display: flex;
+	grid-row: 1 / -1;
+	align-items: flex-end;
+	justify-content: center;
+	min-width: 0;
+	margin: -4px 0 -2px;
+	padding: 0 0 2px;
+	border: 0;
+	border-left: 1px solid var(--fbc-line);
+	background: transparent;
+	font: inherit;
+	cursor: pointer;
+}
+
+.flexo-admin-ui .wrap .fbc-cell:hover,
+.flexo-admin-ui .wrap .fbc-cell:focus-visible {
+	background: var(--fx-primary-soft);
+	box-shadow: inset 0 0 0 2px var(--fx-primary);
+	outline: 0;
+}
+
+.flexo-admin-ui .wrap .fbc-cell.is-today {
+	box-shadow: inset 2px 0 0 var(--fx-primary);
+}
+
+.flexo-admin-ui .wrap .fbc-cell.is-past {
+	background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
+}
+
+.flexo-admin-ui .wrap .fbc-cell.is-closed {
+	background: repeating-linear-gradient(135deg, var(--fx-gray-50) 0 6px, var(--fx-gray-100) 6px 12px);
+}
+
+.flexo-admin-ui .wrap .fbc-free {
+	color: var(--fx-text-placeholder);
+	font-size: 10px;
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
+}
+
+.flexo-admin-ui .wrap .fbc-cell.is-full .fbc-free {
+	color: var(--fx-danger-text);
+	font-weight: 600;
+}
+
+/* Booking bars: the same colours as the status pills. */
+.flexo-admin-ui :is(.wrap, .fbc-dialog) .fbc-item {
+	position: relative;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	gap: var(--fx-space-1);
+	min-width: 0;
+	margin: 0 1px;
+	padding: 0 var(--fx-space-2);
+	border: 1px solid transparent;
+	border-radius: var(--fx-radius-full);
+	font: inherit;
+	font-size: var(--fx-text-xs);
+	font-weight: 500;
+	text-align: left;
+	white-space: nowrap;
+	overflow: hidden;
+	cursor: pointer;
+}
+
+.flexo-admin-ui .wrap .fbc-item:focus-visible {
+	outline: 2px solid var(--fx-primary);
+	outline-offset: 1px;
+}
+
+.flexo-admin-ui .wrap .fbc-item__label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.flexo-admin-ui .wrap .fbc-item__icon {
+	flex: 0 0 auto;
+	width: 12px;
+	height: 12px;
+	background: currentColor;
+	-webkit-mask: var(--fx-status-icon, var(--fx-icon-check)) center / contain no-repeat;
+	mask: var(--fx-status-icon, var(--fx-icon-check)) center / contain no-repeat;
+}
+
+.flexo-admin-ui .wrap .fbc-item--before {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+.flexo-admin-ui .wrap .fbc-item--after {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+.flexo-admin-ui :is(.wrap, .fbc-dialog) .fbc-item--confirmed {
+	--fx-status-icon: var(--fx-icon-check);
+	border-color: var(--fx-success-border);
+	background: var(--fx-success-bg);
+	color: var(--fx-success-text);
+}
+
+.flexo-admin-ui :is(.wrap, .fbc-dialog) .fbc-item--pending {
+	--fx-status-icon: var(--fx-icon-clock);
+	border: 1px dashed var(--fx-warning-solid);
+	background: var(--fx-warning-bg);
+	color: var(--fx-warning-text);
+}
+
+.flexo-admin-ui :is(.wrap, .fbc-dialog) .fbc-item--pending_payment {
+	--fx-status-icon: var(--fx-icon-card);
+	border: 1px dashed var(--fx-info-solid);
+	background: var(--fx-info-bg);
+	color: var(--fx-info-text);
+}
+
+.flexo-admin-ui :is(.wrap, .fbc-dialog) .fbc-item--awaiting_payment {
+	--fx-status-icon: var(--fx-icon-bank);
+	border-color: var(--fx-warning-border);
+	background: repeating-linear-gradient(135deg, var(--fx-warning-bg) 0 6px, #ffecc4 6px 12px);
+	color: var(--fx-warning-text);
+}
+
+.flexo-admin-ui :is(.wrap, .fbc-dialog) .fbc-item--blocked {
+	--fx-status-icon: var(--fx-icon-lock);
+	border-color: var(--fx-gray-300);
+	background: repeating-linear-gradient(135deg, var(--fx-gray-100) 0 5px, var(--fx-gray-200) 5px 10px);
+	color: var(--fx-gray-700);
+}
+
+.flexo-admin-ui :is(.wrap, .fbc-dialog) .fbc-item--external {
+	--fx-status-icon: var(--fx-icon-arrows);
+	border-color: var(--fx-violet-border);
+	background: var(--fx-violet-bg);
+	color: var(--fx-violet-text);
+}
+
+.flexo-admin-ui :is(.wrap, .fbc-dialog) .fbc-item--closed {
+	--fx-status-icon: var(--fx-icon-x);
+	border: 1px dotted var(--fx-gray-400);
+	background: var(--fx-gray-50);
+	color: var(--fx-gray-500);
+}
+
+.flexo-admin-ui :is(.wrap, .fbc-dialog) .fbc-item--cancelled {
+	--fx-status-icon: var(--fx-icon-x);
+	border: 1px dashed var(--fx-gray-300);
+	background: var(--fx-surface);
+	color: var(--fx-gray-500);
+	text-decoration: line-through;
+}
+
+.flexo-admin-ui .wrap :is(.fbc-item--staff, .fbc-swatch.fbc-item--staff) {
+	--fx-status-icon: var(--fx-icon-pen);
+}
+
+.flexo-admin-ui :is(.wrap, .fbc-dialog) .fbc-item--conflict {
+	--fx-status-icon: var(--fx-icon-alert);
+	border: 2px solid var(--fx-danger-solid);
+	color: var(--fx-danger-text);
+	font-weight: 600;
+}
+
+.flexo-admin-ui .wrap .fbc-legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--fx-space-2) var(--fx-space-4);
+	margin: var(--fx-space-3) 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.flexo-admin-ui .wrap .fbc-legend li {
+	display: flex;
+	align-items: center;
+	gap: var(--fx-space-2);
+	margin: 0;
+	color: var(--fx-text-secondary);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .fbc-swatch {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 16px;
+	border: 1px solid transparent;
+	border-radius: var(--fx-radius-full);
+	font-size: 0;
+}
+
+.flexo-admin-ui .wrap .fbc-swatch::before {
+	content: "";
+	width: 10px;
+	height: 10px;
+	background: currentColor;
+	-webkit-mask: var(--fx-status-icon, var(--fx-icon-check)) center / contain no-repeat;
+	mask: var(--fx-status-icon, var(--fx-icon-check)) center / contain no-repeat;
+}
+
+.flexo-admin-ui .wrap .fbc-swatch.fbc-item--conflict {
+	background: var(--fx-surface);
+}
+
+.flexo-admin-ui .wrap .fbc-swatch--full {
+	border: 1px solid var(--fbc-line);
+	background: var(--fx-surface);
+	color: var(--fx-danger-text);
+	font-size: 10px;
+	font-weight: 600;
+}
+
+.flexo-admin-ui .wrap .fbc-swatch--full::before {
+	display: none;
+}
+
+.flexo-admin-ui .wrap .fbc-swatch--free {
+	width: auto;
+	padding: 0 6px;
+	color: var(--fx-text-muted);
+	font-variant-numeric: tabular-nums;
+}
+
+.flexo-admin-ui .wrap .fbc-hint {
+	flex-basis: 100%;
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+}
+
+/* Calendar booking dialog. */
+.flexo-admin-ui .fbc-dialog {
+	width: min(480px, calc(100vw - 32px));
+	padding: 0;
+}
+
+.flexo-admin-ui .fbc-dialog > :not(h2, .fbc-dialog__close) {
+	margin-right: var(--fx-space-5);
+	margin-left: var(--fx-space-5);
+}
+
+.flexo-admin-ui .fbc-dialog .fbc-dialog__sub {
+	margin-top: 0;
+	margin-bottom: var(--fx-space-4);
+	color: var(--fx-text-muted);
+}
+
+.flexo-admin-ui .fbc-dialog .fbc-dialog__actions {
+	margin: 0;
+	padding: var(--fx-space-4) var(--fx-space-5);
+	border-top: 1px solid var(--fx-border);
+	background: var(--fx-surface-subtle);
+}
+
+.flexo-admin-ui .fbc-dialog form {
+	margin: 0 var(--fx-space-5) var(--fx-space-4);
+}
+
+/* Agenda (calendar on phones, or when chosen). */
+.flexo-admin-ui .wrap .fbc-agenda {
+	display: flex;
+	flex-direction: column;
+	gap: var(--fx-space-4);
+}
+
+.flexo-admin-ui .wrap .fbc-agenda[hidden],
+.flexo-admin-ui .wrap .fbc-scroll[hidden] {
+	display: none;
+}
+
+.flexo-admin-ui .wrap .fbc-agenda__date {
+	margin: 0 0 var(--fx-space-2);
+	color: var(--fx-text-secondary);
+	font-size: var(--fx-text-sm);
+	font-weight: 600;
+}
+
+.flexo-admin-ui .wrap .fbc-agenda__day.is-today .fbc-agenda__date {
+	color: var(--fx-primary);
+}
+
+.flexo-admin-ui .wrap .fbc-agenda__list {
+	margin: 0;
+	padding: 0;
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-lg);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs);
+	list-style: none;
+	overflow: hidden;
+}
+
+.flexo-admin-ui .wrap .fbc-agenda__list li {
+	margin: 0;
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .wrap .fbc-agenda__list li:first-child {
+	border-top: 0;
+}
+
+.flexo-admin-ui .wrap .fbc-agenda__item {
+	display: grid;
+	grid-template-columns: 28px minmax(0, 1fr);
+	gap: var(--fx-space-3);
+	align-items: center;
+	width: 100%;
+	min-height: 56px;
+	padding: var(--fx-space-2) var(--fx-space-4);
+	border: 0;
+	background: none;
+	color: var(--fx-text);
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+}
+
+.flexo-admin-ui .wrap .fbc-agenda__item:hover {
+	background: var(--fx-surface-subtle);
+}
+
+.flexo-admin-ui .wrap .fbc-agenda__item:focus-visible {
+	box-shadow: inset 0 0 0 2px var(--fx-primary);
+	outline: 0;
+}
+
+/* The status icon in a tinted circle, in the status colours. */
+.flexo-admin-ui .wrap .fbc-agenda__item .fbc-item__icon {
+	position: relative;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	background: var(--fx-agenda-bg, var(--fx-surface-muted));
+	-webkit-mask: none;
+	mask: none;
+}
+
+.flexo-admin-ui .wrap .fbc-agenda__item .fbc-item__icon::after {
+	content: "";
+	position: absolute;
+	inset: 7px;
+	background: var(--fx-agenda-ink, var(--fx-text-secondary));
+	-webkit-mask: var(--fx-status-icon, var(--fx-icon-check)) center / contain no-repeat;
+	mask: var(--fx-status-icon, var(--fx-icon-check)) center / contain no-repeat;
+}
+
+.flexo-admin-ui .wrap .fbc-agenda__item[data-kind="confirmed"] { --fx-status-icon: var(--fx-icon-check); --fx-agenda-bg: var(--fx-success-bg); --fx-agenda-ink: var(--fx-success-text); }
+.flexo-admin-ui .wrap .fbc-agenda__item[data-kind="pending"] { --fx-status-icon: var(--fx-icon-clock); --fx-agenda-bg: var(--fx-warning-bg); --fx-agenda-ink: var(--fx-warning-text); }
+.flexo-admin-ui .wrap .fbc-agenda__item[data-kind="awaiting_payment"] { --fx-status-icon: var(--fx-icon-bank); --fx-agenda-bg: var(--fx-warning-bg); --fx-agenda-ink: var(--fx-warning-text); }
+.flexo-admin-ui .wrap .fbc-agenda__item[data-kind="pending_payment"] { --fx-status-icon: var(--fx-icon-card); --fx-agenda-bg: var(--fx-info-bg); --fx-agenda-ink: var(--fx-info-text); }
+.flexo-admin-ui .wrap .fbc-agenda__item[data-kind="blocked"] { --fx-status-icon: var(--fx-icon-lock); }
+.flexo-admin-ui .wrap .fbc-agenda__item[data-kind="external"] { --fx-status-icon: var(--fx-icon-arrows); --fx-agenda-bg: var(--fx-violet-bg); --fx-agenda-ink: var(--fx-violet-text); }
+.flexo-admin-ui .wrap .fbc-agenda__item:is([data-kind="closed"], [data-kind="cancelled"]) { --fx-status-icon: var(--fx-icon-x); }
+.flexo-admin-ui .wrap .fbc-agenda__item[data-staff] { --fx-status-icon: var(--fx-icon-pen); }
+.flexo-admin-ui .wrap .fbc-agenda__item[data-conflict] { --fx-status-icon: var(--fx-icon-alert); --fx-agenda-bg: var(--fx-danger-bg); --fx-agenda-ink: var(--fx-danger-text); }
+
+.flexo-admin-ui .wrap .fbc-agenda__text {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.flexo-admin-ui .wrap .fbc-agenda__text strong {
+	overflow: hidden;
+	font-weight: 600;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.flexo-admin-ui .wrap .fbc-agenda__text span {
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .fbc-toolbar__months,
+.flexo-admin-ui .wrap .fbc-scrollers {
+	display: inline-flex;
+	gap: var(--fx-space-1);
+}
+
+.flexo-admin-ui .wrap .fbc-scrollers[hidden] {
+	display: none;
+}
+
+.flexo-admin-ui .wrap .fbc-options__form {
+	margin: 0;
+}
+
+/* 6.11 Room list and room editor. */
+.flexo-admin-ui .wrap .column-flexo_photo {
+	width: 72px;
+}
+
+.flexo-admin-ui .wrap :is(th, td):is(.column-flexo_price, .column-flexo_capacity, .column-flexo_units) {
+	width: 112px;
+	font-variant-numeric: tabular-nums;
+	text-align: right;
+}
+
+.flexo-admin-ui .wrap th:is(.column-flexo_price, .column-flexo_capacity, .column-flexo_units) {
+	padding-right: var(--fx-space-6);
+}
+
+.flexo-admin-ui .wrap td:is(.column-flexo_price, .column-flexo_capacity, .column-flexo_units) {
+	padding-right: var(--fx-space-6);
+}
+
+.flexo-admin-ui .wrap .flexo-room-thumb {
+	display: block;
+	width: 64px;
+	height: 48px;
+	border-radius: var(--fx-radius-sm);
+	background: var(--fx-surface-muted);
+	object-fit: cover;
+	overflow: hidden;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-editor-label) {
+	margin: var(--fx-space-5) 0 var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .flexo-editor-label h2 {
+	margin: 0;
+	font-size: var(--fx-text-md);
+	font-weight: 600;
+}
+
+.flexo-admin-ui .wrap .flexo-editor-label p {
+	margin: 2px 0 0;
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-card-intro {
+	margin: 0 0 var(--fx-space-3);
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-optional {
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-xs);
+	font-weight: 400;
+}
+
+.flexo-admin-ui .wrap .flexo-count-line {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: var(--fx-space-1) var(--fx-space-4);
+}
+
+.flexo-admin-ui .wrap .flexo-counter {
+	color: var(--fx-text-muted);
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.flexo-admin-ui .wrap .flexo-counter.is-over {
+	color: var(--fx-warning-text);
+}
+
+.flexo-admin-ui .wrap .flexo-fields {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: var(--fx-space-4) var(--fx-space-5);
+	margin: var(--fx-space-3) 0 var(--fx-space-1);
+}
+
+.flexo-admin-ui .wrap .flexo-field {
+	display: flex;
+	flex-direction: column;
+	gap: var(--fx-space-1);
+	margin: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-website .flexo-field {
+	margin: var(--fx-space-4) 0 0;
+}
+
+.flexo-admin-ui .wrap .flexo-field > label {
+	color: var(--fx-text);
+	font-weight: 500;
+}
+
+.flexo-admin-ui .wrap .flexo-field > :is(input[type="text"], input[type="number"]:not(.small-text)) {
+	width: 100%;
+}
+
+.flexo-admin-ui .wrap .flexo-field .description {
+	margin: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-input-unit {
+	max-width: 220px;
+}
+
+.flexo-admin-ui .wrap .flexo-subsection {
+	margin-top: var(--fx-space-5);
+	padding-top: var(--fx-space-4);
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .wrap .flexo-subsection--first {
+	margin-top: var(--fx-space-2);
+	padding-top: 0;
+	border-top: 0;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-subsection h4, .flexo-photos h4) {
+	margin: 0 0 var(--fx-space-2);
+	font-size: var(--fx-text-sm);
+	font-weight: 600;
+}
+
+.flexo-admin-ui .wrap .flexo-photos {
+	display: grid;
+	grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
+	gap: var(--fx-space-5);
+	margin-top: var(--fx-space-3);
+}
+
+.flexo-admin-ui .wrap .flexo-photo-slot {
+	position: relative;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-photo-slot__pick, .flexo-gallery__add button) {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--fx-space-1);
+	width: 100%;
+	padding: var(--fx-space-2);
+	overflow: hidden;
+	border: 1px dashed var(--fx-border-strong);
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-surface-subtle);
+	color: var(--fx-primary);
+	font: inherit;
+	font-size: var(--fx-text-sm);
+	font-weight: 500;
+	cursor: pointer;
+	transition: border-color var(--fx-fast) var(--fx-ease), background-color var(--fx-fast) var(--fx-ease);
+}
+
+.flexo-admin-ui .wrap .flexo-photo-slot__pick {
+	aspect-ratio: 4 / 3;
+	padding: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-gallery__add button {
+	height: 100%;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-photo-slot__pick, .flexo-gallery__add button):hover {
+	border-color: var(--fx-primary);
+	background: var(--fx-primary-soft);
+}
+
+.flexo-admin-ui .wrap :is(.flexo-photo-slot__pick, .flexo-gallery__add button):focus-visible {
+	box-shadow: var(--fx-ring);
+	outline: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-photo-slot.has-photo .flexo-photo-slot__pick {
+	border-style: solid;
+	border-color: var(--fx-border);
+}
+
+.flexo-admin-ui .wrap .flexo-photo-slot__pick img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.flexo-admin-ui .wrap .flexo-photo-slot__empty {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--fx-space-1);
+	padding: var(--fx-space-3);
+	text-align: center;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-photo-slot.has-photo .flexo-photo-slot__empty, .flexo-photo-slot:not(.has-photo) .flexo-photo-slot__remove) {
+	display: none;
+}
+
+.flexo-admin-ui .wrap .flexo-photo-slot__remove {
+	margin-top: var(--fx-space-2);
+	color: var(--fx-danger-text);
+}
+
+.flexo-admin-ui .wrap .flexo-gallery {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+	gap: var(--fx-space-2);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-gallery__item, .flexo-gallery__add, .flexo-gallery__placeholder) {
+	position: relative;
+	aspect-ratio: 1;
+	margin: 0;
+	overflow: hidden;
+	border-radius: var(--fx-radius-md);
+}
+
+.flexo-admin-ui .wrap .flexo-gallery__item {
+	border: 1px solid var(--fx-border);
+	background: var(--fx-surface-muted);
+	cursor: grab;
+}
+
+.flexo-admin-ui .wrap .flexo-gallery__item img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.flexo-admin-ui .wrap .flexo-gallery__placeholder {
+	border: 2px dashed var(--fx-primary);
+	background: var(--fx-primary-soft);
+}
+
+.flexo-admin-ui .wrap .flexo-gallery__remove {
+	position: absolute;
+	top: 4px;
+	right: 4px;
+	display: grid;
+	place-items: center;
+	width: 24px;
+	height: 24px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: rgba(17, 26, 36, 0.72);
+	color: #fff;
+	font-size: 16px;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.flexo-admin-ui .wrap .flexo-gallery__remove:is(:hover, :focus-visible) {
+	background: var(--fx-danger-solid);
+	outline: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-photos .description {
+	margin-top: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .flexo-type-list {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-2);
+}
+
+/* Chips: one style (choice chips, preset chips, suggestion chips). */
+.flexo-admin-ui .wrap :is(.flexo-check-chip, .flexo-preset-chip, .flexo-suggest-chip) {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 32px;
+	margin: 0;
+	padding: 0 var(--fx-space-3) 0 10px;
+	border: 1px solid var(--fx-border-strong);
+	border-radius: var(--fx-radius-full);
+	background: var(--fx-surface);
+	color: var(--fx-text-secondary);
+	font: inherit;
+	font-size: var(--fx-text-sm);
+	line-height: 1.2;
+	cursor: pointer;
+	transition: border-color var(--fx-fast) var(--fx-ease), background-color var(--fx-fast) var(--fx-ease), color var(--fx-fast) var(--fx-ease);
+}
+
+.flexo-admin-ui .wrap .flexo-suggest-chip {
+	padding-left: var(--fx-space-3);
+}
+
+.flexo-admin-ui .wrap :is(.flexo-check-chip, .flexo-preset-chip, .flexo-suggest-chip):hover {
+	border-color: var(--fx-primary);
+	color: var(--fx-text);
+}
+
+.flexo-admin-ui .wrap :is(.flexo-preset-chip, .flexo-suggest-chip):focus-visible,
+.flexo-admin-ui .wrap .flexo-check-chip:has(input:focus-visible) {
+	box-shadow: var(--fx-ring);
+	outline: 0;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-check-chip:has(input:checked), .flexo-preset-chip[aria-pressed="true"]) {
+	border-color: var(--fx-primary);
+	background: var(--fx-primary-soft);
+	color: var(--fx-primary-hover);
+	font-weight: 500;
+}
+
+.flexo-admin-ui .wrap .flexo-check-chip input[type="checkbox"] {
+	margin: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-preset-chip__icon {
+	width: 16px;
+	height: 16px;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-preset-chips, .flexo-amenities) {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .flexo-type-add,
+.flexo-admin-ui .wrap .flexo-own-add__row {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .flexo-type-add input {
+	width: 200px;
+}
+
+.flexo-admin-ui .wrap .flexo-own-add {
+	display: flex;
+	flex-direction: column;
+	gap: var(--fx-space-2);
+	margin-top: var(--fx-space-4);
+}
+
+.flexo-admin-ui .wrap .flexo-own-add label {
+	font-weight: 500;
+}
+
+.flexo-admin-ui .wrap .flexo-detail-add {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-2);
+	margin: var(--fx-space-3) 0 0;
+}
+
+.flexo-admin-ui .wrap .flexo-detail-add .button svg {
+	width: 16px;
+	height: 16px;
+}
+
+.flexo-admin-ui .wrap .flexo-sort-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--fx-space-2);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.flexo-admin-ui .wrap .flexo-sort-item {
+	display: flex;
+	align-items: center;
+	gap: var(--fx-space-2);
+	margin: 0;
+	padding: var(--fx-space-1) var(--fx-space-2);
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-surface);
+}
+
+.flexo-admin-ui .wrap .flexo-sort-item:focus-within {
+	border-color: var(--fx-border-strong);
+}
+
+.flexo-admin-ui .wrap .flexo-sort-placeholder {
+	height: 46px;
+	margin: 0;
+	border: 2px dashed var(--fx-primary);
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-primary-soft);
+}
+
+.flexo-admin-ui .wrap .flexo-drag {
+	display: inline-flex;
+	color: var(--fx-text-placeholder);
+	cursor: grab;
+}
+
+.flexo-admin-ui .wrap .flexo-drag svg {
+	width: 16px;
+	height: 16px;
+}
+
+.flexo-admin-ui .wrap .flexo-icon-pick {
+	display: inline-grid;
+	flex: 0 0 auto;
+	place-items: center;
+	width: var(--fx-control-h-sm);
+	height: var(--fx-control-h-sm);
+	padding: 0;
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-sm);
+	background: var(--fx-primary-soft);
+	color: var(--fx-primary);
+	cursor: pointer;
+}
+
+.flexo-admin-ui .wrap .flexo-icon-pick:is(:hover, :focus-visible) {
+	border-color: var(--fx-primary);
+	box-shadow: var(--fx-ring);
+	outline: 0;
+}
+
+.flexo-admin-ui :is(.wrap, .flexo-icon-dialog) .flexo-icon--mask {
+	background-color: currentColor;
+	-webkit-mask: var(--flexo-icon) center / contain no-repeat;
+	mask: var(--flexo-icon) center / contain no-repeat;
+}
+
+.flexo-admin-ui .wrap .flexo-sort-item input[type="text"] {
+	flex: 1 1 auto;
+	min-width: 0;
+	min-height: var(--fx-control-h-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-detail .flexo-detail__label {
+	flex: 0 1 34%;
+	font-weight: 500;
+}
+
+.flexo-admin-ui .wrap .flexo-sort-item__moves {
+	display: inline-flex;
+	gap: 2px;
+}
+
+.flexo-admin-ui .wrap :is(.flexo-move, .flexo-remove) {
+	display: grid;
+	place-items: center;
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	border: 0;
+	border-radius: var(--fx-radius-sm);
+	background: transparent;
+	color: var(--fx-text-muted);
+	font-size: 15px;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.flexo-admin-ui .wrap .flexo-remove {
+	font-size: 18px;
+}
+
+.flexo-admin-ui .wrap .flexo-move:is(:hover, :focus-visible) {
+	background: var(--fx-surface-muted);
+	color: var(--fx-text);
+	outline: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-remove:is(:hover, :focus-visible) {
+	background: var(--fx-danger-bg);
+	color: var(--fx-danger-text);
+	outline: 0;
+}
+
+.flexo-admin-ui .wrap .flexo-sort-item:first-child .flexo-move[data-flexo-move="-1"],
+.flexo-admin-ui .wrap .flexo-sort-item:last-child .flexo-move[data-flexo-move="1"] {
+	visibility: hidden;
+}
+
+.flexo-admin-ui .wrap .flexo-seo {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(240px, 380px);
+	gap: var(--fx-space-5);
+	margin-top: var(--fx-space-3);
+}
+
+.flexo-admin-ui .wrap .flexo-seo__fields {
+	display: flex;
+	flex-direction: column;
+	gap: var(--fx-space-4);
+}
+
+.flexo-admin-ui .wrap .flexo-seo__preview {
+	display: flex;
+	flex-direction: column;
+	gap: var(--fx-space-1);
+	align-self: start;
+	padding: var(--fx-space-3) var(--fx-space-4);
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-surface-subtle);
+	font-family: Arial, sans-serif;
+}
+
+.flexo-admin-ui .wrap .flexo-seo__label {
+	color: var(--fx-text-muted);
+	font-family: var(--fx-font);
+	font-size: var(--fx-text-xs);
+	font-weight: 500;
+}
+
+.flexo-admin-ui .wrap .flexo-seo__url {
+	overflow: hidden;
+	color: #4d5156;
+	font-size: 12px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.flexo-admin-ui .wrap .flexo-seo__title {
+	color: #1a0dab;
+	font-size: 18px;
+	line-height: 1.3;
+}
+
+.flexo-admin-ui .wrap .flexo-seo__desc {
+	color: #4d5156;
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.flexo-admin-ui .wrap .flexo-website .description {
+	margin: var(--fx-space-1) 0 0;
+}
+
+.flexo-admin-ui .wrap .flexo-website__demo {
+	margin-top: var(--fx-space-3);
+	padding: var(--fx-space-2) var(--fx-space-3);
+	border: 1px solid var(--fx-warning-border);
+	border-radius: var(--fx-radius-sm);
+	background: var(--fx-warning-bg);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-link-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-2);
+	margin-top: var(--fx-space-3);
+	padding-top: var(--fx-space-3);
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .wrap .flexo-link-row__label {
+	flex: 1 0 100%;
+	color: var(--fx-text);
+	font-weight: 500;
+}
+
+.flexo-admin-ui .wrap .flexo-link-row__url {
+	flex: 1 1 100%;
+	overflow-wrap: anywhere;
+}
+
+.flexo-admin-ui .wrap .flexo-link-row__actions {
+	display: inline-flex;
+	gap: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .flexo-checklist {
+	margin-top: var(--fx-space-3);
+	padding-top: var(--fx-space-3);
+	border-top: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .wrap .flexo-checklist__head {
+	margin: 0 0 var(--fx-space-2);
+	color: var(--fx-text);
+	font-weight: 500;
+}
+
+.flexo-admin-ui .wrap .flexo-checklist li {
+	display: flex;
+	align-items: center;
+	gap: var(--fx-space-2);
+	margin: 0 0 var(--fx-space-1);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .flexo-checklist li svg {
+	flex: 0 0 auto;
+	width: 16px;
+	height: 16px;
+}
+
+.flexo-admin-ui .wrap .flexo-checklist .is-done {
+	color: var(--fx-text-secondary);
+}
+
+.flexo-admin-ui .wrap .flexo-checklist .is-done svg {
+	color: var(--fx-success-solid);
+}
+
+.flexo-admin-ui .wrap .flexo-checklist .is-missing {
+	color: var(--fx-text-muted);
+}
+
+.flexo-admin-ui .wrap .flexo-translation-note {
+	margin: var(--fx-space-2) 0;
+	padding: var(--fx-space-2) var(--fx-space-3);
+	border: 1px solid var(--fx-info-border);
+	border-radius: var(--fx-radius-sm);
+	background: var(--fx-info-bg);
+	color: var(--fx-text-secondary);
+	font-size: var(--fx-text-sm);
+}
+
+/* Icon picker dialog. */
+.flexo-admin-ui .flexo-icon-dialog {
+	width: min(760px, calc(100vw - 32px));
+	max-height: min(640px, calc(100vh - 64px));
+}
+
+.flexo-admin-ui .flexo-icon-dialog__inner {
+	display: flex;
+	flex-direction: column;
+	max-height: inherit;
+	min-height: 0;
+}
+
+.flexo-admin-ui .flexo-icon-dialog__head {
+	position: relative;
+	display: flex;
+	align-items: center;
+	padding: var(--fx-space-4) var(--fx-space-5);
+	border-bottom: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .flexo-icon-dialog__head h2 {
+	margin: 0;
+	font-size: var(--fx-text-xl);
+	font-weight: 600;
+}
+
+.flexo-admin-ui .flexo-icon-dialog__close {
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.flexo-admin-ui .flexo-icon-dialog__tools {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-2) var(--fx-space-3);
+	padding: var(--fx-space-3) var(--fx-space-5);
+	border-bottom: 1px solid var(--fx-border);
+}
+
+.flexo-admin-ui .flexo-icon-dialog__tools input[type="search"] {
+	flex: 1 1 200px;
+}
+
+.flexo-admin-ui .flexo-icon-dialog__groups {
+	min-height: 0;
+	padding: var(--fx-space-1) var(--fx-space-5) var(--fx-space-5);
+	overflow-y: auto;
+}
+
+.flexo-admin-ui .flexo-icon-group h3 {
+	margin: var(--fx-space-4) 0 var(--fx-space-2);
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-xs);
+	font-weight: 500;
+}
+
+.flexo-admin-ui .flexo-icon-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+	gap: var(--fx-space-1);
+}
+
+.flexo-admin-ui .flexo-icon-choice {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--fx-space-1);
+	padding: 10px 4px 8px;
+	border: 1px solid transparent;
+	border-radius: var(--fx-radius-sm);
+	background: transparent;
+	color: var(--fx-text-secondary);
+	font: inherit;
+	font-size: var(--fx-text-xs);
+	line-height: 1.25;
+	text-align: center;
+	cursor: pointer;
+}
+
+.flexo-admin-ui .flexo-icon-choice svg {
+	width: 22px;
+	height: 22px;
+	color: var(--fx-primary);
+}
+
+.flexo-admin-ui .flexo-icon-choice:is(:hover, :focus-visible) {
+	border-color: var(--fx-primary);
+	background: var(--fx-primary-soft);
+	outline: 0;
+}
+
+.flexo-admin-ui .flexo-icon-choice.is-current {
+	border-color: var(--fx-primary);
+	background: var(--fx-primary-100);
+	font-weight: 500;
+}
+
+/* 6.12 Import & export, room importer. */
+.flexo-admin-ui .wrap .flexo-import-options {
+	display: grid;
+	gap: var(--fx-space-2);
+	margin: var(--fx-space-3) 0;
+}
+
+/* 7 · WordPress markup inside plugin screens ============================ */
+
+/* 7.1 Room list (WordPress list table). */
+.flexo-admin-ui .wrap .tablenav {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-2);
+	height: auto;
+	margin: 0 0 var(--fx-space-3);
+	padding: 0;
+}
+
+.flexo-admin-ui .wrap .tablenav .actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--fx-space-2);
+	padding: 0;
+	overflow: visible;
+}
+
+.flexo-admin-ui .wrap .tablenav .actions select {
+	float: none;
+	margin: 0;
+}
+
+.flexo-admin-ui .wrap .tablenav .tablenav-pages {
+	margin: 0 0 0 auto;
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap .tablenav .tablenav-pages .button {
+	min-width: var(--fx-control-h-sm);
+	min-height: var(--fx-control-h-sm);
+	padding: 0 var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap .tablenav.bottom {
+	display: none;
+}
+
+.flexo-admin-ui .wrap .tablenav br.clear {
+	display: none;
+}
+
+.flexo-admin-ui .wrap table.wp-list-table tfoot {
+	display: none;
+}
+
+.flexo-admin-ui .wrap table.wp-list-table .check-column {
+	width: 40px;
+	padding: var(--fx-space-3) 0 var(--fx-space-3) var(--fx-space-4);
+	vertical-align: top;
+}
+
+.flexo-admin-ui .wrap table.wp-list-table thead .check-column {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	vertical-align: middle;
+}
+
+.flexo-admin-ui .wrap table.wp-list-table .check-column input {
+	margin: 2px 0 0;
+}
+
+.flexo-admin-ui .wrap table.wp-list-table .row-actions {
+	left: 0;
+	color: var(--fx-text-placeholder);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap table.wp-list-table .sorting-indicators {
+	display: none;
+}
+
+.flexo-admin-ui .wrap p.search-box {
+	display: flex;
+	float: none;
+	gap: var(--fx-space-2);
+	margin: 0 0 var(--fx-space-3);
+}
+
+.flexo-admin-ui .wrap p.search-box input[type="search"] {
+	width: 260px;
+	padding-left: 34px;
+	background: var(--fx-surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23687482' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='m20 20-4.2-4.2'/%3E%3C/svg%3E") 10px 50% / 16px no-repeat;
+}
+
+.flexo-admin-ui .wrap .subsubsub + p.search-box,
+.flexo-admin-ui .wrap .wp-filter {
+	margin-top: 0;
+}
+
+/* 7.2 Room editor (WordPress post screen): boxes become cards. */
+.flexo-admin-ui .wrap #poststuff {
+	padding-top: 0;
+}
+
+.flexo-admin-ui .wrap #poststuff #post-body.columns-2 {
+	margin-right: 340px;
+}
+
+.flexo-admin-ui .wrap #poststuff #post-body.columns-2 #postbox-container-1 {
+	width: 316px;
+	margin-right: -340px;
+}
+
+.flexo-admin-ui .wrap #poststuff .postbox {
+	min-width: 0;
+	margin: 0 0 var(--fx-space-5);
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-lg);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs);
+	overflow: hidden;
+}
+
+.flexo-admin-ui .wrap #poststuff .postbox-header {
+	border-bottom: 0;
+}
+
+.flexo-admin-ui .wrap #poststuff .postbox .handle-actions {
+	display: none;
+}
+
+.flexo-admin-ui .wrap #poststuff .postbox-header .hndle {
+	padding: var(--fx-space-5) var(--fx-space-5) var(--fx-space-1);
+	color: var(--fx-text);
+	font-size: var(--fx-text-lg);
+	font-weight: 600;
+	line-height: var(--fx-leading-lg);
+	cursor: default;
+}
+
+.flexo-admin-ui .wrap #poststuff .postbox .inside {
+	margin: 0;
+	padding: var(--fx-space-2) var(--fx-space-5) var(--fx-space-5);
+}
+
+.flexo-admin-ui .wrap #poststuff .postbox.closed .inside {
+	display: block;
+}
+
+.flexo-admin-ui .wrap #titlediv #title {
+	height: 48px;
+	padding: 0 var(--fx-space-4);
+	border: 1px solid var(--fx-border-strong);
+	border-radius: var(--fx-radius-md);
+	background: var(--fx-surface);
+	box-shadow: var(--fx-shadow-xs);
+	font-size: var(--fx-text-xl);
+	font-weight: 600;
+}
+
+.flexo-admin-ui .wrap #titlediv #title:focus {
+	border-color: var(--fx-primary);
+	box-shadow: var(--fx-ring);
+}
+
+.flexo-admin-ui .wrap #titlediv #title-prompt-text {
+	padding: 12px 16px;
+	font-size: var(--fx-text-xl);
+}
+
+.flexo-admin-ui .wrap #edit-slug-box {
+	padding: var(--fx-space-2) 0 0;
+	color: var(--fx-text-muted);
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap #postdivrich {
+	border: 1px solid var(--fx-border);
+	border-radius: var(--fx-radius-lg);
+	overflow: hidden;
+}
+
+.flexo-admin-ui .wrap #postdivrich .wp-editor-tools {
+	padding: var(--fx-space-2) var(--fx-space-2) 0;
+	background: var(--fx-surface-subtle);
+}
+
+.flexo-admin-ui .wrap #postdivrich :is(.wp-editor-container, .mce-tinymce, .quicktags-toolbar) {
+	border: 0;
+}
+
+.flexo-admin-ui .wrap #post-status-info {
+	border: 0;
+	border-top: 1px solid var(--fx-border);
+	border-radius: 0;
+}
+
+.flexo-admin-ui .wrap :is(.quicktags-toolbar, .wp-editor-tabs) .button {
+	min-height: 26px;
+	padding: 2px 8px;
+	box-shadow: none;
+	font-size: var(--fx-text-xs);
+}
+
+.flexo-admin-ui .wrap .wp-switch-editor {
+	border-radius: var(--fx-radius-sm) var(--fx-radius-sm) 0 0;
+	font-size: var(--fx-text-sm);
+}
+
+.flexo-admin-ui .wrap #major-publishing-actions {
+	padding: var(--fx-space-3) var(--fx-space-5);
+	border-top: 1px solid var(--fx-border);
+	background: var(--fx-surface-subtle);
+}
+
+.flexo-admin-ui .wrap #minor-publishing-actions,
+.flexo-admin-ui .wrap #misc-publishing-actions {
+	padding-right: var(--fx-space-5);
+	padding-left: var(--fx-space-5);
+}
+
+.flexo-admin-ui .wrap .misc-pub-section {
+	padding: var(--fx-space-1) 0;
+	font-size: var(--fx-text-sm);
+}
+
+/* The room list's own header replaces WordPress's title row. */
+.flexo-admin-ui.edit-php .wrap.flexo-rooms-head {
+	margin-bottom: 0;
+}
+
+.flexo-admin-ui.edit-php .wrap.flexo-rooms-head + .wrap {
+	margin-top: var(--fx-space-5);
+}
+
+.flexo-admin-ui.edit-php .wrap.flexo-rooms-head + .wrap > :is(.wp-heading-inline, .wp-heading-inline + .page-title-action) {
+	display: none;
+}
+
+.flexo-admin-ui .wrap > h1.wp-heading-inline {
+	margin: 0 var(--fx-space-3) 0 0;
+	padding: 0;
+	color: var(--fx-text);
+	font-size: var(--fx-text-2xl);
+	font-weight: 600;
+	line-height: var(--fx-leading-2xl);
+	vertical-align: middle;
+}
+
+.flexo-admin-ui .wrap > .wp-heading-inline + .page-title-action {
+	top: 0;
+	vertical-align: middle;
+}
+
+/* 8 · Responsive ======================================================== */
+
+/* Wide screens: the preview gets more room. */
+@media (min-width: 1600px) {
+	.flexo-admin-ui .wrap .flexo-appearance__layout {
+		grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+	}
+}
+
+@media (max-width: 1440px) {
+	.flexo-admin-ui .wrap .flexo-booking-view__layout {
+		grid-template-columns: minmax(0, 1fr) 320px;
+	}
+}
+
+@media (max-width: 1100px) {
+	.flexo-admin-ui .wrap .flexo-kpis {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 1280px) {
+
+	.flexo-admin-ui .wrap .flexo-today__layout {
+		grid-template-columns: minmax(0, 1fr) 280px;
+	}
+
+	.flexo-admin-ui .wrap .flexo-wizard__body {
+		grid-template-columns: 200px minmax(0, 1fr);
+		gap: var(--fx-space-5);
+	}
+
+	.flexo-admin-ui .wrap .flexo-page-look__body:has(> .flexo-page-look__own:not([hidden])) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.flexo-admin-ui .wrap .flexo-page-look__body:has(> .flexo-page-look__own:not([hidden])) > .flexo-page-look__preview {
+		position: static;
+	}
+}
+
+/* Below 1280 the label column narrows; sub-navigation stays at the side. */
+@media (max-width: 1279px) {
+	.flexo-admin-ui {
+		--fx-label-col: 220px;
+		--fx-gutter: 24px;
+	}
+}
+
+@media (max-width: 1100px) {
+	.flexo-admin-ui .wrap .flexo-today__layout,
+	.flexo-admin-ui .wrap .flexo-booking-view__layout {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	/* The preview stays next to the settings but is opened on request. */
+	.flexo-admin-ui .wrap .flexo-appearance__layout {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.flexo-admin-ui .wrap .flexo-appearance__preview {
+		position: static;
+		height: 70vh;
+		min-height: 480px;
+	}
+
+	.flexo-admin-ui .wrap .flexo-appbar__site {
+		display: none;
+	}
+}
+
+@media (max-width: 960px) {
+	.flexo-admin-ui .flexo-appbar__site {
+		display: none;
+	}
+
+	.flexo-admin-ui .wrap:has(> .fx-subnav) {
+		display: block;
+	}
+
+	.flexo-admin-ui .wrap > .fx-subnav {
+		position: static;
+		margin: 0 0 var(--fx-space-4);
+		padding: 0;
+		border: 0;
+		background: none;
+	}
+
+	.flexo-admin-ui .wrap > .fx-subnav .fx-subnav__groups {
+		display: none;
+	}
+
+	.flexo-admin-ui .wrap > .fx-subnav .fx-subnav__select {
+		display: block;
+	}
+
+	.flexo-admin-ui .wrap .flexo-booking-view__grid,
+	.flexo-admin-ui .wrap .flexo-today__grid,
+	.flexo-admin-ui .wrap .fx-grid--2,
+	.flexo-admin-ui .wrap .fx-grid--3 {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.flexo-admin-ui .wrap .flexo-wizard__body {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.flexo-admin-ui .wrap .flexo-wizard__steps {
+		flex-direction: row;
+		gap: var(--fx-space-1);
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+
+	.flexo-admin-ui .wrap .flexo-wizard__steps a {
+		white-space: nowrap;
+	}
+
+	.flexo-admin-ui .wrap .flexo-wizard__steps li:not(.is-current) a span {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+	}
+
+	.flexo-admin-ui .wrap .flexo-seo,
+	.flexo-admin-ui .wrap .flexo-photos {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+/* Tablets and phones: WordPress folds its menu away at 782px. */
+@media (max-width: 782px) {
+	.flexo-admin-ui {
+		--fx-control-h: 44px;
+		--fx-control-h-sm: 40px;
+		--fx-gutter: 12px;
+	}
+
+	.flexo-admin-ui .flexo-appbar {
+		margin-left: -10px;
+		padding: 0 0 0 10px;
+	}
+
+	.flexo-admin-ui .flexo-appbar__row {
+		flex-wrap: wrap;
+		gap: 10px var(--fx-space-2);
+		min-height: 0;
+		padding: 10px var(--fx-space-3) 10px 2px;
+	}
+
+	.flexo-admin-ui .flexo-appbar__titles {
+		display: none;
+	}
+
+	.flexo-admin-ui .flexo-appbar__search {
+		order: 3;
+		flex: 1 1 100%;
+		max-width: none;
+		margin: 0;
+	}
+
+	.flexo-admin-ui .flexo-appbar__search input[type="search"] {
+		font-size: 16px;
+	}
+
+	.flexo-admin-ui .flexo-appbar__icon {
+		width: 44px;
+		height: 44px;
+	}
+
+	.flexo-admin-ui .flexo-appbar__nav {
+		display: flex;
+		gap: 6px;
+		margin: 0;
+		padding: 0 var(--fx-space-3) var(--fx-space-3) 2px;
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+
+	.flexo-admin-ui .flexo-appbar__nav::-webkit-scrollbar {
+		display: none;
+	}
+
+	.flexo-admin-ui .flexo-appbar__nav a {
+		display: inline-flex;
+		flex: 0 0 auto;
+		align-items: center;
+		gap: 6px;
+		min-height: 40px;
+		padding: 0 14px;
+		border: 1px solid var(--fx-border);
+		border-radius: var(--fx-radius-full);
+		background: var(--fx-surface);
+		color: var(--fx-text-secondary);
+		font-size: var(--fx-text-md);
+		font-weight: 500;
+		text-decoration: none;
+		white-space: nowrap;
+	}
+
+	.flexo-admin-ui .flexo-appbar__nav a .flexo-icon {
+		width: 18px;
+		height: 18px;
+	}
+
+	.flexo-admin-ui .flexo-appbar__nav a.is-current {
+		border-color: var(--fx-primary);
+		background: var(--fx-primary-soft);
+		color: var(--fx-primary-hover);
+	}
+
+	.flexo-admin-ui .flexo-appbar__nav a:focus-visible {
+		box-shadow: var(--fx-ring);
+		outline: 0;
+	}
+
+	.flexo-admin-ui .wrap {
+		margin: var(--fx-space-4) var(--fx-space-3) var(--fx-space-6) 2px;
+	}
+
+	.flexo-admin-ui .wrap .flexo-page-head__row {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.flexo-admin-ui .wrap .flexo-page-head__main {
+		flex: 0 0 auto;
+	}
+
+	.flexo-admin-ui .wrap .flexo-page-head__actions {
+		justify-content: flex-start;
+		width: 100%;
+	}
+
+	.flexo-admin-ui .wrap h1.flexo-page-head__title,
+	.flexo-admin-ui .wrap > h1.wp-heading-inline {
+		font-size: var(--fx-text-xl);
+		line-height: var(--fx-leading-xl);
+	}
+
+	:where(.flexo-admin-ui :is(.wrap, .fx-layer)) :is(input[type="text"], input:not([type]), input[type="email"], input[type="url"], input[type="tel"], input[type="number"], input[type="search"], input[type="password"], input[type="date"], input[type="time"], select, textarea) {
+		font-size: 16px;
+	}
+
+	.flexo-admin-ui .wrap :is(.flexo-card, .flexo-tools-card, .fx-card) {
+		padding: var(--fx-space-4);
+	}
+
+	.flexo-admin-ui .wrap .fx-card--flush {
+		padding: 0;
+	}
+
+	.flexo-admin-ui .wrap :is(.fx-row, .form-table:not(.flexo-detail-table) > tbody > tr) {
+		display: block;
+	}
+
+	.flexo-admin-ui .wrap .form-table:not(.flexo-detail-table) > tbody > tr > :is(th, td) {
+		display: block;
+		width: auto;
+	}
+
+	.flexo-admin-ui .wrap .form-table:not(.flexo-detail-table) > tbody > tr > th {
+		padding: var(--fx-space-4) 0 var(--fx-space-1);
+	}
+
+	.flexo-admin-ui .wrap .form-table:not(.flexo-detail-table) > tbody > tr > td {
+		padding: 0 0 var(--fx-space-4);
+		border-top: 0;
+	}
+
+	.flexo-admin-ui .wrap .fx-row__head {
+		margin-bottom: var(--fx-space-2);
+	}
+
+	.flexo-admin-ui .wrap .regular-text {
+		width: 100%;
+	}
+
+	.flexo-admin-ui .wrap :is(.fx-savebar, form p.submit) {
+		margin-right: calc(-1 * var(--fx-space-3));
+		margin-left: -2px;
+		padding: var(--fx-space-3);
+	}
+
+	.flexo-admin-ui .wrap .fx-savebar__actions {
+		flex: 1 1 auto;
+	}
+
+	.flexo-admin-ui .wrap .fx-savebar__actions .button-primary {
+		flex: 1 1 auto;
+	}
+
+	.flexo-admin-ui .wrap .flexo-kpis {
+		gap: var(--fx-space-3);
+	}
+
+	.flexo-admin-ui .wrap .flexo-kpi {
+		min-height: 96px;
+		padding: var(--fx-space-3) var(--fx-space-4);
+	}
+
+	.flexo-admin-ui .wrap .flexo-kpi__value {
+		font-size: var(--fx-text-xl);
+		line-height: var(--fx-leading-xl);
+	}
+
+	.flexo-admin-ui .wrap .flexo-attention__item {
+		grid-template-columns: 36px minmax(0, 1fr);
+	}
+
+	.flexo-admin-ui .wrap .flexo-attention__actions {
+		grid-column: 2;
+		justify-content: flex-start;
+	}
+
+	.flexo-admin-ui .wrap .flexo-email-card > :is(.flexo-inline-form, .description, .fx-inline),
+	.flexo-admin-ui .wrap .flexo-email-card__edit {
+		margin-left: 0;
+	}
+
+	/* Bookings list: one card per booking. */
+	.flexo-admin-ui .wrap .flexo-bookings-table,
+	.flexo-admin-ui .wrap .flexo-bookings-table tbody,
+	.flexo-admin-ui .wrap .flexo-bookings-table tr,
+	.flexo-admin-ui .wrap .flexo-bookings-table td {
+		display: block;
+		box-sizing: border-box;
+		width: 100%;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table thead {
+		display: none;
+	}
+
+	.flexo-admin-ui .wrap table.widefat.flexo-bookings-table {
+		border: 0;
+		background: transparent;
+		box-shadow: none;
+		overflow: visible;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table tr.flexo-booking-row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		margin: 0 0 var(--fx-space-3);
+		padding: var(--fx-space-2) 0;
+		border: 1px solid var(--fx-border);
+		border-radius: var(--fx-radius-lg);
+		background: var(--fx-surface);
+		box-shadow: var(--fx-shadow-xs);
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table tr.flexo-booking-row > td {
+		padding: var(--fx-space-2) var(--fx-space-4);
+		border-top: 0;
+		text-align: left;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table tr.flexo-booking-row > td:first-child,
+	.flexo-admin-ui .wrap .flexo-bookings-table tr.flexo-booking-row > td.flexo-actions {
+		grid-column: 1 / -1;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table td[data-colname]::before {
+		content: attr(data-colname);
+		display: block;
+		margin-bottom: 2px;
+		color: var(--fx-text-muted);
+		font-size: var(--fx-text-xs);
+		font-weight: 500;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table tr.flexo-booking-row > td:first-child::before {
+		display: none;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table td.flexo-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--fx-space-2);
+		width: auto;
+		padding-top: var(--fx-space-3);
+		border-top: 1px solid var(--fx-border);
+		white-space: normal;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table td.flexo-actions::before {
+		display: none;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table td.flexo-actions .button {
+		flex: 1 1 auto;
+		margin: 0;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table .flexo-empty-row {
+		border: 1px solid var(--fx-border);
+		border-radius: var(--fx-radius-lg);
+		background: var(--fx-surface);
+	}
+
+	.flexo-admin-ui .wrap .flexo-filters {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		align-items: stretch;
+	}
+
+	.flexo-admin-ui .wrap .flexo-filters > * {
+		min-width: 0;
+	}
+
+	.flexo-admin-ui .wrap .flexo-filters__dates {
+		display: grid;
+		grid-template-rows: auto auto;
+		grid-auto-columns: minmax(0, 1fr);
+		grid-auto-flow: column;
+		gap: var(--fx-space-1) var(--fx-space-2);
+	}
+
+	.flexo-admin-ui .wrap .flexo-filters__dates :is(.fx-datefield, input) {
+		width: 100%;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table td.flexo-num {
+		text-align: left;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table :is(.flexo-badge, .flexo-status) {
+		max-width: 100%;
+		white-space: normal;
+	}
+
+	.flexo-admin-ui .wrap .flexo-filters :is(input[type="search"], input[type="text"], select) {
+		width: 100%;
+		max-width: none;
+	}
+
+	.flexo-admin-ui .wrap .flexo-filters__buttons {
+		margin-left: 0;
+	}
+
+	.flexo-admin-ui .wrap .flexo-filters__buttons .button {
+		flex: 1 1 auto;
+	}
+
+	/* Detail tables keep label and value side by side. */
+	.flexo-admin-ui .wrap .flexo-detail-table > tbody > tr > :is(th, td) {
+		display: table-cell;
+	}
+
+	.flexo-admin-ui .wrap .flexo-detail-table > tbody > tr > th {
+		width: 112px;
+	}
+
+	.flexo-admin-ui .wrap :is(.flexo-payments-card .flexo-payment-history, .flexo-booking-emails table, .fx-table-scroll) {
+		display: block;
+		max-width: 100%;
+		overflow-x: auto;
+	}
+
+	/* Main action stays in reach on booking details. */
+	.flexo-admin-ui .wrap .flexo-actionbar {
+		position: sticky;
+		top: 46px;
+		z-index: var(--fx-z-sticky);
+		margin: 0 calc(-1 * var(--fx-space-3)) 0 -2px;
+		padding: var(--fx-space-3);
+		background: color-mix(in srgb, var(--fx-canvas) 96%, transparent);
+		box-shadow: 0 6px 10px -8px rgba(17, 26, 36, 0.35);
+	}
+
+	/* Calendar: narrower columns; the agenda replaces the grid when chosen. */
+	.flexo-admin-ui .wrap.flexo-calendar-page {
+		--fbc-room-w: 112px;
+		--fbc-day-w: 36px;
+	}
+
+	.flexo-admin-ui .wrap .fbc-options {
+		width: 100%;
+		margin-left: 0;
+	}
+
+	.flexo-admin-ui .wrap .fbc-month {
+		margin: 0 var(--fx-space-1);
+		font-size: var(--fx-text-lg);
+	}
+
+	/* Room editor and list. */
+	.flexo-admin-ui .wrap #poststuff #post-body.columns-2 {
+		margin-right: 0;
+	}
+
+	.flexo-admin-ui .wrap #poststuff #post-body.columns-2 #postbox-container-1 {
+		width: 100%;
+		margin-right: 0;
+	}
+
+	.flexo-admin-ui .wrap .flexo-sort-item {
+		flex-wrap: wrap;
+	}
+
+	.flexo-admin-ui .wrap .flexo-sort-item input[type="text"],
+	.flexo-admin-ui .wrap .flexo-detail .flexo-detail__label {
+		flex: 1 1 calc(100% - 140px);
+	}
+
+	.flexo-admin-ui .wrap .flexo-detail .flexo-detail__value {
+		flex: 1 1 100%;
+		order: 5;
+	}
+
+	.flexo-admin-ui .wrap .flexo-sort-item__moves {
+		display: none;
+	}
+
+	.flexo-admin-ui .wrap .flexo-type-add input {
+		width: 160px;
+	}
+
+	.flexo-admin-ui .wrap p.search-box {
+		width: 100%;
+	}
+
+	.flexo-admin-ui .wrap p.search-box input[type="search"] {
+		flex: 1 1 auto;
+		width: auto;
+	}
+
+	.flexo-admin-ui .wrap .tablenav .tablenav-pages {
+		width: 100%;
+		margin: 0;
+	}
+
+	.flexo-admin-ui .wrap .flexo-health__item {
+		flex-wrap: wrap;
+	}
+
+	.flexo-admin-ui .wrap .fx-dialog,
+	.flexo-admin-ui :is(.flexo-dialog, .fbc-dialog, .flexo-icon-dialog) {
+		width: calc(100vw - 24px);
+	}
+}
+
+/* Phones. */
+@media (max-width: 600px) {
+	/* WordPress's toolbar scrolls away here and #wpbody keeps 46px for it above
+	   the content. The app bar sits before #wpbody, under the toolbar: it makes
+	   room for the toolbar with padding (a margin would collapse and move the
+	   toolbar too) and gives #wpbody's space back below; it is raised so the
+	   overlapping strip stays clickable. */
+	.flexo-admin-ui .flexo-appbar {
+		position: relative;
+		z-index: 1;
+		margin-bottom: -46px;
+		padding-top: 46px;
+	}
+
+	.flexo-admin-ui .flexo-appbar__new span {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+	}
+
+	.flexo-admin-ui .flexo-btn.flexo-appbar__new {
+		width: 44px;
+		height: 44px;
+		padding: 0;
+	}
+
+	.flexo-admin-ui .wrap .flexo-actionbar {
+		top: 0;
+	}
+
+	.flexo-admin-ui .wrap .flexo-kpis {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.flexo-admin-ui .wrap .flexo-kpi .flexo-kpi__icon {
+		display: none;
+	}
+
+	.flexo-admin-ui .wrap .flexo-page-head__actions .button {
+		flex: 1 1 auto;
+	}
+
+	.flexo-admin-ui .wrap .fx-toolbar__end .fx-seg {
+		display: none;
+	}
+}
+
+/* 9 · Reduced motion ==================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+	.flexo-admin-ui :is(.wrap, .flexo-appbar, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog),
+	.flexo-admin-ui :is(.wrap, .flexo-appbar, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) *,
+	.flexo-admin-ui :is(.wrap, .flexo-appbar, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) *::before,
+	.flexo-admin-ui :is(.wrap, .flexo-appbar, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) *::after {
+		transition-duration: 0.01ms;
+		animation-duration: 0.01ms;
+		animation-iteration-count: 1;
+		scroll-behavior: auto;
+	}
+
+	.flexo-admin-ui .wrap .fx-skeleton {
+		animation: none;
+	}
+}
+
+/* Print: no app bar, no save bar. */
+@media print {
+	.flexo-admin-ui :is(.flexo-appbar, .fx-savebar, .fx-toasts) {
+		display: none;
+	}
+}

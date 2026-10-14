@@ -229,7 +229,7 @@ class Flexo_Booking_Pages_Admin {
 		$s    = Flexo_Booking_Settings::all();
 		?>
 		<p class="flexo-tab-intro"><?php esc_html_e( 'Flexo Booking provides ready-to-use pages for reservations and guest communication. You do not need to create these pages manually in WordPress.', 'flexo-booking' ); ?></p>
-		<form method="post" action="options.php" class="flexo-pages-form">
+		<form method="post" action="options.php" class="flexo-pages-form" id="flexo-pages-form" data-fx-save="reload">
 			<?php settings_fields( 'flexo_booking' ); ?>
 
 			<?php
@@ -241,7 +241,7 @@ class Flexo_Booking_Pages_Admin {
 			self::render_header_card( $all, $opt );
 			?>
 
-			<?php submit_button( __( 'Save pages', 'flexo-booking' ) ); ?>
+			<?php Flexo_Booking_UI::save_bar( array( 'label' => __( 'Save pages', 'flexo-booking' ) ) ); ?>
 		</form>
 		<?php
 	}
@@ -415,18 +415,41 @@ class Flexo_Booking_Pages_Admin {
 		);
 		$global += array_fill_keys( array( 'status_confirmed', 'status_awaiting', 'status_request' ), '' );
 		$global  = isset( $global[ $field ] ) && '' !== $global[ $field ] ? Flexo_Booking_Appearance::values()[ $global[ $field ] ] : '';
-		$start   = '' !== $global && 'custom' === Flexo_Booking_Appearance::mode() ? $global : ( in_array( $field, array( 'primary', 'accent', 'success', 'status_confirmed' ), true ) ? '#1f6f5c' : ( in_array( $field, array( 'heading', 'text' ), true ) ? '#1f2933' : '#ffffff' ) );
+		$web     = Flexo_Booking_UI::website_colors();
+		if ( '' !== $global && 'custom' === Flexo_Booking_Appearance::mode() ) {
+			$inherit = array( $global, __( 'Set under Appearance', 'flexo-booking' ) );
+		} elseif ( in_array( $field, array( 'primary', 'accent', 'success' ), true ) ) {
+			$inherit = $web['primary'];
+		} elseif ( 'status_confirmed' === $field ) {
+			$inherit = array( '', __( 'The main colour, pale', 'flexo-booking' ) );
+		} elseif ( in_array( $field, array( 'status_awaiting', 'status_request' ), true ) ) {
+			$inherit = array( '#fff4e5', __( 'Pale orange (built in)', 'flexo-booking' ) );
+		} elseif ( in_array( $field, array( 'heading', 'text' ), true ) ) {
+			$inherit = $web['text'];
+		} elseif ( 'card_bg' === $field ) {
+			$inherit = $web['white'];
+		} else {
+			$inherit = array( '', __( 'Your website\'s page background', 'flexo-booking' ) );
+		}
 		?>
 		<tr class="flexo-color-row">
-			<th scope="row"><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $label ); ?></label></th>
+			<th scope="row"><?php echo esc_html( $label ); ?></th>
 			<td>
-				<label class="flexo-inline-check"><input type="checkbox" class="flexo-color-website" <?php checked( '' === $value ); ?>> <?php esc_html_e( 'Use global colour', 'flexo-booking' ); ?></label>
-				<span class="flexo-color-pick">
-					<input type="color" class="flexo-color-picker" value="<?php echo esc_attr( '' !== $value ? $value : $start ); ?>" aria-label="<?php echo esc_attr( $label ); ?>">
-					<input id="<?php echo esc_attr( $id ); ?>" type="text" class="flexo-color-hex code" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( $value ); ?>" placeholder="<?php echo esc_attr( $start ); ?>" maxlength="7" pattern="#?[0-9a-fA-F]{3}([0-9a-fA-F]{3})?">
-				</span>
+				<?php
+				Flexo_Booking_UI::color_field(
+					array(
+						'name'        => $name,
+						'value'       => $value,
+						'id'          => $id,
+						'label'       => $label,
+						'source'      => __( 'Global colour', 'flexo-booking' ),
+						'inherit'     => $inherit,
+						'describedby' => '' !== $help ? $id . '-help' : '',
+					)
+				);
+				?>
 				<?php if ( '' !== $help ) : ?>
-					<p class="description"><?php echo esc_html( $help ); ?></p>
+					<p class="description" id="<?php echo esc_attr( $id . '-help' ); ?>"><?php echo esc_html( $help ); ?></p>
 				<?php endif; ?>
 			</td>
 		</tr>
@@ -540,19 +563,28 @@ class Flexo_Booking_Pages_Admin {
 					}
 					?>
 				</table>
-				<input type="hidden" name="<?php echo esc_attr( $base ); ?>[reset]" value="0" data-flexo-look-reset-field>
-				<p><button type="button" class="button" data-flexo-look-reset data-confirm="<?php esc_attr_e( 'Remove this page\'s own colours, background, width and spacing and use the global appearance again?', 'flexo-booking' ); ?>"><?php esc_html_e( 'Reset to global', 'flexo-booking' ); ?></button></p>
+				<input type="hidden" name="<?php echo esc_attr( $base ); ?>[reset]" value="0">
+				<p><button type="submit" class="button" name="<?php echo esc_attr( $base ); ?>[reset]" value="1" data-flexo-look-reset data-flexo-confirm="<?php esc_attr_e( 'Remove this page\'s own colours, background, width and spacing and use the global appearance again?', 'flexo-booking' ); ?>" data-flexo-confirm-button="<?php esc_attr_e( 'Reset to global', 'flexo-booking' ); ?>" data-flexo-confirm-tone="danger"><?php echo Flexo_Booking_Admin_UI::icon( 'reset' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?><span><?php esc_html_e( 'Reset to global', 'flexo-booking' ); ?></span></button></p>
 			</div>
 			<div class="flexo-page-look__preview">
 				<div class="flexo-appearance__preview-bar">
-					<strong><?php esc_html_e( 'Preview', 'flexo-booking' ); ?></strong>
-					<span class="flexo-segmented" role="group" aria-label="<?php esc_attr_e( 'Preview width', 'flexo-booking' ); ?>">
-						<button type="button" class="button is-active" data-look-width="1280" aria-pressed="true"><?php esc_html_e( 'Desktop', 'flexo-booking' ); ?></button>
-						<button type="button" class="button" data-look-width="390" aria-pressed="false"><?php esc_html_e( 'Phone', 'flexo-booking' ); ?></button>
-					</span>
-					<a class="button" href="<?php echo esc_url( $open ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Open page', 'flexo-booking' ); ?></a>
+					<div class="fx-toolbar">
+						<div class="fx-toolbar__start"><strong class="flexo-page-look__preview-title"><?php esc_html_e( 'Preview', 'flexo-booking' ); ?></strong></div>
+						<div class="fx-toolbar__end">
+							<?php
+							echo Flexo_Booking_UI::seg_buttons_html( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in the helper.
+								array(
+									array( 'label' => __( 'Desktop', 'flexo-booking' ), 'icon' => 'monitor', 'icon_only' => true, 'pressed' => true, 'attrs' => array( 'data-look-width' => '1280' ) ),
+									array( 'label' => __( 'Phone', 'flexo-booking' ), 'icon' => 'mobile', 'icon_only' => true, 'attrs' => array( 'data-look-width' => '390' ) ),
+								),
+								__( 'Preview width', 'flexo-booking' )
+							);
+							?>
+							<a class="button fx-icon-btn" href="<?php echo esc_url( $open ); ?>" target="_blank" rel="noopener" aria-label="<?php esc_attr_e( 'Open page in a new tab', 'flexo-booking' ); ?>" data-fx-tip="<?php esc_attr_e( 'Open page in a new tab', 'flexo-booking' ); ?>" data-fx-tip-end><?php echo Flexo_Booking_Admin_UI::icon( 'external' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?></a>
+						</div>
+					</div>
 				</div>
-				<div class="flexo-page-look__frame-wrap">
+				<div class="flexo-page-look__frame-wrap flexo-appearance__frame-wrap">
 					<iframe title="<?php esc_attr_e( 'Preview of the page', 'flexo-booking' ); ?>" data-src="<?php echo esc_url( Flexo_Booking_Appearance::preview_url( $key, $key ) ); ?>" data-flexo-look-frame></iframe>
 				</div>
 				<p class="description"><?php esc_html_e( 'The real page with your header and footer and a sample booking. Changes show here at once; save to put them on the website.', 'flexo-booking' ); ?></p>

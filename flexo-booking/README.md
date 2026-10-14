@@ -641,22 +641,24 @@ Syncing stops, the **Calendar Sync** screen disappears, and your export links an
 
 | Looks like | Meaning |
 |---|---|
-| ✓ green | Confirmed website booking |
-| ⏳ yellow, dashed | Pending request waiting for you |
-| 💳 striped yellow | Held while the guest pays by card (disappears if the hold ends unpaid) |
-| 🏦 orange, dashed | Awaiting bank transfer |
-| ✎ | Booking added by staff |
-| ⛔ grey, hatched | Dates blocked by staff |
-| ⇄ blue, striped | Booking from an external calendar (Booking.com, Airbnb…) |
-| ⚠ red border | Conflict – possible double booking |
-| ✕ dotted, hatched days | Closed period |
-| ⊘ struck through | Cancelled (only with "Show cancelled" ticked) |
+| tick, green | Confirmed website booking |
+| clock, amber, dashed | Pending request waiting for you |
+| card, blue, dashed | Held while the guest pays by card (disappears if the hold ends unpaid) |
+| bank, amber, striped | Awaiting bank transfer |
+| pen | Booking added by staff |
+| lock, grey, hatched | Dates blocked by staff |
+| arrows, violet | Booking from an external calendar (Booking.com, Airbnb…) |
+| warning sign, red border | Conflict – possible double booking |
+| cross, dotted, hatched days | Closed period |
+| cross, struck through | Cancelled (only with "Show cancelled" ticked) |
+
+The colours and icons are the same as the status labels in the bookings list and on the booking.
 
 - **Rooms with several units** show "free of total" under every day (e.g. *2/3*). A full day shows *0/3* in red.
 - **Click a booking** for its details: guest, dates, total and status. Pending bookings can be **confirmed**, bookings **cancelled** and blocks **removed** right there, and conflicts **marked as reviewed**.
 - **Click an empty day** to see how many units are free, then **New booking** or **Block dates**. The *Add booking* form opens with the room and dates filled in.
-- **‹ Today ›** moves between months.
-- **On a phone** the page stays still and only the calendar scrolls sideways, starting at today. Details open in a window that fits the screen.
+- **‹ Today ›** moves between months. When the month doesn't fit, the room column stays in place and the **‹ ›** buttons next to *Show cancelled* move a week at a time.
+- **Grid | Agenda:** the agenda lists the month's bookings by arrival day, with the same details on click. Phones start with the agenda; the choice is remembered in the browser. In the grid on a phone only the calendar scrolls sideways, starting at today. Details open in a window that fits the screen.
 
 The calendar is for inventory and reservations only. It has no housekeeping or room assignment.
 
@@ -729,15 +731,17 @@ The calendar is for inventory and reservations only. It has no housekeeping or r
 
 - **Match my website** (default, and what every upgraded site keeps): the form uses the website's Elementor global colours and fonts, or the theme's. Nothing is added.
 - **Custom:** choose
-  - **Colours:** main colour (buttons, selected options, links), accent (badges such as "Only 2 left!"), text, background, button text. Each has **Use website colour**.
+  - **Colours:** main colour (buttons, selected options, links), accent (badges such as "Only 2 left!"), text, background, button text. Each colour is a **Website colour | Custom** switch: *Website colour* shows the colour actually used, with its name and code (e.g. *Elementor: Accent #61CE70*, *Same as the main colour #1F6F5C*); *Custom* gives a colour picker, the code and **Reset**.
   - **Corners:** square, slightly rounded or rounded.
   - **Fonts** for headings and text: *Website font*; **your website's Elementor global fonts** (e.g. *Primary – DM Sans*, as set in Elementor Site Settings → Global Fonts); one of **Inter, Roboto, Open Sans, Manrope, Montserrat, Lora, Playfair Display**, which are part of the plugin, include Cyrillic and are loaded from the hotel's own website – **never from Google** (GDPR), only the chosen ones and only on pages with the form; or **Another font** – type the name of any font the website already loads (theme, Elementor, a fonts plugin).
   - **"Check availability" panel** (§3): **panel background** and how dark the **page behind the panel** is. Its title uses the headings font, its text, buttons and corners the settings above.
   - **Text size:** small, normal or large.
 - **Booking and Thank You pages** (1.9.0, open by default): the whole area between header and footer on the built-in pages – **page background** colour and **background picture** (as it is, softened or darkened so text stays readable), **content width** (as the booking form, narrow, wide or an exact width), **cards** (background, border or none, corners, shadow) and **space between sections**.
+- The colours are grouped in folding sections – **Brand** (open), **Text**, **Buttons and fields**, **Booking steps and summary**, **Confirmation**, **Tabs**, **Booking and Thank You pages** and the **"Check availability" panel**:
 - Folded groups for the details (1.9.0): **Text** (heading and muted text colours), **Buttons and fields** (button colour under the mouse, outline buttons, field background, border, field in use, labels, normal or large height), **Booking steps and summary** (current, completed and upcoming steps, summary background), **Confirmation** (success icon, status colours for *confirmed*, *awaiting payment*, *request received* – their text turns dark or white by itself – stay summary and bank transfer box) and **Tabs** (for the Booking & Contact tabs that come with the Contact page).
-- Every colour has **Use website colour**; empty settings add nothing, so **an upgraded site looks exactly as before** until something is chosen.
-- **Live preview** beside the settings, with the real form and the "Check availability" panel in your site's styles – or the real **Booking page** or **Thank You page** with your header and footer and a sample booking – in desktop or phone width. Changes show before saving; **Open page** opens the real page.
+- A colour left on *Website colour* is not saved as a value; empty settings add nothing, so **an upgraded site looks exactly as before** until something is chosen.
+- **Live preview** beside the settings (it stays in view while you scroll), with the real form and the "Check availability" panel in your site's styles – or the real **Booking page** or **Thank You page** with your header and footer and a sample booking. Tabs on the left choose what to show; on the right, **desktop** (a real 1280 px page, scaled to fit) or **phone** (390 px) and **open the page in a new tab**. Changes show while you type, before saving.
+- **Saving** happens in place: a short message confirms it, the page doesn't jump, and an *unsaved changes* bar with **Discard changes** stays at the bottom while something is not saved yet.
 - **Contrast warnings** when text and background, button text and the main colour, field text, labels, page title on the page background, card text or a status label are hard to read (below 4.5:1), with a suggested colour. They never block saving.
 - **Reset to website style** (after a confirmation) goes back to *Match my website*.
 - **Emails:** logo and email colour are set here too (in Custom style, emails use the main colour).
@@ -766,14 +770,17 @@ Feature **Guest booking page** (off by default; **Settings → Features**).
 
 ## 17. Daily use: managing bookings
 
-### How the admin looks (1.7.0)
+### How the admin looks (1.7.0, redesigned in 1.9.0)
 
-The plugin's screens have their own clean design, so they feel like one booking app rather than a set of WordPress forms:
+The plugin's screens have their own clean design, so they feel like one booking app rather than a set of WordPress forms (the parts are described for developers in §26 *Admin design system*):
 - **App bar** at the top of every booking screen: the Flexo Booking mark with the hotel's name, a **booking search** (reference, name, email or phone – from any screen), a **bell** with the number of things that need attention (opens Today), **open the booking form** in a new tab, **Help**, and **New booking**.
-- **Page header** with the screen's title, a one-line explanation, its main actions and – for *Rooms & prices* and *Settings* – the tabs.
-- **Cards** instead of long forms: settings are grouped in cards with a **Save** bar that stays in reach at the bottom of long pages; **Features** are cards with on/off switches; each **guest email** is a card showing when it is sent, with *Edit text* to open the subject and message.
+- **Page header** with the screen's title, a one-line explanation and its main actions on the right; *Rooms & prices* has tabs.
+- **Settings** has a navigation on the left, grouped as *Property* (Hotel, Booking rules, Pages, Room pages), *Money* (Payments, Taxes & invoices), *Guests & data* (Privacy, Tracking) and *System* (Features, Health, Calendar sync, Import & export); on narrow screens it becomes a drop-down. The addresses are the same as before.
+- **Cards** with section titles instead of long forms. A **save bar** stays at the bottom of the page: it says when something is not saved yet, with **Discard changes** and **Save**. Settings save **in place** with a short confirmation (the page doesn't reload or jump; *Features* and *Pages* reload and come back to the same place), and the browser asks before leaving a page with unsaved changes. Without JavaScript the forms save as usual.
+- **Features** are cards with on/off switches; each **guest email** is a card showing when it is sent, with *Edit text* to open the subject and message.
+- **Dates and times** are typed in the site's date order (e.g. 31.12.2026) with a pop-over calendar, and times as 24-hour 14:00 with a list; what is saved is unchanged.
 - **Today** starts with four tiles (arriving, leaving, staying tonight, occupancy), then *Needs your attention* with coloured icons and one-click actions, the guest lists, and a side column with the next 7 days and shortcuts.
-- **Booking details**: the actions sit in the header; stay, guest (with *Email* and *Call* buttons), price and payments on the left; notes, emails and the history timeline on the right.
+- **Booking details**: the header has the main action for the booking's status (e.g. *Confirm* or *Payment received*) and **Add a note**; **⋯** holds *Show in calendar*, *Resend an email*, *Cancel booking*, *Remove personal data* and *Delete*. Stay, guest (with *Email* and *Call* buttons), price and payments are on the left; notes, emails and the history timeline on the right.
 - **Phones:** the app bar shows a scrollable row of section buttons (the WordPress menu is folded away there), lists become cards, and buttons and fields are at least 44 px tall.
 - The design uses the bundled Inter font (Latin and Cyrillic, loaded from the hotel's own site, never from Google) and is applied **only to the plugin's own screens**. The rest of the WordPress admin and the website are not affected, and the Appearance settings (§15) change the booking form, not the admin.
 
@@ -790,7 +797,7 @@ The first screen under **Bookings**:
 
 ### All bookings
 
-Search by reference, name, email or phone, and filter by **status**, **payment status**, **room**, **arrival between** two dates and **source** (website, staff, each external calendar). Rows have quick actions (**Confirm**, **Cancel**, **Payment received**, **Open**). On a phone the list turns into cards.
+Search by reference, name, email or phone, and filter by **status**, **payment status**, **room**, **arrival between** two dates and **source** (website, staff, each external calendar). Each row has its main action (**Confirm**, **Payment received** or **Restore booking**) and a **⋯** menu with **Open booking**, **Cancel** and **Delete**; totals and guest numbers are right-aligned. On a phone the list turns into cards.
 
 Click a **reference** to open the booking. The actions are at the top; below are the **guest** (tap to call or email), **stay**, **price** with its full breakdown, **payment**, **invoice request**, the guest's **open requests**, **internal notes** and the **history**.
 
@@ -1072,7 +1079,7 @@ wp flexo-booking import template.flexo-booking.json --images      # --skip-setti
 
 **Settings → Room pages:** room page design (a page or template used for every room page, or automatic), room page address (`rooms`), the *All rooms* page room pages link back to (found automatically when empty), prices on room pages ("from" price or none), the **Check availability** bar on phones, the table of your room pages, and the Elementor templates for rooms (§3).
 
-**Settings → Features:** see §2. **Settings → Health:** see §18. **Calendar sync** (§12) and **Import & export** (§24) are linked from the same tab bar.
+**Settings → Features:** see §2. **Settings → Health:** see §18. **Calendar sync** (§12) and **Import & export** (§24) are in the same navigation, under *System*.
 
 Technical settings are hidden until **Show advanced settings** is ticked (remembered per browser).
 
@@ -1135,8 +1142,26 @@ All routes accept `locale` (e.g. `en_US`): the answer is in that language, and a
 | `Flexo_Booking_Phone` | Country codes and names (via `intl` when available), phone normalisation to `+359 888 123 456` |
 | `Flexo_Booking_Appearance` | Custom-mode CSS variables on `.flexo-booking`, bundled `@font-face` rules, contrast checks, the preview |
 | `Flexo_Booking_Roles` | Hotel Staff / Hotel Manager roles, capabilities, room capabilities, trimmed menu |
-| `Flexo_Booking_Admin_UI` | The admin look (1.7.0): body class `flexo-admin-ui` on the plugin's screens only, the app bar, `page_head()` (title, intro, actions, tabs), `icon()` (inline SVG icons), on/off switches, footer line. Styles: `assets/css/admin-ui.css` (design tokens `--fx-*`, fonts, controls, cards, tables, notices) and `admin.css` (screens). |
+| `Flexo_Booking_Admin_UI` | The admin shell: body class `flexo-admin-ui` on the plugin's screens only, the app bar, `page_head()` (title, intro, actions, tabs; the Settings navigation), `icon()` (inline SVG icons), on/off switches, footer line, no Screen Options on the plugin's screens. |
+| `Flexo_Booking_UI` | Building blocks of every screen (see *Admin design system* below). |
 | `Flexo_Booking_Today_Admin`, `Flexo_Booking_Health`, `Flexo_Booking_Help`, `Flexo_Booking_Wizard` | Today screen and "Needs your attention", health checks and system report, guides and support contact, setup wizard |
+
+### Admin design system
+
+All plugin screens are built from the same parts, so they look and behave alike.
+
+| File | What |
+|---|---|
+| `assets/css/flexo-admin.css` | The only admin stylesheet: fonts (bundled Inter), **tokens** (custom properties `--fx-*` on `body.flexo-admin-ui`: greys, primary teal, feedback colours, type scale 12/13/14/16/20/24, spacing 4–48, radii 6/8/12/pill, shadows, focus ring, control heights 32/36/40 – 44 on touch screens, motion 150–200 ms, z-layers, page widths), base controls, then components, screen layouts, WordPress markup inside the plugin's screens, responsive rules (1600/1280/1100/960/782/600) and reduced motion. |
+| `includes/admin/class-admin-components.php` (`Flexo_Booking_UI`) | PHP helpers that print the markup: `page_header()`, `card_open()`/`card_close()` (also folding cards), `row_open()`/`row()` (label and description left, control right), `radio_cards()`, `segmented_html()`, `seg_buttons_html()`, `toggle_html()`, `color_field()` (*Website colour \| Custom*, with `website_colors()` from the Elementor kit), `subnav()`, `save_bar()`, `menu_html()` (the "⋯" menu), `status_pill_html()`, `notice_html()`, `empty_state_html()`, `skeleton_html()`, `preview_toolbar_html()`, `datefield_html()`, `timefield_html()`, `date_input_format()`. |
+| `assets/js/flexo-admin.js` (`window.FlexoUI`) | Shared behaviour: toasts (`FlexoUI.toast()`), the save bar (unsaved state, *Discard changes*, warning before leaving), saving forms marked `data-fx-save="ajax"` in the background (the page from `options.php` is read back: notices become a toast, field values and descriptions are refreshed) or `data-fx-save="reload"` (normal submit, then scroll position and a toast are restored), "⋯" menus (arrow keys, Escape, fixed position so tables don't clip them), tabs with arrow keys, the Settings drop-down, colour fields, the pop-over date and time pickers for `input[type=date]`, `input[type=time]` and `input.flexo-date` (values stay `Y-m-d`, `H:i` or `DD.MM.YYYY`), `FlexoUI.fitFrame()` for previews at a real device width. |
+| `assets/js/admin-bookings.js` | The confirmation dialog for `[data-flexo-confirm]` (a `<dialog>`: focus stays inside, Escape closes, the focus returns), red for `data-flexo-confirm-tone="danger"` and danger menu items. |
+
+**Rules**
+- Everything is scoped: tokens on `body.flexo-admin-ui`, components under `.flexo-admin-ui .wrap` (or `.fx-layer`, the dialogs, the app bar). The stylesheet never targets WordPress's own chrome (`#adminmenu`, `#wpadminbar`, `#wpbody`, footer) or bare `input`/`button`/`table` selectors, and is loaded only on the plugin's screens. No `!important`.
+- Statuses look the same everywhere (pills, calendar bars, agenda, legend): confirmed green with a tick, request amber with a clock, card hold blue, bank transfer amber with a bank, blocked grey with a lock, external violet with arrows, cancelled grey with a cross, conflict red with a warning sign. Icons are one stroke set (inline SVG, or CSS masks for status icons); no emoji.
+- Sentence case for titles and buttons; numbers and prices right-aligned with tabular figures; tables become cards on phones.
+- A new screen: `<div class="wrap flexo-admin">`, `Flexo_Booking_UI::page_header()`, then cards with rows; forms end with `save_bar()` (and `data-fx-save` on the form when it posts to `options.php`).
 
 **Hooks:**
 

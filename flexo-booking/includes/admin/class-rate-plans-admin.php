@@ -154,9 +154,9 @@ class Flexo_Booking_Rate_Plans_Admin {
 							</td>
 							<td>
 								<?php if ( $plan['active'] ) : ?>
-									<span class="flexo-status flexo-status--confirmed">✓ <?php esc_html_e( 'Offered to guests', 'flexo-booking' ); ?></span>
+									<span class="flexo-status flexo-status--confirmed"><?php esc_html_e( 'Offered to guests', 'flexo-booking' ); ?></span>
 								<?php else : ?>
-									<span class="flexo-status flexo-status--cancelled">○ <?php esc_html_e( 'Switched off', 'flexo-booking' ); ?></span>
+									<span class="flexo-status flexo-status--cancelled"><?php esc_html_e( 'Switched off', 'flexo-booking' ); ?></span>
 								<?php endif; ?>
 							</td>
 							<td class="flexo-actions">

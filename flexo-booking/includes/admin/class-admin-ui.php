@@ -20,6 +20,15 @@ class Flexo_Booking_Admin_UI {
 		add_action( 'in_admin_header', array( __CLASS__, 'appbar' ) );
 		add_filter( 'admin_footer_text', array( __CLASS__, 'footer_text' ), 20 );
 		add_filter( 'update_footer', array( __CLASS__, 'footer_version' ), 20 );
+		add_filter( 'screen_options_show_screen', array( __CLASS__, 'screen_options' ), 20 );
+	}
+
+	/**
+	 * No "Screen Options" tab on the plugin's screens: their columns and
+	 * boxes are fixed (WordPress's own setting, not hidden with CSS).
+	 */
+	public static function screen_options( $show ) {
+		return self::is_screen() ? false : $show;
 	}
 
 	/**
@@ -91,6 +100,17 @@ class Flexo_Booking_Admin_UI {
 			'trash'     => '<path d="M4 6.5h16M9.5 6.5V4h5v2.5M6 6.5l1 14h10l1-14"/>',
 			'coffee'    => '<path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM17 10.5h1.5a2.5 2.5 0 0 1 0 5H17M8 3.5v2.5M12 3.5v2.5"/>',
 			'child'     => '<circle cx="12" cy="5.5" r="2.5"/><path d="M8 10h8M12 10v5M9 21l3-6 3 6"/>',
+			'more'      => '<path d="M5.5 12h.01M12 12h.01M18.5 12h.01" stroke-width="3"/>',
+			'monitor'   => '<rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M8.5 20h7M12 16.5V20"/>',
+			'mobile'    => '<rect x="6.5" y="3" width="11" height="18" rx="2.5"/><path d="M11 17.5h2"/>',
+			'chevron-left'  => '<path d="m14.5 6-6 6 6 6"/>',
+			'chevron-right' => '<path d="m9.5 6 6 6-6 6"/>',
+			'chevron-down'  => '<path d="m6 9.5 6 6 6-6"/>',
+			'reset'     => '<path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5"/>',
+			'pencil'    => '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
+			'send'      => '<path d="M20.5 3.5 10 14M20.5 3.5 14 20.5l-4-6.5-6.5-4z"/>',
+			'agenda'    => '<path d="M8 6h12M8 12h12M8 18h12"/><rect x="3.5" y="4.5" width="2" height="3" rx=".5"/><rect x="3.5" y="10.5" width="2" height="3" rx=".5"/><rect x="3.5" y="16.5" width="2" height="3" rx=".5"/>',
+			'grid'      => '<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M3.5 14.5h17M9 4.5v15M15 4.5v15"/>',
 		);
 	}
 
@@ -304,7 +324,7 @@ class Flexo_Booking_Admin_UI {
 				<?php endif; ?>
 			</div>
 			<?php
-			if ( $args['tabs'] ) {
+			if ( $args['tabs'] && 'settings' !== $args['tabs'][0] ) {
 				Flexo_Booking_Admin::section_nav( $args['tabs'][0], $args['tabs'][1] );
 			}
 			?>
@@ -313,6 +333,10 @@ class Flexo_Booking_Admin_UI {
 			<hr class="wp-header-end">
 		<?php endif; ?>
 		<?php
+		// Settings: grouped navigation on the left (a select on narrow screens).
+		if ( $args['tabs'] && 'settings' === $args['tabs'][0] ) {
+			Flexo_Booking_Settings::subnav( $args['tabs'][1] );
+		}
 	}
 
 	/**

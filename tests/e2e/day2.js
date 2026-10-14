@@ -17,6 +17,19 @@ let pass = 0, fail = 0;
 const ok = ( cond, msg ) => { cond ? pass++ : fail++; console.log( ( cond ? '  PASS ' : '  FAIL ' ) + msg ); };
 const section = ( t ) => console.log( '\n== ' + t );
 
+// Saving: forms marked data-fx-save="ajax" save in the background (no page
+// load; the form fires "fx:saved"), the others submit and load a new page.
+async function save( p, sel = '#submit' ) {
+	const ajax = await p.$eval( sel, ( b ) => !! b.form && 'ajax' === b.form.getAttribute( 'data-fx-save' ) ).catch( () => false );
+	if ( ! ajax ) {
+		await Promise.all( [ p.waitForNavigation(), p.click( sel ) ] );
+		return;
+	}
+	const done = p.evaluate( () => new Promise( ( r ) => document.addEventListener( 'fx:saved', () => r(), { once: true } ) ) );
+	await p.click( sel );
+	await done;
+}
+
 ( async () => {
 	const browser = await chromium.launch();
 	const ctx = await browser.newContext( { viewport: { width: 1440, height: 1000 } } );
@@ -66,7 +79,7 @@ const section = ( t ) => console.log( '\n== ' + t );
 	ok( ( await deluxeRow.locator( `.fbc-cell[data-day="${ day( 6 ) }"]` ).textContent() ).trim() === '2/3', 'day with one unit-linked external booking: 2/3 free' );
 	const suiteRow = p.locator( '.fbc-row', { has: p.locator( '.fbc-room', { hasText: 'Family Suite' } ) } );
 	ok( await suiteRow.locator( '.fbc-item--external.fbc-item--conflict' ).count() === 1, 'conflicting external booking marked' );
-	ok( ( await suiteRow.locator( '.fbc-item', { hasText: 'Maria Website' } ).textContent() ).includes( '⚠' ), 'website booking in conflict marked with ⚠' );
+	ok( ( await suiteRow.locator( '.fbc-item', { hasText: 'Maria Website' } ).getAttribute( 'class' ) ).includes( 'fbc-item--conflict' ), 'website booking in conflict marked as a conflict' );
 	const studioRow = p.locator( '.fbc-row', { has: p.locator( '.fbc-room', { hasText: 'Garden Studio' } ) } );
 	ok( await studioRow.locator( '.fbc-item--blocked' ).count() === 1 && await studioRow.locator( '.fbc-item--closed' ).count() === 1, 'blocked dates and closed period shown' );
 	ok( await studioRow.locator( '.fbc-cell.is-closed' ).count() === 3, 'closed nights shaded (3)' );
@@ -92,7 +105,9 @@ const section = ( t ) => console.log( '\n== ' + t );
 	await Promise.all( [ p.waitForNavigation(), p.click( '#fbc-dialog a:has-text("Confirm")' ) ] );
 	ok( p.url().includes( 'flexo-booking-calendar' ) && await deluxeRow.locator( '.fbc-item--pending' ).count() === 0, 'dialog "Confirm" confirms the booking and returns to the calendar' );
 	await studioRow.locator( '.fbc-item--blocked' ).click();
-	await Promise.all( [ p.waitForNavigation(), p.click( '#fbc-dialog a:has-text("Remove block")' ) ] );
+	await p.click( '#fbc-dialog a:has-text("Remove block")' );
+	await p.waitForSelector( '.flexo-dialog[open]' );
+	await Promise.all( [ p.waitForNavigation(), p.click( '.flexo-dialog[open] [data-yes]' ) ] );
 	ok( await studioRow.locator( '.fbc-item--blocked' ).count() === 0, 'dialog "Remove block" removes it' );
 
 	// The calendar shows one month: open the one with that day (D0 + 20 can be next month).
@@ -104,7 +119,7 @@ const section = ( t ) => console.log( '\n== ' + t );
 	ok( await p.inputValue( '[name=check_in]' ) === day( 20 ) && await p.inputValue( '[name=check_out]' ) === day( 21 ), 'Add booking prefilled with the dates' );
 	ok( await p.$eval( '#fb-room', ( s ) => s.options[ s.selectedIndex ].text ) === 'Garden Studio', 'Add booking prefilled with the room' );
 	await p.fill( '#fb-name', 'Quick Guest' );
-	await Promise.all( [ p.waitForNavigation(), p.click( '#submit' ) ] );
+	await save( p );
 	await cal( month( 20 ) );
 	ok( await p.locator( '.fbc-item', { hasText: 'Quick Guest' } ).count() === 1, 'new booking appears in the calendar' );
 	await p.locator( '.fbc-row', { has: p.locator( '.fbc-room', { hasText: 'Garden Studio' } ) } ).locator( `.fbc-cell[data-day="${ day( 23 ) }"]` ).click();
@@ -125,6 +140,8 @@ const section = ( t ) => console.log( '\n== ' + t );
 	const phone = await browser.newContext( { viewport: { width: 390, height: 844 }, storageState: await ctx.storageState() } );
 	const m = await phone.newPage();
 	await m.goto( `${ BASE }/wp-admin/admin.php?page=flexo-booking-calendar&month=${ month( 5 ) }` );
+	ok( await m.isVisible( '.fbc-agenda' ) && ! await m.isVisible( '.fbc-scroll' ) && await m.locator( '.fbc-agenda__item' ).count() > 0, 'phone: the month starts as an agenda list' );
+	await m.click( '[data-fbc-view="grid"]' );
 	const widths = await m.evaluate( () => ( { doc: document.documentElement.scrollWidth, view: window.innerWidth, inner: document.querySelector( '.fbc-scroll' ).scrollWidth, box: document.querySelector( '.fbc-scroll' ).clientWidth } ) );
 	ok( widths.doc <= widths.view && widths.inner > widths.box, `page does not scroll sideways (${ widths.doc } ≤ ${ widths.view }); only the calendar does (${ widths.inner } > ${ widths.box })` );
 	await m.locator( '.fbc-item' ).first().click();
@@ -182,14 +199,14 @@ const section = ( t ) => console.log( '\n== ' + t );
 	section( 'Feature switched off' );
 	await p.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-settings&tab=features' );
 	await p.uncheck( 'input[name="features[]"][value=calendar_sync]' );
-	await Promise.all( [ p.waitForNavigation(), p.click( '#submit' ) ] );
+	await save( p );
 	ok( ! ( await menu() ).includes( 'Calendar Sync' ), 'Calendar Sync gone from the menu' );
 	await cal( month( 5 ) );
 	ok( await p.locator( '.fbc-item--external' ).count() === 0 && ! ( await p.textContent( '.fbc-legend' ) ).includes( 'external calendar' ), 'calendar shows no external bookings' );
 	ok( ( await p.request.get( newUrl ) ).status() === 404, 'export link answers 404 while off' );
 	await p.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-settings&tab=features' );
 	await p.check( 'input[name="features[]"][value=calendar_sync]' );
-	await Promise.all( [ p.waitForNavigation(), p.click( '#submit' ) ] );
+	await save( p );
 	await cal( month( 5 ) );
 	ok( await p.locator( '.fbc-item--external' ).count() >= 1, 'switched on again: external bookings back' );
 

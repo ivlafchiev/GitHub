@@ -15,7 +15,6 @@ class Flexo_Booking_Seasons_Admin {
 	public static function init() {
 		// Priority 10 runs after WordPress adds the Rooms submenu.
 		add_action( 'admin_menu', array( __CLASS__, 'menu' ), 10 );
-		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'assets' ) );
 		add_action( 'add_meta_boxes_' . Flexo_Booking_Rooms::POST_TYPE, array( __CLASS__, 'add_meta_box' ) );
 		add_action( 'admin_post_flexo_booking_save_season', array( __CLASS__, 'handle_save' ) );
 		add_action( 'admin_post_flexo_booking_delete_season', array( __CLASS__, 'handle_delete' ) );
@@ -26,20 +25,6 @@ class Flexo_Booking_Seasons_Admin {
 		if ( Flexo_Booking_Seasons::enabled() ) {
 			add_submenu_page( Flexo_Booking_Admin::MENU_SLUG, __( 'Seasonal prices', 'flexo-booking' ), __( 'Seasonal prices', 'flexo-booking' ), Flexo_Booking_Admin::cap( 'prices' ), self::SLUG, array( __CLASS__, 'render' ) );
 		}
-	}
-
-	public static function assets( $hook ) {
-		if ( false !== strpos( $hook, self::SLUG ) || false !== strpos( $hook, Flexo_Booking_Closures_Admin::SLUG ) ) {
-			self::enqueue_datepicker();
-		}
-	}
-
-	/**
-	 * jQuery UI datepicker (bundled with WordPress) in DD.MM.YYYY.
-	 */
-	public static function enqueue_datepicker() {
-		wp_enqueue_style( 'flexo-booking-admin', FLEXO_BOOKING_URL . 'assets/css/admin.css', array(), FLEXO_BOOKING_VERSION );
-		wp_enqueue_script( 'flexo-booking-admin-dates', FLEXO_BOOKING_URL . 'assets/js/admin-dates.js', array( 'jquery', 'jquery-ui-datepicker' ), FLEXO_BOOKING_VERSION, true );
 	}
 
 	private static function page_url( $args = array() ) {

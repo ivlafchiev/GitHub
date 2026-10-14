@@ -32,6 +32,19 @@ async function login( browser, user ) {
 }
 const menu = ( p ) => p.$$eval( '#toplevel_page_flexo-booking .wp-submenu a', ( els ) => els.map( ( e ) => e.textContent.trim().replace( /\s*\d+$/, '' ) ) );
 
+// Saving: forms marked data-fx-save="ajax" save in the background (no page
+// load; the form fires "fx:saved"), the others submit and load a new page.
+async function save( p, sel = '#submit' ) {
+	const ajax = await p.$eval( sel, ( b ) => !! b.form && 'ajax' === b.form.getAttribute( 'data-fx-save' ) ).catch( () => false );
+	if ( ! ajax ) {
+		await Promise.all( [ p.waitForNavigation(), p.click( sel ) ] );
+		return;
+	}
+	const done = p.evaluate( () => new Promise( ( r ) => document.addEventListener( 'fx:saved', () => r(), { once: true } ) ) );
+	await p.click( sel );
+	await done;
+}
+
 ( async () => {
 	const browser = await chromium.launch();
 	const errors = [];
@@ -110,7 +123,7 @@ const menu = ( p ) => p.$$eval( '#toplevel_page_flexo-booking .wp-submenu a', ( 
 	// Since 1.5.0 every feature is built: none is shown as "Coming soon".
 	ok( ! ( await admin.content() ).includes( 'Coming soon' ) && ( await admin.content() ).includes( 'value="online_payment"' ), 'all features can be switched on (payments included)' );
 	await admin.uncheck( 'input[name="features[]"][value=seasonal_pricing]' );
-	await Promise.all( [ admin.waitForNavigation(), admin.click( '#submit' ) ] );
+	await save( admin );
 	items = await menu( admin );
 	ok( ! items.includes( 'Seasonal prices' ), 'switching Seasonal prices off removes its screen' );
 	await guest.goto( `${ BASE }/booking/?check_in=${ day( 12 ) }&check_out=${ day( 17 ) }&adults=2` );
@@ -119,14 +132,14 @@ const menu = ( p ) => p.$$eval( '#toplevel_page_flexo-booking .wp-submenu a', ( 
 	ok( plain.includes( '550.00' ), 'guests now get room prices (Sat 150 + 4 × 100): ' + plain.trim() );
 	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-settings&tab=features' );
 	await admin.check( 'input[name="features[]"][value=seasonal_pricing]' );
-	await Promise.all( [ admin.waitForNavigation(), admin.click( '#submit' ) ] );
+	await save( admin );
 
 	section( 'Hotel admin: Seasonal prices screen' );
 	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-seasons' );
 	const rows = await admin.$$eval( '.flexo-seasons-table tbody tr', ( trs ) => trs.map( ( tr ) => tr.innerText.replace( /\s+/g, ' ' ).trim() ) );
 	ok( rows.length === 2 && rows[ 0 ].includes( dmy( 0 ) ) && rows[ 0 ].includes( dmy( 13 ) ), 'table shows DD.MM.YYYY: ' + rows[ 0 ] );
 	await admin.click( 'input[name=date_from]' );
-	ok( await admin.isVisible( '.ui-datepicker' ), 'date picker opens' );
+	ok( await admin.isVisible( '.fx-picker:not([hidden])' ), 'date picker opens' );
 	await admin.screenshot( { path: SHOTS + '/d1-datepicker.png' } );
 	await admin.keyboard.press( 'Escape' );
 	await admin.fill( 'input[name=name]', 'Overlapping' );

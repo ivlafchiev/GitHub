@@ -189,13 +189,13 @@ class Flexo_Booking_Help {
 					</p>
 					<ul class="flexo-help__contact">
 						<?php if ( $support['phone'] ) : ?>
-							<li>☎ <a href="tel:<?php echo esc_attr( preg_replace( '/[^0-9+]/', '', $support['phone'] ) ); ?>"><?php echo esc_html( $support['phone'] ); ?></a></li>
+							<li><?php echo Flexo_Booking_Admin_UI::icon( 'phone' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?><a href="tel:<?php echo esc_attr( preg_replace( '/[^0-9+]/', '', $support['phone'] ) ); ?>"><?php echo esc_html( $support['phone'] ); ?></a></li>
 						<?php endif; ?>
 						<?php if ( $support['email'] ) : ?>
-							<li>✉ <a href="mailto:<?php echo esc_attr( $support['email'] ); ?>"><?php echo esc_html( $support['email'] ); ?></a></li>
+							<li><?php echo Flexo_Booking_Admin_UI::icon( 'mail' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?><a href="mailto:<?php echo esc_attr( $support['email'] ); ?>"><?php echo esc_html( $support['email'] ); ?></a></li>
 						<?php endif; ?>
 						<?php if ( $support['url'] ) : ?>
-							<li>↗ <a href="<?php echo esc_url( $support['url'] ); ?>" target="_blank" rel="noopener"><?php echo esc_html( wp_parse_url( $support['url'], PHP_URL_HOST ) ); ?></a></li>
+							<li><?php echo Flexo_Booking_Admin_UI::icon( 'external' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?><a href="<?php echo esc_url( $support['url'] ); ?>" target="_blank" rel="noopener"><?php echo esc_html( wp_parse_url( $support['url'], PHP_URL_HOST ) ); ?></a></li>
 						<?php endif; ?>
 					</ul>
 				<?php else : ?>

@@ -409,7 +409,7 @@ class Flexo_Booking_Today_Admin {
 				/* translators: %s: amount */
 				echo '<span class="flexo-badge flexo-badge--due">' . esc_html( sprintf( __( 'To pay: %s', 'flexo-booking' ), Flexo_Booking_Money::format( $balance['outstanding'], $b['currency'] ) ) ) . '</span> ';
 			} elseif ( $balance['net'] > 0 && $balance['outstanding'] <= 0 ) {
-				echo '<span class="flexo-badge flexo-badge--paid">✓ ' . esc_html__( 'Paid', 'flexo-booking' ) . '</span> ';
+				echo '<span class="flexo-badge flexo-badge--paid">' . esc_html__( 'Paid', 'flexo-booking' ) . '</span> ';
 			}
 			if ( $b['guest_phone'] ) {
 				echo '<a class="button button-small" href="tel:' . esc_attr( preg_replace( '/[^0-9+]/', '', $b['guest_phone'] ) ) . '">' . Flexo_Booking_Admin_UI::icon( 'phone' ) . esc_html__( 'Call', 'flexo-booking' ) . '</a>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG.

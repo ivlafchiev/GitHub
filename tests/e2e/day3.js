@@ -35,6 +35,19 @@ async function fillGuest( p, name ) {
 	await p.fill( '[name=guest_phone]', '+359 888 222 333' );
 }
 
+// Saving: forms marked data-fx-save="ajax" save in the background (no page
+// load; the form fires "fx:saved"), the others submit and load a new page.
+async function save( p, sel = '#submit' ) {
+	const ajax = await p.$eval( sel, ( b ) => !! b.form && 'ajax' === b.form.getAttribute( 'data-fx-save' ) ).catch( () => false );
+	if ( ! ajax ) {
+		await Promise.all( [ p.waitForNavigation(), p.click( sel ) ] );
+		return;
+	}
+	const done = p.evaluate( () => new Promise( ( r ) => document.addEventListener( 'fx:saved', () => r(), { once: true } ) ) );
+	await p.click( sel );
+	await done;
+}
+
 ( async () => {
 	const browser = await chromium.launch();
 	const errors = [];
@@ -211,8 +224,8 @@ async function fillGuest( p, name ) {
 	section( 'Admin: add booking with plan, ages and code' );
 	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-new' );
 	await admin.selectOption( '#fb-room', { label: 'Garden Family Room' } );
-	await admin.fill( '[name=check_in]', day( 40 ) );
-	await admin.fill( '[name=check_out]', day( 42 ) );
+	await admin.fill( '[data-fx-date-for=check_in]', day( 40 ) );
+	await admin.fill( '[data-fx-date-for=check_out]', day( 42 ) );
 	await admin.fill( '[name=children_ages]', '8' );
 	await admin.selectOption( '#fb-plan', { label: 'Room Only' } );
 	await admin.fill( '#fb-promo', 'spring5' );
@@ -229,12 +242,12 @@ async function fillGuest( p, name ) {
 	const box = await text( admin, '#flexo-room-details' );
 	ok( '2' === await admin.inputValue( '#flexo-max-adults' ) && box.includes( 'Use different child prices' ) && box.includes( 'Half Board' ), 'room screen: max adults, child prices, its rate plans' );
 	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-settings' );
-	const tabs = await text( admin, '.nav-tab-wrapper' );
+	const tabs = await text( admin, '.fx-subnav__groups' );
 	// Day 6: children live on "Booking rules", the tourist tax on "Taxes & invoices".
 	ok( tabs.includes( 'Booking rules' ) && tabs.includes( 'Taxes' ), 'settings tabs: Booking rules, Taxes' );
 	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-settings&tab=children' );
 	await admin.fill( '#fb-child-free', '2' );
-	await Promise.all( [ admin.waitForNavigation(), admin.click( '#submit' ) ] );
+	await save( admin );
 	ok( ( await text( admin, '.wrap' ) ).includes( 'Now: Under 2: free · 2–11: 50%' ), 'children tab saved, explained in plain words' );
 	await admin.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-settings&tab=tourist_tax' );
 	ok( 'exempt' === await admin.$eval( '[name="flexo_booking_settings[tourist_tax_children]"]:checked', ( e ) => e.value ) && '7' === await admin.inputValue( '[name="flexo_booking_settings[tourist_tax_exempt_under]"]' ), 'tourist tax tab shows the saved exemption' );
@@ -255,10 +268,10 @@ async function fillGuest( p, name ) {
 	for ( const f of [ 'children', 'rate_plans', 'tourist_tax', 'promo_codes' ] ) {
 		await admin.uncheck( `input[name="features[]"][value=${ f }]` );
 	}
-	await Promise.all( [ admin.waitForNavigation(), admin.click( '#submit' ) ] );
+	await save( admin );
 	const menuOff = await menu( admin );
 	ok( ! menuOff.includes( 'Rates' ) && ! menuOff.includes( 'Promo codes' ), 'menu items gone' );
-	ok( ! ( await text( admin, '.nav-tab-wrapper' ) ).includes( 'Children' ), 'settings tabs gone' );
+	ok( ! ( await text( admin, '.fx-subnav__groups' ) ).includes( 'Children' ), 'settings tabs gone' );
 	await guest.goto( `${ BASE }/booking/?check_in=${ day( 30 ) }&check_out=${ day( 33 ) }&adults=2&children=0` );
 	await guest.waitForSelector( '.fb-room' );
 	ok( ( await guest.$$( '.fb-ages' ) ).length === 0, 'guest form: adults and children counts only, as before' );
@@ -272,7 +285,7 @@ async function fillGuest( p, name ) {
 	for ( const f of [ 'children', 'rate_plans', 'tourist_tax', 'promo_codes' ] ) {
 		await admin.check( `input[name="features[]"][value=${ f }]` );
 	}
-	await Promise.all( [ admin.waitForNavigation(), admin.click( '#submit' ) ] );
+	await save( admin );
 	ok( ( await menu( admin ) ).includes( 'Rates' ), 'switched back on' );
 
 	ok( errors.length === 0, 'no JavaScript errors' + ( errors.length ? ': ' + errors.join( '; ' ) : '' ) );

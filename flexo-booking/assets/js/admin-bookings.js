@@ -53,7 +53,10 @@
 		dialog.querySelector( '#flexo-dialog-title' ).textContent = t.areYouSure || 'Are you sure?';
 		dialog.querySelector( '#flexo-dialog-text' ).textContent = el.getAttribute( 'data-flexo-confirm' );
 		dialog.querySelector( '[data-no]' ).textContent = t.goBack || 'Go back';
-		dialog.querySelector( '[data-yes]' ).textContent = el.getAttribute( 'data-flexo-confirm-button' ) || el.textContent.trim();
+		var yes = dialog.querySelector( '[data-yes]' );
+		var danger = 'danger' === el.getAttribute( 'data-flexo-confirm-tone' ) || el.matches( '.fx-menu__item--danger, .flexo-danger, .button-link-delete, .fx-btn-danger, .fx-btn-danger-quiet' );
+		yes.textContent = el.getAttribute( 'data-flexo-confirm-button' ) || el.textContent.trim();
+		yes.className = 'button ' + ( danger ? 'fx-btn-danger' : 'button-primary' );
 		dialog.showModal();
 		dialog.querySelector( '[data-no]' ).focus();
 	}

@@ -30,7 +30,6 @@ class Flexo_Booking_Sync_Admin {
 
 	public static function assets( $hook ) {
 		if ( false !== strpos( $hook, self::SLUG ) ) {
-			wp_enqueue_style( 'flexo-booking-admin', FLEXO_BOOKING_URL . 'assets/css/admin.css', array(), FLEXO_BOOKING_VERSION );
 			wp_enqueue_script( 'flexo-booking-admin-sync', FLEXO_BOOKING_URL . 'assets/js/admin-sync.js', array(), FLEXO_BOOKING_VERSION, true );
 			wp_localize_script(
 				'flexo-booking-admin-sync',
@@ -243,13 +242,13 @@ class Flexo_Booking_Sync_Admin {
 										<td><?php echo esc_html( self::ago( $calendar['last_synced_at'] ) ); ?></td>
 										<td>
 											<?php if ( 'error' === $calendar['last_status'] ) : ?>
-												<span class="flexo-status flexo-status--error">✕ <?php esc_html_e( 'Error', 'flexo-booking' ); ?></span>
+												<span class="flexo-status flexo-status--error"><?php esc_html_e( 'Error', 'flexo-booking' ); ?></span>
 												<div class="flexo-sync-error"><?php echo esc_html( $calendar['last_error'] ); ?></div>
 												<?php if ( $calendar['fail_count'] > 1 ) : ?>
 													<div class="flexo-muted"><?php echo esc_html( sprintf( /* translators: %d: attempts */ _n( 'Failed %d time in a row', 'Failed %d times in a row', $calendar['fail_count'], 'flexo-booking' ), $calendar['fail_count'] ) ); ?></div>
 												<?php endif; ?>
 											<?php elseif ( 'ok' === $calendar['last_status'] ) : ?>
-												<span class="flexo-status flexo-status--confirmed">✓ <?php esc_html_e( 'OK', 'flexo-booking' ); ?></span>
+												<span class="flexo-status flexo-status--confirmed"><?php esc_html_e( 'OK', 'flexo-booking' ); ?></span>
 											<?php else : ?>
 												<span class="flexo-status"><?php esc_html_e( 'Not synced yet', 'flexo-booking' ); ?></span>
 											<?php endif; ?>

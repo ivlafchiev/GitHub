@@ -619,6 +619,35 @@ class Flexo_Booking_Settings {
 	}
 
 	/**
+	 * Settings navigation, grouped: Property, Money, Guests & data, System.
+	 * The addresses are the same as the tabs' (…-settings&tab=…).
+	 */
+	public static function subnav( $current ) {
+		$tabs   = self::nav_tabs();
+		$groups = array(
+			__( 'Property', 'flexo-booking' )      => array( 'general', 'rules', 'pages', 'room_pages' ),
+			__( 'Money', 'flexo-booking' )         => array( 'payments', 'taxes' ),
+			__( 'Guests & data', 'flexo-booking' ) => array( 'privacy', 'tracking' ),
+			__( 'System', 'flexo-booking' )        => array( 'features', 'health', 'flexo-booking-sync', Flexo_Booking_Admin::MENU_SLUG . '-tools' ),
+		);
+		$out    = array();
+		foreach ( $groups as $title => $keys ) {
+			$out[ $title ] = array();
+			foreach ( $keys as $key ) {
+				if ( isset( $tabs[ $key ] ) ) {
+					$out[ $title ][ $key ] = $tabs[ $key ];
+					unset( $tabs[ $key ] );
+				}
+			}
+		}
+		if ( $tabs ) {
+			$system = __( 'System', 'flexo-booking' );
+			$out[ $system ] = array_merge( $out[ $system ], $tabs );
+		}
+		Flexo_Booking_UI::subnav( $out, $current, __( 'Settings', 'flexo-booking' ) );
+	}
+
+	/**
 	 * Bookings → Emails (also for Hotel Managers).
 	 */
 	public static function render_emails_page() {
@@ -682,7 +711,7 @@ class Flexo_Booking_Settings {
 			}
 			?>
 
-			<form method="post" action="options.php">
+			<form method="post" action="options.php" id="flexo-settings-form" class="flexo-settings-form" data-fx-save="<?php echo esc_attr( 'room_pages' === $tab ? 'reload' : 'ajax' ); ?>">
 				<?php settings_fields( 'flexo_booking' ); ?>
 
 				<?php if ( 'room_pages' === $tab ) : ?>
@@ -690,7 +719,7 @@ class Flexo_Booking_Settings {
 				<?php endif; ?>
 
 				<?php if ( 'general' === $tab ) : ?>
-				<p class="flexo-tab-intro"><?php esc_html_e( 'How guests reach you, and the pages the booking form uses.', 'flexo-booking' ); ?></p>
+				<?php Flexo_Booking_UI::card_open( array( 'title' => __( 'Hotel', 'flexo-booking' ), 'desc' => __( 'How guests reach you, and the pages the booking form uses.', 'flexo-booking' ) ) ); ?>
 				<table class="form-table" role="presentation">
 					<tr>
 						<th scope="row"><?php esc_html_e( 'Your contact details for guests', 'flexo-booking' ); ?></th>
@@ -774,10 +803,11 @@ class Flexo_Booking_Settings {
 					</tr>
 
 				</table>
+				<?php Flexo_Booking_UI::card_close(); ?>
 				<?php endif; ?>
 
 				<?php if ( 'rules' === $tab ) : ?>
-				<p class="flexo-tab-intro"><?php esc_html_e( 'Which stays guests can book, and what the booking form asks.', 'flexo-booking' ); ?></p>
+				<?php Flexo_Booking_UI::card_open( array( 'title' => __( 'Booking rules', 'flexo-booking' ), 'desc' => __( 'Which stays guests can book, and what the booking form asks.', 'flexo-booking' ) ) ); ?>
 				<table class="form-table" role="presentation">
 					<tr>
 						<th scope="row"><?php esc_html_e( 'Stay length', 'flexo-booking' ); ?></th>
@@ -838,11 +868,11 @@ class Flexo_Booking_Settings {
 						</td>
 					</tr>
 				</table>
+				<?php Flexo_Booking_UI::card_close(); ?>
 				<?php endif; ?>
 
 				<?php if ( 'rules' === $tab && Flexo_Booking_Features::is_enabled( 'children' ) ) : ?>
-				<h2><?php esc_html_e( 'Children', 'flexo-booking' ); ?></h2>
-				<p><?php esc_html_e( 'Guests enter the age of each child when they search. Children count towards each room\'s "Max guests". The room price stays the same; these rules set what children pay for per-person extras such as breakfast or half board (rate plans charged per guest per night).', 'flexo-booking' ); ?></p>
+				<?php Flexo_Booking_UI::card_open( array( 'title' => __( 'Children', 'flexo-booking' ), 'desc' => __( 'Guests enter the age of each child when they search. Children count towards each room\'s "Max guests". The room price stays the same; these rules set what children pay for per-person extras such as breakfast or half board (rate plans charged per guest per night).', 'flexo-booking' ) ) ); ?>
 				<table class="form-table" role="presentation">
 					<tr>
 						<th scope="row"><label for="fb-child-free"><?php esc_html_e( 'Free for children under', 'flexo-booking' ); ?></label></th>
@@ -866,11 +896,11 @@ class Flexo_Booking_Settings {
 						</td>
 					</tr>
 				</table>
+				<?php Flexo_Booking_UI::card_close(); ?>
 				<?php endif; ?>
 
 				<?php if ( 'taxes' === $tab && Flexo_Booking_Features::is_enabled( 'tourist_tax' ) ) : ?>
-				<h2><?php esc_html_e( 'Tourist tax', 'flexo-booking' ); ?></h2>
-				<p><?php esc_html_e( 'The tourist tax is shown as a separate line in the price breakdown and is never discounted by promo codes.', 'flexo-booking' ); ?></p>
+				<?php Flexo_Booking_UI::card_open( array( 'title' => __( 'Tourist tax', 'flexo-booking' ), 'desc' => __( 'The tourist tax is shown as a separate line in the price breakdown and is never discounted by promo codes.', 'flexo-booking' ) ) ); ?>
 				<table class="form-table" role="presentation">
 					<tr>
 						<th scope="row"><label for="fb-tax"><?php esc_html_e( 'Amount per adult per night', 'flexo-booking' ); ?></label></th>
@@ -908,10 +938,11 @@ class Flexo_Booking_Settings {
 						</td>
 					</tr>
 				</table>
+				<?php Flexo_Booking_UI::card_close(); ?>
 				<?php endif; ?>
 
 				<?php if ( 'emails' === $tab ) : ?>
-				<h2><?php esc_html_e( 'Your hotel', 'flexo-booking' ); ?></h2>
+				<?php Flexo_Booking_UI::card_open( array( 'title' => __( 'Your hotel', 'flexo-booking' ), 'desc' => '' ) ); ?>
 				<table class="form-table" role="presentation">
 					<tr>
 						<th scope="row"><label for="fb-notify"><?php esc_html_e( 'Send hotel notifications to', 'flexo-booking' ); ?></label></th>
@@ -955,12 +986,10 @@ class Flexo_Booking_Settings {
 					</tr>
 					<?php endif; ?>
 				</table>
+				<?php Flexo_Booking_UI::card_close(); ?>
 
-				<h2><?php esc_html_e( 'Emails to guests', 'flexo-booking' ); ?></h2>
 				<?php if ( Flexo_Booking_Features::is_enabled( 'guest_emails' ) ) : ?>
-				<p class="description">
-					<?php esc_html_e( 'Each email is sent in the language the guest booked in. Texts you haven\'t changed are translated automatically; to translate your own texts, use Polylang or WPML string translation (group "Flexo Booking").', 'flexo-booking' ); ?>
-				</p>
+				<?php Flexo_Booking_UI::card_open( array( 'title' => __( 'Emails to guests', 'flexo-booking' ), 'desc' => __( 'Each email is sent in the language the guest booked in. Texts you haven\'t changed are translated automatically; to translate your own texts, use Polylang or WPML string translation (group "Flexo Booking").', 'flexo-booking' ) ) ); ?>
 				<details class="flexo-placeholders">
 					<summary><?php esc_html_e( 'Placeholders:', 'flexo-booking' ); ?></summary>
 					<p>
@@ -1013,13 +1042,16 @@ class Flexo_Booking_Settings {
 						</div>
 					<?php endforeach; ?>
 				</div>
-				<p class="description"><?php esc_html_e( 'Reminders and review requests are sent by WordPress\'s scheduled tasks once an hour, between 8:00 and 21:00, only once per booking and never for cancelled bookings.', 'flexo-booking' ); ?></p>
+				<p class="fx-help"><?php esc_html_e( 'Reminders and review requests are sent by WordPress\'s scheduled tasks once an hour, between 8:00 and 21:00, only once per booking and never for cancelled bookings.', 'flexo-booking' ); ?></p>
+				<?php Flexo_Booking_UI::card_close(); ?>
 				<?php else : ?>
-					<p class="description"><?php esc_html_e( 'Guest emails are switched off under Settings → Features. Only the notifications to the hotel are sent.', 'flexo-booking' ); ?></p>
+					<?php Flexo_Booking_UI::card_open( array( 'title' => __( 'Emails to guests', 'flexo-booking' ), 'desc' => __( 'Guest emails are switched off under Settings → Features. Only the notifications to the hotel are sent.', 'flexo-booking' ) ) ); ?>
+					<?php Flexo_Booking_UI::card_close(); ?>
 				<?php endif; ?>
 
-				<h2><?php esc_html_e( 'Email log', 'flexo-booking' ); ?></h2>
-				<p><label><?php esc_html_e( 'Keep the log for', 'flexo-booking' ); ?> <input type="number" min="7" max="730" class="small-text" name="<?php echo esc_attr( $name ); ?>[email_log_days]" value="<?php echo esc_attr( $s['email_log_days'] ); ?>"> <?php esc_html_e( 'days', 'flexo-booking' ); ?></label></p>
+				<?php Flexo_Booking_UI::card_open( array( 'title' => __( 'Email log', 'flexo-booking' ), 'desc' => '' ) ); ?>
+				<p class="fx-inline"><label for="fb-email-log-days"><?php esc_html_e( 'Keep the log for', 'flexo-booking' ); ?></label> <span class="flexo-input-unit"><input id="fb-email-log-days" type="number" min="7" max="730" class="small-text" name="<?php echo esc_attr( $name ); ?>[email_log_days]" value="<?php echo esc_attr( $s['email_log_days'] ); ?>"><span><?php esc_html_e( 'days', 'flexo-booking' ); ?></span></span></p>
+				<?php Flexo_Booking_UI::card_close(); ?>
 				<?php endif; ?>
 
 				<?php if ( 'payments' === $tab ) : ?>
@@ -1027,6 +1059,7 @@ class Flexo_Booking_Settings {
 				<?php endif; ?>
 
 				<?php if ( 'privacy' === $tab ) : ?>
+				<?php Flexo_Booking_UI::card_open( array( 'title' => __( 'Privacy', 'flexo-booking' ), 'desc' => '' ) ); ?>
 				<table class="form-table" role="presentation">
 					<tr>
 						<th scope="row"><?php esc_html_e( 'Consent checkbox', 'flexo-booking' ); ?></th>
@@ -1064,12 +1097,12 @@ class Flexo_Booking_Settings {
 						</td>
 					</tr>
 				</table>
-				<p><?php esc_html_e( 'Guests can also ask for their data: use Tools → Export Personal Data and Tools → Erase Personal Data with the guest\'s email address. Bookings, invoice details and emails sent are included. A suggested text for your privacy policy is under Settings → Privacy → Policy Guide.', 'flexo-booking' ); ?></p>
+				<p class="fx-help"><?php esc_html_e( 'Guests can also ask for their data: use Tools → Export Personal Data and Tools → Erase Personal Data with the guest\'s email address. Bookings, invoice details and emails sent are included. A suggested text for your privacy policy is under Settings → Privacy → Policy Guide.', 'flexo-booking' ); ?></p>
+				<?php Flexo_Booking_UI::card_close(); ?>
 				<?php endif; ?>
 
 				<?php if ( 'taxes' === $tab && Flexo_Booking_Features::is_enabled( 'invoice_request' ) ) : ?>
-				<h2><?php esc_html_e( 'Invoice requests', 'flexo-booking' ); ?></h2>
-				<p><?php esc_html_e( 'Guests can tick "I would like an invoice" and enter the details for a person or a company. The plugin only collects the details for you; issue the invoice in your accounting software as usual.', 'flexo-booking' ); ?></p>
+				<?php Flexo_Booking_UI::card_open( array( 'title' => __( 'Invoice requests', 'flexo-booking' ), 'desc' => __( 'Guests can tick "I would like an invoice" and enter the details for a person or a company. The plugin only collects the details for you; issue the invoice in your accounting software as usual.', 'flexo-booking' ) ) ); ?>
 				<table class="form-table" role="presentation">
 					<?php foreach ( Flexo_Booking_Invoices::fields() as $flexo_field => $flexo_def ) : ?>
 						<tr>
@@ -1085,11 +1118,13 @@ class Flexo_Booking_Settings {
 						</tr>
 					<?php endforeach; ?>
 				</table>
-				<p class="description"><?php esc_html_e( 'The company ID (EIK/BULSTAT) is only checked lightly: when it is made of digits only, it must have 9 or 13 digits. Foreign company numbers and VAT numbers are not checked.', 'flexo-booking' ); ?></p>
+				<p class="fx-help"><?php esc_html_e( 'The company ID (EIK/BULSTAT) is only checked lightly: when it is made of digits only, it must have 9 or 13 digits. Foreign company numbers and VAT numbers are not checked.', 'flexo-booking' ); ?></p>
+				<?php Flexo_Booking_UI::card_close(); ?>
 				<?php endif; ?>
 
 				<?php if ( 'tracking' === $tab ) : ?>
-				<p><?php esc_html_e( 'The booking form sends these events to the Google Tag Manager data layer (window.dataLayer). In Tag Manager, create a "Custom Event" trigger for each event name and connect it to your Google Analytics 4 or Meta Pixel tags. Events contain no names, emails or phone numbers.', 'flexo-booking' ); ?></p>
+				<?php Flexo_Booking_UI::card_open( array( 'title' => __( 'Tracking', 'flexo-booking' ), 'desc' => __( 'The booking form sends these events to the Google Tag Manager data layer (window.dataLayer). In Tag Manager, create a "Custom Event" trigger for each event name and connect it to your Google Analytics 4 or Meta Pixel tags. Events contain no names, emails or phone numbers.', 'flexo-booking' ) ) ); ?>
+				<div class="fx-table-scroll">
 				<table class="widefat striped flexo-tracking-events">
 					<thead><tr><th><?php esc_html_e( 'Event', 'flexo-booking' ); ?></th><th><?php esc_html_e( 'When', 'flexo-booking' ); ?></th><th><?php esc_html_e( 'Data', 'flexo-booking' ); ?></th></tr></thead>
 					<tbody>
@@ -1099,7 +1134,10 @@ class Flexo_Booking_Settings {
 						<tr><td><code>booking_complete</code></td><td><?php esc_html_e( 'The booking or request was sent (once per booking)', 'flexo-booking' ); ?></td><td><code>booking_reference</code>, <code>booking_status</code>, <code>room</code>, <code>rate_plan</code>, <code>value</code>, <code>currency</code>, <code>ecommerce.transaction_id</code></td></tr>
 					</tbody>
 				</table>
-				<p class="description"><?php esc_html_e( 'Cookie and consent plugins stay in control: the events only go into the data layer, and your Tag Manager setup (with Consent Mode) decides what is sent to Google or Meta.', 'flexo-booking' ); ?></p>
+				</div>
+				<p class="fx-help"><?php esc_html_e( 'Cookie and consent plugins stay in control: the events only go into the data layer, and your Tag Manager setup (with Consent Mode) decides what is sent to Google or Meta.', 'flexo-booking' ); ?></p>
+				<?php Flexo_Booking_UI::card_close(); ?>
+				<?php Flexo_Booking_UI::card_open( array( 'title' => __( 'Meta Pixel without Tag Manager', 'flexo-booking' ), 'desc' => '' ) ); ?>
 				<table class="form-table" role="presentation">
 					<tr>
 						<th scope="row"><?php esc_html_e( 'Meta Pixel without Tag Manager', 'flexo-booking' ); ?></th>
@@ -1110,9 +1148,10 @@ class Flexo_Booking_Settings {
 						</td>
 					</tr>
 				</table>
+				<?php Flexo_Booking_UI::card_close(); ?>
 				<?php endif; ?>
 
-				<?php submit_button(); ?>
+				<?php Flexo_Booking_UI::save_bar(); ?>
 			</form>
 			<?php
 			if ( 'emails' === $tab ) {
@@ -1196,9 +1235,9 @@ class Flexo_Booking_Settings {
 						<td><?php echo esc_html( $entry['subject'] ); ?></td>
 						<td>
 							<?php if ( 'sent' === $entry['status'] ) : ?>
-								<span class="flexo-status flexo-status--confirmed">✓ <?php esc_html_e( 'Sent', 'flexo-booking' ); ?></span>
+								<span class="flexo-status flexo-status--confirmed"><?php esc_html_e( 'Sent', 'flexo-booking' ); ?></span>
 							<?php else : ?>
-								<span class="flexo-status flexo-status--error">✕ <?php esc_html_e( 'Failed', 'flexo-booking' ); ?></span>
+								<span class="flexo-status flexo-status--error"><?php esc_html_e( 'Failed', 'flexo-booking' ); ?></span>
 								<div class="flexo-sync-error"><?php echo esc_html( (string) $entry['error'] ); ?></div>
 							<?php endif; ?>
 						</td>
