@@ -2596,7 +2596,7 @@ body.flexo-admin-ui {
 	align-items: center;
 	justify-content: center;
 	gap: 6px;
-	min-height: 28px;
+	min-height: calc(var(--fx-control-h) - 8px);
 	padding: 0 var(--fx-space-3);
 	border: 0;
 	border-radius: var(--fx-radius-sm);
@@ -4144,7 +4144,7 @@ body.flexo-admin-ui {
 }
 
 .flexo-admin-ui .wrap .flexo-bookings-table > thead > tr > th:nth-child(2) {
-	min-width: 170px;
+	min-width: 156px;
 }
 
 
@@ -4167,6 +4167,39 @@ body.flexo-admin-ui {
 
 .flexo-admin-ui .wrap .flexo-bookings-table td .flexo-stay-date {
 	white-space: nowrap;
+}
+
+/* Source badges may take two lines (long in some languages); the
+   reference itself stays on one. */
+.flexo-admin-ui .wrap .flexo-bookings-table td:first-child .flexo-badge {
+	white-space: normal;
+}
+
+.flexo-admin-ui .wrap .flexo-bookings-table td:first-child > strong {
+	white-space: nowrap;
+}
+
+.flexo-admin-ui .wrap .flexo-bookings-table > thead > tr > th:first-child {
+	min-width: 128px;
+}
+
+/* If a long language still makes the table wider than its box, the actions
+   stay in view at the right edge while the rest scrolls under them (clip,
+   not hidden, so the table doesn't become the sticky cell's scroll box). */
+.flexo-admin-ui .wrap table.widefat.flexo-bookings-table {
+	overflow: clip;
+}
+
+.flexo-admin-ui .wrap .flexo-bookings-table > * > tr > .flexo-actions {
+	position: sticky;
+	right: 0;
+	z-index: 1;
+	background-color: var(--fx-surface);
+}
+
+.flexo-admin-ui .wrap .flexo-bookings-table > thead > tr > .flexo-actions,
+.flexo-admin-ui .wrap .flexo-bookings-table > tbody > tr:hover > .flexo-actions {
+	background-color: var(--fx-surface-subtle);
 }
 
 .flexo-admin-ui .wrap .flexo-bookings-table .flexo-ref {
@@ -5074,7 +5107,7 @@ body.flexo-admin-ui {
 	padding: var(--fx-space-1) 0;
 	border-left: 1px solid var(--fbc-line);
 	color: var(--fx-text-muted);
-	font-size: 11px;
+	font-size: var(--fx-text-xs);
 	line-height: 14px;
 	text-align: center;
 }
@@ -5135,7 +5168,7 @@ body.flexo-admin-ui {
 
 .flexo-admin-ui .wrap .fbc-free {
 	color: var(--fx-text-placeholder);
-	font-size: 10px;
+	font-size: var(--fx-text-xs);
 	line-height: 1;
 	font-variant-numeric: tabular-nums;
 }
@@ -5309,7 +5342,7 @@ body.flexo-admin-ui {
 	border: 1px solid var(--fbc-line);
 	background: var(--fx-surface);
 	color: var(--fx-danger-text);
-	font-size: 10px;
+	font-size: var(--fx-text-xs);
 	font-weight: 600;
 }
 
@@ -6514,7 +6547,7 @@ body.flexo-admin-ui {
 
 /* Below 1280 the label column narrows; sub-navigation stays at the side. */
 @media (max-width: 1279px) {
-	.flexo-admin-ui {
+	body.flexo-admin-ui {
 		--fx-label-col: 220px;
 		--fx-gutter: 24px;
 	}
@@ -6625,6 +6658,11 @@ body.flexo-admin-ui {
 		min-width: 0;
 	}
 
+	.flexo-admin-ui .wrap .flexo-bookings-table > * > tr > .flexo-actions {
+		position: static;
+		background-color: transparent;
+	}
+
 	.flexo-admin-ui .wrap table.widefat.flexo-bookings-table {
 		border: 0;
 		background: transparent;
@@ -6705,10 +6743,15 @@ body.flexo-admin-ui {
 
 /* Tablets and phones: WordPress folds its menu away at 782px. */
 @media (max-width: 782px) {
-	.flexo-admin-ui {
+	body.flexo-admin-ui {
 		--fx-control-h: 44px;
 		--fx-control-h-sm: 40px;
 		--fx-gutter: 12px;
+	}
+
+	/* Small screens: the save bar floats only while something is unsaved. */
+	.flexo-admin-ui .wrap .fx-savebar:not(.is-dirty) {
+		position: static;
 	}
 
 	.flexo-admin-ui .flexo-appbar {

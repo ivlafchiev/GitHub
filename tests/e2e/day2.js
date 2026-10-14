@@ -77,12 +77,25 @@ async function save( p, sel = '#submit' ) {
 	const full = await deluxeRow.locator( `.fbc-cell[data-day="${ day( 3 ) }"]` );
 	ok( ( await full.getAttribute( 'class' ) ).includes( 'is-full' ) && ( await full.textContent() ).trim() === '0/3', 'day with 3 bookings: 0/3 free, marked full' );
 	ok( ( await deluxeRow.locator( `.fbc-cell[data-day="${ day( 6 ) }"]` ).textContent() ).trim() === '2/3', 'day with one unit-linked external booking: 2/3 free' );
+	// The seed's days 1–18 can run into the next month: each check opens the
+	// month its first night is in.
 	const suiteRow = p.locator( '.fbc-row', { has: p.locator( '.fbc-room', { hasText: 'Family Suite' } ) } );
+	await cal( month( 16 ) );
 	ok( await suiteRow.locator( '.fbc-item--external.fbc-item--conflict' ).count() === 1, 'conflicting external booking marked' );
+	await cal( month( 15 ) );
 	ok( ( await suiteRow.locator( '.fbc-item', { hasText: 'Maria Website' } ).getAttribute( 'class' ) ).includes( 'fbc-item--conflict' ), 'website booking in conflict marked as a conflict' );
 	const studioRow = p.locator( '.fbc-row', { has: p.locator( '.fbc-room', { hasText: 'Garden Studio' } ) } );
-	ok( await studioRow.locator( '.fbc-item--blocked' ).count() === 1 && await studioRow.locator( '.fbc-item--closed' ).count() === 1, 'blocked dates and closed period shown' );
-	ok( await studioRow.locator( '.fbc-cell.is-closed' ).count() === 3, 'closed nights shaded (3)' );
+	await cal( month( 8 ) );
+	const blockedShown = await studioRow.locator( '.fbc-item--blocked' ).count();
+	await cal( month( 16 ) );
+	ok( blockedShown === 1 && await studioRow.locator( '.fbc-item--closed' ).count() === 1, 'blocked dates and closed period shown' );
+	let shaded = 0;
+	for ( const m of new Set( [ 16, 17, 18 ].map( month ) ) ) {
+		await cal( m );
+		shaded += await studioRow.locator( '.fbc-cell.is-closed' ).count();
+	}
+	ok( shaded === 3, 'closed nights shaded (3)' );
+	await cal( month( 5 ) );
 	ok( await p.locator( '.fbc-item--cancelled' ).count() === 0, 'cancelled hidden by default' );
 	const legend = await p.textContent( '.fbc-legend' );
 	ok( legend.includes( 'external calendar' ) && legend.includes( 'Conflict' ) && legend.includes( 'Added by staff' ), 'legend explains every type' );
@@ -93,6 +106,7 @@ async function save( p, sel = '#submit' ) {
 	ok( dlg.includes( 'Website booking' ) && dlg.includes( 'Confirmed' ) && dlg.includes( 'Cancel booking' ), 'click booking → details with actions' );
 	await p.screenshot( { path: SHOTS + '/d2-dialog.png' } );
 	await p.click( '.fbc-dialog__close button' );
+	await cal( month( 16 ) );
 	await suiteRow.locator( '.fbc-item--external.fbc-item--conflict' ).click();
 	await p.waitForSelector( '#fbc-dialog[open]' );
 	const cdlg = await p.textContent( '#fbc-dialog' );
@@ -100,10 +114,12 @@ async function save( p, sel = '#submit' ) {
 	await p.click( '.fbc-dialog__close button' );
 
 	// Actions inside the dialog really work (URLs travel as JSON).
+	await cal( month( 5 ) );
 	await deluxeRow.locator( '.fbc-item--pending' ).first().click();
 	await p.waitForSelector( '#fbc-dialog[open]' );
 	await Promise.all( [ p.waitForNavigation(), p.click( '#fbc-dialog a:has-text("Confirm")' ) ] );
 	ok( p.url().includes( 'flexo-booking-calendar' ) && await deluxeRow.locator( '.fbc-item--pending' ).count() === 0, 'dialog "Confirm" confirms the booking and returns to the calendar' );
+	await cal( month( 8 ) );
 	await studioRow.locator( '.fbc-item--blocked' ).click();
 	await p.click( '#fbc-dialog a:has-text("Remove block")' );
 	await p.waitForSelector( '.flexo-dialog[open]' );
@@ -190,7 +206,7 @@ async function save( p, sel = '#submit' ) {
 	await p.screenshot( { path: SHOTS + '/d2-notices.png' } );
 
 	section( 'Mark conflict as reviewed (from the calendar)' );
-	await cal( month( 5 ) );
+	await cal( month( 16 ) );
 	await p.locator( '.fbc-item--external.fbc-item--conflict' ).click();
 	await Promise.all( [ p.waitForNavigation(), p.click( '#fbc-dialog a:has-text("Mark as reviewed")' ) ] );
 	await p.goto( BASE + '/wp-admin/admin.php?page=flexo-booking-list' );
