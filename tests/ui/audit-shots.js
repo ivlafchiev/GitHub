@@ -6,6 +6,9 @@
  *   wp eval-file tests/ui/audit-seed.php    (realistic data, every feature on)
  *   OUT=flexo-booking/ui-audit/before PENDING=<booking id> ROOM=<room id> \
  *   WIDTHS=1280,1440,1920,390 [ONLY=today,…] [PREFIX=bg-] node tests/ui/audit-shots.js
+ *
+ * Full-page captures show sticky save bars where they rest (after the form);
+ * "appearance-unsaved" is a window-sized capture of the bar while editing.
  */
 const { chromium } = require( 'playwright' );
 const fs = require( 'fs' );
@@ -22,14 +25,14 @@ const screens = [
 	[ 'bookings-list', A + 'flexo-booking-list', 1 ],
 	[ 'bookings-list-empty-search', A + 'flexo-booking-list&s=zzzz-nobody' ],
 	[ 'booking-details', A + 'flexo-booking-list&booking=' + P, 1 ],
-	[ 'booking-details-cancel-dialog', A + 'flexo-booking-list&booking=' + P, 0, async ( p ) => { const b = p.locator( '[data-flexo-confirm]' ).filter( { hasText: /Cancel/ } ).first(); if ( await b.count() ) { await b.click(); await p.waitForTimeout( 400 ); } } ],
+	[ 'booking-details-cancel-dialog', A + 'flexo-booking-list&booking=' + P, 0, async ( p ) => { const m = p.locator( '.flexo-actionbar [aria-haspopup]' ); if ( await m.count() ) { await m.click(); await p.waitForTimeout( 200 ); } const b = p.locator( '[data-flexo-confirm]' ).filter( { hasText: /Cancel/ } ).first(); if ( await b.count() ) { await b.click(); await p.waitForTimeout( 400 ); } } ],
 	[ 'booking-not-found', A + 'flexo-booking-list&booking=99999999' ],
 	[ 'add-booking', A + 'flexo-booking-new' ],
 	[ 'calendar', A + 'flexo-booking-calendar', 1 ],
-	[ 'calendar-dialog', A + 'flexo-booking-calendar', 0, async ( p ) => { const b = p.locator( '.fbc-bar, [data-fbc-booking], .fbc-booking' ).first(); if ( await b.count() ) { await b.click(); await p.waitForTimeout( 500 ); } } ],
+	[ 'calendar-dialog', A + 'flexo-booking-calendar', 0, async ( p ) => { const b = p.locator( '.fbc-scroll .fbc-item, .fbc-bar, [data-fbc-booking], .fbc-booking' ).first(); if ( await b.count() ) { await b.click(); await p.waitForTimeout( 500 ); } } ],
 	[ 'rooms-list', 'wp-admin/edit.php?post_type=flexo_room' ],
 	[ 'room-editor', 'wp-admin/post.php?action=edit&post=' + R ],
-	[ 'room-editor-icon-dialog', 'wp-admin/post.php?action=edit&post=' + R, 0, async ( p ) => { const b = p.locator( '.flexo-amenity__icon, [data-flexo-icon-pick], .flexo-amenities button[aria-haspopup]' ).first(); if ( await b.count() ) { await b.click(); await p.waitForTimeout( 500 ); } } ],
+	[ 'room-editor-icon-dialog', 'wp-admin/post.php?action=edit&post=' + R, 0, async ( p ) => { const b = p.locator( '.flexo-icon-pick, .flexo-amenity__icon, [data-flexo-icon-pick], .flexo-amenities button[aria-haspopup]' ).first(); if ( await b.count() ) { await b.click(); await p.waitForTimeout( 500 ); } } ],
 	[ 'add-room', 'wp-admin/post-new.php?post_type=flexo_room' ],
 	[ 'seasonal-prices', A + 'flexo-booking-seasons' ],
 	[ 'closed-dates', A + 'flexo-booking-closures' ],
@@ -40,6 +43,8 @@ const screens = [
 	[ 'emails-edit-open', A + 'flexo-booking-emails', 0, async ( p ) => { const s = p.locator( 'details summary' ).first(); if ( await s.count() ) { await s.click(); await p.waitForTimeout( 300 ); } } ],
 	[ 'appearance-match', A + 'flexo-booking-appearance' ],
 	[ 'appearance-custom', A + 'flexo-booking-appearance', 0, async ( p ) => { await p.locator( '[name$="[appearance_mode]"][value=custom]' ).check( { force: true } ); await p.waitForTimeout( 1500 ); } ],
+	// One window-sized capture: the save bar while there are unsaved changes.
+	[ 'appearance-unsaved', A + 'flexo-booking-appearance', 0, async ( p ) => { await p.locator( '[name$="[appearance_mode]"][value=custom]' ).check( { force: true } ); await p.waitForTimeout( 1500 ); await p.mouse.wheel( 0, 700 ); await p.waitForTimeout( 400 ); }, 'window' ],
 	[ 'appearance-custom-booking-page-preview', A + 'flexo-booking-appearance', 0, async ( p ) => { await p.locator( '[name$="[appearance_mode]"][value=custom]' ).check( { force: true } ); const s = p.locator( '[data-scene*="preview=booking"]' ); if ( await s.count() ) await s.click(); await p.waitForTimeout( 2500 ); } ],
 	[ 'settings-hotel', A + 'flexo-booking-settings&tab=general' ],
 	[ 'settings-hotel-saved-notice', A + 'flexo-booking-settings&tab=general&settings-updated=true' ],
@@ -101,7 +106,9 @@ const measure = () => {
 		await p.goto( BASE + '/wp-login.php' );
 		await p.fill( '#user_login', 'admin' ); await p.fill( '#user_pass', 'admin' );
 		await Promise.all( [ p.waitForNavigation(), p.click( '#wp-submit' ) ] );
-		for ( const [ name, url, mobile, action ] of screens ) {
+		// The pointer stays where "Log in" was; park it so nothing shows hover.
+		await p.mouse.move( 0, 0 );
+		for ( const [ name, url, mobile, action, shot ] of screens ) {
 			if ( ONLY && ! ONLY.includes( name ) ) continue;
 			if ( w <= 390 && ! mobile ) continue;
 			errs.length = 0;
@@ -112,7 +119,13 @@ const measure = () => {
 				const m = await p.evaluate( measure );
 				m.errors = [ ...errs ];
 				report[ name + '@' + w ] = m;
-				await p.screenshot( { path: `${ OUT }/${ process.env.PREFIX || '' }${ name }@${ w }.jpg`, fullPage: true, type: 'jpeg', quality: 62 } );
+				const full = 'window' !== shot;
+				if ( full ) {
+					// A full-page capture freezes sticky bars at the first window's
+					// bottom edge; show the save bar where it rests, after the form.
+					await p.addStyleTag( { content: '.flexo-admin-ui .wrap :is(.fx-savebar, form p.submit) { position: static; }' } );
+				}
+				await p.screenshot( { path: `${ OUT }/${ process.env.PREFIX || '' }${ name }@${ w }.jpg`, fullPage: full, type: 'jpeg', quality: 62 } );
 			} catch ( e ) {
 				report[ name + '@' + w ] = { error: e.message.split( '\n' )[ 0 ] };
 			}

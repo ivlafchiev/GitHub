@@ -214,7 +214,7 @@ class Flexo_Booking_Admin_UI {
 						/* translators: %d: number of things that need attention */
 						$attention = $count ? sprintf( _n( '%d thing needs your attention', '%d things need your attention', $count, 'flexo-booking' ), $count ) : __( 'Nothing needs your attention', 'flexo-booking' );
 						?>
-						<a class="flexo-appbar__icon<?php echo $count ? ' has-count' : ''; ?>" href="<?php echo esc_url( Flexo_Booking_Admin::page_url() . '#flexo-attention' ); ?>" title="<?php echo esc_attr( $attention ); ?>">
+						<a class="flexo-appbar__icon<?php echo $count ? ' has-count' : ''; ?>" href="<?php echo esc_url( Flexo_Booking_Admin::page_url() . '#flexo-attention' ); ?>" data-fx-tip="<?php echo esc_attr( $attention ); ?>" data-fx-tip-end>
 							<?php echo self::icon( 'bell' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?>
 							<span class="screen-reader-text"><?php echo esc_html( $attention ); ?></span>
 							<?php if ( $count ) : ?>
@@ -222,12 +222,12 @@ class Flexo_Booking_Admin_UI {
 							<?php endif; ?>
 						</a>
 						<?php if ( $page ) : ?>
-							<a class="flexo-appbar__icon" href="<?php echo esc_url( $page ); ?>" target="_blank" rel="noopener" title="<?php esc_attr_e( 'Open your booking form in a new tab', 'flexo-booking' ); ?>">
+							<a class="flexo-appbar__icon" href="<?php echo esc_url( $page ); ?>" target="_blank" rel="noopener" data-fx-tip="<?php esc_attr_e( 'Open your booking form in a new tab', 'flexo-booking' ); ?>" data-fx-tip-end>
 								<?php echo self::icon( 'external' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?>
 								<span class="screen-reader-text"><?php esc_html_e( 'Open your booking form in a new tab', 'flexo-booking' ); ?></span>
 							</a>
 						<?php endif; ?>
-						<a class="flexo-appbar__icon" href="<?php echo esc_url( admin_url( 'admin.php?page=' . Flexo_Booking_Admin::MENU_SLUG . '-help' ) ); ?>" title="<?php esc_attr_e( 'Help', 'flexo-booking' ); ?>">
+						<a class="flexo-appbar__icon" href="<?php echo esc_url( admin_url( 'admin.php?page=' . Flexo_Booking_Admin::MENU_SLUG . '-help' ) ); ?>" data-fx-tip="<?php esc_attr_e( 'Help', 'flexo-booking' ); ?>" data-fx-tip-end>
 							<?php echo self::icon( 'help' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed SVG. ?>
 							<span class="screen-reader-text"><?php esc_html_e( 'Help', 'flexo-booking' ); ?></span>
 						</a>

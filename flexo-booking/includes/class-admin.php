@@ -692,7 +692,7 @@ class Flexo_Booking_Admin {
 							<?php endif; ?>
 						</td>
 						<td data-colname="<?php esc_attr_e( 'Stay', 'flexo-booking' ); ?>">
-							<?php echo esc_html( mysql2date( $format, $b['check_in'] ) . ' → ' . mysql2date( $format, $b['check_out'] ) ); ?>
+							<span class="flexo-stay-date"><?php echo esc_html( mysql2date( $format, $b['check_in'] ) ); ?></span> → <span class="flexo-stay-date"><?php echo esc_html( mysql2date( $format, $b['check_out'] ) ); ?></span>
 							<div class="flexo-muted">
 								<?php
 								/* translators: %d: number of nights */
@@ -743,9 +743,6 @@ class Flexo_Booking_Admin {
 							<?php if ( 'awaiting_payment' === $b['status'] ) : ?>
 								<a class="button button-primary button-small" href="<?php echo esc_url( self::page_url( array( 'booking' => $b['id'] ) ) . '#flexo-payments' ); ?>"><?php esc_html_e( 'Payment received', 'flexo-booking' ); ?></a>
 							<?php endif; ?>
-							<?php if ( in_array( $b['status'], array( 'cancelled', 'expired' ), true ) ) : ?>
-								<a class="button button-small" href="<?php echo esc_url( self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'confirmed' ) ) ); ?>" data-flexo-confirm="<?php echo esc_attr( self::restore_message( $b ) ); ?>" data-flexo-confirm-button="<?php esc_attr_e( 'Restore booking', 'flexo-booking' ); ?>"><?php esc_html_e( 'Restore booking', 'flexo-booking' ); ?></a>
-							<?php endif; ?>
 							<?php
 							$flexo_menu = array(
 								array(
@@ -754,6 +751,17 @@ class Flexo_Booking_Admin {
 									'icon'  => 'arrow',
 								),
 							);
+							if ( in_array( $b['status'], array( 'cancelled', 'expired' ), true ) ) {
+								$flexo_menu[] = array(
+									'label' => __( 'Restore booking', 'flexo-booking' ),
+									'url'   => self::action_url( 'flexo_booking_status', $b['id'], array( 'status' => 'confirmed' ) ),
+									'icon'  => 'reset',
+									'attrs' => array(
+										'data-flexo-confirm'        => self::restore_message( $b ),
+										'data-flexo-confirm-button' => __( 'Restore booking', 'flexo-booking' ),
+									),
+								);
+							}
 							if ( ! in_array( $b['status'], array( 'cancelled', 'expired', 'blocked' ), true ) ) {
 								$flexo_menu[] = array(
 									'label'  => __( 'Cancel', 'flexo-booking' ),
@@ -1433,14 +1441,14 @@ class Flexo_Booking_Admin {
 					</tr>
 					<tr>
 						<th scope="row"><?php esc_html_e( 'Guests', 'flexo-booking' ); ?></th>
-						<td>
+						<td><div class="fx-inline">
 							<label><?php esc_html_e( 'Adults', 'flexo-booking' ); ?> <input type="number" name="adults" min="1" value="2" class="small-text"></label>
 							<?php if ( Flexo_Booking_Children::enabled() ) : ?>
 								<label><?php esc_html_e( 'Children\'s ages', 'flexo-booking' ); ?> <input type="text" name="children_ages" class="regular-text" placeholder="<?php esc_attr_e( 'e.g. 4, 11 – empty if no children', 'flexo-booking' ); ?>"></label>
 							<?php else : ?>
 								<label><?php esc_html_e( 'Children', 'flexo-booking' ); ?> <input type="number" name="children" min="0" value="0" class="small-text"></label>
 							<?php endif; ?>
-						</td>
+						</div></td>
 					</tr>
 					<?php if ( Flexo_Booking_Rate_Plans::enabled() && Flexo_Booking_Rate_Plans::all() ) : ?>
 						<tr>

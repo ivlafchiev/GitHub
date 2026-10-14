@@ -34,7 +34,7 @@ class Flexo_Booking_Payments_Admin {
 		$sname    = Flexo_Booking_Payments::SECRETS_OPTION;
 		$example  = 800;
 		?>
-		<h2><?php esc_html_e( 'What guests pay when booking', 'flexo-booking' ); ?></h2>
+		<?php Flexo_Booking_UI::card_open( array( 'title' => __( 'What guests pay when booking', 'flexo-booking' ) ) ); ?>
 		<table class="form-table" role="presentation">
 			<tr>
 				<th scope="row"><?php esc_html_e( 'Payment', 'flexo-booking' ); ?></th>
@@ -42,14 +42,14 @@ class Flexo_Booking_Payments_Admin {
 					<label class="flexo-feature-choice"><input type="radio" name="<?php echo esc_attr( $name ); ?>[payment_mode]" value="property" <?php checked( $s['payment_mode'], 'property' ); ?>> <strong><?php esc_html_e( 'Nothing online', 'flexo-booking' ); ?></strong> – <?php esc_html_e( 'guests pay everything at the property.', 'flexo-booking' ); ?></label>
 					<?php if ( $deposit ) : ?>
 						<label class="flexo-feature-choice"><input type="radio" name="<?php echo esc_attr( $name ); ?>[payment_mode]" value="deposit" <?php checked( $s['payment_mode'], 'deposit' ); ?>> <strong><?php esc_html_e( 'A deposit', 'flexo-booking' ); ?></strong> – <?php esc_html_e( 'part of the price when booking, the rest at the property.', 'flexo-booking' ); ?></label>
-						<p class="flexo-inline-form" style="margin-left:24px">
+						<p class="flexo-inline-form flexo-choice-indent">
 							<input type="number" min="0" step="0.01" class="small-text" name="<?php echo esc_attr( $name ); ?>[deposit_value]" value="<?php echo esc_attr( $s['deposit_value'] ); ?>" aria-label="<?php esc_attr_e( 'Deposit', 'flexo-booking' ); ?>">
 							<select name="<?php echo esc_attr( $name ); ?>[deposit_type]" aria-label="<?php esc_attr_e( 'Deposit type', 'flexo-booking' ); ?>">
 								<option value="percent" <?php selected( $s['deposit_type'], 'percent' ); ?>><?php esc_html_e( '% of the total', 'flexo-booking' ); ?></option>
 								<option value="fixed" <?php selected( $s['deposit_type'], 'fixed' ); ?>><?php echo esc_html( sprintf( /* translators: %s: currency symbol */ __( '%s (fixed amount)', 'flexo-booking' ), $s['currency_symbol'] ? $s['currency_symbol'] : $s['currency'] ) ); ?></option>
 							</select>
 						</p>
-						<p class="description" style="margin-left:24px">
+						<p class="description flexo-choice-indent">
 							<?php
 							$flexo_now = 'fixed' === $s['deposit_type'] ? min( $example, (float) $s['deposit_value'] ) : $example * min( 100, (float) $s['deposit_value'] ) / 100;
 							printf(
@@ -99,10 +99,11 @@ class Flexo_Booking_Payments_Admin {
 				</td>
 			</tr>
 		</table>
+		<?php Flexo_Booking_UI::card_close(); ?>
 
 		<?php if ( $card ) : ?>
-			<h2><?php esc_html_e( 'Card payments (Stripe)', 'flexo-booking' ); ?></h2>
-			<p><?php esc_html_e( 'Guests pay on Stripe\'s secure payment page; card details never reach this website. The booking is confirmed when Stripe reports the payment (webhook), not when the guest comes back to the website.', 'flexo-booking' ); ?></p>
+			<?php Flexo_Booking_UI::card_open( array( 'title' => __( 'Card payments (Stripe)', 'flexo-booking' ) ) ); ?>
+			<p class="fx-card__desc flexo-card-intro"><?php esc_html_e( 'Guests pay on Stripe\'s secure payment page; card details never reach this website. The booking is confirmed when Stripe reports the payment (webhook), not when the guest comes back to the website.', 'flexo-booking' ); ?></p>
 			<table class="form-table" role="presentation">
 				<tr>
 					<th scope="row"><?php esc_html_e( 'Mode', 'flexo-booking' ); ?></th>
@@ -147,12 +148,13 @@ class Flexo_Booking_Payments_Admin {
 					</td>
 				</tr>
 			</table>
-			<p class="description"><?php esc_html_e( 'Keys and secrets are stored only on this website and are never included in Import & export – enter them on each website. Refunds are made in your Stripe account; they appear on the booking automatically.', 'flexo-booking' ); ?></p>
+			<p class="fx-help"><?php esc_html_e( 'Keys and secrets are stored only on this website and are never included in Import & export – enter them on each website. Refunds are made in your Stripe account; they appear on the booking automatically.', 'flexo-booking' ); ?></p>
+			<?php Flexo_Booking_UI::card_close(); ?>
 		<?php endif; ?>
 
 		<?php if ( $bank ) : ?>
-			<h2><?php esc_html_e( 'Bank transfer', 'flexo-booking' ); ?></h2>
-			<p><?php esc_html_e( 'Guests see these details after booking and in their email. With booking requests, they receive them when you confirm the request. Mark the payment as received on the booking when it arrives.', 'flexo-booking' ); ?></p>
+			<?php Flexo_Booking_UI::card_open( array( 'title' => __( 'Bank transfer', 'flexo-booking' ) ) ); ?>
+			<p class="fx-card__desc flexo-card-intro"><?php esc_html_e( 'Guests see these details after booking and in their email. With booking requests, they receive them when you confirm the request. Mark the payment as received on the booking when it arrives.', 'flexo-booking' ); ?></p>
 			<table class="form-table" role="presentation">
 				<tr>
 					<th scope="row"><label for="fb-bank-ben"><?php esc_html_e( 'Beneficiary', 'flexo-booking' ); ?></label></th>
@@ -194,7 +196,8 @@ class Flexo_Booking_Payments_Admin {
 					</td>
 				</tr>
 			</table>
-			<p class="description"><?php esc_html_e( 'Bank details are not included in Import & export, so a copied website never shows another hotel\'s account.', 'flexo-booking' ); ?></p>
+			<p class="fx-help"><?php esc_html_e( 'Bank details are not included in Import & export, so a copied website never shows another hotel\'s account.', 'flexo-booking' ); ?></p>
+			<?php Flexo_Booking_UI::card_close(); ?>
 		<?php endif; ?>
 		<?php
 	}

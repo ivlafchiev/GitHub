@@ -504,8 +504,8 @@ class Flexo_Booking_Room_Pages {
 		$rooms    = Flexo_Booking_Rooms::all();
 		$detected = self::detect_rooms_page();
 		?>
-		<p class="flexo-tab-intro"><?php esc_html_e( 'Every room has its own page with its photos, description, amenities and a booking box. The design comes from your Elementor single room template.', 'flexo-booking' ); ?></p>
-		<p class="description">
+		<?php Flexo_Booking_UI::card_open( array( 'title' => __( 'Room pages', 'flexo-booking' ), 'desc' => __( 'Every room has its own page with its photos, description, amenities and a booking box. The design comes from your Elementor single room template.', 'flexo-booking' ) ) ); ?>
+		<p class="fx-help">
 			<?php
 			/* translators: 1: address of the booking page, 2: link to Settings → Pages */
 			printf( esc_html__( '"Book now" on room pages leads to the booking page at %1$s (%2$s).', 'flexo-booking' ), '<code>' . esc_html( wp_make_link_relative( Flexo_Booking_Guest::guest_page_url() ) ) . '</code>', '<a href="' . esc_url( admin_url( 'admin.php?page=' . Flexo_Booking_Admin::MENU_SLUG . '-settings&tab=pages' ) ) . '">' . esc_html__( 'Settings → Pages', 'flexo-booking' ) . '</a>' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped parts.
@@ -564,8 +564,10 @@ class Flexo_Booking_Room_Pages {
 				</td>
 			</tr>
 		</table>
+		<?php Flexo_Booking_UI::card_close(); ?>
 		<?php if ( $rooms ) : ?>
-			<h2 class="title"><?php esc_html_e( 'Your room pages', 'flexo-booking' ); ?></h2>
+			<?php Flexo_Booking_UI::card_open( array( 'title' => __( 'Your room pages', 'flexo-booking' ), 'flush' => true ) ); ?>
+			<div class="fx-table-scroll">
 			<table class="widefat striped flexo-room-pages-table">
 				<thead><tr><th><?php esc_html_e( 'Room', 'flexo-booking' ); ?></th><th><?php esc_html_e( 'Page', 'flexo-booking' ); ?></th><th><?php esc_html_e( '"From" price', 'flexo-booking' ); ?></th></tr></thead>
 				<tbody>
@@ -597,6 +599,8 @@ class Flexo_Booking_Room_Pages {
 				<?php endforeach; ?>
 				</tbody>
 			</table>
+			</div>
+			<?php Flexo_Booking_UI::card_close(); ?>
 		<?php endif; ?>
 		<?php
 		Flexo_Booking_Elementor_Templates::render_settings();

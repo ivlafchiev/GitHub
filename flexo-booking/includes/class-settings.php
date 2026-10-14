@@ -774,7 +774,7 @@ class Flexo_Booking_Settings {
 									<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $s['currency_position'], $value ); ?>><?php echo esc_html( $label ); ?></option>
 								<?php endforeach; ?>
 							</select>
-							<p>
+							<p class="fx-inline">
 								<label><?php esc_html_e( 'Number format', 'flexo-booking' ); ?>
 									<select name="<?php echo esc_attr( $name ); ?>[number_format]">
 										<?php foreach ( Flexo_Booking_Money::number_formats() as $value => $format ) : ?>

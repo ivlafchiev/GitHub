@@ -1198,6 +1198,11 @@ body.flexo-admin-ui {
 	line-height: var(--fx-leading-sm);
 }
 
+/* A closing note after a card's fields or choices. */
+.flexo-admin-ui .wrap :is(.flexo-card, .flexo-tools-card, .fx-card) > :is(table, .fx-choices) + p.description {
+	margin-top: var(--fx-space-4);
+}
+
 .flexo-admin-ui .wrap :is(.flexo-card__head, .fx-card__head) {
 	display: flex;
 	flex-wrap: wrap;
@@ -1445,18 +1450,36 @@ body.flexo-admin-ui {
 	line-height: var(--fx-leading-md);
 }
 
-/* Lists of choices in a settings row: one per line. */
-.flexo-admin-ui .wrap .form-table td :is(fieldset > label.flexo-feature-choice, > label.flexo-feature-choice) {
-	display: flex;
+/* A paragraph holding one checkbox label: long text lines up with the text, not under the box. */
+.flexo-admin-ui .wrap p > label:only-child:not([class]):has(> input:is([type="checkbox"], [type="radio"]):first-child) {
+	display: inline-flex;
 	align-items: flex-start;
 	gap: var(--fx-space-2);
+}
+
+.flexo-admin-ui .wrap p > label:only-child:not([class]) > input:is([type="checkbox"], [type="radio"]):first-child {
+	flex: 0 0 auto;
+	margin: 2px 0 0;
+}
+
+.flexo-admin-ui .wrap .flexo-choice-indent,
+.flexo-admin-ui .wrap .form-table td > .flexo-choice-indent {
+	margin-left: 24px;
+}
+
+/* Lists of choices in a settings row: one per line. */
+.flexo-admin-ui .wrap .form-table td > label.flexo-feature-choice,
+.flexo-admin-ui .wrap .form-table td fieldset > label.flexo-feature-choice {
+	display: block;
 	margin: 0 0 var(--fx-space-2);
+	padding-left: 24px;
 	line-height: var(--fx-leading-md);
 }
 
-.flexo-admin-ui .wrap .form-table td :is(fieldset > label.flexo-feature-choice, > label.flexo-feature-choice) > input:is([type="checkbox"], [type="radio"]) {
-	flex: 0 0 auto;
-	margin: 2px 0 0;
+.flexo-admin-ui .wrap .form-table td > label.flexo-feature-choice > input:is([type="checkbox"], [type="radio"]),
+.flexo-admin-ui .wrap .form-table td fieldset > label.flexo-feature-choice > input:is([type="checkbox"], [type="radio"]) {
+	float: left;
+	margin: 2px 0 0 -24px;
 }
 
 .flexo-admin-ui .wrap .form-table tr[hidden] {
@@ -1554,23 +1577,24 @@ body.flexo-admin-ui {
 	margin-top: 0;
 }
 
-/* 4.7 Sticky save bar: in the form's flow (reserves its own space). */
+/* 4.7 Sticky save bar: in the form's flow (reserves its own space), after
+   the form; while the form scrolls it floats just above the window's edge. */
 .flexo-admin-ui .wrap :is(.fx-savebar, form p.submit) {
 	position: sticky;
-	bottom: 0;
+	bottom: var(--fx-space-3);
 	z-index: var(--fx-z-savebar);
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: flex-end;
 	gap: var(--fx-space-3);
-	margin: var(--fx-space-5) calc(-1 * var(--fx-space-3)) 0;
+	max-width: none;
+	margin: var(--fx-space-5) 0 var(--fx-space-3);
 	padding: var(--fx-space-3);
 	border: 1px solid var(--fx-border);
-	border-bottom: 0;
-	border-radius: var(--fx-radius-lg) var(--fx-radius-lg) 0 0;
+	border-radius: var(--fx-radius-lg);
 	background: var(--fx-surface);
-	box-shadow: 0 -6px 16px -10px rgba(17, 26, 36, 0.18);
+	box-shadow: var(--fx-shadow-sm);
 }
 
 .flexo-admin-ui .wrap :is(.flexo-card, .flexo-tools-card, .fx-card, .flexo-dialog) form p.submit {
@@ -1976,6 +2000,7 @@ body.flexo-admin-ui {
 /* 5.4 Tables. */
 /* Wide tables scroll inside their own box, never the page. */
 .flexo-admin-ui .wrap .fx-table-scroll {
+	position: relative;
 	max-width: 100%;
 	overflow-x: auto;
 	overscroll-behavior-x: contain;
@@ -4007,6 +4032,23 @@ body.flexo-admin-ui {
 	gap: var(--fx-space-2);
 }
 
+/* In a narrow card the status and buttons go under the guest's name. */
+.flexo-admin-ui .wrap .flexo-today__card {
+	container: fx-today / inline-size;
+}
+
+@container fx-today (max-width: 460px) {
+	.flexo-admin-ui .wrap .flexo-today__item {
+		grid-template-columns: 36px minmax(0, 1fr);
+		align-items: start;
+	}
+
+	.flexo-admin-ui .wrap .flexo-today__item > .flexo-today__meta {
+		grid-column: 2;
+		justify-content: flex-start;
+	}
+}
+
 .flexo-admin-ui .wrap .flexo-today__stats {
 	display: flex;
 	flex-direction: column;
@@ -4086,6 +4128,26 @@ body.flexo-admin-ui {
 	overflow-wrap: anywhere;
 }
 
+/* Eight columns in about 1,000px: tighter cells, a readable guest column
+   (an e-mail address may still wrap) and each stay date on one line. */
+.flexo-admin-ui .wrap table.flexo-bookings-table > * > tr > :is(th, td) {
+	padding-right: var(--fx-space-3);
+	padding-left: var(--fx-space-3);
+}
+
+.flexo-admin-ui .wrap table.flexo-bookings-table > * > tr > :is(th, td):first-child {
+	padding-left: var(--fx-space-4);
+}
+
+.flexo-admin-ui .wrap table.flexo-bookings-table > * > tr > :is(th, td):last-child {
+	padding-right: var(--fx-space-4);
+}
+
+.flexo-admin-ui .wrap .flexo-bookings-table > thead > tr > th:nth-child(2) {
+	min-width: 170px;
+}
+
+
 .flexo-admin-ui .wrap .flexo-bookings-table td.flexo-actions {
 	display: table-cell;
 }
@@ -4099,8 +4161,12 @@ body.flexo-admin-ui {
 	white-space: nowrap;
 }
 
-.flexo-admin-ui .wrap .flexo-bookings-table :is(td, th):is(.column-total, [data-colname]):is(.flexo-num) {
+.flexo-admin-ui .wrap .flexo-bookings-table :is(td, th).flexo-num {
 	text-align: right;
+}
+
+.flexo-admin-ui .wrap .flexo-bookings-table td .flexo-stay-date {
+	white-space: nowrap;
 }
 
 .flexo-admin-ui .wrap .flexo-bookings-table .flexo-ref {
@@ -6538,6 +6604,105 @@ body.flexo-admin-ui {
 	}
 }
 
+/* Bookings list as cards below 1280px, where its eight columns no longer
+   fit (four fields per row, two on phones). */
+@media (max-width: 1279px) {
+	/* Bookings list: one card per booking. */
+	.flexo-admin-ui .wrap .flexo-bookings-table,
+	.flexo-admin-ui .wrap .flexo-bookings-table tbody,
+	.flexo-admin-ui .wrap .flexo-bookings-table tr,
+	.flexo-admin-ui .wrap .flexo-bookings-table td {
+		display: block;
+		box-sizing: border-box;
+		width: 100%;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table thead {
+		display: none;
+	}
+
+	.flexo-admin-ui .wrap .fx-table-scroll > table.flexo-bookings-table {
+		min-width: 0;
+	}
+
+	.flexo-admin-ui .wrap table.widefat.flexo-bookings-table {
+		border: 0;
+		background: transparent;
+		box-shadow: none;
+		overflow: visible;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table tr.flexo-booking-row {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		margin: 0 0 var(--fx-space-3);
+		padding: var(--fx-space-2) 0;
+		border: 1px solid var(--fx-border);
+		border-radius: var(--fx-radius-lg);
+		background: var(--fx-surface);
+		box-shadow: var(--fx-shadow-xs);
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table tr.flexo-booking-row > td {
+		padding: var(--fx-space-2) var(--fx-space-4);
+		border-top: 0;
+		text-align: left;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table tr.flexo-booking-row > td:first-child,
+	.flexo-admin-ui .wrap .flexo-bookings-table tr.flexo-booking-row > td.flexo-actions {
+		grid-column: 1 / -1;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table td[data-colname]::before {
+		content: attr(data-colname);
+		display: block;
+		margin-bottom: 2px;
+		color: var(--fx-text-muted);
+		font-size: var(--fx-text-xs);
+		font-weight: 500;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table tr.flexo-booking-row > td:first-child::before {
+		display: none;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table td.flexo-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--fx-space-2);
+		width: auto;
+		padding-top: var(--fx-space-3);
+		border-top: 1px solid var(--fx-border);
+		white-space: normal;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table td.flexo-actions::before {
+		display: none;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table td.flexo-actions .button {
+		flex: 0 0 auto;
+		margin: 0;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table td.flexo-num {
+		text-align: left;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table :is(.flexo-badge, .flexo-status) {
+		max-width: 100%;
+		white-space: normal;
+	}
+
+	.flexo-admin-ui .wrap .flexo-bookings-table .flexo-empty-row {
+		border: 1px solid var(--fx-border);
+		border-radius: var(--fx-radius-lg);
+		background: var(--fx-surface);
+	}
+
+}
+
 /* Tablets and phones: WordPress folds its menu away at 782px. */
 @media (max-width: 782px) {
 	.flexo-admin-ui {
@@ -6686,11 +6851,6 @@ body.flexo-admin-ui {
 		width: 100%;
 	}
 
-	.flexo-admin-ui .wrap :is(.fx-savebar, form p.submit) {
-		margin-right: calc(-1 * var(--fx-space-3));
-		margin-left: -2px;
-		padding: var(--fx-space-3);
-	}
 
 	.flexo-admin-ui .wrap .fx-savebar__actions {
 		flex: 1 1 auto;
@@ -6728,85 +6888,12 @@ body.flexo-admin-ui {
 		margin-left: 0;
 	}
 
-	/* Bookings list: one card per booking. */
-	.flexo-admin-ui .wrap .flexo-bookings-table,
-	.flexo-admin-ui .wrap .flexo-bookings-table tbody,
-	.flexo-admin-ui .wrap .flexo-bookings-table tr,
-	.flexo-admin-ui .wrap .flexo-bookings-table td {
-		display: block;
-		box-sizing: border-box;
-		width: 100%;
-	}
-
-	.flexo-admin-ui .wrap .flexo-bookings-table thead {
-		display: none;
-	}
-
-	.flexo-admin-ui .wrap table.widefat.flexo-bookings-table {
-		border: 0;
-		background: transparent;
-		box-shadow: none;
-		overflow: visible;
-	}
-
 	.flexo-admin-ui .wrap .flexo-bookings-table tr.flexo-booking-row {
-		display: grid;
 		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-		margin: 0 0 var(--fx-space-3);
-		padding: var(--fx-space-2) 0;
-		border: 1px solid var(--fx-border);
-		border-radius: var(--fx-radius-lg);
-		background: var(--fx-surface);
-		box-shadow: var(--fx-shadow-xs);
-	}
-
-	.flexo-admin-ui .wrap .flexo-bookings-table tr.flexo-booking-row > td {
-		padding: var(--fx-space-2) var(--fx-space-4);
-		border-top: 0;
-		text-align: left;
-	}
-
-	.flexo-admin-ui .wrap .flexo-bookings-table tr.flexo-booking-row > td:first-child,
-	.flexo-admin-ui .wrap .flexo-bookings-table tr.flexo-booking-row > td.flexo-actions {
-		grid-column: 1 / -1;
-	}
-
-	.flexo-admin-ui .wrap .flexo-bookings-table td[data-colname]::before {
-		content: attr(data-colname);
-		display: block;
-		margin-bottom: 2px;
-		color: var(--fx-text-muted);
-		font-size: var(--fx-text-xs);
-		font-weight: 500;
-	}
-
-	.flexo-admin-ui .wrap .flexo-bookings-table tr.flexo-booking-row > td:first-child::before {
-		display: none;
-	}
-
-	.flexo-admin-ui .wrap .flexo-bookings-table td.flexo-actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--fx-space-2);
-		width: auto;
-		padding-top: var(--fx-space-3);
-		border-top: 1px solid var(--fx-border);
-		white-space: normal;
-	}
-
-	.flexo-admin-ui .wrap .flexo-bookings-table td.flexo-actions::before {
-		display: none;
 	}
 
 	.flexo-admin-ui .wrap .flexo-bookings-table td.flexo-actions .button {
 		flex: 1 1 auto;
-		margin: 0;
-	}
-
-	.flexo-admin-ui .wrap .flexo-bookings-table .flexo-empty-row {
-		border: 1px solid var(--fx-border);
-		border-radius: var(--fx-radius-lg);
-		background: var(--fx-surface);
 	}
 
 	.flexo-admin-ui .wrap .flexo-filters {

@@ -103,7 +103,11 @@
 	var scroll = document.querySelector( '.fbc-scroll' );
 	var today = document.querySelector( '.fbc-row--head .fbc-day.is-today' );
 	if ( scroll && today && scroll.scrollWidth > scroll.clientWidth ) {
-		scroll.scrollLeft = Math.max( 0, today.offsetLeft - 140 );
+		// Two days before today, starting on a whole day (no half column
+		// under the room names).
+		var first = document.querySelector( '.fbc-row--head .fbc-day' );
+		var index = Math.round( ( today.offsetLeft - first.offsetLeft ) / today.offsetWidth );
+		scroll.scrollLeft = Math.max( 0, ( index - 2 ) * today.offsetWidth );
 	}
 
 	// Earlier / later days when the month does not fit (a week at a time).

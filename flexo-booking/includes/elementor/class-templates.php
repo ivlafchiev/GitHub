@@ -274,7 +274,14 @@ class Flexo_Booking_Elementor_Templates {
 		delete_transient( 'flexo_booking_templates_notice' );
 		$current = self::room_template();
 		?>
-		<h2 class="title"><?php esc_html_e( 'Elementor templates for rooms', 'flexo-booking' ); ?></h2>
+		<?php
+		Flexo_Booking_UI::card_open(
+			array(
+				'title' => __( 'Elementor templates for rooms', 'flexo-booking' ),
+				'desc'  => __( 'Design one room page and one room card in Elementor; every room fills them with its own name, photos, description, amenities and prices. Start from your own template (connect its widgets to the "Flexo Booking: room" dynamic tags) or from the starter templates.', 'flexo-booking' ),
+			)
+		);
+		?>
 		<?php if ( is_array( $notice ) && 'error' === $notice[0] ) : ?>
 			<div class="notice notice-error inline"><p><?php echo esc_html( $notice[1] ); ?></p></div>
 		<?php elseif ( is_array( $notice ) && 'success' === $notice[0] ) : ?>
@@ -286,9 +293,6 @@ class Flexo_Booking_Elementor_Templates {
 				<?php endif; ?>
 			</p></div>
 		<?php endif; ?>
-		<p class="flexo-tab-intro">
-			<?php esc_html_e( 'Design one room page and one room card in Elementor; every room fills them with its own name, photos, description, amenities and prices. Start from your own template (connect its widgets to the "Flexo Booking: room" dynamic tags) or from the starter templates.', 'flexo-booking' ); ?>
-		</p>
 		<?php $design = Flexo_Booking_Room_Design::id(); ?>
 		<?php if ( $design ) : ?>
 			<p>
@@ -332,5 +336,6 @@ class Flexo_Booking_Elementor_Templates {
 			<a href="<?php echo esc_url( self::file_url( 'card' ) ); ?>" download><?php esc_html_e( 'Room card for Loop Grid (.json)', 'flexo-booking' ); ?></a>
 		</p>
 		<?php
+		Flexo_Booking_UI::card_close();
 	}
 }
