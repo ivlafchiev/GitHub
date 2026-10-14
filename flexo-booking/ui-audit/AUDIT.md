@@ -1,13 +1,13 @@
 # Flexo Booking – Admin UI audit and design system proposal
 
-Step 1 of the admin UI overhaul: **audit and proposal only, no code changed.**
-Step 2 (the design system) waits for your approval and for your answers in §8.
+Step 1 of the admin UI overhaul (sections 1–8) was the audit and proposal; you approved it with "as proposed" for every question in §8.
+**Steps 2–5 are done. §9 lists what was built, the status of every defect below with before/after screenshot pairs, what was not fixed and why, and the tests.**
 
 | | |
 |---|---|
 | Plugin | 1.8.3 + 1.9.0 work so far (branch `claude/flexohotels-booking-system-ftjrqm`, commit `277cbbb`) |
 | Test site | WordPress 7.2, Twenty Twenty-Five, Elementor 4.4 (free), PHP 8.4, MariaDB. Every feature switched on; 5 rooms (3 with photos), 20 bookings in every status, a season, a promo code, a closure, one booking request waiting. |
-| Screenshots | `ui-audit/before/<screen>@<width>.jpg`: 48 screens and states at 1280, 1440 and 1920 px (including the WordPress dashboard as a reference), plus 390 px for Today, All bookings, Booking details and Calendar. `bg-*@1280.jpg`: six screens in Bulgarian. 154 files in total. Recreate them with `tests/ui/audit-seed.php` and `tests/ui/audit-shots.js`. |
+| Screenshots | **After (Step 5):** `ui-audit/after/` – the same screens, states and widths, plus `appearance-unsaved` (the save bar while editing). **Before:** `ui-audit/before/<screen>@<width>.jpg`: 48 screens and states at 1280, 1440 and 1920 px (including the WordPress dashboard as a reference), plus 390 px for Today, All bookings, Booking details and Calendar. `bg-*@1280.jpg`: six screens in Bulgarian. 154 files in total. Recreate them with `tests/ui/audit-seed.php` and `tests/ui/audit-shots.js`. |
 | Measurements | `ui-audit/before-metrics.json` and `before-bg-metrics.json`. For every screen and width they record horizontal overflow, elements past the right edge, the WordPress sidebar's computed padding, font sizes in use, button heights and corner radii. |
 | Docs read | README.md, IMPLEMENTATION_PLAN.md (§18 is the 1.9.0 spec), UX_REVIEW.md. **`SPEC_1.9.0.md` does not exist in the repository**; if it lives elsewhere, please add it and I'll check it against this plan. |
 
@@ -392,3 +392,163 @@ These go beyond styling (structure or behaviour of admin screens – never booki
 8. **Font.** *Proposal:* keep the bundled Inter (already shipped, Cyrillic, consistent across Windows/macOS). Alternative: WordPress's system font stack (smaller, but Bulgarian renders differently per OS).
 
 Once you approve (with answers to 1–8, or "as proposed"), Step 2 builds the stylesheet, the helpers and the shared JS, then Step 3 moves the screens over one by one, with the test checks above after each screen.
+
+---
+
+## 9. Result of Steps 2–5 (design system, screens, accessibility, visual QA)
+
+Built as proposed, with your answers to §8 ("as proposed"). Booking logic, data, settings keys, field names, nonces and the front end are unchanged; the full regression suite passes (§9.6).
+
+### 9.1 What replaced what
+
+| Before | After |
+|---|---|
+| 4 stylesheets, 5,188 lines, two design layers, enqueued from six classes | **one** stylesheet `assets/css/flexo-admin.css` (tokens → base → layout → components → screens → WordPress markup → responsive → reduced motion), enqueued once, only on the plugin's screens, with one shared script |
+| 14 + 13 + 10 + 8 font sizes, 17 + 15 radii, 52 + 36 + 32 hex colours | type scale 12/13/14/16/20/24, radii 6/8/12/pill, every colour a token (`--fx-*` on `body.flexo-admin-ui`) |
+| Every screen wrote its own HTML | `Flexo_Booking_UI` helpers: page header, cards (also folding), settings rows, radio cards, segmented controls, colour field, settings navigation, save bar, "⋯" menu, status pill, empty state, skeleton, preview toolbar, date/time fields |
+| Emoji and glyphs for statuses (✓ ⏳ 💳 🏦 ✎ ⛔ ⇄ ⚠ ✕ 🧾 ☎ ✉) | one stroke icon set (inline SVG; CSS masks for status icons); one status palette for pills, calendar bars, agenda, legend and Health |
+| jQuery UI date picker on two screens, native `type=date/time` elsewhere | one pop-over date picker in the site's date order and a 24-hour time list everywhere; submitted values unchanged (`Y-m-d`, `H:i`, `DD.MM.YYYY`) |
+| Fixed save bar covering content | a save bar in the form's flow that floats while the form scrolls, with unsaved state, **Discard changes**, a leave warning, and background saving with a toast (Settings tabs, Appearance); reload-in-place with the scroll kept (Features, Pages) |
+
+Token changes after the AA check (§9.5): muted text `--fx-gray-500` #687482 → **#5c6876** (was 4.44 : 1 on the page background), placeholders **#6a7582** (was 2.6 : 1), and a new `--fx-border-control` **#85909c** for field, checkbox and switch edges (3 : 1, WCAG 1.4.11).
+
+### 9.2 Your eight defects
+
+| # | Defect | Now | Before → after |
+|---|---|---|---|
+| 1 | Radios not aligned in the Style cards | **Fixed.** One radio-card component everywhere: the radio sits on the title's first line, title and description share one left edge, the whole card is the label. | `before/appearance-match@1440.jpg` → `after/appearance-match@1440.jpg` |
+| 2 | Preview toolbar overflowing | **Fixed.** Tabs on the left (*Booking form · Booking page · Thank You page*), device switch (desktop/phone icons with tooltips) and "Open page in a new tab" icon on the right; below 480 px of toolbar width the tabs become a select. No overflow in English or Bulgarian. | `before/appearance-custom@1280.jpg` → `after/appearance-custom@1280.jpg` |
+| 3 | Colour rows: same greyed #1f6f5c everywhere | **Fixed.** Each colour is **Website colour \| Custom**. *Website colour* shows the colour really used, with its name and code (*Elementor: Accent #61CE70*, *Same as the main colour*, *The text colour, lighter*…), updated live as other colours change; *Custom* gives picker, code and **Reset**. Grouped in folding sections: Brand (open), Text, Buttons and fields, Booking steps and summary, Confirmation, Tabs, Booking and Thank You pages, "Check availability" panel. | `before/appearance-custom@1440.jpg` → `after/appearance-custom@1440.jpg` |
+| 4 | Save bar overlapping content | **Fixed** on every screen. The bar is part of the form: it reserves its own space, lines up with the cards and rests after the last field. While the form scrolls, it floats 12 px above the bottom of the window and shows *You have unsaved changes* and *Discard changes*. Full-page captures show it where it rests, after the form; `after/appearance-unsaved@<width>.jpg` shows it while editing. | `before/add-booking@1440.jpg` → `after/add-booking@1440.jpg`, `after/appearance-unsaved@1440.jpg` |
+| 5 | WordPress sidebar padding (leak) | **Not reproducible here (as in Step 1), now guarded.** The stylesheet has no selector for WordPress's menu, toolbar, body or footer, every rule is scoped under `body.flexo-admin-ui`, and it is not loaded on other screens. `tests/ui/ui-check.js` compares the computed styles of the menu, a menu item, a submenu link and the toolbar on every plugin screen against a core screen: identical on all 28 screens. If you still see it, please send the screenshot and the list of active plugins. | `before/wp-dashboard@1280.jpg`, `after/*` |
+| 6 | Top bar overflowing | **Fixed by layout rules**: the search shrinks (140–440 px); below 960 px the site name hides; below 782 px the plugin name hides and the search gets its own row; below 600 px "New booking" becomes an icon. The three icon links have tooltips. | `after/today@1280.jpg`, `after/bg-today@1280.jpg`, `after/today@390.jpg` |
+| 7 | Preview clipped, nested scroll | **Fixed.** The preview panel is as tall as the window and sticky; the page inside is drawn at a real device width (1280 px desktop scaled to fit, or a 390 px phone) and only that page scrolls; a placeholder shows while it loads. | `after/appearance-custom@1440.jpg` |
+| 8 | Preview with the narrow layout and old texts | **Fixed.** Desktop preview renders the desktop layout (1280 px, scaled); the sample room shows the real "Select this room →" button and its hint. | `after/appearance-custom@1920.jpg` |
+
+### 9.3 The per-screen list (§3)
+
+**Fixed:**
+- **App shell:** S-01 (one page header everywhere), S-02 (one tab style; segmented controls for views; a vertical stepper in the wizard), S-03 / G-01 (grouped Settings navigation at the side, a select on narrow screens), S-04, S-06, S-07 (the search shrinks; the top bar's icon links have tooltips), S-09, S-10 (one focus ring), S-12 (one page width, full-width cards), S-13 (Screen Options switched off on the plugin's screens with WordPress's own filter).
+- **Today:** T-01, T-02, T-03, T-04. In a narrow card, the status and buttons of a guest row now go under the name.
+- **All bookings:**
+  - L-01;
+  - L-02: below 1280 px the list becomes cards, and each stay date stays on one line;
+  - L-04: the row has its main action plus "⋯" with *Open booking*, *Restore booking*, *Cancel* and *Delete*;
+  - L-08 (sentence-case headers).
+- **Booking details:**
+  - B-02 (Q7);
+  - B-03 (one disclosure style);
+  - B-04: the destructive button is red, the dialog keeps focus, Escape closes it;
+  - B-05: an empty state with *All bookings* and *Calendar*.
+- **Add booking:** A-01, A-03 (*Confirmation email*).
+- **Calendar:** C-01 (sticky room column, week scroll buttons, start on a whole day near today, Grid \| Agenda), C-02 (the legend explains *2/3*), C-03 (shared icons and status colours), M-03 (agenda by default on phones).
+- **Emails:** E-01 (one checkbox per line), E-02 (placeholders folded), E-03 (every card full width, the email log in its own card).
+- **Appearance:** P-01 (folding groups, Brand open), P-02, P-03 (corners as a segmented control), P-04 (reset in the page header, with a confirmation).
+- **Settings and other screens:** G-03 (24-hour time fields), G-06, G-09 (*Save changes*), W-01, H-01.
+- **Bulgarian:** BG-01, BG-02.
+
+**Partly fixed:**
+- **S-05 / M-04 (other plugins' notices):** they are compact and lose the duplicated icon. WordPress still prints them above the content; collecting them behind a button would hide notices that WordPress shows on every admin screen.
+- **S-08 (date formats):** date fields use the site's date order. Dates shown in lists and in the details header keep their formats. That is data formatting, not styling, so I left it to avoid changing texts that guests and staff already know.
+- **S-14 (back links):** there is a back link on Booking details, Add booking and *Booking not found*. The room editor keeps WordPress's own title row (Q3).
+- **T-05 / M-02 (header buttons on phones):** they form a two-column grid, and a third button takes a full row.
+- **L-03, L-05, L-06, L-07 (All bookings):**
+  - same content, with the new hierarchy and the filter card;
+  - *Clear filters* appears once a filter is set;
+  - the empty search keeps its one-line message, now with *Show all bookings*;
+  - the count still sits above the table.
+- **B-01 (Booking details):** the cards line up in rows, so a short card still leaves space below it.
+- **A-02, A-04 (Add booking):**
+  - one field group for adults and children;
+  - the plugin's date picker;
+  - the price still appears only after saving, because a live price would be new behaviour.
+- **C-04 (calendar bars):** the ✓ ✎ glyphs are now the shared icons. A narrow bar still shortens the name, and the full name is in the bar's tooltip, as before.
+- **R-01 (room editor):** restyled with cards, without the metabox arrows, drag handles and Screen Options. It is still WordPress's edit screen, with its title field and editor toolbar, as decided in Q3.
+- **R-02 – R-05 (rooms and prices):**
+  - the list tables, prices (right-aligned), chips and the seasons / closed dates / rates / promo tables use the shared components;
+  - WordPress's bulk actions and date filter on the rooms list stay;
+  - the in-row *Delete* buttons stay, because removing them changes what staff can do;
+  - rooms without a photo still show an empty thumbnail.
+- **G-02, G-05, G-07, G-08 (Settings):**
+  - rows and cards are aligned;
+  - some rows still have small inline labels (*Number format*, *Decimals*);
+  - the booking-mode radio cards stay above the feature cards;
+  - the Pages field list keeps its three-column layout;
+  - the file field on Import & export is WordPress's own.
+- **M-01 (section buttons on phones):** they scroll sideways, without a fade at the edge.
+
+**Not changed:**
+- **S-11:** the footer line is printed in WordPress's `#wpfooter`, and restyling it would touch WordPress's chrome.
+- **T-06:** the greeting uses the name that WordPress provides.
+- **A-05:** validation stays on the server, after saving.
+- **B-06, R-06, P-05:** wording. I kept these to avoid text changes nobody asked for.
+- **C-05:** the calendar's "today" summary stays, now in the same card style.
+- **E-04:** "Edit text" stays at the end of each email's subject row.
+- **G-04:** "Show advanced settings" stays in the header.
+- **W-02:** WordPress decides which menu item is highlighted.
+- **AG-01:** the Agency screen is only for agency users and was not audited. It uses the same components.
+- **BG-03:** this is about the test site, not the plugin.
+
+### 9.4 Measurements (same screens, same widths)
+
+Measured by `tests/ui/audit-shots.js` on the same seeded site, same screens and widths (`before-metrics.json` → `after-metrics.json`, Bulgarian in `*-bg-metrics.json`):
+
+| Measure | Before | After |
+|---|---|---|
+| Screens × widths measured | 145 | 148 (plus the window-sized save-bar capture) |
+| Pages that scroll sideways | 0 in English · **1** in Bulgarian (All bookings) | 0 · 0 |
+| Screens with content cut at the right edge | **24** in English · **4** in Bulgarian | 1 in English (the calendar grid at 1280 px, which scrolls in its own box with *Earlier / Later days* buttons) · 0 in Bulgarian |
+| Text sizes in use | **18** (10 – 28 px, including 12.5, 13.5, 14.5 and 23.8) | the scale 12 · 13 · 14 · 16 · 20 · 24, plus 15/18 px only for the room editor's ↑ ↓ × glyph buttons and the search-result preview title |
+| Button heights (plugin screens, outside WordPress's own editor) | 30, 32, 36, 38, 40, 44, 57 | 28 (compact), 32, 36, 40, and 44 on touch screens; calendar day cells 53/56 |
+| Button corner radii | 0, 2, 8, 10, 14 px and pill | 6 and 8 px and pill (0 for text-link buttons; WordPress's editor tabs keep their own) |
+| WordPress submenu padding on plugin screens | 14 px / 13 px, same as core screens | unchanged, and now checked on every screen by `ui-check.js` |
+| JavaScript errors | 0 | 0 |
+
+### 9.5 Accessibility (Step 4)
+
+- **Contrast (WCAG AA):** every text/background token pair was checked by script. After the token changes in §9.1: placeholders 4.69 : 1, muted text 4.97 : 1 (on the grey fill) to 5.68 : 1 (on white), status pills 5.9–7.2 : 1, primary buttons and links 6.07 : 1, white on the red button 5.47 : 1; field, checkbox and switch edges 3.25 : 1 on white (3.02 : 1 on the page grey). Disabled dates in the picker are lighter on purpose (inactive controls are exempt).
+- **Keyboard:** one visible focus ring on every control; "⋯" menus (arrow keys, Home/End, Escape returns focus, Tab closes); tabs (arrow keys); radio cards and segmented controls are real radio groups; date picker (arrows, Page Up/Down, Home/End, Escape); confirmation dialogs are `<dialog>` (focus stays inside, Escape closes, focus returns to the button).
+- **ARIA:** `aria-current` in the Settings navigation, `role="tablist"`/`tab` with `aria-selected`, `aria-haspopup`/`aria-expanded` on menus and pickers, `aria-pressed` on toggle buttons, labelled groups for colour fields and settings rows, `aria-live` for the save bar and toasts.
+- **Motion:** 150–200 ms transitions; `prefers-reduced-motion` turns transitions and the loading shimmer off.
+- **No layout shift:** the save bar is in the flow; previews have a placeholder of their final size; menus and pickers float above the page.
+- **Bulgarian:** checked on Today, All bookings, Booking details, Settings → Hotel, Settings → Features and Appearance (`after/bg-*@1280.jpg`): no overflow, longer labels wrap inside their column.
+
+### 9.6 Found in the visual check (Step 5) and fixed
+
+The after screenshots showed these problems, which were fixed before the final captures:
+
+- **All bookings at 1280 px:** the guest and stay columns were squeezed to one word per line.
+  - Tighter cells, a minimum width for the guest column, and stay dates kept on one line.
+  - Below 1280 px the list becomes cards.
+  - *Restore booking* moved into the row's "⋯" menu.
+- **All bookings in Bulgarian:** the "⋯" buttons were cut off. The reference column's badge may now take two lines, and the actions column stays in view at the right edge if a language is still too long.
+- **Phone cards:** the card list was wider than the screen, because the scroll box's 720 px minimum still applied.
+- **Touch sizes:** below 782 px, the 44 px controls and the 12 px page gutter never applied. The overrides were weaker than the token definitions. Below 1280 px, the narrower label column had the same problem. All three apply now; segmented controls follow the control height.
+- **Save bar:**
+  - It now lines up with the cards (before, it stuck out 12 px, and on Add booking it was shifted 12 px).
+  - It is a complete bar after the form and floats 12 px above the window edge.
+  - On phones it floats only while something is unsaved.
+- **Today:** in a narrow card, a guest's name, room and dates were squeezed beside the status and *Call*. They now stack.
+- **Calendar:**
+  - The grid starts on a whole day near today.
+  - Day names and free counts moved from 10/11 px to the 12 px step of the scale.
+- **Smaller fixes:**
+  - the top bar's icon links use the shared tooltip;
+  - *Adults* / *Children's ages* and *Number format* / *Decimals* are spaced as one field group;
+  - a closing note after a card's options has space above it.
+
+### 9.7 Tests
+
+- **PHP suites** (`tests/run.sh`, on a copy of the test site): 19 suites, 1,471 checks, all pass. The three concurrency checks pass too.
+- **Browser suites** (days 1–8 and the Appearance suite, on a second copy): all pass – day 1: 37, day 2: 52, day 3: 63, day 4: 49, day 5: 167, day 6: 117, day 7: 61, day 8: 46, Appearance: 46 (638 checks).
+  - They were updated only where the markup changed on purpose: the date picker, the "⋯" menus (row and booking actions), the shared confirmation dialog, background saving (the `save()` helper waits for the save instead of a page load), the colour fields, the grouped Settings navigation, and the phone calendar starting as an agenda.
+  - Day 2 also opens the right month for each calendar check now. The seed places bookings 1–18 days after next Monday, which crossed into November on this run. That was a date-dependent test, not a plugin change.
+- **`tests/ui/ui-check.js` (new)** – 124 checks, all passing:
+  - no sideways scroll on 28 screens at 1024, 1280 and 1440 px, or on the phone screens at 390 px;
+  - WordPress's menu, a menu item, a submenu link, the collapse button and the toolbar have the same computed styles as on a core screen;
+  - no plugin admin styles or scripts, and no plugin body class, on four core screens;
+  - the stylesheet has no `!important`, no selector for WordPress's menu, toolbar, body or footer, and every one of its 1,067 rules is scoped.
+- **Screenshots:**
+  - `ui-audit/after/<screen>@<width>.jpg` (same screens and widths as `before/`), `after/appearance-unsaved@<width>.jpg` and `after/bg-*@1280.jpg`;
+  - measurements in `after-metrics.json` and `after-bg-metrics.json`.
+  - On the room editor, WordPress's own "Connection lost" and "backup of this post" notices come from WordPress's connection check (heartbeat) on the local test server, not from the plugin.

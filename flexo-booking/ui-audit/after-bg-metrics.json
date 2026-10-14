@@ -1,0 +1,150 @@
+{
+ "today@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13px",
+   "14px",
+   "16px",
+   "24px"
+  ],
+  "buttonHeights": [
+   32,
+   36
+  ],
+  "buttonRadii": [
+   "6px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "bookings-list@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13px",
+   "14px",
+   "24px"
+  ],
+  "buttonHeights": [
+   28,
+   32,
+   36
+  ],
+  "buttonRadii": [
+   "6px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "booking-details@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13px",
+   "14px",
+   "16px",
+   "24px"
+  ],
+  "buttonHeights": [
+   32,
+   36
+  ],
+  "buttonRadii": [
+   "6px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "appearance-custom@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13px",
+   "14px",
+   "16px",
+   "24px"
+  ],
+  "buttonHeights": [
+   28,
+   36,
+   40
+  ],
+  "buttonRadii": [
+   "6px",
+   "0px"
+  ],
+  "fonts": [
+   "\"Flexo UI\"",
+   "ui-monospace"
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-hotel@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13px",
+   "14px",
+   "16px",
+   "24px"
+  ],
+  "buttonHeights": [
+   28,
+   36,
+   40
+  ],
+  "buttonRadii": [
+   "6px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ },
+ "settings-features@1280": {
+  "docOverflow": 0,
+  "over": [],
+  "submenuPad": "14px/13px",
+  "fontSizes": [
+   "12px",
+   "13px",
+   "14px",
+   "16px",
+   "24px"
+  ],
+  "buttonHeights": [
+   36,
+   40
+  ],
+  "buttonRadii": [
+   "6px"
+  ],
+  "fonts": [
+   "\"Flexo UI\""
+  ],
+  "notices": 1,
+  "errors": []
+ }
+}
