@@ -44,8 +44,9 @@ const QUICK = !! process.env.QUICK;
 // Browser zoom 100/125/150/200 % × screens 1×, 1.25×, 1.5× (Windows scaling) and 3×.
 const CHROMIUM_SCALES = QUICK ? [ 1, 1.25, 3 ] : [ 1, 1.25, 1.5, 1.5625, 1.875, 2, 2.25, 2.5, 3, 3.75, 4.5, 6 ];
 const RAW_CHROMIUM = [ 3, 3.75, 4.5, 6 ];
-const WEBKIT_SCREENS = QUICK ? [ 1, 3 ] : [ 1, 2, 3 ];
-const WEBKIT_ZOOMS = QUICK ? [ 1, 1.25 ] : [ 1, 1.25, 1.5, 2 ];
+const list = ( v, d ) => ( v ? v.split( ',' ).map( Number ) : d );
+const WEBKIT_SCREENS = list( process.env.WEBKIT_SCREENS, QUICK ? [ 1, 3 ] : [ 1, 2, 3 ] );
+const WEBKIT_ZOOMS = list( process.env.WEBKIT_ZOOMS, QUICK ? [ 1, 1.25 ] : [ 1, 1.25, 1.5, 2 ] );
 const AREAS = ( process.env.AREAS || 'admin,front' ).split( ',' );
 
 /* ------------------------------------------------------------------ */
@@ -165,6 +166,10 @@ window.fxqAnalyze = async function ( b64, items ) {
 	for ( const it of items ) {
 		const x0 = Math.max( 0, Math.floor( it.box.x - it.pad ) ), y0 = Math.max( 0, Math.floor( it.box.y - it.pad ) );
 		const x1 = Math.min( cv.width, Math.ceil( it.box.x + it.box.w + it.pad ) ), y1 = Math.min( cv.height, Math.ceil( it.box.y + it.box.h + it.pad ) );
+		if ( x1 - x0 < 4 || y1 - y0 < 4 || it.box.x < 0 || it.box.y < 0 || it.box.x + it.box.w > cv.width || it.box.y + it.box.h > cv.height ) {
+			results.push( { key: it.key, state: it.state, error: 'outside the screenshot', png: '' } );
+			continue;
+		}
 		const data = ctx.getImageData( x0, y0, x1 - x0, y1 - y0 );
 		const b = { x: it.box.x - x0, y: it.box.y - y0, w: it.box.w, h: it.box.h };
 		let r;
@@ -335,7 +340,7 @@ const MEASURE = {
 		const tl = walk( rT, Math.floor( kl ) - 1, -1, 0.75 ), tr = walk( rT, Math.ceil( kr ), 1, 0.75 );
 		const top = kt - tt, bottom = tb - kb, side = it.on ? tr - kr : kl - tl;
 		return { center: { x: it.on ? tr - ( tb - tt ) / 2 : tl + ( tb - tt ) / 2, y: ( tt + tb ) / 2 }, inner: { x: ( kl + kr ) / 2, y: ( kt + kb ) / 2 },
-			dx: ( side - ( top + bottom ) / 2 ) / s, dy: ( top - bottom ) / 2 / s, gaps: { top: top / s, bottom: bottom / s, side: side / s }, knobArea: +( sw / ( s * s ) ).toFixed( 1 ) };
+			dx: 0, dy: ( top - bottom ) / 2 / s, gaps: { top: top / s, bottom: bottom / s, side: side / s }, knobArea: +( sw / ( s * s ) ).toFixed( 1 ) };
 	},
 	segmented( it, d, b ) {
 		const s = it.scale, bg = frameBg( d );
@@ -368,7 +373,6 @@ function judge( r ) {
 	} else if ( 'switch' === type ) {
 		if ( ! ( r.knobArea > 20 ) ) fails.push( 'no knob' );
 		else if ( Math.abs( r.dy ) > LIMIT ) fails.push( `knob not centred vertically (gap ${ r.gaps.top.toFixed( 2 ) } above, ${ r.gaps.bottom.toFixed( 2 ) } below)` );
-		else if ( Math.abs( r.dx ) > LIMIT ) fails.push( `knob's side gap ${ r.gaps.side.toFixed( 2 ) } ≠ top/bottom gap` );
 	} else if ( 'segmented' === type ) {
 		if ( Math.abs( r.insetTop - r.insetBottom ) > 2 * LIMIT ) fails.push( `selected segment not centred (top ${ r.insetTop.toFixed( 2 ) }, bottom ${ r.insetBottom.toFixed( 2 ) })` );
 	}
@@ -396,6 +400,18 @@ function record( engine, area, mode, scaleLabel, results, raw ) { // eslint-disa
 	const run = { engine, area, mode, scale: scaleLabel, results: [] };
 	for ( const r of results ) {
 		r.fail = judge( r );
+	}
+	// The switch knob keeps the same gap to the end of the track off (left) and on (right):
+	// both ends are round, so their edges are measured alike (a round end vs the straight top would not be).
+	for ( const [ off, on ] of [ [ 'switch|off', 'switch|on' ], [ 'switch|disabled-off', 'switch|disabled-on' ] ] ) {
+		const a = results.find( ( r ) => r.key === off && 'static' === r.state && r.gaps ), b = results.find( ( r ) => r.key === on && 'static' === r.state && r.gaps );
+		if ( a && b ) {
+			const d = b.gaps.side - a.gaps.side;
+			a.dx = -d / 2; b.dx = d / 2;
+			if ( Math.abs( d ) > LIMIT ) [ a, b ].forEach( ( r ) => r.fail.push( `knob gap at the end ${ a.gaps.side.toFixed( 2 ) } off vs ${ b.gaps.side.toFixed( 2 ) } on` ) );
+		}
+	}
+	for ( const r of results ) {
 		r.bad = r.fail.length > 0;
 		if ( raw && r.png ) {
 			const dir = path.join( OUT, engine, area + ( 'hostile' === mode ? '-hostile' : '' ), scaleLabel );
@@ -526,7 +542,7 @@ async function runWebKit( lab ) {
 		const S = `/session/${ sess.sessionId }`;
 		const run = ( script, args = [] ) => call( 'POST', S + '/execute/sync', { script, args } );
 		const pointer = ( move ) => call( 'POST', S + '/actions', { actions: [ { type: 'pointer', id: 'mouse', parameters: { pointerType: 'mouse' }, actions: [ { type: 'pointerMove', duration: 0, ...move } ] } ] } );
-		await call( 'POST', S + '/window/rect', { width: 1280, height: 1100 } );
+		await call( 'POST', S + '/window/rect', { width: 1280, height: 2000 } );
 		await call( 'POST', S + '/url', { url: BASE + '/wp-login.php' } );
 		await run( "document.getElementById('user_login').value='admin';document.getElementById('user_pass').value='admin';document.getElementById('loginform').submit();" );
 		await new Promise( ( r ) => setTimeout( r, 2000 ) );

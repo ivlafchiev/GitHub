@@ -1163,7 +1163,7 @@ All plugin screens are built from the same parts, so they look and behave alike.
 - Sentence case for titles and buttons; numbers and prices right-aligned with tabular figures; tables become cards on phones.
 - A new screen: `<div class="wrap flexo-admin">`, `Flexo_Booking_UI::page_header()`, then cards with rows; forms end with `save_bar()` (and `data-fx-save` on the form when it posts to `options.php`).
 - Form controls are drawn **by construction**, never with a mark positioned by margins:
-  - The radio dot and the checkbox tick are backgrounds centred on the control's border box (`background-origin: border-box; background-position: center`). Front-end ticks are an absolutely centred `::before` (`inset: 0; margin: auto`), so they can use the form's contrast colour.
+  - The radio dot and the checkbox tick are backgrounds centred on the control's border box (`background-origin: border-box; background-position: center`). Front-end ticks are a `::before` covering the inner box (`inset: 0`) with the tick masked at its centre, so they can use the form's contrast colour.
   - Border widths are whole pixels.
   - Sizes come from tokens: `--fx-check-size` 18 px (22 px on touch screens), `--fx-check-border` 2 px, `--fx-check-dot` 8 px, `--fx-check-tick` 12 px. On the front end, `--fb-check-size` and `--fb-control-border`.
   - The switch knob is a background tile of the track.
