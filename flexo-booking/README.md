@@ -1152,7 +1152,7 @@ All plugin screens are built from the same parts, so they look and behave alike.
 
 | File | What |
 |---|---|
-| `assets/css/flexo-admin.css` | The only admin stylesheet: fonts (bundled Inter), **tokens** (custom properties `--fx-*` on `body.flexo-admin-ui`: greys, primary teal, feedback colours, type scale 12/13/14/16/20/24, spacing 4–48, radii 6/8/12/pill, shadows, focus ring, control heights 32/36/40 – 44 on touch screens, motion 150–200 ms, z-layers, page widths), base controls, then components, screen layouts, WordPress markup inside the plugin's screens, responsive rules (1600/1280/1100/960/782/600) and reduced motion. |
+| `assets/css/flexo-admin.css` | The only admin stylesheet: fonts (bundled Inter), **tokens** (custom properties `--fx-*` on `body.flexo-admin-ui`: greys, primary teal, feedback colours, type scale 12/13/14/16/20/24, spacing 4–48, radii 6/8/12/pill, shadows, focus ring, control heights 32/36/40 – 44 on touch screens, checkbox/radio 18 px – 22 on touch screens, motion 150–200 ms, z-layers, page widths), base controls, then components, screen layouts, WordPress markup inside the plugin's screens, responsive rules (1600/1280/1100/960/782/600) and reduced motion. |
 | `includes/admin/class-admin-components.php` (`Flexo_Booking_UI`) | PHP helpers that print the markup: `page_header()`, `card_open()`/`card_close()` (also folding cards), `row_open()`/`row()` (label and description left, control right), `radio_cards()`, `segmented_html()`, `seg_buttons_html()`, `toggle_html()`, `color_field()` (*Website colour \| Custom*, with `website_colors()` from the Elementor kit), `subnav()`, `save_bar()`, `menu_html()` (the "⋯" menu), `status_pill_html()`, `notice_html()`, `empty_state_html()`, `skeleton_html()`, `preview_toolbar_html()`, `datefield_html()`, `timefield_html()`, `date_input_format()`. |
 | `assets/js/flexo-admin.js` (`window.FlexoUI`) | Shared behaviour: toasts (`FlexoUI.toast()`), the save bar (unsaved state, *Discard changes*, warning before leaving), saving forms marked `data-fx-save="ajax"` in the background (the page from `options.php` is read back: notices become a toast, field values and descriptions are refreshed) or `data-fx-save="reload"` (normal submit, then scroll position and a toast are restored), "⋯" menus (arrow keys, Escape, fixed position so tables don't clip them), tabs with arrow keys, the Settings drop-down, colour fields, the pop-over date and time pickers for `input[type=date]`, `input[type=time]` and `input.flexo-date` (values stay `Y-m-d`, `H:i` or `DD.MM.YYYY`), `FlexoUI.fitFrame()` for previews at a real device width. |
 | `assets/js/admin-bookings.js` | The confirmation dialog for `[data-flexo-confirm]` (a `<dialog>`: focus stays inside, Escape closes, the focus returns), red for `data-flexo-confirm-tone="danger"` and danger menu items. |
@@ -1162,6 +1162,22 @@ All plugin screens are built from the same parts, so they look and behave alike.
 - Statuses look the same everywhere (pills, calendar bars, agenda, legend): confirmed green with a tick, request amber with a clock, card hold blue, bank transfer amber with a bank, blocked grey with a lock, external violet with arrows, cancelled grey with a cross, conflict red with a warning sign. Icons are one stroke set (inline SVG, or CSS masks for status icons); no emoji.
 - Sentence case for titles and buttons; numbers and prices right-aligned with tabular figures; tables become cards on phones.
 - A new screen: `<div class="wrap flexo-admin">`, `Flexo_Booking_UI::page_header()`, then cards with rows; forms end with `save_bar()` (and `data-fx-save` on the form when it posts to `options.php`).
+- Form controls are drawn **by construction**, never with a mark positioned by margins:
+  - The radio dot and the checkbox tick are backgrounds centred on the control's border box (`background-origin: border-box; background-position: center`). Front-end ticks are an absolutely centred `::before` (`inset: 0; margin: auto`), so they can use the form's contrast colour.
+  - Border widths are whole pixels.
+  - Sizes come from tokens: `--fx-check-size` 18 px (22 px on touch screens), `--fx-check-border` 2 px, `--fx-check-dot` 8 px, `--fx-check-tick` 12 px. On the front end, `--fb-check-size` and `--fb-control-border`.
+  - The switch knob is a background tile of the track.
+  - Each control's `::before`/`::after` is set explicitly with selectors more specific than WordPress core's, themes' and the Elementor kit's checkbox/radio rules. Those rules (`float`, `display`, margins, `line-height` on `:checked::before`) are what moved the old radio dot.
+
+**UI QA – run after every change to an admin screen or the booking form's controls** (on a test site with `tests/ui/audit-seed.php`):
+
+| Check | It proves |
+|---|---|
+| `node tests/ui/ui-check.js` | No sideways scroll on 28 screens at 1024, 1280 and 1440 px, or on phones at 390 px. WordPress's menu and toolbar look the same as on a core screen. No plugin admin CSS/JS on core screens. The stylesheet is fully scoped, with no `!important`. |
+| `LABEL=before …` on the old code, then `LABEL=after WEBKIT=1 xvfb-run -a node tests/ui/controls-check.js` | Every checkbox, radio, radio card, switch and segmented control (admin and booking form), in every state (unchecked, checked, hover, keyboard focus, disabled), in Chromium at browser zoom 100/125/150/200 % on 1×, 1.25× and 1.5× (Windows scaling) and 3× screens, and in WebKit on 1×/2×/3× screens with page zoom 100–200 %. It measures the pixels: the radio dot, checkbox tick and switch knob are centred and the selected segment sits centred in its track, all within **0.5 CSS px**. The same holds with "hostile" theme/plugin CSS added. The checkboxes and radios on WordPress's own screens keep the same computed styles and pixels as the `before` run. Zoomed sheets (red cross = box centre, green = mark centre) and crops go to `ui-audit/controls/<label>/`. |
+| `node tests/ui/audit-shots.js` | Full-page screenshots of every screen and state, for a before/after look. |
+
+Firefox needs a Firefox build that a test environment can download; the controls check runs Chromium (Chrome, Edge) and WebKit (Safari's engine, as WebKitGTK).
 
 **Hooks:**
 
