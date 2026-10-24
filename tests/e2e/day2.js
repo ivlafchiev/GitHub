@@ -67,18 +67,20 @@ async function save( p, sel = '#submit' ) {
 	ok( ext.includes( 'Booking.com' ) && ext.includes( 'Vrbo' ) && ext.includes( 'Room no. 2' ), 'external view lists synced bookings with their calendar and unit' );
 
 	section( 'Calendar' );
-	await cal( month( 5 ) );
+	// The seed's days 1–18 can run into the next month: each check opens the
+	// month its first night is in.
+	await cal( month( 1 ) );
 	await p.screenshot( { path: SHOTS + '/d2-calendar.png', fullPage: true } );
 	const deluxeRow = p.locator( '.fbc-row', { has: p.locator( '.fbc-room', { hasText: 'Deluxe Double' } ) } );
 	ok( ( await deluxeRow.locator( '.fbc-room' ).textContent() ).includes( '3 rooms' ), 'multi-unit room shows its count' );
 	ok( await deluxeRow.locator( '.fbc-item--pending' ).count() >= 1, 'pending booking shown' );
+	await cal( month( 3 ) );
 	ok( await deluxeRow.locator( '.fbc-item--confirmed.fbc-item--staff' ).count() === 1, 'staff booking shown as such' );
-	ok( await deluxeRow.locator( '.fbc-item--external' ).count() === 1, 'external booking shown' );
 	const full = await deluxeRow.locator( `.fbc-cell[data-day="${ day( 3 ) }"]` );
 	ok( ( await full.getAttribute( 'class' ) ).includes( 'is-full' ) && ( await full.textContent() ).trim() === '0/3', 'day with 3 bookings: 0/3 free, marked full' );
+	await cal( month( 6 ) );
+	ok( await deluxeRow.locator( '.fbc-item--external' ).count() === 1, 'external booking shown' );
 	ok( ( await deluxeRow.locator( `.fbc-cell[data-day="${ day( 6 ) }"]` ).textContent() ).trim() === '2/3', 'day with one unit-linked external booking: 2/3 free' );
-	// The seed's days 1–18 can run into the next month: each check opens the
-	// month its first night is in.
 	const suiteRow = p.locator( '.fbc-row', { has: p.locator( '.fbc-room', { hasText: 'Family Suite' } ) } );
 	await cal( month( 16 ) );
 	ok( await suiteRow.locator( '.fbc-item--external.fbc-item--conflict' ).count() === 1, 'conflicting external booking marked' );
@@ -100,6 +102,7 @@ async function save( p, sel = '#submit' ) {
 	const legend = await p.textContent( '.fbc-legend' );
 	ok( legend.includes( 'external calendar' ) && legend.includes( 'Conflict' ) && legend.includes( 'Added by staff' ), 'legend explains every type' );
 
+	await cal( month( 2 ) );
 	await deluxeRow.locator( '.fbc-item', { hasText: 'Boris Confirmed' } ).click();
 	await p.waitForSelector( '#fbc-dialog[open]' );
 	const dlg = await p.textContent( '#fbc-dialog' );
@@ -114,7 +117,7 @@ async function save( p, sel = '#submit' ) {
 	await p.click( '.fbc-dialog__close button' );
 
 	// Actions inside the dialog really work (URLs travel as JSON).
-	await cal( month( 5 ) );
+	await cal( month( 1 ) );
 	await deluxeRow.locator( '.fbc-item--pending' ).first().click();
 	await p.waitForSelector( '#fbc-dialog[open]' );
 	await Promise.all( [ p.waitForNavigation(), p.click( '#fbc-dialog a:has-text("Confirm")' ) ] );
