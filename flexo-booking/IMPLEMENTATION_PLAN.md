@@ -1,6 +1,6 @@
 # Flexo Booking: implementation plan (Days 1–7, 1.9.0)
 
-Status: **Days 1–7 done (1.8.x); admin redesign done (1.7.0, §16); Day 7 in §17; 1.9.0 system pages in §18 – Session A done (§18.13), Sessions B and C waiting for approval.** Day 1 (1.1.0) is in §9, Day 2
+Status: **Days 1–7 done (1.8.x); admin redesign done (1.7.0, §16); Day 7 in §17; 1.9.0 system pages in §18 – Session A done (§18.13), Sessions B and C waiting for approval; UI, responsive and widget controls release planned in §19, waiting for approval.** Day 1 (1.1.0) is in §9, Day 2
 (1.2.0) in §10, Day 3 (1.3.0) in §11, Day 4 (1.4.0) in §12 and Day 5 (1.5.0)
 in §13, each with what was built, the deviations and the test results. §14
 is the status after Day 5. §15 is Day 6 (1.6.0, usability and appearance,
@@ -27,6 +27,8 @@ Contents:
 15. Day 6 status, deviations and test results
 16. Admin redesign (1.7.0)
 17. Day 7 plan: dynamic room pages, room listings and availability buttons
+18. 1.9.0 plan: system pages (Booking, Thank You, Contact)
+19. Plan: UI, responsive and widget controls release (1.10.0) – waiting for approval
 
 ---
 
