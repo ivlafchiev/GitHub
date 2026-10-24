@@ -6,7 +6,9 @@
  * Override by copying to {your-theme}/flexo-booking/booking-form.php.
  * Overrides made before 1.6.0 keep working: the script adds the step bar,
  * the date picker and the stay line itself, and shows the summary where
- * the template has it.
+ * the template has it. Overrides made before 1.10.0 keep working too: the
+ * script groups check-in and check-out (.fb-dates) and uses the room results
+ * layout of Settings → Pages → Booking when data-fb-results is missing.
  *
  * @package FlexoBooking
  *
@@ -20,12 +22,14 @@
  * @var string     $terms_url
  * @var bool       $autosearch
  * @var bool       $ask_ages   Children's ages are asked ("Children & ages" feature).
+ * @var string     $results    Room results layout: auto, stacked or horizontal (1.10.0).
  */
 
 defined( 'ABSPATH' ) || exit;
 ?>
 <div class="flexo-booking flexo-booking--full"
 	data-flexo-booking
+	data-fb-results="<?php echo esc_attr( isset( $results ) ? $results : 'auto' ); ?>"
 	data-room="<?php echo esc_attr( $room ? $room['slug'] : '' ); ?>"
 	data-autosearch="<?php echo $autosearch ? '1' : '0'; ?>"<?php echo Flexo_Booking_Frontend::locale_attributes(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in locale_attributes(). ?>>
 
@@ -48,13 +52,15 @@ defined( 'ABSPATH' ) || exit;
 	<?php endif; ?>
 
 	<form class="fb-search" novalidate>
-		<div class="fb-field">
-			<label for="<?php echo esc_attr( $uid ); ?>-in"><?php esc_html_e( 'Check-in', 'flexo-booking' ); ?></label>
-			<input id="<?php echo esc_attr( $uid ); ?>-in" type="date" name="check_in" required min="<?php echo esc_attr( $min_date ); ?>" max="<?php echo esc_attr( $max_date ); ?>" value="<?php echo esc_attr( $prefill['check_in'] ); ?>">
-		</div>
-		<div class="fb-field">
-			<label for="<?php echo esc_attr( $uid ); ?>-out"><?php esc_html_e( 'Check-out', 'flexo-booking' ); ?></label>
-			<input id="<?php echo esc_attr( $uid ); ?>-out" type="date" name="check_out" required min="<?php echo esc_attr( $min_date ); ?>" value="<?php echo esc_attr( $prefill['check_out'] ); ?>">
+		<div class="fb-dates">
+			<div class="fb-field">
+				<label for="<?php echo esc_attr( $uid ); ?>-in"><?php esc_html_e( 'Check-in', 'flexo-booking' ); ?></label>
+				<input id="<?php echo esc_attr( $uid ); ?>-in" type="date" name="check_in" required min="<?php echo esc_attr( $min_date ); ?>" max="<?php echo esc_attr( $max_date ); ?>" value="<?php echo esc_attr( $prefill['check_in'] ); ?>">
+			</div>
+			<div class="fb-field">
+				<label for="<?php echo esc_attr( $uid ); ?>-out"><?php esc_html_e( 'Check-out', 'flexo-booking' ); ?></label>
+				<input id="<?php echo esc_attr( $uid ); ?>-out" type="date" name="check_out" required min="<?php echo esc_attr( $min_date ); ?>" value="<?php echo esc_attr( $prefill['check_out'] ); ?>">
+			</div>
 		</div>
 		<div class="fb-field fb-field--small">
 			<label for="<?php echo esc_attr( $uid ); ?>-adults"><?php esc_html_e( 'Adults', 'flexo-booking' ); ?></label>

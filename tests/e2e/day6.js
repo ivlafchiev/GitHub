@@ -139,7 +139,7 @@ async function save( p, sel = '#submit' ) {
 	ok( g.url().includes( 'check_in=' + day( 10 ) ) && g.url().includes( 'check_out=' + day( 12 ) ), 'dates in the address' );
 	ok( await g.isVisible( '.fb-stay' ) && ( await g.textContent( '.fb-stay' ) ).includes( '2 nights' ), 'stay line with "Change"' );
 	const card = await text( g, '.fb-room:has-text("Garden Family")' );
-	ok( card.includes( '36 m²' ) && card.includes( '1 double + 2 single' ) && card.includes( 'Up to 4 guests' ) && card.includes( 'Free Wi-Fi' ) && card.includes( '+2 more' ), 'room card: size, beds, guests, 5 amenities + more' );
+	ok( card.includes( '36 m²' ) && card.includes( '1 double + 2 single' ) && card.includes( 'Up to 4 guests' ) && card.includes( 'Free Wi-Fi' ) && card.includes( '+3 more' ), 'room card: size, beds, guests, 4 amenities + more (1.10.0)' );
 	ok( await noOverflow( g ), 'results fit 390 px' );
 	await g.locator( '.fb-room', { hasText: 'Garden Family' } ).locator( '.fb-room__side .fb-button' ).click();
 	const plans = await text( g, '.fb-plans' );

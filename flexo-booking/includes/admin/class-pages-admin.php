@@ -385,12 +385,12 @@ class Flexo_Booking_Pages_Admin {
 		<?php
 	}
 
-	private static function layout_choice( $key, array $layouts, $current, $opt ) {
+	private static function layout_choice( $key, array $layouts, $current, $opt, $field = 'layout', $legend = '' ) {
 		?>
 		<fieldset class="flexo-mode-choice flexo-layout-choice">
-			<legend><?php esc_html_e( 'Layout', 'flexo-booking' ); ?></legend>
+			<legend><?php echo esc_html( '' !== $legend ? $legend : __( 'Layout', 'flexo-booking' ) ); ?></legend>
 			<?php foreach ( $layouts as $value => $layout ) : ?>
-				<label class="flexo-choice-card flexo-layout-choice__item flexo-layout-choice__item--<?php echo esc_attr( $value ); ?>"><input type="radio" name="<?php echo esc_attr( $opt . '[' . $key . '][layout]' ); ?>" value="<?php echo esc_attr( $value ); ?>" <?php checked( $current, $value ); ?>><strong><?php echo esc_html( $layout[0] ); ?></strong><span><?php echo esc_html( $layout[1] ); ?></span></label>
+				<label class="flexo-choice-card flexo-layout-choice__item flexo-layout-choice__item--<?php echo esc_attr( $value ); ?>"><input type="radio" name="<?php echo esc_attr( $opt . '[' . $key . '][' . $field . ']' ); ?>" value="<?php echo esc_attr( $value ); ?>" <?php checked( $current, $value ); ?>><strong><?php echo esc_html( $layout[0] ); ?></strong><span><?php echo esc_html( $layout[1] ); ?></span></label>
 			<?php endforeach; ?>
 		</fieldset>
 		<?php
@@ -624,6 +624,19 @@ class Flexo_Booking_Pages_Admin {
 					<p class="description"><?php esc_html_e( 'Leave a text empty to use the standard text shown in grey – it is translated into your guests\' language automatically. "Why book here": one point per line.', 'flexo-booking' ); ?></p>
 					<?php self::layout_choice( 'booking', Flexo_Booking_System_Pages::booking_layouts(), $page['layout'], $opt ); ?>
 				</div>
+
+				<h3 class="flexo-page-section__title"><?php esc_html_e( 'Room results', 'flexo-booking' ); ?></h3>
+				<p class="description"><?php esc_html_e( 'For every booking form on the site: this page, the Elementor widget and the [flexo_booking] shortcode. A widget can choose its own layout.', 'flexo-booking' ); ?></p>
+				<?php self::layout_choice( 'booking', Flexo_Booking_System_Pages::results_layouts(), $page['results_layout'], $opt, 'results_layout', __( 'Room cards', 'flexo-booking' ) ); ?>
+				<table class="form-table" role="presentation">
+					<?php
+					self::text_row( 'booking', 'hint_request', __( 'Under "Select this room": booking requests', 'flexo-booking' ), $opt );
+					self::text_row( 'booking', 'hint_instant', __( 'Instant booking, paid at the property', 'flexo-booking' ), $opt );
+					self::text_row( 'booking', 'hint_card', __( 'Instant booking, card payment', 'flexo-booking' ), $opt );
+					self::text_row( 'booking', 'hint_bank', __( 'Instant booking, bank transfer', 'flexo-booking' ), $opt );
+					?>
+				</table>
+				<p class="description"><?php esc_html_e( 'Guests see the line that fits how you take bookings, under the button of each room. Leave a text empty to use the standard one.', 'flexo-booking' ); ?></p>
 
 				<?php self::render_fields( $s ); ?>
 

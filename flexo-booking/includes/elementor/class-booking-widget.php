@@ -103,6 +103,22 @@ class Flexo_Booking_Elementor_Widget extends Widget_Base {
 			)
 		);
 
+		$layouts = array( '' => __( 'As in Settings → Pages → Booking', 'flexo-booking' ) );
+		foreach ( Flexo_Booking_System_Pages::results_layouts() as $value => $layout ) {
+			$layouts[ $value ] = $layout[0];
+		}
+		$this->add_control(
+			'results_layout',
+			array(
+				'label'       => __( 'Room results', 'flexo-booking' ),
+				'type'        => Controls_Manager::SELECT,
+				'default'     => '',
+				'options'     => $layouts,
+				'description' => __( 'Automatic follows the space this widget has: stacked cards in a narrow column, a row of photo, details and price when it is wide.', 'flexo-booking' ),
+				'condition'   => array( 'layout' => 'full' ),
+			)
+		);
+
 		$this->end_controls_section();
 
 		$this->register_style_controls();
@@ -233,6 +249,7 @@ class Flexo_Booking_Elementor_Widget extends Widget_Base {
 				'booking_page' => $settings['booking_page'],
 				'title'        => $settings['title'],
 				'button_text'  => $settings['button_text'],
+				'results'      => isset( $settings['results_layout'] ) ? $settings['results_layout'] : '',
 			)
 		);
 	}

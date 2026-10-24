@@ -142,7 +142,8 @@ async function save( p, sel = '#submit' ) {
 
 	await guest.click( '.fb-details [type=submit]' );
 	await guest.waitForSelector( '.fb-notice--error:not([hidden])' );
-	ok( ( await guest.textContent( '.fb-notice' ) ).includes( 'The price for this stay is now 279.00 €' ), 'booking refused: "The price for this stay is now 279.00 €"' );
+	// 1.10.0: the details form's own messages are above its buttons.
+	ok( ( await guest.textContent( '.fb-notice--error:not([hidden])' ) ).includes( 'The price for this stay is now 279.00 €' ), 'booking refused: "The price for this stay is now 279.00 €"' );
 	await guest.waitForFunction( () => document.querySelector( '.fb-summary' ).textContent.includes( '279.00' ) );
 	ok( true, 'summary refreshed to the new price' );
 	await guest.click( '.fb-details [type=submit]' );

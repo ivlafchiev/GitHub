@@ -221,15 +221,13 @@ async function layoutChecks( p, width, stage ) {
 		await p.goto( `${ BASE }/booking/?check_in=${ day( 50 ) }&check_out=${ day( 53 ) }&adults=2&children=0` );
 		await p.waitForSelector( '.fb-room' );
 		await layoutChecks( p, width, 'results' );
+		// 1.10.0: the card follows the width of the results, not the window.
 		const card = await p.evaluate( () => {
-			const side = document.querySelector( '.fb-room__side' );
-			return { cols: getComputedStyle( document.querySelector( '.fb-room' ) ).gridTemplateColumns.split( ' ' ).length, align: getComputedStyle( side ).textAlign };
+			const price = document.querySelector( '.fb-room__price' );
+			return { cols: getComputedStyle( document.querySelector( '.fb-room' ) ).gridTemplateColumns.split( ' ' ).length, align: getComputedStyle( price ).textAlign, results: document.querySelector( '.fb-results' ).clientWidth };
 		} );
-		if ( width > 1024 ) {
-			ok( card.cols >= 2 && card.align === 'right', '1280px: desktop room card unchanged (price column on the right)' );
-		} else {
-			ok( card.cols === 1 && card.align === 'center', `${ width }px: room card in one centred column` );
-		}
+		const expected = card.results < 480 ? 1 : ( card.results < 720 ? 2 : 3 );
+		ok( card.cols === expected && ( 3 !== expected || card.align === 'right' ), `${ width }px: room card in ${ expected } column(s) for ${ card.results }px of results (got ${ card.cols })` );
 		await p.screenshot( { path: `${ SHOTS }/d5-${ width }-2-results.png`, fullPage: true } );
 		await p.locator( '.fb-room', { hasText: 'Garden Room' } ).locator( '.fb-room__side .fb-button' ).click();
 		await p.waitForSelector( '.fb-plans' );

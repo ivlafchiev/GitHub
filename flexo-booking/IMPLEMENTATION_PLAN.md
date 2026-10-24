@@ -1,6 +1,6 @@
 # Flexo Booking: implementation plan (Days 1–7, 1.9.0)
 
-Status: **Days 1–7 done (1.8.x); admin redesign done (1.7.0, §16); Day 7 in §17; 1.9.0 system pages in §18 – Session A done (§18.13), Sessions B and C waiting for approval; UI, responsive and widget controls release planned in §19, waiting for approval.** Day 1 (1.1.0) is in §9, Day 2
+Status: **Days 1–7 done (1.8.x); admin redesign done (1.7.0, §16); Day 7 in §17; 1.9.0 system pages in §18 – Session A done (§18.13), Sessions B and C waiting for approval; UI, responsive and widget controls release (§19): approved; Phase 1 done (§19.8), waiting for review before Phase 2.** Day 1 (1.1.0) is in §9, Day 2
 (1.2.0) in §10, Day 3 (1.3.0) in §11, Day 4 (1.4.0) in §12 and Day 5 (1.5.0)
 in §13, each with what was built, the deviations and the test results. §14
 is the status after Day 5. §15 is Day 6 (1.6.0, usability and appearance,
@@ -28,7 +28,7 @@ Contents:
 16. Admin redesign (1.7.0)
 17. Day 7 plan: dynamic room pages, room listings and availability buttons
 18. 1.9.0 plan: system pages (Booking, Thank You, Contact)
-19. Plan: UI, responsive and widget controls release (1.10.0) – waiting for approval
+19. Plan: UI, responsive and widget controls release (1.10.0) – Phase 1 done (§19.8)
 
 ---
 
@@ -2307,7 +2307,7 @@ Tests:
 
 ## 19. Plan: UI, responsive and widget controls release (1.10.0)
 
-Status: **plan, waiting for approval.** Phases 1–3 as in the brief, each
+Status: **approved as proposed; Phase 1 done (§19.8), waiting for review.** Phases 1–3 as in the brief, each
 ending with tests, screenshots, a report, a commit and a stop.
 
 ### 19.1 Baseline
@@ -2515,3 +2515,133 @@ ending with tests, screenshots, a report, a commit and a stop.
 4. **Version:** 1.10.0 at the end of Phase 3 (header, constant and
    `?ver=` on the assets, so browsers fetch the new CSS).
 5. **Elementor access** for the editor checks (19.5).
+
+### 19.8 Phase 1 status: responsive foundation and booking flow (Parts 1–5) – done, waiting for review
+
+Approved as proposed (decisions 1–5 of §19.7; Elementor is still not reachable here, see 19.5).
+
+**One change from the plan (19.3):** the size container is the form's own root (`.flexo-booking`), not an extra wrapper around it. A wrapper changed the page structure, and the Appearance suite showed what that breaks: CSS that targets `… > .flexo-booking` (the Booking page's own card style, and any theme rule written the same way). With the root as container, the markup around the form is exactly as in 1.9.0. Two consequences:
+- The root's own padding cannot follow its own width. It stays 24 px, and 16 px on phones, as before.
+- The results layout setting is an attribute on the root (`data-fb-results`). For theme copies of the template that don't have it, `booking.js` uses the Booking page's setting.
+
+**Part 1 – room cards and container layout**
+
+- Containers:
+  - `.flexo-booking` (`fbform`): steps, room box;
+  - `.fb-search` (`fbsearch`): dates and guests;
+  - `.fb-results` (`fbresults`): cards.
+- Viewport rules that decided layout inside the form are gone:
+  - the card's 3 columns from 1025 px and its centred single column under 1024 px;
+  - fields at 100 % under 767 px;
+  - the box's one column under 380 px;
+  - the skeleton and steps rules that relied on the JS-measured `.fb-narrow` class.
+- Kept by the window, on purpose: centred headings and the 560/760 px reading width on tablets and phones, 44 px tap targets, the sticky total on phones, reduced motion.
+- Search row (by its own width):
+  - check-in and check-out always side by side in `.fb-dates`;
+  - under 420 px: guests 2 per line, then the button;
+  - from 420 px: guests and button share the line under the dates;
+  - from 700 px: one row.
+  - Date buttons are now as tall as the selects (the theme's line height made them 2 px taller, so the labels didn't line up).
+- One card renderer (`BookingForm.roomCard()`), used everywhere, also by the Appearance preview (`window.FlexoBooking.roomCard()` with sample data) – the preview's PHP copy of the card is gone.
+  - Layouts:
+    - stacked under 480 px of results;
+    - photo beside details with price and button as the footer from 480 px;
+    - photo | details (≥ 240 px) | price from 720 px.
+  - Content:
+    - facts with icons;
+    - four amenities with their own icons, plus "+N more" – the availability answer now carries `amenity_icons` and one `icons` map (icon → mask address);
+    - the short description clamped to three lines;
+    - "More details" (inline: full text and every amenity), shown only when something is cut;
+    - price block (total, per night, "Only 2 left!" badge);
+    - full-width button with the line for how the hotel takes bookings.
+- **Results layout:**
+  - Settings → Pages → Booking → *Room results* (Automatic / Always stacked / Always horizontal), and the widget's *Room results* (default: as in Settings).
+  - Shortcode: `[flexo_booking results="stacked"]`.
+- **Reassurance texts:** four editable lines (request / at the property / card / bank transfer). They replace "Nothing is booked yet" (that text is kept as the fallback).
+- Long names wrap between words. Long button texts wrap instead of overflowing ("Confirm and pay 510.00 € by bank transfer" was 392 px in a 320 px form).
+- Summary: a full payment reads "To pay now", not "Pay now – to pay now".
+
+**Part 2 – calendar:**
+- The single picker is placed **after the last box of the date group's row**. In narrow and medium forms that is directly under the dates (before guests and button). In one-row forms it is under the row, as before.
+- It is placed again when the form changes width while open.
+- No scroll jump:
+  - days get focus with `preventScroll`;
+  - the page scrolls only as far as needed to show the calendar, keeping the date fields in view;
+  - keyboard moves scroll the focused day into view.
+- Only the date being chosen is highlighted.
+- Disabled days, prices, minimum stays and validation are untouched.
+
+**Part 3 – steps:**
+- `grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr)`: equal tracks for however many steps are shown (no count hardcoded), and the current step only changes colour and weight.
+- Under 640 px of form: numbers only, with the current step's name under the bar. The other names are visually hidden but read by screen readers.
+- Labels wrap instead of being cut.
+
+**Part 4 – messages:**
+- **Placement:**
+  - Field messages are kept by form and placed in **one slot under the row of their field** (`.fb-msgs`, full width), with messages of the same row together.
+  - Rows are measured from the layout, so this holds at every width and in theme copies. Slots open and close in 150 ms (instant with reduced motion).
+- **Invalid state:** colour plus an inner line (`box-shadow: inset`), never a wider border.
+  - The date fields' "double border" was the focus outline 2 px outside the red border. Date buttons now use the same ring as the other fields.
+- **Component:** one message component (`.fb-msg`, error/warning/info/success, icon), also used by notices, the promo code, the enquiry form and change requests.
+- **Details step:** its form-level messages ("Please check the highlighted fields", a refused booking) appear above its buttons instead of above the form.
+- `aria-describedby` and `aria-invalid` as before. On submit, focus goes to the first field to correct.
+- **Every message location:**
+
+| Where | Before | Now |
+|---|---|---|
+| Booking form: dates missing | inside the Check-in cell (the row lost its alignment) | slot under the date row |
+| Booking form: children's ages | inside the age cell | slot under the ages row |
+| Booking form: check-out before check-in, search failed (network/server) | notice under the search form | same place, message component |
+| Booking form: capacity, minimum stay, closed, sold out | reason on the room card | unchanged |
+| Booking form: nothing free | nearby dates / other rooms / enquiry | unchanged (enquiry form uses the slots) |
+| Promo code | text under the code field | message component under the code field |
+| Guest details, phone, invoice fields, terms, privacy consent | under each field, inside its grid cell | slot under the row (several in one) |
+| Payment errors, price changed, conflicts, server errors on booking | notice above the form (every field moved down) | above the buttons |
+| Compact search bar: dates missing | **no message at all** (the browser's own check stopped at the hidden date fields) | slot under the date row, calendar opens |
+| Room booking box: dates/ages missing | inside the field cell | slot under the row; availability answer under the form as before |
+| Enquiry form, change requests | inside cells / plain text | slots / message component |
+| Appearance preview | its own static copy | the form's own code |
+| Contact form, Forms Tabs, Contact page | do not exist (Phase 2 / Session B) | – |
+
+**Part 5 – several forms:**
+- IDs: `wp_unique_id()` in templates, `uid()` in the script. The calendar, slots and live region belong to each form.
+- Only the first form keeps its step in the address (as before).
+- A form in a tab that starts hidden lays out for its own width when shown (container queries need no script).
+- Checked: two forms side by side, one in a hidden tab.
+
+**Tests**
+
+- **`tests/ui/layout-check.js` (new) with `tests/ui/layout-seed.php`:**
+  - Before (1.9.0-controls): 384 passed, 288 failed.
+  - After: **745 passed, 0 failed**; Bulgarian (site in `bg_BG`) **503 passed, 0 failed**.
+  - Cases:
+    - columns of 320–1100 px;
+    - windows of 320–1920 px;
+    - the Azure-like two columns at 390–1920 px;
+    - two forms;
+    - a hidden tab;
+    - the search bar and room box at 320–1100 / 320–560 px;
+    - forced layouts;
+    - a content-sized row.
+- **PHP suites** (`tests/run.sh`):
+  - all pass except three checks in `test-day7` that need `register_block_template()` (WordPress 6.7 test build) – the same as before this phase;
+  - `test-day7-elementor` and `test-room-design` skip without Elementor.
+- **Browser suites:** all pass except where Elementor is needed.
+  - Day 1: 32 passed. It runs up to its Elementor section, which needs Elementor; its seed only stores Elementor's version as a page detail, so the test run defines it.
+  - Day 2: 52. Day 3: 63. Day 4: 49. Day 5: 167. Day 8: 46. Appearance: 46.
+  - Day 6: 116 of 117 – the failing check needs an Elementor page.
+  - Day 7: the same two room-page checks as before this phase (Elementor room template / block template).
+  - These include complete bookings with emails in the mail log, history and status, prices (seasons, rates, children, promo codes, deposits) and inventory (the last unit, payment holds).
+  - Tests changed only where Phase 1 changes the design on purpose:
+    - day 3 reads the refused-booking message where it now is;
+    - day 5 expects the card layout for the width of the results instead of the window;
+    - day 6 expects four amenities and "+3 more".
+- **Screenshots and sheets:**
+  - `ui-audit/part-1` … `part-5` (`before/`, `after/`, `after-bg/`, `before-after.png`);
+  - results in `ui-audit/layout-before.json`, `layout-after.json`, `layout-after-bg.json`.
+
+**To check by hand in WordPress/Elementor:**
+- the Azure contact page with the real Elementor columns at laptop width;
+- the widget's *Room results* in the Elementor panel;
+- that Elementor's padding, spacing, corner and typography controls still apply;
+- a theme copy of `booking-form.php`, if a client site has one.

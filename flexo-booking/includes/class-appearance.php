@@ -837,21 +837,21 @@ class Flexo_Booking_Appearance {
 			<div class="flexo-booking flexo-booking--full">
 				<?php echo Flexo_Booking_Frontend::steps(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in steps(). ?>
 				<script>document.currentScript.previousElementSibling.querySelectorAll( '[data-step]' ).forEach( function ( li, i ) { li.classList.toggle( 'is-done', i < 2 ); li.classList.toggle( 'is-current', i === 2 ); } );</script>
-				<div class="fb-results">
-					<article class="fb-room">
-						<div class="fb-room__body">
-							<h4 class="fb-room__title"><?php esc_html_e( 'Double Room with Sea View', 'flexo-booking' ); ?></h4>
-							<p class="fb-room__meta"><?php echo esc_html( sprintf( /* translators: %d: guests */ __( 'Up to %d guests', 'flexo-booking' ), 2 ) . ' · 24 m²' ); ?></p>
-							<p class="fb-room__urgency"><?php echo esc_html( sprintf( /* translators: %d: rooms left */ __( 'Only %d left!', 'flexo-booking' ), 2 ) ); ?></p>
-						</div>
-						<div class="fb-room__side">
-							<span class="fb-room__total-label"><?php echo esc_html( sprintf( /* translators: %d: nights */ _n( 'Total for %d night', 'Total for %d nights', 3, 'flexo-booking' ), 3 ) ); ?></span>
-							<strong class="fb-room__total"><?php echo esc_html( Flexo_Booking_Money::format( 360, $currency ) ); ?></strong>
-							<button type="button" class="fb-button fb-room__select"><?php esc_html_e( 'Select this room', 'flexo-booking' ); ?><span class="fb-room__select-arrow" aria-hidden="true">→</span></button>
-							<span class="fb-room__select-hint"><?php esc_html_e( 'Nothing is booked yet', 'flexo-booking' ); ?></span>
-						</div>
-					</article>
-				</div>
+				<?php // The room card is the booking form's own (booking.js), drawn from sample data. ?>
+				<div class="fb-results"><div class="fb-rooms" data-fb-preview-rooms></div></div>
+				<script>
+				document.addEventListener( 'DOMContentLoaded', function () {
+					var box = document.querySelector( '[data-fb-preview-rooms]' );
+					var data = <?php echo wp_json_encode( self::preview_room() ); ?>;
+					if ( box && window.FlexoBooking && window.FlexoBooking.roomCard ) {
+						box.appendChild( window.FlexoBooking.roomCard( data.room, data.stay, data.icons ) );
+						var email = document.querySelector( '.flexo-preview-steps [name="guest_email"]' );
+						if ( email ) {
+							window.FlexoBooking.fieldError( email, data.emailError );
+						}
+					}
+				} );
+				</script>
 				<div class="fb-summary">
 					<div class="fb-summary__row fb-summary__room"><span><?php esc_html_e( 'Double Room with Sea View', 'flexo-booking' ); ?></span><span><?php echo esc_html( Flexo_Booking_Money::format( 360, $currency ) ); ?></span></div>
 					<div class="fb-summary__row fb-summary__total"><span><?php esc_html_e( 'Total', 'flexo-booking' ); ?></span><span><?php echo esc_html( Flexo_Booking_Money::format( 360, $currency ) ); ?></span></div>
@@ -859,7 +859,7 @@ class Flexo_Booking_Appearance {
 				<form class="fb-details" onsubmit="return false">
 					<h4 class="fb-step-title"><?php esc_html_e( 'Your details', 'flexo-booking' ); ?></h4>
 					<div class="fb-grid"><?php echo Flexo_Booking_Forms::booking_fields_html( $uid ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in booking_fields_html(). ?></div>
-					<div class="fb-notice fb-notice--error"><?php esc_html_e( 'Please enter an email address like name@example.com.', 'flexo-booking' ); ?></div>
+					<p class="fb-notice fb-notice--error"><?php esc_html_e( 'Please check the highlighted fields.', 'flexo-booking' ); ?></p>
 					<div class="fb-actions">
 						<button type="button" class="fb-button fb-button--ghost"><?php esc_html_e( 'Back', 'flexo-booking' ); ?></button>
 						<button type="button" class="fb-button"><?php esc_html_e( 'Confirm booking', 'flexo-booking' ); ?></button>
@@ -868,6 +868,59 @@ class Flexo_Booking_Appearance {
 			</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * A sample room for the preview, in the shape of the availability answer.
+	 */
+	private static function preview_room() {
+		$currency  = Flexo_Booking_Money::currency();
+		$presets   = Flexo_Booking_Room_Content::amenity_presets();
+		$amenities = array( 'wifi', 'air_conditioning', 'sea_view', 'balcony', 'tv' );
+		$icons     = array();
+		foreach ( array( 'size', 'bed', 'users' ) as $icon ) {
+			$icons[ $icon ] = Flexo_Booking_Room_Icons::mask_url( $icon );
+		}
+		$labels = array();
+		$keys   = array();
+		foreach ( $amenities as $key ) {
+			if ( isset( $presets[ $key ] ) ) {
+				$labels[]                   = $presets[ $key ][0];
+				$keys[]                     = $presets[ $key ][1];
+				$icons[ $presets[ $key ][1] ] = Flexo_Booking_Room_Icons::mask_url( $presets[ $key ][1] );
+			}
+		}
+		$image = '';
+		foreach ( Flexo_Booking_Rooms::all() as $post ) {
+			$room = Flexo_Booking_Rooms::to_array( $post );
+			if ( ! empty( $room['image'] ) ) {
+				$image = $room['image'];
+				break;
+			}
+		}
+		return array(
+			'room'  => array(
+				'id'                      => 0,
+				'title'                   => __( 'Double Room with Sea View', 'flexo-booking' ),
+				'excerpt'                 => __( 'A bright room with a balcony over the bay, a comfortable double bed and a rain shower.', 'flexo-booking' ),
+				'image'                   => $image,
+				'size'                    => 24,
+				'beds'                    => __( '1 double bed', 'flexo-booking' ),
+				'capacity'                => 2,
+				'amenities'               => $labels,
+				'amenity_icons'           => $keys,
+				'available'               => true,
+				'units_left'              => 2,
+				'total_formatted'         => Flexo_Booking_Money::format( 360, $currency ),
+				'price_average_formatted' => Flexo_Booking_Money::format( 120, $currency ),
+				'price_varies'            => false,
+				'plans'                   => array(),
+			),
+			/* translators: %d: nights */
+			'stay'  => array( 'nightsLabel' => sprintf( _n( 'Total for %d night', 'Total for %d nights', 3, 'flexo-booking' ), 3 ) ),
+			'icons' => $icons,
+			'emailError' => __( 'Please enter an email address like name@example.com.', 'flexo-booking' ),
+		);
 	}
 
 	/**

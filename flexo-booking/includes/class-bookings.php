@@ -154,6 +154,12 @@ class Flexo_Booking_Bookings {
 
 		$guests  = $adults + $children;
 		$results = array();
+		// 1.10.0: room cards show each amenity's own icon and icons for size, beds and guests,
+		// sent once per answer (icon => mask address) rather than once per room.
+		$icons = array();
+		foreach ( array( 'size', 'bed', 'users' ) as $icon ) {
+			$icons[ $icon ] = Flexo_Booking_Room_Icons::mask_url( $icon );
+		}
 
 		foreach ( $posts as $post ) {
 			$room = Flexo_Booking_Rooms::to_array( $post );
@@ -208,6 +214,11 @@ class Flexo_Booking_Bookings {
 			// Name, text and photo in the guest's language (the room's translation).
 			$shown     = Flexo_Booking_Room_I18n::active() ? Flexo_Booking_Room_Content::room( Flexo_Booking_Room_I18n::translation_id( $room['id'] ) ) : null;
 			$shown     = $shown ? $shown : array_merge( $room, array( 'amenity_list' => Flexo_Booking_Room_Content::amenities( $room['id'] ) ) );
+			foreach ( $shown['amenity_list'] as $item ) {
+				if ( ! isset( $icons[ $item['icon'] ] ) ) {
+					$icons[ $item['icon'] ] = Flexo_Booking_Room_Icons::mask_url( $item['icon'] );
+				}
+			}
 			$results[] = array(
 				'id'                      => $room['id'],
 				'slug'                    => $room['slug'],
@@ -218,6 +229,7 @@ class Flexo_Booking_Bookings {
 				'size'                    => $room['size'],
 				'beds'                    => $room['beds'],
 				'amenities'               => wp_list_pluck( $shown['amenity_list'], 'label' ),
+				'amenity_icons'           => wp_list_pluck( $shown['amenity_list'], 'icon' ),
 				'max_adults'              => Flexo_Booking_Children::enabled() ? $room['max_adults'] : 0,
 				'available'               => '' === $reason,
 				'reason'                  => $reason,
@@ -250,6 +262,7 @@ class Flexo_Booking_Bookings {
 			'nights_label'  => sprintf( _n( 'Total for %d night', 'Total for %d nights', $stay['nights'], 'flexo-booking' ), $stay['nights'] ),
 			'notice'        => $closure ? Flexo_Booking_Closures::guest_message( $closure ) : '',
 			'rooms'         => $results,
+			'icons'         => $icons,
 		);
 	}
 

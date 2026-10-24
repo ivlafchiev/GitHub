@@ -184,6 +184,12 @@ class Flexo_Booking_System_Pages {
 				'meta_description' => '',
 				// Page caches may keep a copy (the page holds no private data).
 				'cacheable'        => 1,
+				// 1.10.0, every booking form: room results layout and the line under "Select this room".
+				'results_layout'   => 'auto',
+				'hint_request'     => '',
+				'hint_instant'     => '',
+				'hint_card'        => '',
+				'hint_bank'        => '',
 				'appearance'       => self::appearance_defaults(),
 			),
 			'thank_you'        => array(
@@ -307,6 +313,10 @@ class Flexo_Booking_System_Pages {
 				'help_text'        => __( 'Contact us and we will be happy to assist you.', 'flexo-booking' ),
 				'reassurance'      => implode( "\n", self::default_reassurance() ),
 				'meta_description' => '',
+				'hint_request'     => __( 'You won\'t be charged now – the hotel confirms first', 'flexo-booking' ),
+				'hint_instant'     => __( 'Pay at the property', 'flexo-booking' ),
+				'hint_card'        => __( 'Secure payment in the next step', 'flexo-booking' ),
+				'hint_bank'        => __( 'Pay by bank transfer after booking', 'flexo-booking' ),
 			),
 			'thank_you' => array(
 				'heading_request'  => __( 'Your booking request has been received', 'flexo-booking' ),
@@ -339,6 +349,51 @@ class Flexo_Booking_System_Pages {
 			: sprintf( __( 'We confirm your request by email %s', 'flexo-booking' ), Flexo_Booking_Guest::reply_time_text() );
 		$lines[] = __( 'Your details are only shared with the hotel', 'flexo-booking' );
 		return $lines;
+	}
+
+	/**
+	 * How room results are laid out (1.10.0): value => array( label, description ).
+	 */
+	public static function results_layouts() {
+		return array(
+			'auto'       => array( __( 'Automatic', 'flexo-booking' ), __( 'Follows the space the form has: stacked in narrow columns and on phones, image and details side by side in medium ones, image, details and price in a row when wide.', 'flexo-booking' ) ),
+			'stacked'    => array( __( 'Always stacked', 'flexo-booking' ), __( 'Photo on top, then the details, price and button – at every width.', 'flexo-booking' ) ),
+			'horizontal' => array( __( 'Always horizontal', 'flexo-booking' ), __( 'Photo, details and price side by side wherever the form is at least 560 px wide; narrower forms still stack, so nothing gets squeezed.', 'flexo-booking' ) ),
+		);
+	}
+
+	/**
+	 * The results layout of a form: its own (widget, shortcode) or the Booking page's setting.
+	 */
+	public static function results_layout( $own = '' ) {
+		$own = (string) $own;
+		if ( isset( self::results_layouts()[ $own ] ) ) {
+			return $own;
+		}
+		$page = self::get( 'booking' );
+		return isset( self::results_layouts()[ $page['results_layout'] ] ) ? $page['results_layout'] : 'auto';
+	}
+
+	/**
+	 * The reassurance under "Select this room", for the way this hotel takes bookings:
+	 * a request (nothing charged now), or an instant booking paid by card, by bank
+	 * transfer or at the property.
+	 */
+	public static function select_hint( $locale = '' ) {
+		$name = 'hint_instant';
+		if ( 'instant' !== Flexo_Booking_Features::booking_mode() ) {
+			$name = 'hint_request';
+		} elseif ( Flexo_Booking_Payments::enabled() && Flexo_Booking_Payments::collects_now() ) {
+			$methods = Flexo_Booking_Payments::methods();
+			$name    = in_array( 'bank_transfer', $methods, true ) ? 'hint_bank' : $name;
+			foreach ( $methods as $id ) {
+				$gateway = Flexo_Booking_Payments::gateway( $id );
+				if ( $gateway && $gateway->is_hosted() ) {
+					$name = 'hint_card';
+				}
+			}
+		}
+		return self::text( 'booking', $name, $locale );
 	}
 
 	/**
@@ -483,8 +538,11 @@ class Flexo_Booking_System_Pages {
 			$layouts         = 'thank_you' === $key ? array_keys( self::thank_you_layouts() ) : array_keys( self::booking_layouts() );
 			$clean['layout'] = in_array( $input['layout'], $layouts, true ) ? $input['layout'] : $defaults['layout'];
 		}
+		if ( isset( $input['results_layout'] ) && 'booking' === $key ) {
+			$clean['results_layout'] = isset( self::results_layouts()[ $input['results_layout'] ] ) ? $input['results_layout'] : 'auto';
+		}
 		foreach ( $defaults as $name => $default ) {
-			if ( ! isset( $input[ $name ] ) || in_array( $name, array( 'source', 'page_id', 'enabled', 'slug', 'old_slugs', 'layout', 'order', 'hidden', 'appearance' ), true ) ) {
+			if ( ! isset( $input[ $name ] ) || in_array( $name, array( 'source', 'page_id', 'enabled', 'slug', 'old_slugs', 'layout', 'order', 'hidden', 'appearance', 'results_layout' ), true ) ) {
 				continue;
 			}
 			if ( is_int( $default ) ) {

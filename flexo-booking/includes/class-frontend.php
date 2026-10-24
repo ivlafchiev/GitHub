@@ -67,6 +67,8 @@ class Flexo_Booking_Frontend {
 				'replyTime' => Flexo_Booking_Guest::reply_time_text(),
 				'manage'    => Flexo_Booking_Guest::manage_enabled(),
 				'phoneMode' => $settings['field_phone'],
+				// 1.10.0: room results layout of Settings → Pages → Booking (for theme copies of the template without data-fb-results).
+				'resultsLayout' => Flexo_Booking_System_Pages::results_layout(),
 				// 1.9.0: an administrator's visit tells Settings → Pages whether the header lies over the page.
 				'overlayReport' => current_user_can( 'manage_options' ) ? array(
 					'url'   => esc_url_raw( rest_url( Flexo_Booking_Rest::NAMESPACE_V1 . '/overlay-header' ) ),
@@ -90,6 +92,10 @@ class Flexo_Booking_Frontend {
 					// 1.9.0: the room card's button says what it does.
 					'selectRoom'   => __( 'Select this room', 'flexo-booking' ),
 					'notBookedYet' => __( 'Nothing is booked yet', 'flexo-booking' ),
+					// 1.10.0: under "Select this room", for the way this hotel takes bookings (Settings → Pages → Booking).
+					'selectHint'   => Flexo_Booking_System_Pages::select_hint(),
+					'moreDetails'  => __( 'More details', 'flexo-booking' ),
+					'lessDetails'  => __( 'Fewer details', 'flexo-booking' ),
 					'unavailable'  => __( 'Unavailable', 'flexo-booking' ),
 					'perNight'     => __( 'per night', 'flexo-booking' ),
 					/* translators: %s: average price per night */
@@ -360,6 +366,8 @@ class Flexo_Booking_Frontend {
 				'book_text'    => '',
 				'show_price'   => 'yes',
 				'in_dialog'    => '',
+				// Room results: "" (the Booking page's setting), "auto", "stacked" or "horizontal".
+				'results'      => '',
 			),
 			$atts,
 			$is_box ? 'flexo_room_booking' : 'flexo_booking'
@@ -417,6 +425,8 @@ class Flexo_Booking_Frontend {
 			'autosearch'   => $prefill['check_in'] && $prefill['check_out'],
 			'ask_ages'     => Flexo_Booking_Children::enabled() && (int) $settings['max_children'] > 0,
 			'terms_url'    => Flexo_Booking_I18n::page_url( Flexo_Booking_Settings::site_url_setting( 'terms_url' ) ),
+			// 1.10.0: how room results are arranged (auto, stacked, horizontal).
+			'results'      => Flexo_Booking_System_Pages::results_layout( $atts['results'] ),
 		);
 
 		wp_enqueue_style( 'flexo-booking' );

@@ -12605,3 +12605,66 @@ msgstr "Може да е била изтрита. Потърсете я в сп�
 #: includes/class-admin.php:1490
 msgid "Confirmation email"
 msgstr "Имейл за потвърждение"
+
+msgid "A bright room with a balcony over the bay, a comfortable double bed and a rain shower."
+msgstr "Светла стая с балкон към залива, удобно двойно легло и душ тип „дъжд“."
+
+msgid "Always horizontal"
+msgstr "Винаги в ред"
+
+msgid "Always stacked"
+msgstr "Винаги една под друга"
+
+msgid "As in Settings → Pages → Booking"
+msgstr "Както в Настройки → Страници → Резервация"
+
+msgid "Automatic follows the space this widget has: stacked cards in a narrow column, a row of photo, details and price when it is wide."
+msgstr "Автоматично следва мястото на джаджата: картите са една под друга в тясна колона, а в широка – снимка, описание и цена в един ред."
+
+msgid "Fewer details"
+msgstr "По-малко подробности"
+
+msgid "Follows the space the form has: stacked in narrow columns and on phones, image and details side by side in medium ones, image, details and price in a row when wide."
+msgstr "Следва мястото, което формата има: една под друга в тесни колони и на телефони, снимка и описание една до друга в средни, снимка, описание и цена в един ред в широки."
+
+msgid "For every booking form on the site: this page, the Elementor widget and the [flexo_booking] shortcode. A widget can choose its own layout."
+msgstr "За всяка форма за резервация в сайта: тази страница, джаджата в Elementor и краткия код [flexo_booking]. Джаджата може да избере свое подреждане."
+
+msgid "Guests see the line that fits how you take bookings, under the button of each room. Leave a text empty to use the standard one."
+msgstr "Гостите виждат реда, който отговаря на начина, по който приемате резервации, под бутона на всяка стая. Оставете текста празен, за да се използва стандартният."
+
+msgid "Instant booking, bank transfer"
+msgstr "Незабавна резервация, банков превод"
+
+msgid "Instant booking, card payment"
+msgstr "Незабавна резервация, плащане с карта"
+
+msgid "Instant booking, paid at the property"
+msgstr "Незабавна резервация, плащане в хотела"
+
+msgid "Pay at the property"
+msgstr "Плащане в хотела"
+
+msgid "Pay by bank transfer after booking"
+msgstr "Плащане по банков път след резервацията"
+
+msgid "Photo on top, then the details, price and button – at every width."
+msgstr "Снимката отгоре, после описанието, цената и бутонът – при всяка ширина."
+
+msgid "Photo, details and price side by side wherever the form is at least 560 px wide; narrower forms still stack, so nothing gets squeezed."
+msgstr "Снимка, описание и цена една до друга, където формата е широка поне 560 px; по-тесните форми остават една под друга, за да не се смачква нищо."
+
+msgid "Room cards"
+msgstr "Карти на стаите"
+
+msgid "Room results"
+msgstr "Резултати със стаи"
+
+msgid "Secure payment in the next step"
+msgstr "Сигурно плащане в следващата стъпка"
+
+msgid "Under \"Select this room\": booking requests"
+msgstr "Под „Изберете тази стая“: заявки за резервация"
+
+msgid "You won't be charged now – the hotel confirms first"
+msgstr "Сега не плащате нищо – първо хотелът потвърждава"

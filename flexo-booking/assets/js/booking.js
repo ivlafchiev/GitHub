@@ -243,30 +243,212 @@
 		return ! field.disabled && ! field.closest( '[hidden]' ) && field.type !== 'hidden';
 	}
 
-	function errorAnchor( field ) {
-		if ( field.type === 'checkbox' || field.type === 'radio' ) {
-			return field.closest( 'label, fieldset' ) || field;
+	/* ---------------------------------------------------------------------
+	 * 1.10.0: messages and the calendar go under the row of their field, as
+	 * wide as the row, so showing them never moves or resizes a field of that
+	 * row (only what is below it moves down). The row is the line the field's
+	 * box shares with others in the form's layout – it depends on the space
+	 * the form has, so it is measured, and measured again when that changes.
+	 * ------------------------------------------------------------------- */
+
+	var FLOW = /^(flex|grid|inline-flex|inline-grid)$/;
+
+	function formOf( node ) {
+		return node.form || node.closest( 'form' ) || node.closest( '.flexo-booking' );
+	}
+
+	/**
+	 * The box that stands for a field in the form's rows: the date pair, the
+	 * children's ages, the field, the checkbox line.
+	 */
+	function rowItem( node, form ) {
+		var item = node.closest( '.fb-dates, .fb-ages, .fb-field, .fb-terms, .fb-check, .fb-choice, fieldset, label' ) || node;
+		var group = item.parentElement && item.parentElement.closest( '.fb-dates, .fb-ages' );
+		if ( group && form.contains( group ) ) {
+			item = group;
 		}
-		return field.closest( '.fb-phone' ) || field;
+		while ( item.parentElement && item.parentElement !== form && form.contains( item.parentElement ) && ! FLOW.test( getComputedStyle( item.parentElement ).display ) ) {
+			item = item.parentElement;
+		}
+		return item;
+	}
+
+	/**
+	 * The last box (in the DOM) on the same line as item: boxes whose heights
+	 * overlap are on one line of a wrapping row or grid.
+	 */
+	function rowEnd( item ) {
+		var parent = item.parentElement;
+		if ( ! parent || ! FLOW.test( getComputedStyle( parent ).display ) ) {
+			return item;
+		}
+		var r = item.getBoundingClientRect();
+		var last = item;
+		// Siblings, not parent.children: a form's "children" field would stand in for it.
+		for ( var n = parent.firstElementChild; n; n = n.nextElementSibling ) {
+			if ( n === item || n.classList.contains( 'fb-msgs' ) || n.classList.contains( 'fb-picker' ) || ! n.getClientRects().length ) {
+				continue;
+			}
+			var b = n.getBoundingClientRect();
+			if ( b.height > 0 && b.top < r.bottom - 1 && b.bottom > r.top + 1 && ( last.compareDocumentPosition( n ) & 4 ) ) {
+				last = n;
+			}
+		}
+		return last;
+	}
+
+	function newSlot() {
+		var slot = el( 'div', 'fb-msgs is-entering' );
+		slot.appendChild( el( 'div', 'fb-msgs__inner' ) );
+		window.requestAnimationFrame( function () {
+			window.requestAnimationFrame( function () {
+				slot.classList.remove( 'is-entering' );
+			} );
+		} );
+		return slot;
+	}
+
+	function dropSlot( slot ) {
+		if ( slot.classList.contains( 'is-leaving' ) ) {
+			return;
+		}
+		slot.classList.add( 'is-leaving' );
+		window.setTimeout( function () {
+			if ( slot.classList.contains( 'is-leaving' ) ) {
+				slot.remove();
+			}
+		}, 180 );
+	}
+
+	/**
+	 * Puts the form's messages (one slot per row of fields, messages of the
+	 * same row together) and its open calendar under their rows.
+	 */
+	function layoutForm( form ) {
+		if ( ! form || ! form.isConnected ) {
+			return;
+		}
+		var picker = form._fbPicker && form._fbPicker.isOpen() ? form._fbPicker : null;
+		var list = ( form._fbMessages || [] ).filter( function ( m ) {
+			return m.field.isConnected && m.field._fbError === m.p;
+		} );
+		form._fbMessages = list;
+		// Measured without the slots and the calendar, which sit between rows.
+		var floating = Array.prototype.slice.call( form.querySelectorAll( '.fb-msgs:not(.is-leaving)' ) );
+		if ( picker ) {
+			floating.push( picker.panel );
+		}
+		floating.forEach( function ( n ) {
+			n.style.display = 'none';
+		} );
+		var ends = list.map( function ( m ) {
+			return rowEnd( rowItem( m.field, form ) );
+		} );
+		var pickerEnd = picker ? rowEnd( rowItem( picker.group, form ) ) : null;
+		floating.forEach( function ( n ) {
+			n.style.display = '';
+		} );
+
+		var groups = [];
+		list.forEach( function ( m, i ) {
+			var g = groups.filter( function ( x ) {
+				return x.end === ends[ i ];
+			} )[ 0 ];
+			if ( ! g ) {
+				g = { end: ends[ i ], items: [] };
+				groups.push( g );
+			}
+			g.items.push( m );
+		} );
+		var keep = [];
+		groups.forEach( function ( g ) {
+			// The slot that already shows one of these messages stays (no new animation).
+			var slot = null;
+			g.items.forEach( function ( m ) {
+				var s = m.p.parentNode && m.p.parentNode.parentNode;
+				if ( ! slot && s && s.classList && s.classList.contains( 'fb-msgs' ) && ! s.classList.contains( 'is-leaving' ) && keep.indexOf( s ) < 0 ) {
+					slot = s;
+				}
+			} );
+			slot = slot || newSlot();
+			if ( g.end.nextElementSibling !== slot ) {
+				g.end.insertAdjacentElement( 'afterend', slot );
+			}
+			g.end._fbSlot = slot;
+			var inner = slot.firstElementChild;
+			var at = inner.firstElementChild;
+			g.items.sort( function ( a, b ) {
+				return a.field.compareDocumentPosition( b.field ) & 4 ? -1 : 1;
+			} ).forEach( function ( m ) {
+				if ( at !== m.p ) {
+					inner.insertBefore( m.p, at );
+				}
+				at = m.p.nextElementSibling;
+			} );
+			keep.push( slot );
+		} );
+		form.querySelectorAll( '.fb-msgs' ).forEach( function ( slot ) {
+			if ( keep.indexOf( slot ) < 0 ) {
+				dropSlot( slot );
+			}
+		} );
+		if ( picker ) {
+			var after = pickerEnd._fbSlot && keep.indexOf( pickerEnd._fbSlot ) >= 0 ? pickerEnd._fbSlot : pickerEnd;
+			if ( after.nextElementSibling !== picker.panel ) {
+				after.insertAdjacentElement( 'afterend', picker.panel );
+			}
+		}
+	}
+
+	/** Lays the form out again when its width changes (columns wrap differently). */
+	function watchForm( form ) {
+		if ( ! form || form._fbWatched ) {
+			return;
+		}
+		form._fbWatched = true;
+		var width = form.clientWidth;
+		var again = function () {
+			if ( form.clientWidth !== width ) {
+				width = form.clientWidth;
+				layoutForm( form );
+			}
+		};
+		if ( window.ResizeObserver ) {
+			new window.ResizeObserver( again ).observe( form );
+		} else {
+			window.addEventListener( 'resize', again );
+		}
 	}
 
 	function setError( field, message ) {
 		if ( ! field ) {
 			return;
 		}
-		clearError( field );
 		if ( ! message ) {
+			clearError( field );
 			return;
 		}
-		var id = ( field.id || uid( 'fb-f' ) ) + '-error';
-		var p = el( 'p', 'fb-field__error', message );
-		p.id = id;
-		errorAnchor( field ).insertAdjacentElement( 'afterend', p );
+		var form = formOf( field );
+		var p = field._fbError;
+		if ( ! p ) {
+			p = el( 'p', 'fb-field__error fb-msg fb-msg--error' );
+			p.id = ( field.id || uid( 'fb-f' ) ) + '-error';
+			field._fbError = p;
+			var described = ( field.getAttribute( 'aria-describedby' ) || '' ).split( ' ' ).filter( Boolean );
+			described.push( p.id );
+			field.setAttribute( 'aria-describedby', described.join( ' ' ) );
+			if ( form ) {
+				( form._fbMessages = form._fbMessages || [] ).push( { field: field, p: p } );
+			}
+		}
+		p.textContent = message;
 		field.setAttribute( 'aria-invalid', 'true' );
-		var described = ( field.getAttribute( 'aria-describedby' ) || '' ).split( ' ' ).filter( Boolean );
-		described.push( id );
-		field.setAttribute( 'aria-describedby', described.join( ' ' ) );
-		field._fbError = p;
+		if ( form ) {
+			watchForm( form );
+			layoutForm( form );
+		} else if ( ! p.parentNode ) {
+			field.insertAdjacentElement( 'afterend', p );
+		}
 	}
 
 	function clearError( field ) {
@@ -285,6 +467,7 @@
 		} else {
 			field.removeAttribute( 'aria-describedby' );
 		}
+		layoutForm( formOf( field ) );
 	}
 
 	/**
@@ -545,6 +728,21 @@
 			self.buttons[ pair[ 0 ] ] = btn;
 		} );
 
+		// Check-in and check-out side by side in one group (theme copies of the
+		// templates made before 1.10.0 don't have it); the calendar opens under it.
+		var inField = this.inInput.closest( '.fb-field' );
+		var outField = this.outInput.closest( '.fb-field' );
+		this.group = inField ? inField.closest( '.fb-dates' ) : null;
+		if ( ! this.group && inField && outField && inField.parentNode === outField.parentNode ) {
+			this.group = el( 'div', 'fb-dates' );
+			inField.parentNode.insertBefore( this.group, inField );
+			this.group.appendChild( inField );
+			this.group.appendChild( outField );
+		}
+		this.group = this.group || inField || this.buttons.in;
+		form._fbPicker = this;
+		watchForm( form );
+
 		this.panel = el( 'div', 'fb-picker' );
 		this.panel.id = uid( 'fb-picker' );
 		this.panel.setAttribute( 'role', 'dialog' );
@@ -629,10 +827,13 @@
 
 	DatePicker.prototype.updateButtons = function () {
 		var self = this;
+		var open = this.panel && ! this.panel.hidden;
 		[ [ 'in', this.start ], [ 'out', this.end ] ].forEach( function ( pair ) {
 			var btn = self.buttons[ pair[ 0 ] ];
 			btn.textContent = pair[ 1 ] ? humanDate( pair[ 1 ], self.options.dateFormat, self.locale ) : t.chooseDates;
 			btn.classList.toggle( 'is-empty', ! pair[ 1 ] );
+			// The date being chosen now (arrival or departure) is the highlighted one.
+			btn.classList.toggle( 'is-picking', open && self.mode === pair[ 0 ] );
 		} );
 	};
 
@@ -658,6 +859,8 @@
 		var first = parseDate( anchor );
 		this.view = new Date( first.getFullYear(), first.getMonth(), 1 );
 		this.panel.hidden = false;
+		// Right under the row of the date fields, whatever the form's width.
+		layoutForm( this.form );
 		this.buttons.in.setAttribute( 'aria-expanded', 'true' );
 		this.buttons.out.setAttribute( 'aria-expanded', 'true' );
 		this.months = this.panel.offsetWidth >= 560 ? 2 : 1;
@@ -665,6 +868,20 @@
 		this.render();
 		this.load();
 		this.focusDay( this.focusDate );
+		this.reveal();
+	};
+
+	/**
+	 * Scrolls just enough to show the calendar, keeping the date fields in
+	 * view (no jump to the focused day).
+	 */
+	DatePicker.prototype.reveal = function () {
+		var p = this.panel.getBoundingClientRect();
+		var g = this.group.getBoundingClientRect();
+		var below = p.bottom - window.innerHeight + 16;
+		if ( below > 0 ) {
+			window.scrollBy( 0, Math.max( 0, Math.min( below, g.top - 16 ) ) );
+		}
 	};
 
 	DatePicker.prototype.close = function ( returnFocus ) {
@@ -674,6 +891,7 @@
 		this.panel.hidden = true;
 		this.buttons.in.setAttribute( 'aria-expanded', 'false' );
 		this.buttons.out.setAttribute( 'aria-expanded', 'false' );
+		this.updateButtons();
 		if ( returnFocus ) {
 			this.buttons[ this.end ? 'out' : 'in' ].focus();
 		}
@@ -1005,7 +1223,11 @@
 		} );
 		var btn = this.monthsBox.querySelector( '[data-date="' + ymd + '"]' );
 		if ( btn ) {
-			btn.focus();
+			try {
+				btn.focus( { preventScroll: true } );
+			} catch ( e ) {
+				btn.focus();
+			}
 		}
 	};
 
@@ -1034,6 +1256,10 @@
 			e.preventDefault();
 			if ( target >= this.today() ) {
 				this.focusDay( target );
+				var moved = this.monthsBox.querySelector( '[data-date="' + target + '"]' );
+				if ( moved && moved.scrollIntoView ) {
+					moved.scrollIntoView( { block: 'nearest' } );
+				}
 			}
 		}
 	};
@@ -1074,6 +1300,22 @@
 	 * The booking form
 	 * ------------------------------------------------------------------- */
 
+	/**
+	 * The form is a size container (its layouts follow its width). A page
+	 * builder that sizes the widget to its content would make it as narrow
+	 * as its padding: then it stops being a container and takes the width
+	 * of its content, laid out as in a narrow column.
+	 */
+	function guardContainer( node ) {
+		if ( node.classList.contains( 'fb-intrinsic' ) || ! node.getClientRects().length ) {
+			return;
+		}
+		var cs = getComputedStyle( node );
+		if ( node.clientWidth - parseFloat( cs.paddingLeft ) - parseFloat( cs.paddingRight ) < 2 ) {
+			node.classList.add( 'fb-intrinsic' );
+		}
+	}
+
 	var STATE_KEYS = [ 'check_in', 'check_out', 'adults', 'children', 'children_ages', 'children_ages[]', 'fb_step', 'fb_room', 'fb_plan', 'fb_promo', 'fb_all', 'fb_done', 'fb_key', 'fb_manage', 'fb_payment', 'fb_ref' ];
 
 	function BookingForm( root ) {
@@ -1097,6 +1339,10 @@
 		this.promo = '';
 		this.step = '';
 		this.useUrl = ! urlOwner && !! ( window.history && window.history.pushState && window.URL );
+		// Theme copies of the template made before 1.10.0: the Booking page's results layout.
+		if ( ! root.hasAttribute( 'data-fb-results' ) && cfg.resultsLayout ) {
+			root.setAttribute( 'data-fb-results', cfg.resultsLayout );
+		}
 		if ( this.useUrl ) {
 			urlOwner = this;
 		}
@@ -1190,6 +1436,7 @@
 		}
 		// Wide forms show the summary next to the steps; narrow ones above them.
 		function measure() {
+			guardContainer( root );
 			var wide = root.clientWidth >= 900;
 			root.classList.toggle( 'fb-wide', wide );
 			root.classList.toggle( 'fb-narrow', root.clientWidth < 600 );
@@ -1558,6 +1805,38 @@
 		this.notice.textContent = message || '';
 		this.notice.classList.toggle( 'fb-notice--error', !! isError );
 		this.notice.hidden = ! message;
+		if ( ! message ) {
+			this.detailsMessage( '' );
+		}
+	};
+
+	/**
+	 * A message about the whole details form ("check the fields", booking
+	 * refused): right above its buttons, where the guest just clicked, so no
+	 * field above it moves.
+	 *
+	 * @return {Element|null} The message.
+	 */
+	BookingForm.prototype.detailsMessage = function ( message ) {
+		var box = this.detailsNotice;
+		if ( ! message ) {
+			if ( box ) {
+				box.hidden = true;
+				box.textContent = '';
+			}
+			return null;
+		}
+		if ( ! box ) {
+			box = el( 'p', 'fb-notice fb-notice--error fb-details__notice' );
+			box.setAttribute( 'role', 'alert' );
+			box.tabIndex = -1;
+			var actions = this.detailsForm.querySelector( '.fb-actions' );
+			this.detailsForm.insertBefore( box, actions );
+			this.detailsNotice = box;
+		}
+		box.textContent = message;
+		box.hidden = false;
+		return box;
 	};
 
 	BookingForm.prototype.values = function () {
@@ -1636,6 +1915,7 @@
 				self.selected = null;
 				self.view = null;
 				self.closedNotice = data.notice || '';
+				self.icons = data.icons || {};
 				self.rooms = data.rooms;
 				self.renderStay();
 				self.renderStaySummary();
@@ -1787,6 +2067,17 @@
 			list.appendChild( self.roomCard( room ) );
 		} );
 		this.results.appendChild( list );
+		this.updateMore();
+		if ( ! this.resultsWatched && window.ResizeObserver ) {
+			this.resultsWatched = true;
+			var width = 0;
+			new window.ResizeObserver( function () {
+				if ( self.results.clientWidth !== width ) {
+					width = self.results.clientWidth;
+					self.updateMore();
+				}
+			} ).observe( this.results );
+		}
 
 		if ( ! available.length ) {
 			this.renderNothing();
@@ -1808,8 +2099,28 @@
 		return more;
 	};
 
+	/** An icon drawn in the text colour from a mask address (bundled SVG or the hotel's own). */
+	function icon( url ) {
+		var i = el( 'span', 'fb-icon' );
+		i.setAttribute( 'aria-hidden', 'true' );
+		if ( url ) {
+			i.style.setProperty( '--fb-icon', 'url("' + String( url ).replace( /["\\\n\r]/g, '' ) + '")' );
+		}
+		return i;
+	}
+
+	var CARD_AMENITIES = 4;
+
+	/**
+	 * One room in the results (1.10.0): photo, name, facts, amenities with
+	 * their own icons, a short description with "More details", the price
+	 * for the stay and the button. How these are arranged follows the width
+	 * of the results (booking.css): stacked, photo beside the details with
+	 * the price below, or photo, details and price in one row.
+	 */
 	BookingForm.prototype.roomCard = function ( room ) {
 		var self = this;
+		var icons = this.icons || {};
 		var card = el( 'article', 'fb-room' + ( room.available ? '' : ' is-unavailable' ) );
 		card.setAttribute( 'data-room-id', room.id );
 		var titleId = uid( 'fb-room' );
@@ -1829,27 +2140,41 @@
 		}
 
 		var body = el( 'div', 'fb-room__body' );
+		body.id = uid( 'fb-room-body' );
 		var h = el( 'h4', 'fb-room__title', room.title );
 		h.id = titleId;
 		body.appendChild( h );
+
 		var facts = el( 'ul', 'fb-room__facts' );
+		var fact = function ( key, iconKey, text ) {
+			var li = el( 'li', 'fb-room__fact fb-room__fact--' + key );
+			li.appendChild( icon( icons[ iconKey ] ) );
+			li.appendChild( el( 'span', '', text ) );
+			facts.appendChild( li );
+		};
 		if ( room.size ) {
-			facts.appendChild( el( 'li', '', fmt( t.sqm, room.size ) ) );
+			fact( 'size', 'size', fmt( t.sqm, room.size ) );
 		}
 		if ( room.beds ) {
-			facts.appendChild( el( 'li', '', room.beds ) );
+			fact( 'beds', 'bed', room.beds );
 		}
-		facts.appendChild( el( 'li', '', fmt( t.upTo, room.capacity ) ) );
+		fact( 'guests', 'users', fmt( t.upTo, room.capacity ) );
 		body.appendChild( facts );
+
 		var amenities = room.amenities || [];
+		var amenityIcons = room.amenity_icons || [];
+		card._fbExtra = Math.max( 0, amenities.length - CARD_AMENITIES );
 		if ( amenities.length ) {
 			var am = el( 'ul', 'fb-room__amenities' );
-			amenities.slice( 0, 5 ).forEach( function ( a ) {
-				am.appendChild( el( 'li', '', a ) );
+			amenities.forEach( function ( a, i ) {
+				var li = el( 'li', 'fb-room__amenity' + ( i >= CARD_AMENITIES ? ' is-extra' : '' ) );
+				li.appendChild( icon( icons[ amenityIcons[ i ] ] ) );
+				li.appendChild( el( 'span', '', a ) );
+				am.appendChild( li );
 			} );
-			if ( amenities.length > 5 ) {
-				var more = el( 'li', 'fb-room__amenities-more', fmt( t.moreAmenities, amenities.length - 5 ) );
-				more.title = amenities.slice( 5 ).join( ', ' );
+			if ( card._fbExtra ) {
+				var more = el( 'li', 'fb-room__amenities-more', fmt( t.moreAmenities, card._fbExtra ) );
+				more.title = amenities.slice( CARD_AMENITIES ).join( ', ' );
 				am.appendChild( more );
 			}
 			body.appendChild( am );
@@ -1857,21 +2182,37 @@
 		if ( room.excerpt ) {
 			body.appendChild( el( 'p', 'fb-room__excerpt', room.excerpt ) );
 		}
-		if ( room.available && room.units_left > 0 && room.units_left <= 2 ) {
-			body.appendChild( el( 'p', 'fb-room__urgency', fmt( t.onlyLeft, room.units_left ) ) );
-		}
+		// Shown when the description is cut or amenities are left out (see updateMore).
+		var toggle = button( 'fb-link fb-room__more', t.moreDetails || '' );
+		toggle.hidden = true;
+		toggle.setAttribute( 'aria-expanded', 'false' );
+		toggle.setAttribute( 'aria-controls', body.id );
+		toggle.addEventListener( 'click', function () {
+			var open = ! card.classList.contains( 'is-expanded' );
+			card.classList.toggle( 'is-expanded', open );
+			toggle.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+			toggle.textContent = open ? t.lessDetails : t.moreDetails;
+		} );
+		body.appendChild( toggle );
 		if ( ! room.available && room.reason ) {
 			body.appendChild( el( 'p', 'fb-room__reason', room.reason ) );
 		}
 		card.appendChild( body );
 
 		var side = el( 'div', 'fb-room__side' );
-		side.appendChild( el( 'span', 'fb-room__total-label', this.stay.nightsLabel ) );
-		side.appendChild( el( 'strong', 'fb-room__total', room.price_from ? fmt( t.from, room.total_formatted ) : room.total_formatted ) );
+		var price = el( 'div', 'fb-room__price' );
+		price.appendChild( el( 'span', 'fb-room__total-label', this.stay.nightsLabel ) );
+		price.appendChild( el( 'strong', 'fb-room__total', room.price_from ? fmt( t.from, room.total_formatted ) : room.total_formatted ) );
 		var nightly = room.price_varies && t.avgPerNight
 			? fmt( t.avgPerNight, room.price_average_formatted )
 			: ( room.price_average_formatted || room.price_formatted ) + ' ' + t.perNight;
-		side.appendChild( el( 'span', 'fb-room__meta fb-room__avg', nightly ) );
+		price.appendChild( el( 'span', 'fb-room__meta fb-room__avg', nightly ) );
+		if ( room.available && room.units_left > 0 && room.units_left <= 2 ) {
+			price.appendChild( el( 'span', 'fb-room__badge fb-room__urgency', fmt( t.onlyLeft, room.units_left ) ) );
+		}
+		side.appendChild( price );
+
+		var actionBox = el( 'div', 'fb-room__action' );
 		var plans = room.plans || [];
 		var action = plans.length > 1 ? t.chooseRate : ( t.selectRoom || t.select );
 		var btn = button( 'fb-button fb-room__select', room.available ? action : t.unavailable );
@@ -1890,12 +2231,53 @@
 				self.select( room, plans[ 0 ] || room.quote || null );
 			}
 		} );
-		side.appendChild( btn );
-		if ( room.available && t.notBookedYet ) {
-			side.appendChild( el( 'span', 'fb-room__select-hint', t.notBookedYet ) );
+		actionBox.appendChild( btn );
+		var hint = t.selectHint || t.notBookedYet;
+		if ( room.available && hint ) {
+			actionBox.appendChild( el( 'span', 'fb-room__select-hint', hint ) );
 		}
+		side.appendChild( actionBox );
 		card.appendChild( side );
 		return card;
+	};
+
+	/**
+	 * The same room card for previews (Bookings → Appearance), from sample data.
+	 *
+	 * @param {Object} room  A room as the availability answer has it.
+	 * @param {Object} stay  At least nightsLabel.
+	 * @param {Object} icons Icon key => mask address.
+	 * @return {Element} The card.
+	 */
+	window.FlexoBooking = window.FlexoBooking || {};
+	// The form's own field message (under the field's row), for the same previews.
+	window.FlexoBooking.fieldError = setError;
+	window.FlexoBooking.roomCard = function ( room, stay, icons ) {
+		var view = Object.create( BookingForm.prototype );
+		view.icons = icons || {};
+		view.stay = stay || {};
+		view.select = view.showPlans = function () {};
+		return view.roomCard( room );
+	};
+
+	/**
+	 * "More details" only where there is more: a description cut to its
+	 * lines, or amenities left out. Checked again when the results change width.
+	 */
+	BookingForm.prototype.updateMore = function () {
+		this.results.querySelectorAll( '.fb-room' ).forEach( function ( card ) {
+			var toggle = card.querySelector( '.fb-room__more' );
+			if ( ! toggle ) {
+				return;
+			}
+			if ( card.classList.contains( 'is-expanded' ) ) {
+				toggle.hidden = false;
+				return;
+			}
+			var text = card.querySelector( '.fb-room__excerpt' );
+			var cut = !! text && text.scrollHeight > text.clientHeight + 1;
+			toggle.hidden = ! ( cut || card._fbExtra > 0 );
+		} );
 	};
 
 	/**
@@ -2155,6 +2537,7 @@
 			submit.disabled = true;
 			submit.setAttribute( 'aria-busy', 'true' );
 			status.textContent = t.sending;
+			status.classList.remove( 'fb-msg', 'fb-msg--error' );
 			postJson( 'enquiry', {
 				name: get( 'name' ),
 				email: get( 'email' ),
@@ -2185,6 +2568,7 @@
 						status.textContent = '';
 					} else {
 						status.textContent = err.message;
+						status.classList.add( 'fb-msg', 'fb-msg--error' );
 					}
 				} )
 				.finally( function () {
@@ -2319,7 +2703,9 @@
 		}
 		var pay = view.payment || null;
 		if ( pay && pay.now > 0 ) {
-			row( pay.now_label + ' – ' + t.toPayNow.toLowerCase(), pay.now_formatted, 'fb-summary__paynow' );
+			// "Deposit (30 %) – to pay now"; paying everything now is just "To pay now".
+			var nowLabel = pay.mode === 'full' ? t.toPayNow : pay.now_label + ' – ' + t.toPayNow.toLowerCase();
+			row( nowLabel, pay.now_formatted, 'fb-summary__paynow' );
 			if ( pay.at_property > 0 ) {
 				row( t.atPropertyRest, pay.at_property_formatted, 'fb-summary__property' );
 			}
@@ -2413,6 +2799,7 @@
 		message.setAttribute( 'role', 'status' );
 
 		if ( view.promo ) {
+			message.className = 'fb-promo__message fb-msg fb-msg--success';
 			message.textContent = String( t.promoApplied ).replace( '%1$s', view.promo.code ).replace( '%2$s', view.promo.label );
 			box.appendChild( message );
 			var remove = button( 'fb-link', t.remove );
@@ -2472,7 +2859,7 @@
 			fields.hidden = false;
 			toggle.setAttribute( 'aria-expanded', 'true' );
 			message.textContent = this.promoError;
-			message.classList.add( 'is-error' );
+			message.className = 'fb-promo__message fb-msg fb-msg--error is-error';
 			fields.appendChild( message );
 		}
 		summary.appendChild( box );
@@ -2558,7 +2945,7 @@
 		}
 		var bad = validateForm( f );
 		if ( bad ) {
-			this.setNotice( t.checkFields, true );
+			this.detailsMessage( t.checkFields );
 			focusEl( bad );
 			return;
 		}
@@ -2646,11 +3033,10 @@
 				var target = name ? f.querySelector( '[name="' + name + '"]' ) : null;
 				if ( target && isShown( target ) ) {
 					setError( target, err.message );
-					self.setNotice( t.checkFields, true );
+					self.detailsMessage( t.checkFields );
 					focusEl( target );
 				} else {
-					self.setNotice( err.message, true );
-					focusEl( self.notice );
+					focusEl( self.detailsMessage( err.message ) );
 				}
 				// Show the current price (or why the promo code no longer applies).
 				if ( err.code === 'flexo_price_changed' || ( err.code && err.code.indexOf( 'flexo_promo' ) === 0 ) ) {
@@ -2928,6 +3314,7 @@
 						focusEl( target );
 					} else {
 						status.textContent = err.message;
+						status.classList.add( 'fb-msg', 'fb-msg--error' );
 					}
 				} )
 				.finally( function () {
@@ -3195,6 +3582,7 @@
 	 * The compact search bar: the same date picker, then off to the booking page.
 	 */
 	function SearchBar( node ) {
+		guardContainer( node );
 		var form = node.querySelector( '.fb-search' );
 		var picker = new DatePicker( form, {
 			locale: node.getAttribute( 'data-locale' ) || '',
@@ -3207,6 +3595,9 @@
 		} );
 		if ( ! picker.enhanced ) {
 			bindDates( form );
+		} else {
+			// The browser's own check would stop at the hidden date fields without a word.
+			form.noValidate = true;
 		}
 		bindAges( form );
 		form.addEventListener( 'submit', function ( e ) {
@@ -3230,6 +3621,7 @@
 		var self = this;
 		this.root = node;
 		node.flexoRoomBox = this;
+		guardContainer( node );
 		this.form = node.querySelector( '.fb-search' );
 		this.result = node.querySelector( '[data-fb-box-result]' );
 		this.room = node.getAttribute( 'data-room' ) || '';
