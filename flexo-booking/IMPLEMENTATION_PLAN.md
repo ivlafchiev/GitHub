@@ -2301,3 +2301,215 @@ Tests:
   - e2e days 2–5, 7, 8 and day8-appearance passed in the full run.
   - Day 1 found the new hint sharing the price line's class (fixed: own class `fb-room__select-hint`), then passed 37/37.
   - Day 6 timed out once in the full run and passed 117/117 on its own.
+
+
+## 19. Plan: UI, responsive and widget controls release (1.10.0)
+
+Status: **plan, waiting for approval.** Phases 1–3 as in the brief, each
+ending with tests, screenshots, a report, a commit and a stop.
+
+### 19.1 Baseline
+
+- **Source:** `flexo-booking-1.9.0-controls.zip` was built from commit
+  `3bffd49` on this branch, so the comparison is exact.
+  - Git history is complete: `master`/`dev` 1.0 → 1.8.3 → 1.9.0 Session A →
+    admin overhaul → form controls.
+  - The plugin header still says **1.8.3** (§18.13: the 1.9.0 number was
+    meant for Session C).
+- **`SPEC_1.9.0.md` is not in the repository.** §18 holds the 1.9.0 plan,
+  but it refers to the brief's sections only by letter. I, J, K, L1, W, X
+  and Y are read from §18.1/§18.10.
+- **The screenshots mentioned in the brief did not arrive** with the
+  message.
+- **Not in the code at all** (1.9.0 Sessions B and C were never built):
+  - a Contact form component, `[flexo_contact]`, a REST `contact` route;
+  - the built-in Contact page;
+  - a Forms Tabs widget;
+  - a Thank You widget/shortcode.
+- **What exists for those:**
+  - availability **enquiries**: `Guest::enquiry()`, REST `enquiry`, honeypot,
+    per-IP limit, hotel email with Reply-To, Today → *Needs your attention*
+    → *Mark as answered*, retention, privacy export/erase;
+  - the tab colour/corner **tokens** in Appearance (no tabs markup).
+  - So the "Booking / Contact" tabs on the Azure site are not Flexo's. They
+    are probably Elementor's Tabs with Elementor Pro's Form.
+- **Environment:**
+  - Elementor and Elementor Pro can't be installed here: wordpress.org
+    times out, GitHub answers 403, and no Pro zip is on disk.
+  - WordPress is a 6.7 test build.
+  - There is no Firefox.
+
+### 19.2 Each part: what exists, the cause, the change
+
+| Part | Exists today | Cause of the problem / gap | Change |
+|---|---|---|---|
+| 1 Responsive + room cards | `BookingForm` measures its own width (ResizeObserver → `fb-wide` ≥ 900, `fb-narrow` < 600), used only for the summary and steps. `booking.css` has 18 `@media` and 0 `@container` rules. | The card is `grid: 200px 1fr auto` whenever the **viewport** is ≥ 1025 px. The price column is `auto` with a 168 px button, so in a half column on a laptop the middle `1fr` collapses. Below 1024 px a viewport rule centres everything. Amenities are text with "✓". The excerpt is not clamped. | One card component, chosen by **container width** (§19.3). Short description clamped to 3 lines with an inline *More details*. Facts and amenities with icons. Price block. Full-width button when narrow. Setting *Results layout*: Automatic / Always stacked / Always horizontal (widget + Booking page). |
+| 1 (admin preview) | Appearance → preview prints its **own static copy** of the card in PHP (`preview_booking_steps()`). | Second card markup. | The preview renders cards through the same JS renderer (`FlexoBooking.roomCard()`) with sample data. |
+| 2 Calendar | One `DatePicker` per form; the panel is `form.appendChild()`-ed. | The panel is the **last** item of the `.fb-search` flex row. When fields wrap or stack, it lands after Adults, Children and the button. | Check-in/out wrapped in one date group (added by JS when a theme override lacks it). Narrow/medium container: the panel is inline right after the date group. Wide container: anchored pop-over under the date group. Same single instance, same handlers, no scroll jump. |
+| 3 Progress bar | `ol.fb-steps`, `flex: 1 1 0` per item. | In `.fb-narrow` (< 600 px, the half column) items get `flex: 0 0 auto` and the current one `flex: 1 1 auto`, so step 1 takes the row. | `grid-template-columns: repeat(var(--fb-steps), minmax(0, 1fr))`, with the count set from the visible steps. Lines independent of labels. Narrow: numbers only, current label below, labels kept for screen readers. |
+| 4 Messages | `setError()` inserts `p.fb-field__error` **after the input, inside `.fb-field`**. `.fb-notice` is used for form-level messages. | The cell grows, so the row loses alignment. The date error sits under Check-in. The "double border" comes from `[aria-invalid]` on the hidden native date input plus the visible date button (to be confirmed in the browser). | One *form message* component (error, warning, info, success; icon, tint, radius, AA colours). One full-width slot per field row (one slot after the stacked field). Errors of a row merged. Height/opacity animation, none with reduced motion. Invalid state by `box-shadow` (no size change). `aria-describedby`, focus on the first invalid field. Class names of today kept for tests and themes. |
+| 5 Instances | IDs from `wp_unique_id()`, the picker is per form, one delegated `document` click listener (dialog links). | Not verified with two forms. | Test: two forms, tabs, columns. Fix whatever leaks (IDs, live regions, the document listener). |
+| 6 Amenity icons | Amenities have icons (bundled Lucide set + media upload, `Room_Content::amenities()`). The room widgets and Icon List (§18.15) show them. | REST sends the results **names only**, so the card prints "✓". The booking box and Thank You don't show amenities. | REST sends `{label, icon}`. Icons go out once per page as a small map (bundled SVG) or URL (upload, as a mask so it takes `currentColor`). Display: Amenity icons / Simple tick / No icon, colour, size, gap (Appearance + widgets). |
+| 7 Details/amenities controls | Shared *Icon* section (colour, size, gap), *Text* colour/typography, columns, gap, alignment, divider. | Size exists, so I must reproduce why it has no effect on your site. Likely suspects: Elementor icon-library SVG/`<i>` rules, or the "Your own icons" path. **Needs real Elementor.** | Fix the cause. Add vertical alignment, separator style/colour/visibility, direction, wrap, hover colour. |
+| 8 Gallery | Arrows/dots on/off, arrow colour/bg, dot colour, photo gap/radius/border/height, per view. | No sizes. The arrow selector `(0,2,1)` ties with Elementor-kit `button:hover/:focus` rules (`(0,2,1)`, loaded later), so the kit's border wins on hover/focus. **To confirm with Elementor.** | All arrow/dot/image controls from the brief, including *Border: none*. Focus ring only on `:focus-visible`. Dots / lines / fraction styles. |
+| 9 Buttons | One `--fb-radius` for buttons, fields and cards (Square 0 / Slight 6 / Rounded 16). Tab corners exist with *Round ends*. Widget: button typography only. | Can't make pill buttons, can't separate fields from buttons, no padding/border/shadow/state controls. | `--fb-button-radius` and `--fb-field-radius`, both defaulting to `--fb-radius` (no change for existing sites). Presets plus *Pill* (9999 px) and custom 0–100 px. *Field corners: match buttons*. Per-page overrides. One *Buttons* Style section reused by every Flexo widget (§19.3). |
+| 10 Controls audit | Booking form widget: colours, padding, spacing, radius, three typography groups. Room box: same. Room widgets as above. | Many elements unstyleable. | Checklist per widget in §19.6 (filled during Phase 2), then the missing controls. Shared control groups, not copies. |
+| 11 Contact form | Enquiry storage, email, Today, retention (see 19.1). | No contact component. | `class-contact.php` + `templates/contact-form.php`. REST `contact` uses the **same internal enquiry method** as availability enquiries (refactored out of `Guest::enquiry()`, `details.kind = contact`). Contact fields in `flexo_booking_forms` (§18.3). Widget *Flexo Contact Form*, `[flexo_contact]`. Optional auto-reply (off). *Reply by email* (mailto, `Re: subject`). `contact_submit` tracking without personal data. |
+| 12 Timeline | `ol.flexo-history__list`: rail `::before` at left 5 px, dot `::before` at `top: 6px; left: -22px`, 8 px + 2 px border. | Dot centre and rail axis are fixed pixel offsets that depend on box sizing and line height. The rail runs from `top: 6` to `bottom: 6` of the list, so it goes past the last dot. | Grid with a fixed rail column. Dot centred on the first line (`calc(1lh / 2)`). Rail segments drawn per item between dot centres, so nothing extends before the first or after the last. Tokens only. |
+| 13 Emails | Per-type editable subject and text, 30 placeholders, HTML wrapper (logo or name on the hotel colour, details table, one button, footer), plain-text part, test email, log, resend, `.ics`. Logo and colour in Appearance. | To verify each one in Phase 3A. | Audit, report, stop. Phase 3B only after your decision. |
+
+### 19.3 Shared decisions
+
+- **Container queries.**
+  - `container-type: inline-size` goes on an inner wrapper that always
+    fills the widget (`.fb-shell`, added by the templates; JS wraps old
+    theme overrides). It doesn't go on the widget itself: a size container
+    has no content width, so in an Elementor row whose widget width is
+    *auto* it would collapse to 0.
+  - Breakpoints (container width): **< 480** stacked · **480–759** hybrid
+    (image + details, price/button footer) · **≥ 760** three columns, with
+    minimums of image 180, details 240, side 200.
+  - The same widths drive the search row (4 fields in one row ≥ 640, 2 × 2
+    ≥ 420, stacked below), the details step (2 columns ≥ 560) and the
+    summary aside (≥ 900, the current `fb-wide`).
+  - Viewport `@media` rules that decide layout move to `@container`. Those
+    for touch (44 px targets), reduced motion and print stay.
+  - **No plugin rule sets a property that an Elementor responsive control
+    sets.** Elementor's `{{WRAPPER}}` selectors keep winning on equal
+    specificity, because they load later.
+- **One room card renderer** in `booking.js`, used by the results, Forms
+  Tabs (when built), the built-in page and the admin preview.
+- **Buttons.**
+  - Tokens `--fb-button-*`: radius, padding-x/y, min-height, border,
+    shadow, plus hover/active/disabled colours. Each defaults to today's
+    value.
+  - Appearance and per-page overrides set the tokens.
+  - Elementor controls write the same tokens at `{{WRAPPER}}`, with the
+    loading state included.
+  - Date-picker navigation and tabs get their own groups.
+- **Theme template overrides** (`booking-form.php` copies) keep working:
+  JS adds the new wrappers when they are missing, as it already does for
+  the steps (1.6.0 rule).
+- **New labels** in English and Bulgarian (`flexo-booking-bg_BG.po/.mo`).
+  Long Bulgarian strings are tested for wrapping.
+
+### 19.4 Files
+
+- **Phase 1:**
+  - `assets/css/booking.css` (layout section rewritten around containers;
+    card, steps, messages, picker);
+  - `assets/js/booking.js` (card renderer, date group + picker placement,
+    message slots, step count, instance checks);
+  - `templates/booking-form.php`, `search-bar.php`, `room-booking-box.php`
+    (wrapper + date group, no logic);
+  - `class-frontend.php` (texts, *Results layout*, microcopy);
+  - `class-rest.php` / `class-rooms.php` (amenity icons in the room payload,
+    shared with Phase 2);
+  - `class-appearance.php` (preview uses the JS card);
+  - `includes/elementor/class-booking-widget.php` (*Results layout*);
+  - `admin/class-pages-admin.php` (*Results layout* and microcopy for the
+    Booking page);
+  - tests.
+- **Phase 2:**
+  - `class-room-icons.php`, `class-room-content.php` (defaults, icon map);
+  - `elementor/class-room-widgets.php`, `class-booking-widget.php`,
+    `class-room-box-widget.php`, a new `elementor/class-controls.php`
+    (shared control groups), a new `elementor/class-contact-widget.php`;
+  - `class-contact.php`, `templates/contact-form.php`, `class-guest.php`
+    (enquiry method shared), `class-rest.php`, `class-forms.php`
+    (contact fields), `admin/class-today-admin.php` (labels, *Reply by
+    email*);
+  - `class-appearance.php` + `admin/class-appearance-admin.php` (button and
+    field corners, icon style), `rooms.css`, `rooms.js` (gallery dots and
+    arrows);
+  - `class-privacy.php` (kind = contact);
+  - `languages/`.
+- **Phase 3:**
+  - `class-admin.php` (history markup) and `flexo-admin.css` (timeline);
+  - Phase 3B, if approved: `class-emails.php` and
+    `admin/class-appearance-admin.php`.
+- **Docs:** `README.md`, this plan (§19.6 widget checklist),
+  `ui-audit/<part>/`.
+
+### 19.5 Risks
+
+- **Elementor editor checks can't be done here.** That covers live update,
+  responsive values and saved overrides (Parts 7–11, scenario 10).
+  - Without Elementor I can test that the controls register, that their
+    selectors match the rendered markup, and how the generated CSS
+    behaves (by applying the same CSS by hand).
+  - I can't run the real editor.
+  - **To make it possible:** allow `downloads.wordpress.org` and
+    `wordpress.org` in the environment's network access, and put the
+    Elementor Pro zip in the session (it stays out of git).
+- **Container size containment** (see 19.3): it is tested inside Elementor
+  rows/columns, with widget width *auto*, *full* and *custom*, and inside
+  tabs that start hidden (width 0 until shown).
+- **Changed markup:**
+  - day 6 tests (picker, steps, errors) and theme CSS that targets
+    `.fb-field__error` inside `.fb-field`;
+  - mitigation: class names are kept, and the tests are updated only where
+    the placement changes on purpose.
+- **Amenity icons in REST:** they add to the payload. Each icon is sent
+  once per page, not per room.
+- **Existing sites must look the same** for everything not listed as
+  broken.
+  - New tokens default to today's values. New controls are empty
+    (inherit).
+  - Checked by screenshots of the current layouts at wide widths before
+    and after.
+- **Contact form email:** header injection is blocked through the existing
+  sanitising (single-line, `sanitize_email` for Reply-To) and a test.
+
+### 19.6 Verification per phase
+
+- **New `tests/ui/layout-check.js` (Chromium, real WordPress pages)** runs
+  at viewports 320 · 360 · 390 · 430 · 768 · 1024 · 1280 · 1440 · 1920
+  and in container widths 320 · 360 · 420 · 480 · 560 · 640 · 720 · 900 ·
+  1100. It checks:
+  - no horizontal overflow, nothing outside the widget;
+  - the card's columns never under their minimums;
+  - the price/button not overlapping;
+  - step tracks equal within 1 px and unchanged across steps;
+  - fields' boxes before/after each message within 0.5 px;
+  - the calendar directly after the date group;
+  - two forms on one page;
+  - Bulgarian;
+  - the Azure-like layout: two columns of 50 % at 1280/1440 with
+    contact text beside the form.
+- **WebKit spot checks** use the same harness as the controls check.
+- **Timeline geometry** (Phase 3): dot centres on the rail axis within
+  0.5 px, and the first line aligned.
+- **Screenshots** go to `ui-audit/part-N/` (before/after).
+- **Regression every phase:**
+  - `tests/run.sh`, e2e days 1–8 + Appearance;
+  - a full booking: email in the mail log, history, status, prices,
+    inventory.
+- **The Elementor widget checklist** (Part 10) is written here as §19.7
+  during Phase 2.
+
+### 19.7 Decisions needed
+
+1. **Contact scope (Part 11).**
+   - **Proposal:** the shared contact component, the REST route, the
+     *Flexo Contact Form* widget and `[flexo_contact]` in Phase 2, plus a
+     thin **Forms Tabs** widget (Booking | Contact panels rendering the two
+     shared components). The brief's Parts 1, 4 and 5 and scenario 3 assume
+     it exists.
+   - The built-in **Contact system page** (routing, slug, SEO) stays in
+     Session B, ready to reuse the component.
+2. **Amenity icon picker.**
+   - Elementor's icon library only exists inside the Elementor editor, so
+     the amenity screen (wp-admin) can offer the bundled set (searchable)
+     plus SVG/PNG upload.
+   - In widgets, *Your own icons* (Elementor library) already overrides per
+     fact; I'd extend it to amenities.
+3. **Reassurance under the button** (editable in Settings → Pages →
+   Booking):
+   - request mode: "You won't be charged now – the hotel confirms first";
+   - instant without payment: "Pay at the property";
+   - card: "Secure payment in the next step";
+   - bank transfer: "Pay by bank transfer after booking".
+4. **Version:** 1.10.0 at the end of Phase 3 (header, constant and
+   `?ver=` on the assets, so browsers fetch the new CSS).
+5. **Elementor access** for the editor checks (19.5).
