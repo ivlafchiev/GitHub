@@ -1,0 +1,3365 @@
+{
+ "label": "before",
+ "results": [
+  {
+   "name": "frame 320 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 188.0 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "frame 320 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "frame 320 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "frame 320: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "frame 320 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 188.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "frame 320 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 328.0px"
+  },
+  {
+   "name": "frame 320 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320 rooms: nothing outside the form",
+   "ok": false,
+   "detail": "fb-room [584–1163 in 560–880]; fb-room__body [813–925 in 560–880]; fb-room__title [813–925 in 560–880]; fb-room__facts [813–925 in 560–880]; LI [813–925 in 560–880]"
+  },
+  {
+   "name": "frame 320: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320: room cards readable and contained",
+   "ok": false,
+   "detail": "card 0: details column 112 px next to the image, card outside the results | card 1: details column 120 px next to the image, card outside the results"
+  },
+  {
+   "name": "frame 320 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 188.0 / 24.0"
+  },
+  {
+   "name": "frame 320 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 328.0px"
+  },
+  {
+   "name": "frame 320 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320 details: nothing outside the form",
+   "ok": false,
+   "detail": "fb-button [584–976 in 560–880]"
+  },
+  {
+   "name": "frame 320 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,92.1 0.0×0.0); fb-2-name#1 (0.0,92.1 0.0×0.0); fb-2-email#2 (0.0,124.8 0.0×0.0); fb-2-email#3 (0.0,124.8 0.0×0.0)"
+  },
+  {
+   "name": "frame 320 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "frame 320 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320 details: message under its row",
+   "ok": false,
+   "detail": "554px into the row; 428px into the row; 276px into the row"
+  },
+  {
+   "name": "frame 360 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 228.0 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "frame 360 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "frame 360 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "frame 360: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "frame 360 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 228.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "frame 360 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 408.0px"
+  },
+  {
+   "name": "frame 360 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 rooms: nothing outside the form",
+   "ok": false,
+   "detail": "fb-room [564–1143 in 540–900]; fb-room__body [793–905 in 540–900]; fb-room__title [793–905 in 540–900]; fb-room__facts [793–905 in 540–900]; LI [793–905 in 540–900]"
+  },
+  {
+   "name": "frame 360: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360: room cards readable and contained",
+   "ok": false,
+   "detail": "card 0: details column 112 px next to the image, card outside the results | card 1: details column 120 px next to the image, card outside the results"
+  },
+  {
+   "name": "frame 360 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 228.0 / 24.0"
+  },
+  {
+   "name": "frame 360 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 408.0px"
+  },
+  {
+   "name": "frame 360 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 details: nothing outside the form",
+   "ok": false,
+   "detail": "fb-button [564–956 in 540–900]"
+  },
+  {
+   "name": "frame 360 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,98.8 0.0×0.0); fb-2-email#3 (0.0,98.8 0.0×0.0)"
+  },
+  {
+   "name": "frame 360 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "frame 360 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 details: message under its row",
+   "ok": false,
+   "detail": "557px into the row; 431px into the row; 280px into the row"
+  },
+  {
+   "name": "frame 420 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 288.0 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "frame 420 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0×0.0); fb-2-out-btn#3 (0.0,78.3 0.0×0.0)"
+  },
+  {
+   "name": "frame 420 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "frame 420 dates: message as wide as the form",
+   "ok": false,
+   "detail": "178 of 372px"
+  },
+  {
+   "name": "frame 420 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "frame 420: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "frame 420 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 288.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "frame 420 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 528.0px"
+  },
+  {
+   "name": "frame 420 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420 rooms: nothing outside the form",
+   "ok": false,
+   "detail": "fb-room [534–1113 in 510–930]; fb-room__side [891–1100 in 510–930]; fb-room__total-label [991–1100 in 510–930]; fb-room__total [952–1100 in 510–930]; fb-room__meta fb-room__avg [983–1100 in 510–930]"
+  },
+  {
+   "name": "frame 420: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420: room cards readable and contained",
+   "ok": false,
+   "detail": "card 0: details column 112 px next to the image, card outside the results | card 1: details column 120 px next to the image, card outside the results"
+  },
+  {
+   "name": "frame 420 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 288.0 / 24.0"
+  },
+  {
+   "name": "frame 420 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 528.0px"
+  },
+  {
+   "name": "frame 420 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,98.8 0.0×0.0); fb-2-email#3 (0.0,98.8 0.0×0.0)"
+  },
+  {
+   "name": "frame 420 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "frame 420 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420 details: message under its row",
+   "ok": false,
+   "detail": "557px into the row; 431px into the row; 280px into the row"
+  },
+  {
+   "name": "frame 480 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 348.0 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "frame 480 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0×0.0); fb-2-out-btn#3 (0.0,55.6 0.0×0.0)"
+  },
+  {
+   "name": "frame 480 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "frame 480 dates: message as wide as the form",
+   "ok": false,
+   "detail": "208 of 432px"
+  },
+  {
+   "name": "frame 480 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "frame 480: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "frame 480 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 348.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "frame 480 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 648.0px"
+  },
+  {
+   "name": "frame 480 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480 rooms: nothing outside the form",
+   "ok": false,
+   "detail": "fb-room [504–1083 in 480–960]; fb-room__side [861–1070 in 480–960]; fb-room__total-label [961–1070 in 480–960]; fb-room__total [922–1070 in 480–960]; fb-room__meta fb-room__avg [953–1070 in 480–960]"
+  },
+  {
+   "name": "frame 480: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480: room cards readable and contained",
+   "ok": false,
+   "detail": "card 0: details column 112 px next to the image, card outside the results | card 1: details column 120 px next to the image, card outside the results"
+  },
+  {
+   "name": "frame 480 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 348.0 / 24.0"
+  },
+  {
+   "name": "frame 480 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 648.0px"
+  },
+  {
+   "name": "frame 480 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+  },
+  {
+   "name": "frame 480 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "frame 480 details: message as wide as the form",
+   "ok": false,
+   "detail": "208 of 432px; 208 of 432px; 208 of 432px"
+  },
+  {
+   "name": "frame 480 details: message under its row",
+   "ok": false,
+   "detail": "444px into the row; 444px into the row; 270px into the row"
+  },
+  {
+   "name": "frame 560 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 428.0 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "frame 560 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0×0.0); fb-2-out-btn#3 (0.0,78.3 0.0×0.0); fb-2-adults#4 (0.0,78.3 0.0×0.0); fb-2-adults#5 (0.0,78.3 0.0×0.0)"
+  },
+  {
+   "name": "frame 560 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "frame 560 dates: message as wide as the form",
+   "ok": false,
+   "detail": "190 of 512px"
+  },
+  {
+   "name": "frame 560 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "frame 560: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "frame 560 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 428.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "frame 560 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 808.0px"
+  },
+  {
+   "name": "frame 560 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560 rooms: nothing outside the form",
+   "ok": false,
+   "detail": "fb-room [464–1043 in 440–1000]; fb-room__side [821–1030 in 440–1000]; fb-room__total-label [921–1030 in 440–1000]; fb-room__total [882–1030 in 440–1000]; fb-room__meta fb-room__avg [913–1030 in 440–1000]"
+  },
+  {
+   "name": "frame 560: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560: room cards readable and contained",
+   "ok": false,
+   "detail": "card 0: details column 112 px next to the image, card outside the results | card 1: details column 120 px next to the image, card outside the results"
+  },
+  {
+   "name": "frame 560 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 428.0 / 24.0"
+  },
+  {
+   "name": "frame 560 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 808.0px"
+  },
+  {
+   "name": "frame 560 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+  },
+  {
+   "name": "frame 560 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "frame 560 details: message as wide as the form",
+   "ok": false,
+   "detail": "248 of 512px; 248 of 512px; 248 of 512px"
+  },
+  {
+   "name": "frame 560 details: message under its row",
+   "ok": false,
+   "detail": "422px into the row; 422px into the row; 270px into the row"
+  },
+  {
+   "name": "frame 640 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 145.0 / 145.0 / 145.0 / 145.0"
+  },
+  {
+   "name": "frame 640 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0×0.0); fb-2-out-btn#3 (0.0,78.3 0.0×0.0); fb-2-adults#4 (0.0,78.3 0.0×0.0); fb-2-adults#5 (0.0,78.3 0.0×0.0)"
+  },
+  {
+   "name": "frame 640 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "frame 640 dates: message as wide as the form",
+   "ok": false,
+   "detail": "172 of 592px"
+  },
+  {
+   "name": "frame 640 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "frame 640: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "frame 640 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 145.0 / 145.0 / 145.0 / 145.0"
+  },
+  {
+   "name": "frame 640 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 640 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640: room cards readable and contained",
+   "ok": false,
+   "detail": "card 0: details column 125 px next to the image | card 1: details column 132 px next to the image"
+  },
+  {
+   "name": "frame 640 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 145.0 / 145.0 / 145.0 / 145.0"
+  },
+  {
+   "name": "frame 640 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 640 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+  },
+  {
+   "name": "frame 640 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "frame 640 details: message as wide as the form",
+   "ok": false,
+   "detail": "288 of 592px; 288 of 592px; 288 of 592px"
+  },
+  {
+   "name": "frame 640 details: message under its row",
+   "ok": false,
+   "detail": "422px into the row; 422px into the row; 270px into the row"
+  },
+  {
+   "name": "frame 720 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 165.0 / 165.0 / 165.0 / 165.0"
+  },
+  {
+   "name": "frame 720 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0×0.0); fb-2-out-btn#3 (0.0,55.6 0.0×0.0); fb-2-adults#4 (0.0,55.6 0.0×0.0); fb-2-adults#5 (0.0,55.6 0.0×0.0)"
+  },
+  {
+   "name": "frame 720 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "frame 720 dates: message as wide as the form",
+   "ok": false,
+   "detail": "212 of 672px"
+  },
+  {
+   "name": "frame 720 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "frame 720: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "frame 720 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 165.0 / 165.0 / 165.0 / 165.0"
+  },
+  {
+   "name": "frame 720 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 720 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 165.0 / 165.0 / 165.0 / 165.0"
+  },
+  {
+   "name": "frame 720 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 720 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+  },
+  {
+   "name": "frame 720 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "frame 720 details: message as wide as the form",
+   "ok": false,
+   "detail": "213 of 672px; 213 of 672px; 213 of 672px"
+  },
+  {
+   "name": "frame 720 details: message under its row",
+   "ok": false,
+   "detail": "329px into the row; 329px into the row; 329px into the row"
+  },
+  {
+   "name": "frame 900 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 210.0 / 210.0 / 210.0 / 210.0"
+  },
+  {
+   "name": "frame 900 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0×0.0); fb-2-out-btn#3 (0.0,55.6 0.0×0.0); fb-2-adults#4 (0.0,55.6 0.0×0.0); fb-2-adults#5 (0.0,55.6 0.0×0.0)"
+  },
+  {
+   "name": "frame 900 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "frame 900 dates: message as wide as the form",
+   "ok": false,
+   "detail": "200 of 852px"
+  },
+  {
+   "name": "frame 900 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 16.0px"
+  },
+  {
+   "name": "frame 900: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "frame 900 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 210.0 / 210.0 / 210.0 / 210.0"
+  },
+  {
+   "name": "frame 900 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 900 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900: room cards readable and contained",
+   "ok": false,
+   "detail": "card 0: details column 112 px next to the image, card outside the results | card 1: details column 120 px next to the image, card outside the results"
+  },
+  {
+   "name": "frame 900 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 210.0 / 210.0 / 210.0 / 210.0"
+  },
+  {
+   "name": "frame 900 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 900 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+  },
+  {
+   "name": "frame 900 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "frame 900 details: message as wide as the form",
+   "ok": false,
+   "detail": "250 of 516px; 250 of 516px; 250 of 516px"
+  },
+  {
+   "name": "frame 900 details: message under its row",
+   "ok": false,
+   "detail": "422px into the row; 422px into the row; 270px into the row"
+  },
+  {
+   "name": "frame 1100 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 260.0 / 260.0 / 260.0 / 260.0"
+  },
+  {
+   "name": "frame 1100 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0×0.0); fb-2-out-btn#3 (0.0,55.6 0.0×0.0); fb-2-adults#4 (0.0,55.6 0.0×0.0); fb-2-adults#5 (0.0,55.6 0.0×0.0)"
+  },
+  {
+   "name": "frame 1100 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "frame 1100 dates: message as wide as the form",
+   "ok": false,
+   "detail": "300 of 1052px"
+  },
+  {
+   "name": "frame 1100 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 16.0px"
+  },
+  {
+   "name": "frame 1100: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "frame 1100 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 260.0 / 260.0 / 260.0 / 260.0"
+  },
+  {
+   "name": "frame 1100 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 1100 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 260.0 / 260.0 / 260.0 / 260.0"
+  },
+  {
+   "name": "frame 1100 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 1100 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+  },
+  {
+   "name": "frame 1100 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "frame 1100 details: message as wide as the form",
+   "ok": false,
+   "detail": "228 of 716px; 228 of 716px; 228 of 716px"
+  },
+  {
+   "name": "frame 1100 details: message under its row",
+   "ok": false,
+   "detail": "329px into the row; 329px into the row; 329px into the row"
+  },
+  {
+   "name": "window 320 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 152.8 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "window 320 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "window 320 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "window 320: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320: date fields still in view after opening",
+   "ok": false,
+   "detail": "scrolled 502px"
+  },
+  {
+   "name": "window 320 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 152.8 / 24.0 / 24.0"
+  },
+  {
+   "name": "window 320 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 257.6px"
+  },
+  {
+   "name": "window 320 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 152.8 / 24.0"
+  },
+  {
+   "name": "window 320 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 257.6px"
+  },
+  {
+   "name": "window 320 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,92.1 0.0×0.0); fb-2-name#1 (0.0,92.1 0.0×0.0); fb-2-email#2 (0.0,124.8 0.0×0.0); fb-2-email#3 (0.0,124.8 0.0×0.0)"
+  },
+  {
+   "name": "window 320 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "window 320 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 details: message under its row",
+   "ok": false,
+   "detail": "593px into the row; 468px into the row; 316px into the row"
+  },
+  {
+   "name": "window 360 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 186.4 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "window 360 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "window 360 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "window 360: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360: date fields still in view after opening",
+   "ok": false,
+   "detail": "scrolled 507px"
+  },
+  {
+   "name": "window 360 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 186.4 / 24.0 / 24.0"
+  },
+  {
+   "name": "window 360 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 324.8px"
+  },
+  {
+   "name": "window 360 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 186.4 / 24.0"
+  },
+  {
+   "name": "window 360 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 324.8px"
+  },
+  {
+   "name": "window 360 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,92.1 0.0×0.0); fb-2-name#1 (0.0,92.1 0.0×0.0); fb-2-email#2 (0.0,124.8 0.0×0.0); fb-2-email#3 (0.0,124.8 0.0×0.0)"
+  },
+  {
+   "name": "window 360 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "window 360 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 details: message under its row",
+   "ok": false,
+   "detail": "570px into the row; 445px into the row; 293px into the row"
+  },
+  {
+   "name": "window 390 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 211.6 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "window 390 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "window 390 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "window 390: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390: date fields still in view after opening",
+   "ok": false,
+   "detail": "scrolled 511px"
+  },
+  {
+   "name": "window 390 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 211.6 / 24.0 / 24.0"
+  },
+  {
+   "name": "window 390 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 375.3px"
+  },
+  {
+   "name": "window 390 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 211.6 / 24.0"
+  },
+  {
+   "name": "window 390 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 375.3px"
+  },
+  {
+   "name": "window 390 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,92.1 0.0×0.0); fb-2-name#1 (0.0,92.1 0.0×0.0); fb-2-email#2 (0.0,124.8 0.0×0.0); fb-2-email#3 (0.0,124.8 0.0×0.0)"
+  },
+  {
+   "name": "window 390 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "window 390 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 details: message under its row",
+   "ok": false,
+   "detail": "570px into the row; 445px into the row; 293px into the row"
+  },
+  {
+   "name": "window 430 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 245.2 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "window 430 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "window 430 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "window 430: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430: date fields still in view after opening",
+   "ok": false,
+   "detail": "scrolled 517px"
+  },
+  {
+   "name": "window 430 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 245.2 / 24.0 / 24.0"
+  },
+  {
+   "name": "window 430 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 442.4px"
+  },
+  {
+   "name": "window 430 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 245.2 / 24.0"
+  },
+  {
+   "name": "window 430 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 442.4px"
+  },
+  {
+   "name": "window 430 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,98.8 0.0×0.0); fb-2-email#3 (0.0,98.8 0.0×0.0)"
+  },
+  {
+   "name": "window 430 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "window 430 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 details: message under its row",
+   "ok": false,
+   "detail": "585px into the row; 459px into the row; 307px into the row"
+  },
+  {
+   "name": "window 768 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 768 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0×0.0); fb-2-out-btn#3 (0.0,78.3 0.0×0.0); fb-2-adults#4 (0.0,78.3 0.0×0.0); fb-2-adults#5 (0.0,78.3 0.0×0.0)"
+  },
+  {
+   "name": "window 768 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "window 768 dates: message as wide as the form",
+   "ok": false,
+   "detail": "162 of 572px"
+  },
+  {
+   "name": "window 768 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "window 768: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768: date fields still in view after opening",
+   "ok": false,
+   "detail": "scrolled 501px"
+  },
+  {
+   "name": "window 768 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 768 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 768 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 768 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 768 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+  },
+  {
+   "name": "window 768 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "window 768 details: message as wide as the form",
+   "ok": false,
+   "detail": "272 of 572px; 272 of 572px; 272 of 572px; 560 of 572px"
+  },
+  {
+   "name": "window 768 details: message under its row",
+   "ok": false,
+   "detail": "422px into the row; 422px into the row; 270px into the row"
+  },
+  {
+   "name": "window 1024 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1024 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0×0.0); fb-2-out-btn#3 (0.0,78.3 0.0×0.0); fb-2-adults#4 (0.0,78.3 0.0×0.0); fb-2-adults#5 (0.0,78.3 0.0×0.0)"
+  },
+  {
+   "name": "window 1024 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "window 1024 dates: message as wide as the form",
+   "ok": false,
+   "detail": "162 of 572px"
+  },
+  {
+   "name": "window 1024 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "window 1024: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 23px"
+  },
+  {
+   "name": "window 1024 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1024 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 1024 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1024 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 1024 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+  },
+  {
+   "name": "window 1024 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "window 1024 details: message as wide as the form",
+   "ok": false,
+   "detail": "272 of 572px; 272 of 572px; 272 of 572px; 560 of 572px"
+  },
+  {
+   "name": "window 1024 details: message under its row",
+   "ok": false,
+   "detail": "422px into the row; 422px into the row; 270px into the row"
+  },
+  {
+   "name": "window 1280 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1280 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0×0.0); fb-2-out-btn#3 (0.0,78.3 0.0×0.0); fb-2-adults#4 (0.0,78.3 0.0×0.0); fb-2-adults#5 (0.0,78.3 0.0×0.0)"
+  },
+  {
+   "name": "window 1280 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "window 1280 dates: message as wide as the form",
+   "ok": false,
+   "detail": "162 of 572px"
+  },
+  {
+   "name": "window 1280 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "window 1280: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280: date fields still in view after opening",
+   "ok": false,
+   "detail": "scrolled 487px"
+  },
+  {
+   "name": "window 1280 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1280 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 1280 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280: room cards readable and contained",
+   "ok": false,
+   "detail": "card 0: details column 112 px next to the image, card outside the results | card 1: details column 120 px next to the image, card outside the results"
+  },
+  {
+   "name": "window 1280 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1280 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 1280 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+  },
+  {
+   "name": "window 1280 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "window 1280 details: message as wide as the form",
+   "ok": false,
+   "detail": "278 of 572px; 278 of 572px; 278 of 572px"
+  },
+  {
+   "name": "window 1280 details: message under its row",
+   "ok": false,
+   "detail": "422px into the row; 422px into the row; 270px into the row"
+  },
+  {
+   "name": "window 1440 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1440 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0×0.0); fb-2-out-btn#3 (0.0,78.3 0.0×0.0); fb-2-adults#4 (0.0,78.3 0.0×0.0); fb-2-adults#5 (0.0,78.3 0.0×0.0)"
+  },
+  {
+   "name": "window 1440 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "window 1440 dates: message as wide as the form",
+   "ok": false,
+   "detail": "162 of 572px"
+  },
+  {
+   "name": "window 1440 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "window 1440: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440: date fields still in view after opening",
+   "ok": false,
+   "detail": "scrolled 491px"
+  },
+  {
+   "name": "window 1440 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1440 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 1440 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440: room cards readable and contained",
+   "ok": false,
+   "detail": "card 0: details column 112 px next to the image, card outside the results | card 1: details column 120 px next to the image, card outside the results"
+  },
+  {
+   "name": "window 1440 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1440 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 1440 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+  },
+  {
+   "name": "window 1440 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "window 1440 details: message as wide as the form",
+   "ok": false,
+   "detail": "278 of 572px; 278 of 572px; 278 of 572px"
+  },
+  {
+   "name": "window 1440 details: message under its row",
+   "ok": false,
+   "detail": "422px into the row; 422px into the row; 270px into the row"
+  },
+  {
+   "name": "window 1920 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1920 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0×0.0); fb-2-out-btn#3 (0.0,78.3 0.0×0.0); fb-2-adults#4 (0.0,78.3 0.0×0.0); fb-2-adults#5 (0.0,78.3 0.0×0.0)"
+  },
+  {
+   "name": "window 1920 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "window 1920 dates: message as wide as the form",
+   "ok": false,
+   "detail": "162 of 572px"
+  },
+  {
+   "name": "window 1920 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "window 1920: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920: date fields still in view after opening",
+   "ok": false,
+   "detail": "scrolled 491px"
+  },
+  {
+   "name": "window 1920 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1920 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 1920 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920: room cards readable and contained",
+   "ok": false,
+   "detail": "card 0: details column 112 px next to the image, card outside the results | card 1: details column 120 px next to the image, card outside the results"
+  },
+  {
+   "name": "window 1920 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1920 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 1920 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+  },
+  {
+   "name": "window 1920 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "window 1920 details: message as wide as the form",
+   "ok": false,
+   "detail": "278 of 572px; 278 of 572px; 278 of 572px"
+  },
+  {
+   "name": "window 1920 details: message under its row",
+   "ok": false,
+   "detail": "422px into the row; 422px into the row; 270px into the row"
+  },
+  {
+   "name": "azure 390 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 226.0 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure 390 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "azure 390 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "azure 390: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390: date fields still in view after opening",
+   "ok": false,
+   "detail": "scrolled 707px"
+  },
+  {
+   "name": "azure 390 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 226.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure 390 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 404.0px"
+  },
+  {
+   "name": "azure 390 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 226.0 / 24.0"
+  },
+  {
+   "name": "azure 390 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 404.0px"
+  },
+  {
+   "name": "azure 390 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,98.8 0.0×0.0); fb-2-email#3 (0.0,98.8 0.0×0.0)"
+  },
+  {
+   "name": "azure 390 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "azure 390 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 details: message under its row",
+   "ok": false,
+   "detail": "596px into the row; 471px into the row; 319px into the row"
+  },
+  {
+   "name": "azure 768 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 165.0 / 165.0 / 165.0 / 165.0"
+  },
+  {
+   "name": "azure 768 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0×0.0); fb-2-out-btn#3 (0.0,55.6 0.0×0.0); fb-2-adults#4 (0.0,55.6 0.0×0.0); fb-2-adults#5 (0.0,55.6 0.0×0.0)"
+  },
+  {
+   "name": "azure 768 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "azure 768 dates: message as wide as the form",
+   "ok": false,
+   "detail": "212 of 672px"
+  },
+  {
+   "name": "azure 768 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "azure 768: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 612px"
+  },
+  {
+   "name": "azure 768 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 165.0 / 165.0 / 165.0 / 165.0"
+  },
+  {
+   "name": "azure 768 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure 768 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 165.0 / 165.0 / 165.0 / 165.0"
+  },
+  {
+   "name": "azure 768 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure 768 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+  },
+  {
+   "name": "azure 768 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "azure 768 details: message as wide as the form",
+   "ok": false,
+   "detail": "272 of 672px; 272 of 672px; 272 of 672px; 560 of 672px"
+  },
+  {
+   "name": "azure 768 details: message under its row",
+   "ok": false,
+   "detail": "422px into the row; 422px into the row; 270px into the row"
+  },
+  {
+   "name": "azure 1024 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 332.0 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure 1024 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0×0.0); fb-2-out-btn#3 (0.0,55.6 0.0×0.0)"
+  },
+  {
+   "name": "azure 1024 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "azure 1024 dates: message as wide as the form",
+   "ok": false,
+   "detail": "200 of 416px"
+  },
+  {
+   "name": "azure 1024 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "azure 1024: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "azure 1024 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 332.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure 1024 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 616.0px"
+  },
+  {
+   "name": "azure 1024 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 332.0 / 24.0"
+  },
+  {
+   "name": "azure 1024 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 616.0px"
+  },
+  {
+   "name": "azure 1024 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+  },
+  {
+   "name": "azure 1024 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "azure 1024 details: message as wide as the form",
+   "ok": false,
+   "detail": "200 of 416px; 200 of 416px; 200 of 416px"
+  },
+  {
+   "name": "azure 1024 details: message under its row",
+   "ok": false,
+   "detail": "464px into the row; 464px into the row; 290px into the row"
+  },
+  {
+   "name": "azure 1280 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 460.0 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure 1280 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0×0.0); fb-2-out-btn#3 (0.0,55.6 0.0×0.0); fb-2-adults#4 (0.0,55.6 0.0×0.0); fb-2-adults#5 (0.0,55.6 0.0×0.0)"
+  },
+  {
+   "name": "azure 1280 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "azure 1280 dates: message as wide as the form",
+   "ok": false,
+   "detail": "206 of 544px"
+  },
+  {
+   "name": "azure 1280 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "azure 1280: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "azure 1280 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 460.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure 1280 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 872.0px"
+  },
+  {
+   "name": "azure 1280 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280: room cards readable and contained",
+   "ok": false,
+   "detail": "card 0: details column 77 px next to the image, \"Garden\" broken over two lines | card 1: details column 84 px next to the image"
+  },
+  {
+   "name": "azure 1280 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 460.0 / 24.0"
+  },
+  {
+   "name": "azure 1280 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 872.0px"
+  },
+  {
+   "name": "azure 1280 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+  },
+  {
+   "name": "azure 1280 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "azure 1280 details: message as wide as the form",
+   "ok": false,
+   "detail": "264 of 544px; 264 of 544px; 264 of 544px"
+  },
+  {
+   "name": "azure 1280 details: message under its row",
+   "ok": false,
+   "detail": "422px into the row; 422px into the row; 270px into the row"
+  },
+  {
+   "name": "azure 1440 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 464.0 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure 1440 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0×0.0); fb-2-out-btn#3 (0.0,55.6 0.0×0.0); fb-2-adults#4 (0.0,55.6 0.0×0.0); fb-2-adults#5 (0.0,55.6 0.0×0.0)"
+  },
+  {
+   "name": "azure 1440 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "azure 1440 dates: message as wide as the form",
+   "ok": false,
+   "detail": "208 of 548px"
+  },
+  {
+   "name": "azure 1440 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "azure 1440: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "azure 1440 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 464.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure 1440 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 880.0px"
+  },
+  {
+   "name": "azure 1440 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440: room cards readable and contained",
+   "ok": false,
+   "detail": "card 0: details column 81 px next to the image, \"Garden\" broken over two lines | card 1: details column 88 px next to the image"
+  },
+  {
+   "name": "azure 1440 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 464.0 / 24.0"
+  },
+  {
+   "name": "azure 1440 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 880.0px"
+  },
+  {
+   "name": "azure 1440 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+  },
+  {
+   "name": "azure 1440 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "azure 1440 details: message as wide as the form",
+   "ok": false,
+   "detail": "266 of 548px; 266 of 548px; 266 of 548px"
+  },
+  {
+   "name": "azure 1440 details: message under its row",
+   "ok": false,
+   "detail": "422px into the row; 422px into the row; 270px into the row"
+  },
+  {
+   "name": "azure 1920 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 464.0 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure 1920 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0×0.0); fb-2-out-btn#3 (0.0,55.6 0.0×0.0); fb-2-adults#4 (0.0,55.6 0.0×0.0); fb-2-adults#5 (0.0,55.6 0.0×0.0)"
+  },
+  {
+   "name": "azure 1920 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "azure 1920 dates: message as wide as the form",
+   "ok": false,
+   "detail": "208 of 548px"
+  },
+  {
+   "name": "azure 1920 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "azure 1920: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "azure 1920 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 464.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure 1920 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 880.0px"
+  },
+  {
+   "name": "azure 1920 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920: room cards readable and contained",
+   "ok": false,
+   "detail": "card 0: details column 81 px next to the image, \"Garden\" broken over two lines | card 1: details column 88 px next to the image"
+  },
+  {
+   "name": "azure 1920 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 464.0 / 24.0"
+  },
+  {
+   "name": "azure 1920 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 880.0px"
+  },
+  {
+   "name": "azure 1920 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+  },
+  {
+   "name": "azure 1920 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "azure 1920 details: message as wide as the form",
+   "ok": false,
+   "detail": "266 of 548px; 266 of 548px; 266 of 548px"
+  },
+  {
+   "name": "azure 1920 details: message under its row",
+   "ok": false,
+   "detail": "422px into the row; 422px into the row; 270px into the row"
+  },
+  {
+   "name": "two forms: no repeated ids",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "two forms: the calendar opens in its own form only",
+   "ok": true,
+   "detail": "A 1, B 0"
+  },
+  {
+   "name": "two forms: messages only in the form used",
+   "ok": true,
+   "detail": "A 1, B 0"
+  },
+  {
+   "name": "two forms: each has its own current step",
+   "ok": true,
+   "detail": "A 1, B 1"
+  },
+  {
+   "name": "two forms B: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "two forms B: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "two forms B: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "two forms: opening B leaves A closed",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "hidden tab shown: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "hidden tab shown: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "hidden tab shown: steps equally wide",
+   "ok": true,
+   "detail": "widths 295.0 / 295.0 / 295.0 / 295.0"
+  },
+  {
+   "name": "hidden tab shown: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 16.0px"
+  },
+  {
+   "name": "hidden tab shown: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "hidden tab shown: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 16px"
+  },
+  {
+   "name": "search 320: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 320: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 320: a message is shown",
+   "ok": false,
+   "detail": "no message"
+  },
+  {
+   "name": "search 320: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "search 320: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 320: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "search 360: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 360: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 360: a message is shown",
+   "ok": false,
+   "detail": "no message"
+  },
+  {
+   "name": "search 360: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "search 360: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 360: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "search 420: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 420: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 420: a message is shown",
+   "ok": false,
+   "detail": "no message"
+  },
+  {
+   "name": "search 420: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "search 420: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 420: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "search 480: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 480: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 480: a message is shown",
+   "ok": false,
+   "detail": "no message"
+  },
+  {
+   "name": "search 480: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "search 480: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 480: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "search 560: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 560: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 560: a message is shown",
+   "ok": false,
+   "detail": "no message"
+  },
+  {
+   "name": "search 560: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "search 560: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 560: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "search 640: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 640: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 640: a message is shown",
+   "ok": false,
+   "detail": "no message"
+  },
+  {
+   "name": "search 640: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "search 640: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 640: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "search 720: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 720: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 720: a message is shown",
+   "ok": false,
+   "detail": "no message"
+  },
+  {
+   "name": "search 720: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 16.0px"
+  },
+  {
+   "name": "search 720: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 720: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "search 900: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 900: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 900: a message is shown",
+   "ok": false,
+   "detail": "no message"
+  },
+  {
+   "name": "search 900: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 16.0px"
+  },
+  {
+   "name": "search 900: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 900: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "search 1100: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 1100: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 1100: a message is shown",
+   "ok": false,
+   "detail": "no message"
+  },
+  {
+   "name": "search 1100: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 16.0px"
+  },
+  {
+   "name": "search 1100: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 1100: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "box 320: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 320: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 320: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "box 320: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 320: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "box 360: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 360: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 360: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "box 360: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 360: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "box 420: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 420: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 420: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "box 420: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 420: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "box 480: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 480: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 480: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "box 480: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 480: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "box 560: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 560: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 560: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "box 560: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 560: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "content-sized row: the form keeps a usable width",
+   "ok": true,
+   "detail": "689px"
+  },
+  {
+   "name": "content-sized row: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "content-sized row: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}

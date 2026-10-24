@@ -1,0 +1,3730 @@
+{
+ "label": "after",
+ "results": [
+  {
+   "name": "frame 320 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 65.0 / 65.0 / 65.0 / 65.0"
+  },
+  {
+   "name": "frame 320 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 89.2px"
+  },
+  {
+   "name": "frame 320: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "frame 320 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 65.0 / 65.0 / 65.0 / 65.0"
+  },
+  {
+   "name": "frame 320 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 320 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 65.0 / 65.0 / 65.0 / 65.0"
+  },
+  {
+   "name": "frame 320 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 320 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 320 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 75.0 / 75.0 / 75.0 / 75.0"
+  },
+  {
+   "name": "frame 360 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 89.2px"
+  },
+  {
+   "name": "frame 360: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "frame 360 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 75.0 / 75.0 / 75.0 / 75.0"
+  },
+  {
+   "name": "frame 360 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 360 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 75.0 / 75.0 / 75.0 / 75.0"
+  },
+  {
+   "name": "frame 360 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 360 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 360 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 90.0 / 90.0 / 90.0 / 90.0"
+  },
+  {
+   "name": "frame 420 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 89.2px"
+  },
+  {
+   "name": "frame 420: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "frame 420 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 90.0 / 90.0 / 90.0 / 90.0"
+  },
+  {
+   "name": "frame 420 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 420 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 90.0 / 90.0 / 90.0 / 90.0"
+  },
+  {
+   "name": "frame 420 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 420 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 420 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 105.0 / 105.0 / 105.0 / 105.0"
+  },
+  {
+   "name": "frame 480 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 68.6px"
+  },
+  {
+   "name": "frame 480: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "frame 480 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 105.0 / 105.0 / 105.0 / 105.0"
+  },
+  {
+   "name": "frame 480 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 480 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 105.0 / 105.0 / 105.0 / 105.0"
+  },
+  {
+   "name": "frame 480 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 480 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 480 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 125.0 / 125.0 / 125.0 / 125.0"
+  },
+  {
+   "name": "frame 560 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 68.6px"
+  },
+  {
+   "name": "frame 560: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "frame 560 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 125.0 / 125.0 / 125.0 / 125.0"
+  },
+  {
+   "name": "frame 560 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 560 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 125.0 / 125.0 / 125.0 / 125.0"
+  },
+  {
+   "name": "frame 560 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 560 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 560 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 145.0 / 145.0 / 145.0 / 145.0"
+  },
+  {
+   "name": "frame 640 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 68.6px"
+  },
+  {
+   "name": "frame 640: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "frame 640 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 145.0 / 145.0 / 145.0 / 145.0"
+  },
+  {
+   "name": "frame 640 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 640 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 145.0 / 145.0 / 145.0 / 145.0"
+  },
+  {
+   "name": "frame 640 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 640 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 640 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 165.0 / 165.0 / 165.0 / 165.0"
+  },
+  {
+   "name": "frame 720 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 68.6px"
+  },
+  {
+   "name": "frame 720: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "frame 720 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 165.0 / 165.0 / 165.0 / 165.0"
+  },
+  {
+   "name": "frame 720 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 720 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 165.0 / 165.0 / 165.0 / 165.0"
+  },
+  {
+   "name": "frame 720 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 720 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 720 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 210.0 / 210.0 / 210.0 / 210.0"
+  },
+  {
+   "name": "frame 900 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 68.6px"
+  },
+  {
+   "name": "frame 900: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "frame 900 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 210.0 / 210.0 / 210.0 / 210.0"
+  },
+  {
+   "name": "frame 900 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 900 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 210.0 / 210.0 / 210.0 / 210.0"
+  },
+  {
+   "name": "frame 900 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 900 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 900 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 260.0 / 260.0 / 260.0 / 260.0"
+  },
+  {
+   "name": "frame 1100 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 68.6px"
+  },
+  {
+   "name": "frame 1100: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "frame 1100 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 260.0 / 260.0 / 260.0 / 260.0"
+  },
+  {
+   "name": "frame 1100 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 1100 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 260.0 / 260.0 / 260.0 / 260.0"
+  },
+  {
+   "name": "frame 1100 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "frame 1100 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "frame 1100 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 56.2 / 56.2 / 56.2 / 56.2"
+  },
+  {
+   "name": "window 320 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 109.7px"
+  },
+  {
+   "name": "window 320: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 94px"
+  },
+  {
+   "name": "window 320 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 56.2 / 56.2 / 56.2 / 56.2"
+  },
+  {
+   "name": "window 320 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 320 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 56.2 / 56.2 / 56.2 / 56.2"
+  },
+  {
+   "name": "window 320 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 320 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 320 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 64.6 / 64.6 / 64.6 / 64.6"
+  },
+  {
+   "name": "window 360 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 89.2px"
+  },
+  {
+   "name": "window 360: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 79px"
+  },
+  {
+   "name": "window 360 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 64.6 / 64.6 / 64.6 / 64.6"
+  },
+  {
+   "name": "window 360 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 360 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 64.6 / 64.6 / 64.6 / 64.6"
+  },
+  {
+   "name": "window 360 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 360 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 360 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 70.9 / 70.9 / 70.9 / 70.9"
+  },
+  {
+   "name": "window 390 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 89.2px"
+  },
+  {
+   "name": "window 390: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 65px"
+  },
+  {
+   "name": "window 390 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 70.9 / 70.9 / 70.9 / 70.9"
+  },
+  {
+   "name": "window 390 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 390 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 70.9 / 70.9 / 70.9 / 70.9"
+  },
+  {
+   "name": "window 390 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 390 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 390 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 79.3 / 79.3 / 79.3 / 79.3"
+  },
+  {
+   "name": "window 430 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 89.2px"
+  },
+  {
+   "name": "window 430: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 70px"
+  },
+  {
+   "name": "window 430 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 79.3 / 79.3 / 79.3 / 79.3"
+  },
+  {
+   "name": "window 430 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 430 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 79.3 / 79.3 / 79.3 / 79.3"
+  },
+  {
+   "name": "window 430 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 430 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 430 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 768 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 68.6px"
+  },
+  {
+   "name": "window 768: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 226px"
+  },
+  {
+   "name": "window 768 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 768 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 768 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 768 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 768 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 768 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1024 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 68.6px"
+  },
+  {
+   "name": "window 1024: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 267px"
+  },
+  {
+   "name": "window 1024 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1024 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 1024 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1024 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 1024 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1024 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1280 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 68.6px"
+  },
+  {
+   "name": "window 1280: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 257px"
+  },
+  {
+   "name": "window 1280 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1280 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 1280 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1280 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 1280 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1280 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1440 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 68.6px"
+  },
+  {
+   "name": "window 1440: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 215px"
+  },
+  {
+   "name": "window 1440 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1440 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 1440 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1440 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 1440 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1440 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1920 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 68.6px"
+  },
+  {
+   "name": "window 1920: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 215px"
+  },
+  {
+   "name": "window 1920 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1920 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 1920 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 140.0 / 140.0 / 140.0 / 140.0"
+  },
+  {
+   "name": "window 1920 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "window 1920 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "window 1920 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 74.5 / 74.5 / 74.5 / 74.5"
+  },
+  {
+   "name": "azure 390 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 89.2px"
+  },
+  {
+   "name": "azure 390: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 211px"
+  },
+  {
+   "name": "azure 390 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 74.5 / 74.5 / 74.5 / 74.5"
+  },
+  {
+   "name": "azure 390 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure 390 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 74.5 / 74.5 / 74.5 / 74.5"
+  },
+  {
+   "name": "azure 390 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure 390 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 390 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 165.0 / 165.0 / 165.0 / 165.0"
+  },
+  {
+   "name": "azure 768 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 68.6px"
+  },
+  {
+   "name": "azure 768: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 278px"
+  },
+  {
+   "name": "azure 768 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 165.0 / 165.0 / 165.0 / 165.0"
+  },
+  {
+   "name": "azure 768 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure 768 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 165.0 / 165.0 / 165.0 / 165.0"
+  },
+  {
+   "name": "azure 768 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure 768 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 768 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 101.0 / 101.0 / 101.0 / 101.0"
+  },
+  {
+   "name": "azure 1024 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 68.6px"
+  },
+  {
+   "name": "azure 1024: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "azure 1024 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 101.0 / 101.0 / 101.0 / 101.0"
+  },
+  {
+   "name": "azure 1024 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure 1024 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 101.0 / 101.0 / 101.0 / 101.0"
+  },
+  {
+   "name": "azure 1024 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure 1024 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1024 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 133.0 / 133.0 / 133.0 / 133.0"
+  },
+  {
+   "name": "azure 1280 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 68.6px"
+  },
+  {
+   "name": "azure 1280: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "azure 1280 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 133.0 / 133.0 / 133.0 / 133.0"
+  },
+  {
+   "name": "azure 1280 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure 1280 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 133.0 / 133.0 / 133.0 / 133.0"
+  },
+  {
+   "name": "azure 1280 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure 1280 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1280 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 134.0 / 134.0 / 134.0 / 134.0"
+  },
+  {
+   "name": "azure 1440 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 68.6px"
+  },
+  {
+   "name": "azure 1440: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "azure 1440 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 134.0 / 134.0 / 134.0 / 134.0"
+  },
+  {
+   "name": "azure 1440 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure 1440 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 134.0 / 134.0 / 134.0 / 134.0"
+  },
+  {
+   "name": "azure 1440 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure 1440 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1440 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 134.0 / 134.0 / 134.0 / 134.0"
+  },
+  {
+   "name": "azure 1920 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 68.6px"
+  },
+  {
+   "name": "azure 1920: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "azure 1920 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 134.0 / 134.0 / 134.0 / 134.0"
+  },
+  {
+   "name": "azure 1920 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure 1920 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 134.0 / 134.0 / 134.0 / 134.0"
+  },
+  {
+   "name": "azure 1920 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure 1920 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure 1920 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "two forms: no repeated ids",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "two forms: the calendar opens in its own form only",
+   "ok": true,
+   "detail": "A 1, B 0"
+  },
+  {
+   "name": "two forms: messages only in the form used",
+   "ok": true,
+   "detail": "A 1, B 0"
+  },
+  {
+   "name": "two forms: each has its own current step",
+   "ok": true,
+   "detail": "A 1, B 1"
+  },
+  {
+   "name": "two forms B: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 16.0px"
+  },
+  {
+   "name": "two forms B: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "two forms B: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "two forms: opening B leaves A closed",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "hidden tab shown: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "hidden tab shown: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "hidden tab shown: steps equally wide",
+   "ok": true,
+   "detail": "widths 295.0 / 295.0 / 295.0 / 295.0"
+  },
+  {
+   "name": "hidden tab shown: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 16.0px"
+  },
+  {
+   "name": "hidden tab shown: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "hidden tab shown: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 297px"
+  },
+  {
+   "name": "search 320: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 320: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 320: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 320: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 320: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 320: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 320: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 320: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 16.0px"
+  },
+  {
+   "name": "search 320: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 320: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "search 360: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 360: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 360: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 360: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 360: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 360: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 360: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 360: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 16.0px"
+  },
+  {
+   "name": "search 360: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 360: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "search 420: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 420: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 420: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 420: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 420: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 420: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 420: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 420: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 16.0px"
+  },
+  {
+   "name": "search 420: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 420: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "search 480: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 480: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 480: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 480: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 480: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 480: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 480: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 480: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 16.0px"
+  },
+  {
+   "name": "search 480: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 480: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "search 560: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 560: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 560: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 560: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 560: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 560: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 560: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 560: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 16.0px"
+  },
+  {
+   "name": "search 560: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 560: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "search 640: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 640: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 640: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 640: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 640: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 640: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 640: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 640: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 16.0px"
+  },
+  {
+   "name": "search 640: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 640: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "search 720: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 720: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 720: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 720: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 720: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 720: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 720: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 720: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 16.0px"
+  },
+  {
+   "name": "search 720: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 720: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "search 900: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 900: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 900: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 900: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 900: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 900: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 900: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 900: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 16.0px"
+  },
+  {
+   "name": "search 900: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 900: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "search 1100: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 1100: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 1100: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 1100: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 1100: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 1100: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 1100: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 1100: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 16.0px"
+  },
+  {
+   "name": "search 1100: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "search 1100: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "box 320: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 320: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 320: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 320: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 12.0px"
+  },
+  {
+   "name": "box 320: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 320: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "box 360: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 360: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 360: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 360: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 12.0px"
+  },
+  {
+   "name": "box 360: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 360: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "box 420: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 420: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 420: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 420: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 12.0px"
+  },
+  {
+   "name": "box 420: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 420: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "box 480: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 480: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 480: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 480: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 12.0px"
+  },
+  {
+   "name": "box 480: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 480: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "box 560: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 560: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 560: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 560: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 12.0px"
+  },
+  {
+   "name": "box 560: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "box 560: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "fxl-stacked in 1100px: 1 column(s)",
+   "ok": true,
+   "detail": "got 1"
+  },
+  {
+   "name": "fxl-stacked in 1100px: cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fxl-stacked in 640px: 1 column(s)",
+   "ok": true,
+   "detail": "got 1"
+  },
+  {
+   "name": "fxl-stacked in 640px: cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fxl-horizontal in 640px: 3 column(s)",
+   "ok": true,
+   "detail": "got 3"
+  },
+  {
+   "name": "fxl-horizontal in 640px: cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "fxl-horizontal in 420px: 1 column(s)",
+   "ok": true,
+   "detail": "got 1"
+  },
+  {
+   "name": "fxl-horizontal in 420px: cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "content-sized row: the form keeps a usable width",
+   "ok": true,
+   "detail": "689px"
+  },
+  {
+   "name": "content-sized row: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "content-sized row: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}
