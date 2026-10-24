@@ -27,6 +27,8 @@
 	--fb-focus: var(--fb-primary);
 	--fb-secondary: var(--fb-primary);
 	--fb-control-h: 46px;
+	--fb-check-size: 18px;
+	--fb-control-border: color-mix(in srgb, var(--fb-text) 55%, var(--fb-field-bg));
 	--fb-step-active: var(--fb-primary);
 	--fb-step-done: var(--fb-primary);
 	--fb-step-inactive: var(--fb-border);
@@ -656,12 +658,126 @@
 	background: color-mix(in srgb, var(--fb-primary) 6%, transparent);
 }
 
-.flexo-booking .fb-choice input {
-	width: 20px;
-	height: 20px;
-	margin: 1px 0 0;
+.flexo-booking .fb-choice {
+	--fb-check-size: 20px;
+}
+
+/* Checkboxes and radios (terms, consent, invoice, payment method, change
+   requests), drawn by construction like the admin ones: the radio dot is a
+   background centred on the control's box, the checkbox tick a ::before that
+   covers the inner box (inset 0) with the tick masked at its centre. Themes and the
+   Elementor kit often restyle every checkbox and radio on a site
+   (appearance: none plus their own ::before/::after, borders, padding,
+   line-height), and browsers draw native controls differently and not always
+   centred at 125 % zoom; here every property that matters is set, and
+   ".flexo-booking" twice lifts these rules above the usual theme and kit
+   rules (up to three classes). Colours follow the form's appearance. */
+.flexo-booking.flexo-booking :is(.fb-terms, .fb-check, .fb-choice) > input:is([type="checkbox"], [type="radio"]) {
+	--fb-check-fill: var(--fb-primary);
+	position: relative;
+	display: inline-block;
 	flex: 0 0 auto;
-	accent-color: var(--fb-primary);
+	float: none;
+	box-sizing: border-box;
+	width: var(--fb-check-size);
+	min-width: var(--fb-check-size);
+	max-width: none;
+	height: var(--fb-check-size);
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	border: 2px solid var(--fb-control-border);
+	border-radius: 50%;
+	background-color: var(--fb-field-bg);
+	background-image: none;
+	background-origin: border-box;
+	background-clip: border-box;
+	background-position: center;
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	box-shadow: none;
+	outline: 0;
+	opacity: 1;
+	line-height: normal;
+	vertical-align: middle;
+	-webkit-appearance: none;
+	appearance: none;
+	transform: none;
+	cursor: pointer;
+	transition: background-color 0.15s, border-color 0.15s;
+}
+
+.flexo-booking.flexo-booking :is(.fb-terms, .fb-check, .fb-choice) > input:is([type="checkbox"], [type="radio"])[hidden] {
+	display: none;
+}
+
+.flexo-booking.flexo-booking :is(.fb-terms, .fb-check, .fb-choice) > input[type="checkbox"] {
+	border-radius: 4px;
+}
+
+/* (:checked or not) lifts these above themes' :checked::before / ::after rules. */
+.flexo-booking.flexo-booking :is(.fb-terms, .fb-check, .fb-choice) > input:is([type="checkbox"], [type="radio"]):is(:checked, :not(:checked))::after,
+.flexo-booking.flexo-booking :is(.fb-terms, .fb-check, .fb-choice) > input[type="radio"]:is(:checked, :not(:checked))::before {
+	content: none;
+	display: none;
+}
+
+/* Next to text that starts at the top: centred on the first line. */
+.flexo-booking.flexo-booking :is(.fb-terms, .fb-choice) > input:is([type="checkbox"], [type="radio"]) {
+	margin-top: 3px;
+	margin-top: max(0px, calc((1lh - var(--fb-check-size)) / 2));
+	font: inherit;
+	line-height: inherit;
+}
+
+.flexo-booking.flexo-booking :is(.fb-terms, .fb-check, .fb-choice) > input:is([type="checkbox"], [type="radio"]):hover:not(:disabled) {
+	border-color: var(--fb-check-fill);
+}
+
+.flexo-booking.flexo-booking :is(.fb-terms, .fb-check, .fb-choice) > input:is([type="checkbox"], [type="radio"]):focus-visible {
+	outline: 2px solid var(--fb-focus);
+	outline-offset: 2px;
+}
+
+.flexo-booking.flexo-booking :is(.fb-terms, .fb-check, .fb-choice) > input[type="radio"]:checked {
+	border-color: var(--fb-check-fill);
+	background-image: radial-gradient(circle at center, var(--fb-check-fill) 0 calc(var(--fb-check-size) * 0.22 - 0.5px), transparent calc(var(--fb-check-size) * 0.22 + 0.5px));
+}
+
+.flexo-booking.flexo-booking :is(.fb-terms, .fb-check, .fb-choice) > input[type="checkbox"]:checked {
+	border-color: var(--fb-check-fill);
+	background-color: var(--fb-check-fill);
+}
+
+/* The tick: a layer over the control's inner box (inset 0) with the tick masked in its centre, in the colour that reads on the main colour. */
+.flexo-booking.flexo-booking :is(.fb-terms, .fb-check, .fb-choice) > input[type="checkbox"]:is(:checked, :not(:checked))::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	display: block;
+	float: none;
+	box-sizing: border-box;
+	width: auto;
+	height: auto;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: var(--fb-primary-contrast);
+	box-shadow: none;
+	opacity: 0;
+	transform: none;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.8 8.3l2.7 2.6 5.7-5.8' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 86% 86% no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.8 8.3l2.7 2.6 5.7-5.8' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 86% 86% no-repeat;
+}
+
+.flexo-booking.flexo-booking :is(.fb-terms, .fb-check, .fb-choice) > input[type="checkbox"]:checked::before {
+	opacity: 1;
+}
+
+.flexo-booking.flexo-booking :is(.fb-terms, .fb-check, .fb-choice) > input:is([type="checkbox"], [type="radio"]):disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
 }
 
 .flexo-booking .fb-choice__text {
@@ -967,11 +1083,8 @@
 		align-items: center;
 	}
 
-	.flexo-booking .fb-terms input[type="checkbox"],
-	.flexo-booking .fb-check input {
-		width: 22px;
-		height: 22px;
-		flex: 0 0 auto;
+	.flexo-booking :is(.fb-terms, .fb-check, .fb-choice) {
+		--fb-check-size: 22px;
 	}
 
 	.flexo-booking .fb-promo__row {

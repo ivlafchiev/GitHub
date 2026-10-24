@@ -153,6 +153,14 @@ body.flexo-admin-ui {
 	--fx-control-h: 36px;
 	--fx-control-h-sm: 32px;
 	--fx-control-h-lg: 40px;
+	/* Checkbox and radio: box, border, radio dot, checkbox tick (integer pixels). */
+	--fx-check-size: 18px;
+	--fx-check-border: 2px;
+	--fx-check-dot: 8px;
+	--fx-check-tick: 12px;
+	/* Offset that centres the control on a 20 px first line, and the indent of text after it. */
+	--fx-check-offset: max(0px, calc((var(--fx-leading-md) - var(--fx-check-size)) / 2));
+	--fx-check-indent: calc(var(--fx-check-size) + var(--fx-space-2));
 
 	/* Motion and layers (all below WordPress's admin bar and menus). */
 	--fx-ease: cubic-bezier(0.2, 0, 0, 1);
@@ -432,74 +440,105 @@ body.flexo-admin-ui {
 	cursor: pointer;
 }
 
-/* Checkbox and radio: 16 px, aligned with the first line of their label. */
-:where(.flexo-admin-ui :is(.wrap, .fx-layer)) :is(input[type="checkbox"], input[type="radio"]) {
+/* Checkbox and radio, drawn by construction. The dot and the tick are
+   backgrounds centred on the control's own box (border box, so the border's
+   rounding at 125 % or 150 % cannot move them), and the control has no
+   ::before or ::after: WordPress core, themes and other plugins style
+   input:checked::before (float, display, margins, line-height), which used to
+   push our dot off-centre. Every property that matters is set here, on
+   body.flexo-admin-ui, so their usual rules (up to .wp-core-ui … :checked::before)
+   don't apply. Size, border and dot come from tokens (18 / 2 / 8 px). */
+body.flexo-admin-ui :is(.wrap, .fx-layer) input:is([type="checkbox"], [type="radio"]) {
+	--fx-check-fill: var(--fx-primary);
+	display: inline-block;
 	flex: 0 0 auto;
-	width: 16px;
-	min-width: 16px;
-	height: 16px;
+	float: none;
+	box-sizing: border-box;
+	width: var(--fx-check-size);
+	min-width: var(--fx-check-size);
+	height: var(--fx-check-size);
+	min-height: 0;
 	margin: 0 var(--fx-space-2) 0 0;
-	border: 1.5px solid var(--fx-border-control);
-	background: var(--fx-surface);
+	padding: 0;
+	border: var(--fx-check-border) solid var(--fx-border-control);
+	border-radius: 50%;
+	background-color: var(--fx-surface);
+	background-image: none;
+	background-origin: border-box;
+	background-clip: border-box;
+	background-position: center;
+	background-repeat: no-repeat;
 	box-shadow: none;
-	vertical-align: -3px;
-	transition: background-color var(--fx-fast) var(--fx-ease), border-color var(--fx-fast) var(--fx-ease);
+	line-height: normal;
+	vertical-align: middle;
+	-webkit-appearance: none;
+	appearance: none;
+	transform: none;
+	cursor: pointer;
+	transition: background-color var(--fx-fast) var(--fx-ease), border-color var(--fx-fast) var(--fx-ease), box-shadow var(--fx-fast) var(--fx-ease);
 }
 
-:where(.flexo-admin-ui :is(.wrap, .fx-layer)) input[type="checkbox"] {
+body.flexo-admin-ui :is(.wrap, .fx-layer) input:is([type="checkbox"], [type="radio"])[hidden] {
+	display: none;
+}
+
+body.flexo-admin-ui :is(.wrap, .fx-layer) input[type="checkbox"] {
 	border-radius: 4px;
 }
 
-:where(.flexo-admin-ui :is(.wrap, .fx-layer)) :is(input[type="checkbox"], input[type="radio"]):hover {
+/* (:checked or not) lifts these above core's and themes' :checked::before rules. */
+body.flexo-admin-ui :is(.wrap, .fx-layer) input:is([type="checkbox"], [type="radio"]):is(:checked, :not(:checked))::before,
+body.flexo-admin-ui :is(.wrap, .fx-layer) input:is([type="checkbox"], [type="radio"]):is(:checked, :not(:checked))::after {
+	content: none;
+	display: none;
+}
+
+body.flexo-admin-ui :is(.wrap, .fx-layer) input:is([type="checkbox"], [type="radio"]):hover:not(:disabled) {
 	border-color: var(--fx-primary);
 }
 
-:where(.flexo-admin-ui :is(.wrap, .fx-layer)) :is(input[type="checkbox"], input[type="radio"]):focus {
-	border-color: var(--fx-border-control);
-	box-shadow: none;
+body.flexo-admin-ui :is(.wrap, .fx-layer) input:is([type="checkbox"], [type="radio"]):focus {
 	outline: 0;
+	box-shadow: none;
 }
 
-:where(.flexo-admin-ui :is(.wrap, .fx-layer)) :is(input[type="checkbox"], input[type="radio"]):focus-visible {
+body.flexo-admin-ui :is(.wrap, .fx-layer) input:is([type="checkbox"], [type="radio"]):focus-visible {
 	border-color: var(--fx-primary);
 	box-shadow: var(--fx-ring);
 }
 
-:where(.flexo-admin-ui :is(.wrap, .fx-layer)) input[type="checkbox"]:checked {
-	border-color: var(--fx-primary);
-	background: var(--fx-primary);
+/* Radio: a dot of --fx-check-dot, centred (soft 1 px edge so it renders round at any zoom). */
+body.flexo-admin-ui :is(.wrap, .fx-layer) input[type="radio"]:checked {
+	border-color: var(--fx-check-fill);
+	background-image: radial-gradient(circle at center, var(--fx-check-fill) 0 calc(var(--fx-check-dot) / 2 - 0.5px), transparent calc(var(--fx-check-dot) / 2 + 0.5px));
+	background-size: 100% 100%;
 }
 
-:where(.flexo-admin-ui :is(.wrap, .fx-layer)) input[type="checkbox"]:checked::before {
-	content: "";
-	float: none;
-	display: block;
-	width: 100%;
-	height: 100%;
-	margin: 0;
-	background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.8 8.3l2.7 2.6 5.7-5.8' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 12px 12px no-repeat;
+/* Checkbox: filled, with a white tick whose bounding box is centred in its 16 × 16 view box. */
+body.flexo-admin-ui :is(.wrap, .fx-layer) input[type="checkbox"]:checked {
+	border-color: var(--fx-check-fill);
+	background-color: var(--fx-check-fill);
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.8 8.3l2.7 2.6 5.7-5.8' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+	background-size: var(--fx-check-tick) var(--fx-check-tick);
 }
 
-:where(.flexo-admin-ui :is(.wrap, .fx-layer)) input[type="radio"]:checked {
-	border-color: var(--fx-primary);
-	background: var(--fx-surface);
+body.flexo-admin-ui :is(.wrap, .fx-layer) input:is([type="checkbox"], [type="radio"]):checked:hover:not(:disabled) {
+	--fx-check-fill: var(--fx-primary-hover);
 }
 
-:where(.flexo-admin-ui :is(.wrap, .fx-layer)) input[type="radio"]:checked::before {
-	content: "";
-	float: none;
-	display: block;
-	width: 8px;
-	height: 8px;
-	margin: 2.5px auto 0;
-	border-radius: 50%;
-	background: var(--fx-primary);
-}
-
-:where(.flexo-admin-ui :is(.wrap, .fx-layer)) :is(input[type="checkbox"], input[type="radio"]):disabled {
+body.flexo-admin-ui :is(.wrap, .fx-layer) input:is([type="checkbox"], [type="radio"]):disabled {
+	--fx-check-fill: var(--fx-gray-400);
 	border-color: var(--fx-gray-300);
-	background: var(--fx-surface-muted);
+	background-color: var(--fx-surface-muted);
 	cursor: not-allowed;
+}
+
+body.flexo-admin-ui :is(.wrap, .fx-layer) input:is([type="checkbox"], [type="radio"]):disabled:checked {
+	border-color: var(--fx-check-fill);
+}
+
+body.flexo-admin-ui :is(.wrap, .fx-layer) input[type="checkbox"]:disabled:checked {
+	background-color: var(--fx-check-fill);
 }
 
 /* Colour input (used inside the colour field). */
@@ -628,7 +667,7 @@ body.flexo-admin-ui {
 }
 
 .flexo-admin-ui .wrap :is(.fx-check, .fx-checks > label, .flexo-inline-check) > :is(input[type="checkbox"], input[type="radio"]) {
-	margin: 2px 0 0;
+	margin: var(--fx-check-offset) 0 0;
 }
 
 /* 3.2 Buttons ----------------------------------------------------------- */
@@ -1459,12 +1498,12 @@ body.flexo-admin-ui {
 
 .flexo-admin-ui .wrap p > label:only-child:not([class]) > input:is([type="checkbox"], [type="radio"]):first-child {
 	flex: 0 0 auto;
-	margin: 2px 0 0;
+	margin: var(--fx-check-offset) 0 0;
 }
 
 .flexo-admin-ui .wrap .flexo-choice-indent,
 .flexo-admin-ui .wrap .form-table td > .flexo-choice-indent {
-	margin-left: 24px;
+	margin-left: var(--fx-check-indent);
 }
 
 /* Lists of choices in a settings row: one per line. */
@@ -1472,14 +1511,14 @@ body.flexo-admin-ui {
 .flexo-admin-ui .wrap .form-table td fieldset > label.flexo-feature-choice {
 	display: block;
 	margin: 0 0 var(--fx-space-2);
-	padding-left: 24px;
+	padding-left: var(--fx-check-indent);
 	line-height: var(--fx-leading-md);
 }
 
 .flexo-admin-ui .wrap .form-table td > label.flexo-feature-choice > input:is([type="checkbox"], [type="radio"]),
 .flexo-admin-ui .wrap .form-table td fieldset > label.flexo-feature-choice > input:is([type="checkbox"], [type="radio"]) {
 	float: left;
-	margin: 2px 0 0 -24px;
+	margin: var(--fx-check-offset) 0 0 calc(-1 * var(--fx-check-indent));
 }
 
 .flexo-admin-ui .wrap .form-table tr[hidden] {
@@ -2582,11 +2621,13 @@ body.flexo-admin-ui {
 	cursor: pointer;
 }
 
-.flexo-admin-ui :is(.wrap, .fx-layer) .fx-seg__opt > input {
+.flexo-admin-ui :is(.wrap, .fx-layer) .fx-seg__opt > input[type="radio"] {
 	position: absolute;
 	width: 1px;
+	min-width: 0;
 	height: 1px;
 	margin: 0;
+	border: 0;
 	opacity: 0;
 	pointer-events: none;
 }
@@ -2754,12 +2795,12 @@ body.flexo-admin-ui {
 	box-shadow: inset 0 0 0 1px var(--fx-primary), var(--fx-ring);
 }
 
-/* The radio sits on the first line of the title (line height 20 → offset 2). */
+/* The radio sits on the first line of the title (20 px line). */
 .flexo-admin-ui .wrap :is(.fx-choice, .flexo-choice-card, .flexo-appearance__modes .flexo-feature-choice) > input:is([type="radio"], [type="checkbox"]) {
 	position: static;
 	grid-row: 1 / span 3;
 	grid-column: 1;
-	margin: 2px 0 0;
+	margin: var(--fx-check-offset) 0 0;
 }
 
 .flexo-admin-ui .wrap :is(.fx-choice, .flexo-choice-card, .flexo-appearance__modes .flexo-feature-choice) > :not(input) {
@@ -2822,43 +2863,43 @@ body.flexo-admin-ui {
 	cursor: pointer;
 }
 
+/* The knob is a background layer of the track: a square tile as tall as the
+   track with a white circle in its middle, at the left end (off) or the right
+   end (on). It is centred vertically by construction and keeps the same gap
+   on every side at any zoom (a positioned ::after rounded differently at
+   125 %). A thin ring of the same tile gives it an edge on light tracks. */
 .flexo-admin-ui :is(.wrap, .fx-layer) .flexo-switch__track {
+	--fx-switch-w: 36px;
+	--fx-switch-h: 20px;
+	--fx-switch-knob: 16px;
+	--fx-switch-color: var(--fx-border-control);
 	position: relative;
 	flex: 0 0 auto;
-	width: 36px;
-	height: 20px;
+	box-sizing: border-box;
+	width: var(--fx-switch-w);
+	height: var(--fx-switch-h);
 	border-radius: var(--fx-radius-full);
-	background: var(--fx-border-control);
-	transition: background-color var(--fx-fast) var(--fx-ease);
-}
-
-.flexo-admin-ui :is(.wrap, .fx-layer) .flexo-switch__track::after {
-	content: "";
-	position: absolute;
-	top: 2px;
-	left: 2px;
-	width: 16px;
-	height: 16px;
-	border-radius: 50%;
-	background: #fff;
-	box-shadow: 0 1px 2px rgba(17, 26, 36, 0.3);
-	transition: transform var(--fx-fast) var(--fx-ease);
+	background-color: var(--fx-switch-color);
+	background-image:
+		radial-gradient(circle at center, #fff 0 calc(var(--fx-switch-knob) / 2 - 0.5px), transparent calc(var(--fx-switch-knob) / 2 + 0.5px)),
+		radial-gradient(circle at center, rgba(17, 26, 36, 0.22) 0 calc(var(--fx-switch-knob) / 2 + 0.25px), transparent calc(var(--fx-switch-knob) / 2 + 1.25px));
+	background-position: 0 0, 0 0;
+	background-size: var(--fx-switch-h) var(--fx-switch-h);
+	background-repeat: no-repeat;
+	transition: background-color var(--fx-fast) var(--fx-ease), background-position var(--fx-fast) var(--fx-ease);
 }
 
 .flexo-admin-ui :is(.wrap, .fx-layer) .flexo-switch:hover .flexo-switch__track {
-	background: var(--fx-gray-500);
+	--fx-switch-color: var(--fx-gray-500);
 }
 
 .flexo-admin-ui :is(.wrap, .fx-layer) .flexo-switch input:checked + .flexo-switch__track {
-	background: var(--fx-primary);
+	--fx-switch-color: var(--fx-primary);
+	background-position: 100% 0, 100% 0;
 }
 
 .flexo-admin-ui :is(.wrap, .fx-layer) .flexo-switch:hover input:checked + .flexo-switch__track {
-	background: var(--fx-primary-hover);
-}
-
-.flexo-admin-ui :is(.wrap, .fx-layer) .flexo-switch input:checked + .flexo-switch__track::after {
-	transform: translateX(16px);
+	--fx-switch-color: var(--fx-primary-hover);
 }
 
 .flexo-admin-ui :is(.wrap, .fx-layer) .flexo-switch input:focus-visible + .flexo-switch__track {
@@ -6747,6 +6788,9 @@ body.flexo-admin-ui {
 		--fx-control-h: 44px;
 		--fx-control-h-sm: 40px;
 		--fx-gutter: 12px;
+		--fx-check-size: 22px;
+		--fx-check-dot: 10px;
+		--fx-check-tick: 14px;
 	}
 
 	/* Small screens: the save bar floats only while something is unsaved. */
@@ -7134,6 +7178,12 @@ body.flexo-admin-ui {
 /* 9 · Reduced motion ==================================================== */
 
 @media (prefers-reduced-motion: reduce) {
+	/* Every transition uses these tokens, so this reaches components whatever their specificity. */
+	body.flexo-admin-ui {
+		--fx-fast: 0.01ms;
+		--fx-slow: 0.01ms;
+	}
+
 	.flexo-admin-ui :is(.wrap, .flexo-appbar, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog),
 	.flexo-admin-ui :is(.wrap, .flexo-appbar, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) *,
 	.flexo-admin-ui :is(.wrap, .flexo-appbar, .fx-layer, .flexo-dialog, .fbc-dialog, .flexo-icon-dialog) *::before,
@@ -7144,7 +7194,8 @@ body.flexo-admin-ui {
 		scroll-behavior: auto;
 	}
 
-	.flexo-admin-ui .wrap .fx-skeleton {
+	.flexo-admin-ui :is(.wrap, .fx-layer) .fx-skeleton,
+	.flexo-admin-ui .wrap .flexo-appearance__frame-wrap.is-loading::before {
 		animation: none;
 	}
 }
