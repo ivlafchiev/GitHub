@@ -30,7 +30,7 @@
  * and the same pixels as on the LABEL=before run (no CSS leak).
  *
  *   BASE=http://localhost:8092 OUT=flexo-booking/ui-audit/controls LABEL=after \
- *   [WEBKIT=1] [QUICK=1] [CORE_ONLY=1] [AREAS=admin,front] xvfb-run -a node tests/ui/controls-check.js
+ *   [WEBKIT=1] [QUICK=1] [CORE_ONLY=1] [AREAS=admin,front] [ENGINES=webkit] xvfb-run -a node tests/ui/controls-check.js
  */
 const { chromium } = require( 'playwright' );
 const { spawn } = require( 'child_process' );
@@ -48,6 +48,8 @@ const list = ( v, d ) => ( v ? v.split( ',' ).map( Number ) : d );
 const WEBKIT_SCREENS = list( process.env.WEBKIT_SCREENS, QUICK ? [ 1, 3 ] : [ 1, 2, 3 ] );
 const WEBKIT_ZOOMS = list( process.env.WEBKIT_ZOOMS, QUICK ? [ 1, 1.25 ] : [ 1, 1.25, 1.5, 2 ] );
 const AREAS = ( process.env.AREAS || 'admin,front' ).split( ',' );
+// ENGINES=webkit re-runs one engine and keeps the other engine's results in an existing report.json.
+const ENGINES = ( process.env.ENGINES || 'chromium' + ( process.env.WEBKIT ? ',webkit' : '' ) ).split( ',' );
 
 /* ------------------------------------------------------------------ */
 /* Fixtures: the same markup the plugin prints (helpers / templates).  */
@@ -56,6 +58,9 @@ const AREAS = ( process.env.AREAS || 'admin,front' ).split( ',' );
 const sw = ( state, attrs ) => `<label class="flexo-switch"><input type="checkbox" role="switch"${ attrs }><span class="flexo-switch__track" aria-hidden="true" data-q="switch|${ state }"></span><span class="flexo-switch__label">Switch</span></label>`;
 const seg = ( state, first ) => `<span class="fx-seg" role="radiogroup" aria-label="Corners" data-q="segmented|${ state }"><label class="fx-seg__opt"><input type="radio" name="fxq-seg-${ state }"${ first ? ' checked' : '' }><span>Square</span></label><label class="fx-seg__opt"><input type="radio" name="fxq-seg-${ state }"${ first ? '' : ' checked' }><span>Rounded</span></label></span>`;
 const CAL = '<span id="fxq-cal" aria-hidden="true" style="display:block;flex:0 0 auto;width:24px;height:24px;background:#ff00ff"></span>';
+// A second square at the far end: the scale comes from the distance between the two (a single
+// small square's rounding would grow into several pixels further down the page).
+const CAL2 = '<span style="display:flex;flex:1 1 100%;justify-content:flex-end"><span id="fxq-cal2" aria-hidden="true" style="display:block;width:24px;height:24px;background:#00ffff"></span></span>';
 const ADMIN_FIXTURE = `<div id="fxq" style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:24px 32px;margin:0 0 20px;padding:20px;background:#fff;border:1px solid #e1e6eb;border-radius:8px">${ CAL }
 ${ [ 'radio', 'checkbox' ].map( ( t ) => [ [ 'off', '' ], [ 'on', ' checked' ], [ 'disabled-off', ' disabled' ], [ 'disabled-on', ' disabled checked' ] ].map( ( [ s, a ] ) => `<label class="fx-check"><input type="${ t }" name="fxq-${ t }-${ s }"${ a } data-q="${ t }|${ s }"> ${ t } ${ s }</label>` ).join( '' ) ).join( '' ) }
 ${ sw( 'off', '' ) }${ sw( 'on', ' checked' ) }${ sw( 'disabled-off', ' disabled' ) }${ sw( 'disabled-on', ' disabled checked' ) }
@@ -64,7 +69,7 @@ ${ seg( 'first', true ) }${ seg( 'second', false ) }
 <fieldset class="fx-choices" style="flex:1 1 100%"><legend class="screen-reader-text">Style</legend>
 <label class="fx-choice"><input type="radio" name="fxq-card" data-q="card|off"><span class="fx-choice__body"><span class="fx-choice__title">Match my website</span><span class="fx-choice__desc">The form uses your website's colours and fonts.</span></span></label>
 <label class="fx-choice"><input type="radio" name="fxq-card" checked data-q="card|on"><span class="fx-choice__body"><span class="fx-choice__title">Custom</span><span class="fx-choice__desc">Choose a few colours and fonts.</span></span></label>
-</fieldset></div>`;
+</fieldset>${ CAL2 }</div>`;
 
 const FRONT_FIXTURE = `<div id="fxq" style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:20px 28px;margin:0 0 20px;padding:16px;background:#fff">${ CAL }
 <label class="fb-terms"><input type="checkbox" data-q="terms|off"> <span>I accept the booking terms</span></label>
@@ -77,7 +82,7 @@ const FRONT_FIXTURE = `<div id="fxq" style="display:flex;flex-wrap:wrap;align-it
 <label class="fb-check"><input type="radio" name="fxq-inv-c" disabled checked data-q="fradio|disabled-on"> Disabled</label>
 <div style="flex:1 1 100%;max-width:420px"><label class="fb-choice"><input type="radio" name="fxq-pay" checked data-q="fchoice|on"><span class="fb-choice__text"><strong>Card</strong><span>Pay securely now</span></span></label>
 <label class="fb-choice"><input type="radio" name="fxq-pay" data-q="fchoice|off"><span class="fb-choice__text"><strong>Bank transfer</strong><span>Pay within 3 days</span></span></label></div>
-</div>`;
+${ CAL2 }</div>`;
 
 // Rules of the kind WordPress core, themes (e.g. Twenty Twenty-One) and the
 // Elementor kit ship for radios and checkboxes, at their usual specificity.
@@ -141,10 +146,12 @@ function prepare( { fixture, css, area } ) {
 
 function boxes() {
 	const out = {};
+	// Page zoom applied as zoom on the root (WebKit): rects come zoomed, computed borders don't.
+	const zoom = parseFloat( getComputedStyle( document.documentElement ).zoom ) || 1;
 	document.querySelectorAll( '[data-q]' ).forEach( ( n ) => {
 		const r = n.getBoundingClientRect();
 		const cs = getComputedStyle( n );
-		out[ n.getAttribute( 'data-q' ) ] = { x: r.x, y: r.y, w: r.width, h: r.height, border: parseFloat( cs.borderTopWidth ) || 0, checked: !! n.checked };
+		out[ n.getAttribute( 'data-q' ) ] = { x: r.x, y: r.y, w: r.width, h: r.height, border: parseFloat( cs.borderTopWidth ) || 0, zoom, checked: !! n.checked };
 	} );
 	return out;
 }
@@ -303,7 +310,8 @@ const MEASURE = {
 		const box = bbox( d, ( x, y ) => dist( px( d, x, y ), bg ) / ( maxBg || 1 ), 0, 0, d.width, d.height );
 		const ins = bw + 1.2 * s;
 		const fill = median( [ sample( d, box.l + ins, box.t + ins ), sample( d, box.r - ins, box.t + ins ), sample( d, box.l + ins, box.b - ins ), sample( d, box.r - ins, box.b - ins ) ] );
-		const x0 = Math.ceil( box.l + bw + 0.5 * s ), x1 = Math.floor( box.r - bw - 0.5 * s ), y0 = Math.ceil( box.t + bw + 0.5 * s ), y1 = Math.floor( box.b - bw - 0.5 * s );
+		// The tick keeps ≥ 2 px from the border; 1 px of margin keeps the border's soft edge out.
+		const x0 = Math.ceil( box.l + bw + s ), x1 = Math.floor( box.r - bw - s ), y0 = Math.ceil( box.t + bw + s ), y1 = Math.floor( box.b - bw - s );
 		let tick = fill, far = 0;
 		for ( let y = y0; y < y1; y++ ) for ( let x = x0; x < x1; x++ ) { const p = px( d, x, y ), v = dist( p, fill ); if ( v > far ) { far = v; tick = p; } }
 		const out = { center: { x: box.cx, y: box.cy }, tick: far > 60 };
@@ -358,9 +366,11 @@ const MEASURE = {
 /* Checks                                                              */
 /* ------------------------------------------------------------------ */
 
+const isOn = ( key ) => /\|(on|first|second|disabled-on|in-paragraph)$/.test( key );
+
 function judge( r ) {
 	const type = TYPE[ r.key.split( '|' )[ 0 ] ];
-	const on = /\|(on|first|second|disabled-on|in-paragraph)$/.test( r.key );
+	const on = isOn( r.key );
 	const fails = [];
 	if ( r.error ) fails.push( 'could not measure: ' + r.error );
 	else if ( 'radio' === type && on ) {
@@ -390,8 +400,9 @@ let failures = 0;
 async function analyse( lab, png, rects, map, state, only ) {
 	const items = Object.entries( rects ).filter( ( [ k ] ) => ! only || only === k ).map( ( [ key, r ] ) => ( {
 		key, state, type: TYPE[ key.split( '|' )[ 0 ] ], on: /\|(on|disabled-on)$/.test( key ),
-		box: { x: map.a * r.x + map.bx, y: map.a * r.y + map.by, w: map.a * r.w, h: map.a * r.h },
-		scale: map.a, border: r.border, pad: Math.ceil( 6 * map.a ),
+		box: { x: ( map.ax || map.a ) * r.x + map.bx, y: ( map.ay || map.a ) * r.y + map.by, w: ( map.ax || map.a ) * r.w, h: ( map.ay || map.a ) * r.h },
+		// Image pixels per CSS px of the design (screen scale × page zoom): limits and offsets are in these.
+		scale: map.a * ( r.zoom || 1 ), border: r.border, pad: Math.ceil( 6 * map.a * ( r.zoom || 1 ) ),
 	} ) );
 	return lab.evaluate( ( [ b64, its ] ) => window.fxqAnalyze( b64, its ), [ png.toString( 'base64' ), items ] );
 }
@@ -552,7 +563,7 @@ async function runWebKit( lab ) {
 				for ( const mode of [ 'normal', 'hostile' ] ) {
 					await call( 'POST', S + '/url', { url: BASE + PAGE[ area ] } );
 					await run( `return (${ prepare.toString() })(arguments[0])`, [ { fixture: 'admin' === area ? ADMIN_FIXTURE : FRONT_FIXTURE, css: 'hostile' === mode ? HOSTILE[ area ] : '', area } ] );
-					// Page zoom (WebKit applies it as zoom on the root); the fixture's magenta square calibrates rect → image pixels.
+					// Page zoom (WebKit applies it as zoom on the root); two squares at opposite ends of the fixture calibrate rect → image pixels.
 					await run( "document.documentElement.style.zoom=arguments[0];window.scrollTo(0,0);if(arguments[0]!=='1')document.getElementById('fxq').scrollIntoView({block:'start'});", [ String( zoom ) ] );
 					const park = await run( 'return {x:innerWidth-4,y:innerHeight-4}' );
 					await pointer( park );
@@ -561,17 +572,18 @@ async function runWebKit( lab ) {
 					const grab = async ( only, st ) => {
 						const rects = await run( `return (${ boxes.toString() })()` );
 						if ( 1 !== zoom ) Object.keys( rects ).filter( ( k ) => k.startsWith( 'real-card' ) ).forEach( ( k ) => delete rects[ k ] );
-						const cal = await run( "const r=document.getElementById('fxq-cal').getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height}" );
+						const cal = await run( "const a=document.getElementById('fxq-cal').getBoundingClientRect(),b=document.getElementById('fxq-cal2').getBoundingClientRect();return {x1:a.x,y1:a.y,x2:b.x,y2:b.y}" );
 						const png = Buffer.from( await call( 'GET', S + '/screenshot' ), 'base64' );
 						const map = await lab.evaluate( async ( [ b64, c ] ) => {
 							const img = new Image(); img.src = 'data:image/png;base64,' + b64; await img.decode();
 							const cv = document.createElement( 'canvas' ); cv.width = img.naturalWidth; cv.height = img.naturalHeight;
 							const g = cv.getContext( '2d', { willReadFrequently: true } ); g.drawImage( img, 0, 0 );
 							const d = g.getImageData( 0, 0, cv.width, cv.height ).data;
-							let x0 = 1e9, y0 = 1e9, x1 = -1;
-							for ( let y = 0; y < cv.height; y++ ) for ( let x = 0; x < cv.width; x++ ) { const i = ( y * cv.width + x ) * 4; if ( d[ i ] > 230 && d[ i + 1 ] < 30 && d[ i + 2 ] > 230 ) { x0 = Math.min( x0, x ); y0 = Math.min( y0, y ); x1 = Math.max( x1, x ); } }
-							const a = ( x1 + 1 - x0 ) / c.w;
-							return { a, bx: x0 - a * c.x, by: y0 - a * c.y };
+							// Top-left corner of each square (magenta, cyan).
+							const find = ( test ) => { let x0 = 1e9, y0 = 1e9; for ( let y = 0; y < cv.height; y++ ) for ( let x = 0; x < cv.width; x++ ) { const i = ( y * cv.width + x ) * 4; if ( test( d[ i ], d[ i + 1 ], d[ i + 2 ] ) ) { if ( y < y0 ) y0 = y; if ( x < x0 ) x0 = x; } } return { x: x0, y: y0 }; };
+							const m = find( ( r, gr, bl ) => r > 230 && gr < 30 && bl > 230 ), cy = find( ( r, gr, bl ) => r < 30 && gr > 230 && bl > 230 );
+							const ax = ( cy.x - m.x ) / ( c.x2 - c.x1 ), ay = ( cy.y - m.y ) / ( c.y2 - c.y1 );
+							return { a: ( ax + ay ) / 2, ax, ay, bx: m.x - ax * c.x1, by: m.y - ay * c.y1 };
 						}, [ png.toString( 'base64' ), cal ] );
 						results.push( ...await analyse( lab, png, rects, map, st, only ) );
 					};
@@ -638,11 +650,15 @@ async function compare( lab ) {
 	const lab = await labBrowser.newPage();
 	await lab.setContent( '<!doctype html><title>lab</title>' );
 	await lab.addScriptTag( { content: LAB } );
-	if ( ! process.env.CORE_ONLY ) {
+	const existing = path.join( OUT, 'report.json' );
+	if ( process.env.ENGINES && fs.existsSync( existing ) ) {
+		report.runs = JSON.parse( fs.readFileSync( existing, 'utf8' ) ).runs.filter( ( r ) => ! ENGINES.includes( r.engine ) && 'core' !== r.area );
+	}
+	if ( ENGINES.includes( 'chromium' ) && ! process.env.CORE_ONLY ) {
 		await runChromium( lab );
 	}
 	await runCore();
-	if ( process.env.WEBKIT && ! process.env.CORE_ONLY ) {
+	if ( ENGINES.includes( 'webkit' ) && ! process.env.CORE_ONLY ) {
 		await runWebKit( lab );
 	}
 	fs.writeFileSync( path.join( OUT, 'report.json' ), JSON.stringify( report, null, 1 ) );
@@ -651,7 +667,8 @@ async function compare( lab ) {
 	// Summary: worst offset per engine, area and control type.
 	const worst = {};
 	for ( const run of report.runs ) for ( const r of run.results ) {
-		if ( 'core' === run.area ) continue;
+		// Offsets of checked controls (an unchecked radio or checkbox has no dot or tick to place).
+		if ( 'core' === run.area || ! ( isOn( r.key ) || 'switch' === TYPE[ r.key.split( '|' )[ 0 ] ] ) ) continue;
 		const k = `${ run.engine } ${ run.area }${ 'hostile' === run.mode ? ' (hostile CSS)' : '' } ${ TYPE[ r.key.split( '|' )[ 0 ] ] }`;
 		const v = 'segmented' === TYPE[ r.key.split( '|' )[ 0 ] ] ? Math.abs( ( r.insetTop || 0 ) - ( r.insetBottom || 0 ) ) / 2 : Math.max( Math.abs( r.dx || 0 ), Math.abs( r.dy || 0 ) );
 		if ( ! worst[ k ] || v > worst[ k ].v ) worst[ k ] = { v, at: `${ run.scale } ${ r.key } ${ r.state }` };
