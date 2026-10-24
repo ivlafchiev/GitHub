@@ -652,7 +652,9 @@ async function compare( lab ) {
 	await lab.addScriptTag( { content: LAB } );
 	const existing = path.join( OUT, 'report.json' );
 	if ( process.env.ENGINES && fs.existsSync( existing ) ) {
-		report.runs = JSON.parse( fs.readFileSync( existing, 'utf8' ) ).runs.filter( ( r ) => ! ENGINES.includes( r.engine ) && 'core' !== r.area );
+		// Keeps every run this invocation doesn't repeat (other engines, other WebKit screens/zooms, other areas).
+		const redo = ( r ) => ENGINES.includes( r.engine ) && AREAS.includes( r.area ) && ( 'webkit' !== r.engine || ( WEBKIT_SCREENS.some( ( sc ) => r.scale.startsWith( `x${ sc }-` ) ) && WEBKIT_ZOOMS.some( ( z ) => r.scale.endsWith( `-zoom${ Math.round( z * 100 ) }` ) ) ) );
+		report.runs = JSON.parse( fs.readFileSync( existing, 'utf8' ) ).runs.filter( ( r ) => 'core' !== r.area && ! redo( r ) );
 	}
 	if ( ENGINES.includes( 'chromium' ) && ! process.env.CORE_ONLY ) {
 		await runChromium( lab );

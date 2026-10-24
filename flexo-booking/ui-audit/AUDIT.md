@@ -552,3 +552,128 @@ The after screenshots showed these problems, which were fixed before the final c
   - `ui-audit/after/<screen>@<width>.jpg` (same screens and widths as `before/`), `after/appearance-unsaved@<width>.jpg` and `after/bg-*@1280.jpg`;
   - measurements in `after-metrics.json` and `after-bg-metrics.json`.
   - On the room editor, WordPress's own "Connection lost" and "backup of this post" notices come from WordPress's connection check (heartbeat) on the local test server, not from the plugin.
+
+---
+
+## 10. Form controls: the radio dot was not centred (and every other custom control)
+
+Images: `controls/root-cause.png` (the cause, step by step), `controls/before-after-1.png` and `-2.png` (the same controls before and after, zoomed, at 3× and 3.75× in Chromium and 3× + 125/150 % in WebKit), and one zoomed sheet per engine, area and scale in `controls/before/sheets/` and `controls/after/sheets/`. Red cross = the circle's or box's centre, green = the centre of the dot, tick or knob.
+
+### 10.1 Cause (computed styles of the input and its `::before`, Bookings → Appearance → Style)
+
+- **The dot was a `::before` placed by margins in normal flow:** `display: block; float: none; width: 8px; height: 8px; margin: 2.5px auto 0`, inside a 16 px radio with a `1.5px` border.
+- **The border rounds differently at each zoom.** Chromium draws borders in whole device pixels, so the computed `border-top-width` is **1px** at 100 % (and 0.8 px at 125 %). The dot's centre is then 1 + 2.5 + 4 = 7.5 px from the top of a 16 px circle: **0.5 px high at 100 %, 0.7 px at 125 %** (panel A).
+- **Its position depended on properties that other style sheets set on the same pseudo-element.** WordPress core (`load-styles.php`) sets:
+  - on `input[type=radio]:checked::before`: `float: left; display: inline-block; vertical-align: middle; width: .5rem; height: .5rem; margin: .1875rem; line-height: 1.14285714`;
+  - on the input: `display: inline-block; line-height: .71428571` (radio), `line-height: 0`, `margin: -.25rem .25rem 0 0`.
+- **Our rules were the weakest possible.** They were wrapped in `:where()`, so the `::before` rule had the same specificity as core's (0,2,2) and won only by loading later. Any more specific rule from a plugin, theme or admin colour scheme (`.wp-core-ui input[type=radio]:checked::before …`) beats it. Once the `::before` is `inline-block` and the input's line box is taller than the circle, the dot drops to the bottom of the circle (panels B–E; D and E are the "dot near the bottom" look you described).
+- On this test site (WordPress 6.7, no Elementor) panel A is what shipped. I could not load your site's other plugins here, so I can't name the exact rule that wins on your site. The fix doesn't depend on it: the dot no longer uses `::before` at all.
+- **The same weakness was in the other controls:**
+  - the checked checkbox tick (a `::before` with a background);
+  - the switch knob (a `::after` positioned with `top/left` and `translateX(16px)`, rounded differently at 125 %);
+  - the booking form's checkboxes and radios (native, with `accent-color`, which WebKit ignores, and which themes and the Elementor kit restyle).
+  - The before run measured:
+    - the admin radio up to 0.71 px off in Chromium and 0.80 px in WebKit (1.33 px with theme CSS);
+    - no visible tick on a disabled checked checkbox;
+    - with typical theme/plugin CSS added, dots and ticks moved by several pixels.
+
+### 10.2 Fix: every mark is drawn by construction
+
+**Admin (`flexo-admin.css`)**
+- `appearance: none`, `box-sizing: border-box` and a fixed size from tokens:
+  - `--fx-check-size` 18 px (22 px on touch screens);
+  - `--fx-check-border` **2 px**, a whole pixel;
+  - `--fx-check-dot` 8 px (10 px on touch screens);
+  - `--fx-check-tick` 12 px (14 px on touch screens).
+- **Radio dot:** a `radial-gradient` background, centred on the border box (`background-origin: border-box; background-position: center; background-size: 100% 100%`). Border rounding can't move it, because it is not inside the border.
+- **Checkbox tick:** an SVG background, centred the same way, white on the filled box. A disabled checked checkbox keeps a visible grey tick.
+- **No `::before` or `::after`.** Both are set to `content: none; display: none` with `:is(:checked, :not(:checked))`. That raises the rule above core's, themes' and plugins' `:checked::before` rules without `!important`.
+- **Switch:**
+  - the knob is a background tile of the track: a white disc in a square tile as tall as the track, with a soft edge ring;
+  - it moves from `background-position: 0 0` to `100% 0`;
+  - it is centred vertically by construction, with the same gap at both ends at any zoom.
+- **Segmented control:** its hidden radio stays hidden (`min-width: 0; border: 0`), so the new base size can't leak into it.
+- Unchanged:
+  - the focus ring (`--fx-ring` on `:focus-visible`), hover (`:hover:not(:disabled)`), disabled and checked states;
+  - the markup, names and settings;
+  - all rules are scoped to `body.flexo-admin-ui :is(.wrap, .fx-layer)`, with no `!important`;
+  - reduced motion: the `--fx-fast`/`--fx-slow` tokens are zeroed.
+- The first-line offset and hanging indents use `--fx-check-offset` and `--fx-check-indent`, so text next to a control stays aligned with the larger size.
+
+**Booking form (`booking.css`)**: the rate plan and payment choices (`.fb-choice`), the invoice, consent and terms checkboxes (`.fb-terms`), and the other checkboxes (`.fb-check`).
+- The same reset under `.flexo-booking.flexo-booking …`. The doubled class beats theme and Elementor-kit rules of up to three classes.
+- The radio dot is a gradient.
+- The tick is a `::before` covering the inner box (`inset: 0`) in `--fb-primary-contrast`. It is masked by an SVG whose view box centres the tick and which fills the layer (`0 0 / 100% 100%`), so the tick snaps to pixels with the box itself.
+- Sizes: 18 px, 20 px for choice cards, 22 px on phones.
+- The border is `--fb-control-border` (text colour mixed into the field background).
+- Focus outline 2 px; disabled at 50 % opacity.
+
+### 10.3 Verification (`tests/ui/controls-check.js`)
+
+**Every control type and state:**
+- admin: radio, real Appearance radio cards, radio card, checkbox, checkbox in a paragraph, switch and segmented control;
+- booking form: terms, checkbox, radio and choice card;
+- states: unchecked, checked, disabled (both), hover and keyboard focus.
+
+**Engines and scales:**
+- Chromium, as Chrome and Edge: device scale 1, 1.25, 1.5, 1.5625, 1.875, 2, 2.25, 2.5, 3, 3.75, 4.5, 6. That is browser zoom 100/125/150/200 % on 1×, 1.25× and 1.5× (Windows scaling 125 %/150 %) and 3× screens.
+- WebKit (Safari's engine, as WebKitGTK 2.52 under Xvfb): 1×, 2× and 3× screens, each at page zoom 100/125/150/200 %.
+
+**Two modes:**
+- normal;
+- with "hostile" CSS: WordPress-core-like `.wp-core-ui … :checked::before` rules, a Twenty Twenty-One-like checkbox theme (the real TT1 stylesheet on the front end) and an Elementor-kit rule.
+
+The geometry check measures the pixels and fails above **0.5 CSS px** for the dot, tick, knob and selected segment.
+
+**Results** (checked controls within 0.5 CSS px / all checked controls; *worst* = largest offset of a dot, tick, knob or segment):
+
+| Engine · area · control | Before (old CSS) | After |
+|---|---|---|
+| chromium admin checkbox | 48/60 · worst mark missing | 60/60 · worst 0.10 px |
+| chromium admin radio | 89/96 · worst 0.71 px | 96/96 · worst 0.40 px |
+| chromium admin segmented | 36/36 · worst 0.25 px | 36/36 · worst 0.25 px |
+| chromium admin switch | 84/84 · worst 0.12 px | 84/84 · worst 0.17 px |
+| chromium admin + hostile CSS checkbox | 0/60 · worst 4.60 px | 60/60 · worst 0.10 px |
+| chromium admin + hostile CSS radio | 0/96 · worst 1.28 px | 96/96 · worst 0.40 px |
+| chromium admin + hostile CSS segmented | 36/36 · worst 0.25 px | 36/36 · worst 0.25 px |
+| chromium admin + hostile CSS switch | 84/84 · worst 0.12 px | 84/84 · worst 0.17 px |
+| chromium front checkbox | 60/72 · worst mark missing | 72/72 · worst 0.20 px |
+| chromium front radio | 72/72 · worst 0.28 px | 72/72 · worst 0.12 px |
+| chromium front + hostile CSS checkbox | 0/72 · worst 13.04 px | 72/72 · worst 0.20 px |
+| chromium front + hostile CSS radio | 0/72 · worst 10.44 px · 22 unchecked show a mark | 72/72 · worst 0.11 px |
+| webkit admin checkbox | 48/60 · worst mark missing | 60/60 · worst 0.40 px |
+| webkit admin radio | 78/87 · worst 0.80 px | 87/87 · worst 0.32 px |
+| webkit admin segmented | 36/36 · worst 0.48 px | 36/36 · worst 0.48 px |
+| webkit admin switch | 80/84 · worst 0.40 px | 84/84 · worst 0.06 px |
+| webkit admin + hostile CSS checkbox | 0/60 · worst 4.28 px | 60/60 · worst 0.40 px |
+| webkit admin + hostile CSS radio | 0/87 · worst 1.33 px | 87/87 · worst 0.42 px |
+| webkit admin + hostile CSS segmented | 36/36 · worst 0.48 px | 36/36 · worst 0.48 px |
+| webkit admin + hostile CSS switch | 82/84 · worst 0.44 px | 84/84 · worst 0.06 px |
+| webkit front checkbox | 50/72 · worst 0.75 px | 72/72 · worst 0.20 px |
+| webkit front radio | 64/72 · worst 1.51 px · 8 unchecked show a mark | 72/72 · worst 0.23 px |
+| webkit front + hostile CSS checkbox | 0/72 · worst 13.03 px | 72/72 · worst 0.20 px |
+| webkit front + hostile CSS radio | 0/72 · worst 10.43 px · 23 unchecked show a mark | 72/72 · worst 0.23 px |
+| WordPress core screens (4 screens × 6 controls) | 24/24 identical | 24/24 identical |
+
+Total: **before 1,512 passed, 732 failed → after 2,244 passed, 0 failed.**
+
+**What I fixed in the measurement during this run:** WebKit's page zoom is applied as `zoom` on the root, so element rects come back zoomed but computed borders don't. The first after-run therefore measured WebKit at 125–200 % with too thin a ring and in device pixels, and reported dots that weren't there. The check now uses screen scale × page zoom, calibrated from two squares at opposite ends of the fixture. Both runs above use the corrected check.
+
+**Then fixed in the CSS:** the booking form's terms tick under the theme CSS at WebKit 1× / 125 % was 0.47, 0.53 px off. That was the mask's own centring (`center / 86%`) rounding on top of the box's. The mask now fills the layer, and the tick is centred by the SVG's view box.
+
+**I inspected the zoomed sheets and crops myself.** At every scale, the dots sit on the circle centres, the ticks are centred in the box, the knobs have equal gaps, and the disabled ticks are visible.
+
+**WordPress's own screens are unchanged:** on General, Discussion and Reading settings and the Posts list, the checkboxes' and radios' computed styles and pixels match the before run. Plugin CSS is not loaded there.
+
+**Regression:**
+- `tests/ui/controls-check.js`: 2,244 / 2,244 (above). `tests/ui/ui-check.js`: 124 / 124.
+- PHP suites (`tests/run.sh`): pass, except the checks that need Elementor (`test-day7-elementor`, `test-room-design`) and three in `test-day7` that need `register_block_template` (WordPress 6.7 test build). No PHP changed in this task.
+- Browser suites on the final CSS: day 2: 52, day 3: 63, day 4: 49, day 5: 167, day 8: 46, Appearance: 46 – all pass. Day 6: 116 / 117 (the failing check needs an Elementor page). Day 7: two room-page checks that need Elementor fail. Day 1 can't run here: its seed needs Elementor (`ELEMENTOR_VERSION`).
+
+**Limits of this environment:**
+- **Firefox:** it can't be downloaded here (Mozilla's and Playwright's download hosts are blocked), so Firefox wasn't run. The controls use only `appearance: none`, gradients, SVG backgrounds and masks, which Firefox supports alike.
+- **Safari** is represented by WebKitGTK: same engine, Linux graphics.
+- **Edge** is Chromium.
+- **Windows scaling** is the Chromium device scale.
+- **Elementor** couldn't be installed (wordpress.org is blocked), so the Elementor kit is represented by its typical rule.
+- **WordPress** is 6.7.

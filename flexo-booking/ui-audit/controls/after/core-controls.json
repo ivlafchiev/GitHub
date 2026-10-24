@@ -1,0 +1,218 @@
+{
+ "wp-admin/options-general.php#0 checkbox": {
+  "n": 0,
+  "checked": false,
+  "type": "checkbox",
+  "input": "none|16px|16px|-4px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|4px|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|0px|middle|inline-block",
+  "before": "none|auto|auto|0px|rgba(0, 0, 0, 0)|none|inline",
+  "flexo": false,
+  "pixels": "6b347171db60123d0052ce09caaf1f748e8e51ed"
+ },
+ "wp-admin/options-general.php#1 radio checked": {
+  "n": 1,
+  "checked": true,
+  "type": "radio",
+  "input": "none|16px|16px|-4px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|50%|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|10px|middle|inline-block",
+  "before": "\"\"|8px|8px|3px|rgb(53, 130, 196)|left|block",
+  "flexo": false,
+  "pixels": "88a275a5e0f36a38dd714abc7be83b5f60d5589f"
+ },
+ "wp-admin/options-general.php#2 radio": {
+  "n": 2,
+  "checked": false,
+  "type": "radio",
+  "input": "none|16px|16px|-4px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|50%|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|10px|middle|inline-block",
+  "before": "none|auto|auto|0px|rgba(0, 0, 0, 0)|none|inline",
+  "flexo": false,
+  "pixels": "971b666481aada7783eb5e04d4eabd1bc282afee"
+ },
+ "wp-admin/options-general.php#3 radio": {
+  "n": 3,
+  "checked": false,
+  "type": "radio",
+  "input": "none|16px|16px|-4px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|50%|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|10px|middle|inline-block",
+  "before": "none|auto|auto|0px|rgba(0, 0, 0, 0)|none|inline",
+  "flexo": false,
+  "pixels": "971b666481aada7783eb5e04d4eabd1bc282afee"
+ },
+ "wp-admin/options-general.php#4 radio": {
+  "n": 4,
+  "checked": false,
+  "type": "radio",
+  "input": "none|16px|16px|-4px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|50%|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|10px|middle|inline-block",
+  "before": "none|auto|auto|0px|rgba(0, 0, 0, 0)|none|inline",
+  "flexo": false,
+  "pixels": "74d520a8b28cc170b0f1eb1515f0354a82eb2ac8"
+ },
+ "wp-admin/options-general.php#5 radio": {
+  "n": 5,
+  "checked": false,
+  "type": "radio",
+  "input": "none|16px|16px|-4px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|50%|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|10px|middle|inline-block",
+  "before": "none|auto|auto|0px|rgba(0, 0, 0, 0)|none|inline",
+  "flexo": false,
+  "pixels": "74d520a8b28cc170b0f1eb1515f0354a82eb2ac8"
+ },
+ "wp-admin/options-general.php#6 radio checked": {
+  "n": 6,
+  "checked": true,
+  "type": "radio",
+  "input": "none|16px|16px|-4px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|50%|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|10px|middle|inline-block",
+  "before": "\"\"|8px|8px|3px|rgb(53, 130, 196)|left|block",
+  "flexo": false,
+  "pixels": "0cd547c007897049c61e9528d0929a1a762ee0d7"
+ },
+ "wp-admin/options-general.php#7 radio": {
+  "n": 7,
+  "checked": false,
+  "type": "radio",
+  "input": "none|16px|16px|-4px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|50%|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|10px|middle|inline-block",
+  "before": "none|auto|auto|0px|rgba(0, 0, 0, 0)|none|inline",
+  "flexo": false,
+  "pixels": "74d520a8b28cc170b0f1eb1515f0354a82eb2ac8"
+ },
+ "wp-admin/options-discussion.php#0 checkbox checked": {
+  "n": 0,
+  "checked": true,
+  "type": "checkbox",
+  "input": "none|16px|16px|-4px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|4px|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|0px|middle|inline-block",
+  "before": "url(\"data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2020%2020%27%3E%3Cpath%20d%3D%27M14.83%204.89l1.34.94-5.81%208.38H9.02L5.78%209.67l1.34-1.25%202.57%202.4z%27%20fill%3D%27%233582c4%27%2F%3E%3C%2Fsvg%3E\")|21px|21px|-3px 0px 0px -4px|rgba(0, 0, 0, 0)|left|block",
+  "flexo": false,
+  "pixels": "785883577a4d352e5bd5d89fbab4c5b3275383a2"
+ },
+ "wp-admin/options-discussion.php#1 checkbox checked": {
+  "n": 1,
+  "checked": true,
+  "type": "checkbox",
+  "input": "none|16px|16px|-4px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|4px|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|0px|middle|inline-block",
+  "before": "url(\"data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2020%2020%27%3E%3Cpath%20d%3D%27M14.83%204.89l1.34.94-5.81%208.38H9.02L5.78%209.67l1.34-1.25%202.57%202.4z%27%20fill%3D%27%233582c4%27%2F%3E%3C%2Fsvg%3E\")|21px|21px|-3px 0px 0px -4px|rgba(0, 0, 0, 0)|left|block",
+  "flexo": false,
+  "pixels": "c5fe525457a46eb2e64ada4b2729338ab9b72e97"
+ },
+ "wp-admin/options-discussion.php#2 checkbox checked": {
+  "n": 2,
+  "checked": true,
+  "type": "checkbox",
+  "input": "none|16px|16px|-4px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|4px|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|0px|middle|inline-block",
+  "before": "url(\"data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2020%2020%27%3E%3Cpath%20d%3D%27M14.83%204.89l1.34.94-5.81%208.38H9.02L5.78%209.67l1.34-1.25%202.57%202.4z%27%20fill%3D%27%233582c4%27%2F%3E%3C%2Fsvg%3E\")|21px|21px|-3px 0px 0px -4px|rgba(0, 0, 0, 0)|left|block",
+  "flexo": false,
+  "pixels": "d934cc53dbf441749ec66bc7664aad96f2ee5425"
+ },
+ "wp-admin/options-discussion.php#3 checkbox checked": {
+  "n": 3,
+  "checked": true,
+  "type": "checkbox",
+  "input": "none|16px|16px|-4px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|4px|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|0px|middle|inline-block",
+  "before": "url(\"data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2020%2020%27%3E%3Cpath%20d%3D%27M14.83%204.89l1.34.94-5.81%208.38H9.02L5.78%209.67l1.34-1.25%202.57%202.4z%27%20fill%3D%27%233582c4%27%2F%3E%3C%2Fsvg%3E\")|21px|21px|-3px 0px 0px -4px|rgba(0, 0, 0, 0)|left|block",
+  "flexo": false,
+  "pixels": "bba28f4f9fcc4df91dad5b731be70dfae03b064d"
+ },
+ "wp-admin/options-discussion.php#4 checkbox": {
+  "n": 4,
+  "checked": false,
+  "type": "checkbox",
+  "input": "none|16px|16px|-4px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|4px|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|0px|middle|inline-block",
+  "before": "none|auto|auto|0px|rgba(0, 0, 0, 0)|none|inline",
+  "flexo": false,
+  "pixels": "9c7f28b6e55bb468e224ba33dd9a602c30afcd2e"
+ },
+ "wp-admin/options-discussion.php#5 checkbox": {
+  "n": 5,
+  "checked": false,
+  "type": "checkbox",
+  "input": "none|16px|16px|-4px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|4px|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|0px|middle|inline-block",
+  "before": "none|auto|auto|0px|rgba(0, 0, 0, 0)|none|inline",
+  "flexo": false,
+  "pixels": "9c7f28b6e55bb468e224ba33dd9a602c30afcd2e"
+ },
+ "wp-admin/options-discussion.php#6 checkbox checked": {
+  "n": 6,
+  "checked": true,
+  "type": "checkbox",
+  "input": "none|16px|16px|-4px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|4px|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|0px|middle|inline-block",
+  "before": "url(\"data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2020%2020%27%3E%3Cpath%20d%3D%27M14.83%204.89l1.34.94-5.81%208.38H9.02L5.78%209.67l1.34-1.25%202.57%202.4z%27%20fill%3D%27%233582c4%27%2F%3E%3C%2Fsvg%3E\")|21px|21px|-3px 0px 0px -4px|rgba(0, 0, 0, 0)|left|block",
+  "flexo": false,
+  "pixels": "d934cc53dbf441749ec66bc7664aad96f2ee5425"
+ },
+ "wp-admin/options-discussion.php#7 checkbox checked": {
+  "n": 7,
+  "checked": true,
+  "type": "checkbox",
+  "input": "none|16px|16px|-4px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|4px|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|0px|middle|inline-block",
+  "before": "url(\"data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2020%2020%27%3E%3Cpath%20d%3D%27M14.83%204.89l1.34.94-5.81%208.38H9.02L5.78%209.67l1.34-1.25%202.57%202.4z%27%20fill%3D%27%233582c4%27%2F%3E%3C%2Fsvg%3E\")|21px|21px|-3px 0px 0px -4px|rgba(0, 0, 0, 0)|left|block",
+  "flexo": false,
+  "pixels": "d934cc53dbf441749ec66bc7664aad96f2ee5425"
+ },
+ "wp-admin/options-reading.php#0 radio checked": {
+  "n": 0,
+  "checked": true,
+  "type": "radio",
+  "input": "none|16px|16px|-2px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|50%|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|10px|middle|inline-block",
+  "before": "\"\"|8px|8px|3px|rgb(53, 130, 196)|left|block",
+  "flexo": false,
+  "pixels": "006855f2c930faa7cc161dce4785726f05ddc1bc"
+ },
+ "wp-admin/options-reading.php#1 radio": {
+  "n": 1,
+  "checked": false,
+  "type": "radio",
+  "input": "none|16px|16px|-2px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|50%|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|10px|middle|inline-block",
+  "before": "none|auto|auto|0px|rgba(0, 0, 0, 0)|none|inline",
+  "flexo": false,
+  "pixels": "971b666481aada7783eb5e04d4eabd1bc282afee"
+ },
+ "wp-admin/options-reading.php#2 radio checked": {
+  "n": 2,
+  "checked": true,
+  "type": "radio",
+  "input": "none|16px|16px|-2px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|50%|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|10px|middle|inline-block",
+  "before": "\"\"|8px|8px|3px|rgb(53, 130, 196)|left|block",
+  "flexo": false,
+  "pixels": "88a275a5e0f36a38dd714abc7be83b5f60d5589f"
+ },
+ "wp-admin/options-reading.php#3 radio": {
+  "n": 3,
+  "checked": false,
+  "type": "radio",
+  "input": "none|16px|16px|-2px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|50%|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|10px|middle|inline-block",
+  "before": "none|auto|auto|0px|rgba(0, 0, 0, 0)|none|inline",
+  "flexo": false,
+  "pixels": "74d520a8b28cc170b0f1eb1515f0354a82eb2ac8"
+ },
+ "wp-admin/options-reading.php#4 checkbox": {
+  "n": 4,
+  "checked": false,
+  "type": "checkbox",
+  "input": "none|16px|16px|-4px 4px 0px 0px|0px|1px solid rgb(140, 143, 148)|4px|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|0px|middle|inline-block",
+  "before": "none|auto|auto|0px|rgba(0, 0, 0, 0)|none|inline",
+  "flexo": false,
+  "pixels": "9c7f28b6e55bb468e224ba33dd9a602c30afcd2e"
+ },
+ "wp-admin/edit.php#0 checkbox": {
+  "n": 0,
+  "checked": false,
+  "type": "checkbox",
+  "input": "none|16px|16px|0px 0px 0px 8px|0px|1px solid rgb(140, 143, 148)|4px|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|0px|text-top|inline-block",
+  "before": "none|auto|auto|0px|rgba(0, 0, 0, 0)|none|inline",
+  "flexo": false,
+  "pixels": "6a58592ed813575067559f27f76a44db90960faa"
+ },
+ "wp-admin/edit.php#1 checkbox": {
+  "n": 1,
+  "checked": false,
+  "type": "checkbox",
+  "input": "none|16px|16px|0px 0px 0px 8px|0px|1px solid rgb(140, 143, 148)|4px|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|0px|text-top|inline-block",
+  "before": "none|auto|auto|0px|rgba(0, 0, 0, 0)|none|inline",
+  "flexo": false,
+  "pixels": "b86d4e338fa0e461db74e9ced4a17d12e5a684ac"
+ },
+ "wp-admin/edit.php#2 checkbox": {
+  "n": 2,
+  "checked": false,
+  "type": "checkbox",
+  "input": "none|16px|16px|0px 0px 0px 8px|0px|1px solid rgb(140, 143, 148)|4px|rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box|rgba(0, 0, 0, 0.1) 0px 1px 2px 0px inset|0px|text-top|inline-block",
+  "before": "none|auto|auto|0px|rgba(0, 0, 0, 0)|none|inline",
+  "flexo": false,
+  "pixels": "6a58592ed813575067559f27f76a44db90960faa"
+ }
+}
