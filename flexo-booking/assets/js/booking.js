@@ -188,6 +188,10 @@
 		window.history.replaceState( window.history.state, '', url.toString() );
 	}
 
+	// Separator in one-line summaries ("3 nights · 2 adults"): glued to the text before it, so a
+	// line that wraps never starts with "·".
+	var SEP = '\u00a0· ';
+
 	var uidCounter = 0;
 	function uid( prefix ) {
 		uidCounter++;
@@ -1273,7 +1277,7 @@
 			}
 			this.end = ymd;
 			this.commit();
-			this.setStatus( humanDate( this.start, this.options.dateFormat, this.locale ) + ' – ' + humanDate( this.end, this.options.dateFormat, this.locale ) + ' · ' + nightsText( diffDays( this.start, this.end ) ) );
+			this.setStatus( humanDate( this.start, this.options.dateFormat, this.locale ) + ' – ' + humanDate( this.end, this.options.dateFormat, this.locale ) + SEP + nightsText( diffDays( this.start, this.end ) ) );
 			this.close( true );
 			if ( this.options.onDone ) {
 				this.options.onDone( this.start, this.end );
@@ -1976,20 +1980,26 @@
 		}
 	};
 
-	BookingForm.prototype.guestsText = function () {
+	// [ "2 adults", "2 children", "(ages 4, 7)" ]: the stay line keeps each part on one line.
+	BookingForm.prototype.guestsParts = function () {
 		var s = this.stay;
 		var adults = parseInt( s.adults, 10 ) || 1;
 		var children = parseInt( s.children, 10 ) || 0;
-		var text = fmt( adults === 1 ? t.adult : t.adults, adults );
+		var parts = [ fmt( adults === 1 ? t.adult : t.adults, adults ) ];
 		if ( children ) {
-			text += ', ' + fmt( children === 1 ? t.child : t.childrenN, children );
+			parts.push( fmt( children === 1 ? t.child : t.childrenN, children ) );
 			if ( s.ages && s.ages.length ) {
-				text += ' ' + fmt( t.agesList, s.ages.map( function ( a ) {
+				parts.push( fmt( t.agesList, s.ages.map( function ( a ) {
 					return a === 0 ? t.ageUnder1 : a;
-				} ).join( ', ' ) );
+				} ).join( ', ' ) ) );
 			}
 		}
-		return text;
+		return parts;
+	};
+
+	BookingForm.prototype.guestsText = function () {
+		var p = this.guestsParts();
+		return p[ 0 ] + ( p[ 1 ] ? ', ' + p[ 1 ] : '' ) + ( p[ 2 ] ? ' ' + p[ 2 ] : '' );
 	};
 
 	BookingForm.prototype.date = function ( ymd ) {
@@ -2008,9 +2018,22 @@
 		var self = this;
 		var s = this.stay;
 		this.stayBar.innerHTML = '';
+		// Wraps only between its parts: a date, the nights or a group of guests never splits.
 		var text = el( 'p', 'fb-stay__text' );
-		text.appendChild( el( 'strong', '', this.rangeText() ) );
-		text.appendChild( document.createTextNode( ' · ' + nightsText( s.nights ) + ' · ' + this.guestsText() ) );
+		var range = el( 'strong' );
+		range.appendChild( el( 'span', 'fb-stay__part', this.date( s.check_in ) ) );
+		range.appendChild( document.createTextNode( '\u00a0– ' ) );
+		range.appendChild( el( 'span', 'fb-stay__part', this.date( s.check_out ) ) );
+		text.appendChild( range );
+		text.appendChild( document.createTextNode( SEP ) );
+		text.appendChild( el( 'span', 'fb-stay__part', nightsText( s.nights ) ) );
+		text.appendChild( document.createTextNode( SEP ) );
+		this.guestsParts().forEach( function ( part, i ) {
+			if ( i ) {
+				text.appendChild( document.createTextNode( 1 === i ? ', ' : ' ' ) );
+			}
+			text.appendChild( el( 'span', 'fb-stay__part', part ) );
+		} );
 		this.stayBar.appendChild( text );
 		var change = button( 'fb-link fb-stay__change', t.change );
 		change.setAttribute( 'aria-label', t.changeSearch );
@@ -2034,7 +2057,7 @@
 		var summary = this.summary;
 		summary.innerHTML = '';
 		var dl = el( 'dl', 'fb-summary__stay' );
-		[ [ t.dates, this.rangeText() + ' · ' + nightsText( this.stay.nights ) ], [ t.guests, this.guestsText() ] ].forEach( function ( row ) {
+		[ [ t.dates, this.rangeText() + SEP + nightsText( this.stay.nights ) ], [ t.guests, this.guestsText() ] ].forEach( function ( row ) {
 			var line = el( 'div', 'fb-summary__row' );
 			line.appendChild( el( 'dt', '', row[ 0 ] ) );
 			line.appendChild( el( 'dd', '', row[ 1 ] ) );
@@ -2289,7 +2312,7 @@
 			parts.push( rate.meals_label );
 		}
 		parts.push( ( rate.refundable ? '✓ ' : '✕ ' ) + rate.refundable_label );
-		return parts.join( ' · ' );
+		return parts.join( SEP );
 	}
 
 	/**
@@ -2388,7 +2411,7 @@
 						var li = el( 'li' );
 						var b = button( 'fb-alt' );
 						b.appendChild( el( 'strong', '', shortDate( d.check_in, self.locale ) + ' – ' + shortDate( d.check_out, self.locale ) ) );
-						b.appendChild( el( 'span', '', ( d.rooms === 1 ? t.oneRoom : fmt( t.nRooms, d.rooms ) ) + ' · ' + d.from ) );
+						b.appendChild( el( 'span', '', ( d.rooms === 1 ? t.oneRoom : fmt( t.nRooms, d.rooms ) ) + SEP + d.from ) );
 						b.addEventListener( 'click', function () {
 							self.useDates( d.check_in, d.check_out );
 						} );
@@ -2671,7 +2694,7 @@
 
 		row( room.title, view.total_formatted || room.total_formatted, 'fb-summary__room' );
 		if ( view.rate_plan ) {
-			row( t.rate, view.rate_plan.name + ( view.rate_plan.meals_label ? ' · ' + view.rate_plan.meals_label : '' ), 'fb-summary__rate' );
+			row( t.rate, view.rate_plan.name + ( view.rate_plan.meals_label ? SEP + view.rate_plan.meals_label : '' ), 'fb-summary__rate' );
 		}
 		row( this.date( s.check_in ) + ' → ' + this.date( s.check_out ), s.nightsLabel );
 		row( t.guests, this.guestsText() );
@@ -2710,7 +2733,7 @@
 				row( t.atPropertyRest, pay.at_property_formatted, 'fb-summary__property' );
 			}
 		} else if ( pay && pay.mode === 'property' ) {
-			row( t.payAtProperty, t.payAtPropertyText + ( pay.at_property > 0 ? ' · ' + pay.at_property_formatted : '' ), 'fb-summary__property' );
+			row( t.payAtProperty, t.payAtPropertyText + ( pay.at_property > 0 ? SEP + pay.at_property_formatted : '' ), 'fb-summary__property' );
 		} else if ( view.due_at_property > 0 ) {
 			row( t.atProperty, view.due_at_property_formatted, 'fb-summary__property' );
 		}
@@ -2735,7 +2758,7 @@
 			this.renderPromo( inForm ? this.promoSlot : summary, view );
 		}
 		if ( this.asideShort ) {
-			this.asideShort.textContent = room.title + ' · ' + ( view.total_formatted || room.total_formatted );
+			this.asideShort.textContent = room.title + SEP + ( view.total_formatted || room.total_formatted );
 		}
 		this.updateSubmit();
 		this.renderBefore();
@@ -2760,7 +2783,7 @@
 		}
 		var method = this.paymentMethod();
 		if ( pay && pay.now > 0 && method ) {
-			ul.appendChild( el( 'li', '', t.payNowText + ': ' + pay.now_formatted + ( pay.at_property > 0 ? ' · ' + t.payLaterText + ': ' + pay.at_property_formatted : '' ) ) );
+			ul.appendChild( el( 'li', '', t.payNowText + ': ' + pay.now_formatted + ( pay.at_property > 0 ? SEP + t.payLaterText + ': ' + pay.at_property_formatted : '' ) ) );
 		} else if ( ! cfg.instant ) {
 			ul.appendChild( el( 'li', '', fmt( t.requestNote, cfg.replyTime || '' ) ) );
 		} else {
@@ -2776,7 +2799,7 @@
 				li.appendChild( tel );
 			}
 			if ( c.phone && c.email ) {
-				li.appendChild( document.createTextNode( ' · ' ) );
+				li.appendChild( document.createTextNode( SEP ) );
 			}
 			if ( c.email ) {
 				var mail = el( 'a', '', c.email );
@@ -3077,7 +3100,7 @@
 		ref.appendChild( document.createTextNode( t.reference + ': ' ) );
 		ref.appendChild( el( 'strong', '', data.reference ) );
 		this.success.appendChild( ref );
-		this.success.appendChild( el( 'p', 'fb-success__stay', data.room + ' · ' + this.date( data.check_in ) + ' → ' + this.date( data.check_out ) + ' · ' + data.total_formatted ) );
+		this.success.appendChild( el( 'p', 'fb-success__stay', data.room + SEP + this.date( data.check_in ) + ' → ' + this.date( data.check_out ) + SEP + data.total_formatted ) );
 		if ( data.payment ) {
 			this.renderPayment( data.payment );
 		}
@@ -3134,7 +3157,7 @@
 		ref.appendChild( document.createTextNode( t.reference + ': ' ) );
 		ref.appendChild( el( 'strong', '', v.reference ) );
 		box.appendChild( ref );
-		box.appendChild( el( 'p', 'fb-success__stay', v.room + ' · ' + v.check_in_text + ' → ' + v.check_out_text + ' · ' + v.total_formatted ) );
+		box.appendChild( el( 'p', 'fb-success__stay', v.room + SEP + v.check_in_text + ' → ' + v.check_out_text + SEP + v.total_formatted ) );
 
 		if ( v.payment ) {
 			this.renderPayment( v.payment );
@@ -3142,8 +3165,8 @@
 
 		var details = section( box, t.yourBooking, 'fb-done__booking' );
 		var dl = el( 'dl', 'fb-done__list' );
-		dlRow( dl, t.room, v.room + ( v.rate ? ' · ' + v.rate.name + ( v.rate.meals ? ' · ' + v.rate.meals : '' ) : '' ) );
-		dlRow( dl, t.dates, v.check_in_text + ' → ' + v.check_out_text + ' · ' + v.nights_label );
+		dlRow( dl, t.room, v.room + ( v.rate ? SEP + v.rate.name + ( v.rate.meals ? SEP + v.rate.meals : '' ) : '' ) );
+		dlRow( dl, t.dates, v.check_in_text + ' → ' + v.check_out_text + SEP + v.nights_label );
 		dlRow( dl, t.guests, v.guests );
 		var q = v.quote || {};
 		( q.lines || [] ).forEach( function ( line ) {
@@ -3186,7 +3209,7 @@
 			}
 			if ( c.email ) {
 				if ( p.childNodes.length ) {
-					p.appendChild( document.createTextNode( ' · ' ) );
+					p.appendChild( document.createTextNode( SEP ) );
 				}
 				var mail = el( 'a', '', c.email );
 				mail.href = 'mailto:' + c.email;
@@ -3242,7 +3265,7 @@
 			v.requests.forEach( function ( r ) {
 				var li = el( 'li' );
 				li.appendChild( el( 'strong', '', r.type ) );
-				li.appendChild( document.createTextNode( ' · ' + r.date + ' · ' + ( r.handled ? t.requestHandled : t.requestOpen ) ) );
+				li.appendChild( document.createTextNode( SEP + r.date + SEP + ( r.handled ? t.requestHandled : t.requestOpen ) ) );
 				if ( r.message ) {
 					li.appendChild( el( 'p', '', r.message ) );
 				}
@@ -3518,7 +3541,7 @@
 		ref.appendChild( document.createTextNode( t.reference + ': ' ) );
 		ref.appendChild( el( 'strong', '', view.reference ) );
 		box.appendChild( ref );
-		box.appendChild( el( 'p', 'fb-success__stay', view.room + ' · ' + this.date( view.check_in ) + ' → ' + this.date( view.check_out ) + ' · ' + view.total_formatted ) );
+		box.appendChild( el( 'p', 'fb-success__stay', view.room + SEP + this.date( view.check_in ) + ' → ' + this.date( view.check_out ) + SEP + view.total_formatted ) );
 		this.renderPayment( view );
 
 		var actions = el( 'div', 'fb-actions fb-actions--result' );
@@ -3806,7 +3829,7 @@
 		this.result.innerHTML = '';
 		this.root.classList.add( 'is-checked' );
 		var box = el( 'div', 'fb-box__answer' + ( room.available ? ' is-available' : ' is-unavailable' ) );
-		var stay = el( 'p', 'fb-box__stay', nightsText( data.nights ) + ' · ' + this.guestsText( v ) );
+		var stay = el( 'p', 'fb-box__stay', nightsText( data.nights ) + SEP + this.guestsText( v ) );
 		if ( room.available ) {
 			box.appendChild( el( 'p', 'fb-box__status is-ok', t.boxAvailable ) );
 			box.appendChild( stay );

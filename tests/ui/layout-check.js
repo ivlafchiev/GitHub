@@ -4,7 +4,8 @@
  * The booking form, the search bar and the room box in frames of 320–1100 px (on a 1440 px
  * window), the full-width form at window widths 320–1920, the Azure contact page's two columns
  * at 1024–1920, two forms on one page, a form in a tab that starts hidden, and a content-sized
- * row. For every case it measures the rendered page:
+ * row, and the Azure section as an Elementor site has it (kit and theme button rules), at
+ * 360–1920. For every case it measures the rendered page:
  *
  * - nothing wider than the window and nothing outside the form;
  * - room cards: image, details and price/button never overlap, the details column is at least
@@ -14,12 +15,16 @@
  *   the date field still in view;
  * - messages: showing them moves or resizes no field in the same row or above (0.5 px); the
  *   message is outside the field cells, as wide as the form row and under the row;
- * - two forms: one form's calendar, messages and steps never show in the other, no repeated ids.
+ * - two forms: one form's calendar, messages and steps never show in the other, no repeated ids;
+ * - the site's button and field rules (Elementor kit, theme reset): every calendar day and arrow,
+ *   text link, date field and small button of the form looks the same at rest, on hover and on
+ *   focus with and without them.
  *
  * Screenshots of each case go to OUT/LABEL/part-N/.
  *
  *   BASE=http://localhost:8092 OUT=flexo-booking/ui-audit LABEL=before node tests/ui/layout-check.js
- *   [QUICK=1] [ONLY=frames,viewports,azure,two,search,box,forced,flexrow] [LANG_SUFFIX=-bg, with the site in Bulgarian]
+ *   [QUICK=1] [ONLY=frames,viewports,azure,azurekit,two,search,box,forced,flexrow] [LANG_SUFFIX=-bg, with the site in Bulgarian]
+ *   ONLY=sheets: only the before/after sheets, from the screenshots already taken
  */
 const { chromium } = require( 'playwright' );
 const fs = require( 'fs' );
@@ -29,7 +34,7 @@ const BASE = process.env.BASE || 'http://localhost:8092';
 const LABEL = process.env.LABEL || 'after';
 const OUT = process.env.OUT || 'flexo-booking/ui-audit';
 const QUICK = !! process.env.QUICK;
-const ONLY = ( process.env.ONLY || 'frames,viewports,azure,two,search,box,forced,flexrow' ).split( ',' );
+const ONLY = ( process.env.ONLY || 'frames,viewports,azure,azurekit,two,search,box,forced,flexrow' ).split( ',' );
 const LANG = process.env.LANG_SUFFIX || '';
 const FRAMES = QUICK ? [ 320, 480, 720, 1100 ] : [ 320, 360, 420, 480, 560, 640, 720, 900, 1100 ];
 const VIEWPORTS = QUICK ? [ 360, 1024, 1440 ] : [ 320, 360, 390, 430, 768, 1024, 1280, 1440, 1920 ];
@@ -247,6 +252,20 @@ async function settle( page, ms = 350 ) {
 	await page.waitForTimeout( ms );
 }
 
+// A click a guest can make: fails the check when something else covers the element (then
+// clicks it anyway, so the rest of the case still runs).
+async function press( locator, name ) {
+	try {
+		await locator.click( { timeout: 5000 } );
+		return true;
+	} catch ( e ) {
+		const cover = ( e.message.match( /<[^>]+> intercepts pointer events/ ) || [ e.message.split( '\n' )[ 0 ] ] )[ 0 ];
+		ok( false, `${ name }: can be clicked`, cover );
+		await locator.dispatchEvent( 'click' );
+		return false;
+	}
+}
+
 async function checkOverflow( page, name, sel ) {
 	const o = await page.evaluate( lab, [ 'overflow', sel ] );
 	ok( o.page <= 0, `${ name }: no sideways scroll`, o.page > 0 ? `page ${ o.page }px wider than the window` : '' );
@@ -271,7 +290,7 @@ async function checkSteps( page, name, sel, prev ) {
 
 async function checkMessages( page, name, sel, form, click ) {
 	const before = await page.evaluate( lab, [ 'fields', { root: sel, form } ] );
-	await page.locator( `${ sel || '.flexo-booking' } ${ form } ${ click }` ).first().click();
+	await press( page.locator( `${ sel || '.flexo-booking' } ${ form } ${ click }` ).first(), `${ name }: ${ click }` );
 	await settle( page, 450 );
 	const after = await page.evaluate( lab, [ 'fields', { root: sel, form } ] );
 	const msgs = await page.evaluate( lab, [ 'messages', { root: sel, form } ] );
@@ -319,7 +338,7 @@ async function checkAlign( page, name, sel ) {
 
 async function checkPicker( page, name, sel, which = 0 ) {
 	const y0 = await page.evaluate( () => scrollY );
-	await page.locator( `${ sel || '.flexo-booking' } .fb-date` ).nth( which ).click();
+	await press( page.locator( `${ sel || '.flexo-booking' } .fb-date` ).nth( which ), `${ name }: date field` );
 	await settle( page, 500 );
 	const p = await page.evaluate( lab, [ 'picker', sel ] );
 	if ( ! p.open ) {
@@ -331,6 +350,95 @@ async function checkPicker( page, name, sel, which = 0 ) {
 	const y1 = await page.evaluate( () => scrollY );
 	ok( p.inView, `${ name }: date fields still in view after opening`, `scrolled ${ Math.round( y1 - y0 ) }px` );
 	return p;
+}
+
+// The form's own controls under the site's button and field rules: styles at rest, on hover and
+// on focus, with the rules (#fxl-kit-controls) and without them. The site's colours and fonts
+// (#fxl-kit) stay, so the form's tokens are the same in both. Transitions are switched off so
+// a hover is measured at its end.
+const KIT_PROPS = [ 'color', 'backgroundColor', 'borderTopColor', 'borderTopWidth', 'boxShadow', 'paddingTop', 'paddingLeft', 'letterSpacing', 'textTransform', 'textDecorationLine', 'whiteSpace', 'borderTopLeftRadius' ];
+
+async function kitStates( page, root ) {
+	await page.addStyleTag( { content: '*,*::before,*::after{transition:none!important}' } );
+	// Elements of steps that this page doesn't reach (nearby dates, the summary toggle, the room
+	// box panel's close button) are added as they are rendered: styled by CSS alone.
+	const keys = await page.evaluate( ( r ) => {
+		const form = document.querySelector( r );
+		const extra = document.createElement( 'div' );
+		extra.id = 'fxl-kit-extra';
+		extra.innerHTML = '<button type="button" class="fb-alt"><strong>Fri 12 – Sun 14</strong><span>2 rooms · from 300 €</span></button>'
+			+ '<button type="button" class="fb-aside__toggle"><span>Your stay</span><span>300 €</span></button>'
+			+ '<button type="button" class="flexo-book-dialog__close" aria-label="Close">×</button>';
+		form.appendChild( extra );
+		const pick = {
+			'date field': '.fb-date',
+			'day': '.fb-day:not([aria-disabled="true"]):not(.is-start):not(.is-end):not(.is-range)',
+			'day (unavailable)': '.fb-day[aria-disabled="true"]',
+			'day (check-in)': '.fb-day.is-start',
+			'day (in the stay)': '.fb-day.is-range',
+			'next month': '.fb-picker__nav--next',
+			'previous month': '.fb-picker__nav--prev',
+			'clear dates': '.fb-picker .fb-link',
+			'more details': '.fb-room__more',
+			'nearby dates': '#fxl-kit-extra .fb-alt',
+			'summary toggle': '#fxl-kit-extra .fb-aside__toggle',
+			'close': '#fxl-kit-extra .flexo-book-dialog__close',
+		};
+		const found = [];
+		Object.entries( pick ).forEach( ( [ k, sel ] ) => {
+			const el = [ ...form.querySelectorAll( sel ) ].find( ( e ) => e.getClientRects().length );
+			if ( el ) {
+				el.dataset.kit = k;
+				found.push( k );
+			}
+		} );
+		return found;
+	}, root );
+	const measure = async () => {
+		const out = {};
+		for ( const k of keys ) {
+			const sel = `[data-kit="${ k }"]`;
+			const css = ( props ) => page.evaluate( ( [ s, ps ] ) => {
+				const cs = getComputedStyle( document.querySelector( s ) );
+				return Object.fromEntries( ps.map( ( p ) => [ p, cs[ p ] ] ) );
+			}, [ sel, props ] );
+			await page.evaluate( () => document.activeElement && document.activeElement.blur() );
+			await page.mouse.move( 0, 0 );
+			const rest = await css( KIT_PROPS );
+			await page.evaluate( ( s ) => document.querySelector( s ).scrollIntoView( { block: 'center' } ), sel );
+			const box = await page.locator( sel ).boundingBox();
+			await page.mouse.move( box.x + box.width / 2, box.y + box.height / 2 );
+			const hover = await css( KIT_PROPS );
+			await page.mouse.move( 0, 0 );
+			await page.evaluate( ( s ) => document.querySelector( s ).focus( { preventScroll: true } ), sel );
+			const focus = await css( KIT_PROPS );
+			out[ k ] = { rest, hover, focus };
+		}
+		await page.evaluate( () => document.activeElement && document.activeElement.blur() );
+		return out;
+	};
+	const withKit = await measure();
+	const sheet = await page.evaluate( () => {
+		const st = document.getElementById( 'fxl-kit-controls' );
+		const css = st.textContent;
+		st.textContent = '';
+		return css;
+	} );
+	const without = await measure();
+	await page.evaluate( ( css ) => {
+		document.getElementById( 'fxl-kit-controls' ).textContent = css;
+	}, sheet );
+	return keys.map( ( k ) => {
+		const diff = [];
+		[ 'rest', 'hover', 'focus' ].forEach( ( state ) => {
+			KIT_PROPS.forEach( ( p ) => {
+				if ( withKit[ k ][ state ][ p ] !== without[ k ][ state ][ p ] ) {
+					diff.push( `${ state } ${ p }: ${ withKit[ k ][ state ][ p ] } (without the site's rules ${ without[ k ][ state ][ p ] })` );
+				}
+			} );
+		} );
+		return { k, diff };
+	} );
 }
 
 /* ------------------------------------------------------------------ */
@@ -374,11 +482,11 @@ async function fullFlow( page, url, name, sel, part1Shot, opts = {} ) {
 	// Details: the first room that can be booked (a rate when it has several).
 	const select = page.locator( `${ root } .fb-room__select:not([disabled])` ).first();
 	if ( await select.count() ) {
-		await select.click();
+		await press( select, `${ name }: room button` );
 		await settle( page );
 		const plan = page.locator( `${ root } .fb-plan .fb-button` ).first();
 		if ( await plan.count() && await plan.isVisible() ) {
-			await plan.click();
+			await press( plan, `${ name }: rate button` );
 			await settle( page );
 		}
 		steps = await checkSteps( page, `${ name } details`, sel, steps );
@@ -392,10 +500,10 @@ async function fullFlow( page, url, name, sel, part1Shot, opts = {} ) {
 
 // Before/after sheets (when a LABEL=before run exists): part => [ caption, file ].
 const PAIRS = {
-	1: [ [ 'Azure contact page, 1280 px window: the booking form in its half column', 'azure-1280-page' ], [ 'Form in a 320 px column', 'frame-320-rooms' ], [ 'Form in a 720 px column', 'frame-720-rooms' ] ],
-	2: [ [ 'Azure contact page, 1280 px: calendar', 'azure-1280-calendar' ], [ 'Form in a 320 px column: calendar', 'frame-320-calendar' ], [ 'Room box, 320 px: calendar', 'box-320-calendar' ], [ 'Search bar, 480 px: calendar', 'search-480-calendar' ] ],
-	3: [ [ 'Azure contact page, 1280 px: steps', 'azure-1280-steps-dates' ], [ 'Form in a 480 px column: steps', 'frame-480-steps-dates' ], [ 'Form in a 1100 px column: steps', 'frame-1100-steps-dates' ] ],
-	4: [ [ 'Azure contact page, 1280 px: no dates chosen', 'azure-1280-dates-message' ], [ 'Form in a 1100 px column: no dates chosen', 'frame-1100-dates-message' ], [ 'Form in a 720 px column: guest details sent empty', 'frame-720-details-message' ] ],
+	1: [ [ 'Azure section as on the client\'s site (Elementor kit), 1025 px: rooms', 'azure-kit-1025-page' ], [ 'Azure section with the kit, 390 px: rooms', 'azure-kit-390-rooms' ], [ 'Azure contact page, 1280 px window: the booking form in its half column', 'azure-1280-page' ], [ 'Form in a 320 px column', 'frame-320-rooms' ], [ 'Form in a 720 px column', 'frame-720-rooms' ] ],
+	2: [ [ 'Azure section with the kit, 1025 px: calendar after "Change", a day hovered', 'azure-kit-1025-day-hover' ], [ 'Azure section with the kit, 1025 px: next-month arrow hovered', 'azure-kit-1025-arrow-hover' ], [ 'Azure section with the kit, 390 px: calendar', 'azure-kit-390-calendar' ], [ 'Azure contact page, 1280 px: calendar', 'azure-1280-calendar' ], [ 'Form in a 320 px column: calendar', 'frame-320-calendar' ], [ 'Room box, 320 px: calendar', 'box-320-calendar' ], [ 'Search bar, 480 px: calendar', 'search-480-calendar' ] ],
+	3: [ [ 'Azure section with the kit, 1025 px: steps', 'azure-kit-1025-steps-dates' ], [ 'Azure contact page, 1280 px: steps', 'azure-1280-steps-dates' ], [ 'Form in a 480 px column: steps', 'frame-480-steps-dates' ], [ 'Form in a 1100 px column: steps', 'frame-1100-steps-dates' ] ],
+	4: [ [ 'Azure section with the kit, 1025 px: date field with focus', 'azure-kit-1025-date-focus' ], [ 'Azure section with the kit, 390 px: no dates chosen', 'azure-kit-390-dates-message' ], [ 'Azure contact page, 1280 px: no dates chosen', 'azure-1280-dates-message' ], [ 'Form in a 1100 px column: no dates chosen', 'frame-1100-dates-message' ], [ 'Form in a 720 px column: guest details sent empty', 'frame-720-details-message' ] ],
 	5: [ [ 'Two forms on one page (1280 px)', 'two-forms' ] ],
 };
 
@@ -423,6 +531,13 @@ async function compare( browser ) {
 
 async function run() {
 	const browser = await chromium.launch();
+
+	// ONLY=sheets: the before/after sheets from the screenshots already taken, nothing measured.
+	if ( ONLY.includes( 'sheets' ) ) {
+		await compare( browser );
+		await browser.close();
+		return;
+	}
 
 	if ( ONLY.includes( 'frames' ) ) {
 		console.log( '### frames (form in a frame, window 1440)' );
@@ -460,6 +575,41 @@ async function run() {
 			await shot( az, 1, `azure-${ w }-page`, '.wp-block-columns' );
 		}
 		await az.close();
+	}
+
+	if ( ONLY.includes( 'azurekit' ) ) {
+		console.log( '### Azure section with the Elementor kit and theme button rules' );
+		const sel = '#fxl-az-book .flexo-booking';
+		const ak = await browser.newPage();
+		ak.on( 'pageerror', ( e ) => ok( false, 'no script errors', e.message ) );
+		for ( const w of QUICK ? [ 1025 ] : [ 360, 390, 768, 1025, 1280, 1366, 1440, 1920 ] ) {
+			await ak.setViewportSize( { width: w, height: 1000 } );
+			await fullFlow( ak, `${ BASE }/fxl-azure-kit/`, `azure kit ${ w }`, sel, `azure-kit-${ w }`, { shots: [ 390, 1025, 1366 ].includes( w ) } );
+			await ak.goto( `${ BASE }/fxl-azure-kit/?${ STAY }`, { waitUntil: 'networkidle' } );
+			await ak.waitForSelector( '.fb-room', { timeout: 15000 } ).catch( () => {} );
+			await settle( ak );
+			await shot( ak, 1, `azure-kit-${ w }-page`, '.fxl-az' );
+		}
+		// Hover and focus under the kit, with the calendar open on the chosen dates (as on the
+		// client's site after "Change").
+		await ak.setViewportSize( { width: 1025, height: 1000 } );
+		await ak.goto( `${ BASE }/fxl-azure-kit/?${ STAY }`, { waitUntil: 'networkidle' } );
+		await ak.waitForSelector( '.fb-room', { timeout: 15000 } ).catch( () => {} );
+		await press( ak.locator( `${ sel } .fb-stay__change` ), 'azure kit 1025: "Change"' );
+		await settle( ak, 500 );
+		const states = await kitStates( ak, sel );
+		ok( states.length >= 10, 'azure kit: controls found for the state check', states.map( ( s ) => s.k ).join( ', ' ) );
+		states.forEach( ( s ) => ok( ! s.diff.length, `azure kit: ${ s.k } keeps its look at rest, on hover and on focus`, s.diff.slice( 0, 3 ).join( '; ' ) ) );
+		await ak.evaluate( () => document.getElementById( 'fxl-kit-extra' ).remove() );
+		// Screenshots: a day and the next-month arrow hovered, a date field focused.
+		await ak.locator( `${ sel } [data-kit="day"]` ).hover( { timeout: 5000 } ).catch( () => {} );
+		await shot( ak, 2, 'azure-kit-1025-day-hover', '#fxl-az-book' );
+		await ak.locator( `${ sel } [data-kit="next month"]` ).hover( { timeout: 5000 } ).catch( () => {} );
+		await shot( ak, 2, 'azure-kit-1025-arrow-hover', '#fxl-az-book' );
+		await ak.mouse.move( 0, 0 );
+		await ak.locator( `${ sel } .fb-date` ).first().focus();
+		await shot( ak, 4, 'azure-kit-1025-date-focus', `${ sel } .fb-search` );
+		await ak.close();
 	}
 
 	if ( ONLY.includes( 'two' ) ) {

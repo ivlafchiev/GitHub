@@ -705,6 +705,7 @@ The booking form, the search bar and the room box lay themselves out by the **sp
 - **Steps:** every step gets the same share of the bar however many there are; in forms under 640 px only the numbers show, with the current step's name under the bar (all names stay readable to screen readers).
 - **Messages** (a missing date, a field to correct, a refused booking) appear **under the row of fields** they are about, as wide as the form, with an icon, and never move or resize a field of that row. Messages about the whole form (*Please check the highlighted fields*, *The price for this stay is now …*) appear right above the buttons. The first field to correct gets the focus.
 - Several forms on one page work independently (calendars, messages, steps), also in tabs that start hidden.
+- **Your site's button and field styles** (Elementor Site Settings → Buttons / Form fields, or the theme's) give the form its colours and fonts, but don't restyle its date fields, calendar days and arrows or links: hovering a date doesn't turn it into a button, and a focused field shows one 2 px line inside its border.
 
 ### 14.1 Booking and Thank You pages (Settings → Pages, 1.9.0)
 

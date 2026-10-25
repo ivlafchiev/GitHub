@@ -1,6 +1,6 @@
 # Flexo Booking: implementation plan (Days 1–7, 1.9.0)
 
-Status: **Days 1–7 done (1.8.x); admin redesign done (1.7.0, §16); Day 7 in §17; 1.9.0 system pages in §18 – Session A done (§18.13), Sessions B and C waiting for approval; UI, responsive and widget controls release (§19): approved; Phase 1 done (§19.8), waiting for review before Phase 2.** Day 1 (1.1.0) is in §9, Day 2
+Status: **Days 1–7 done (1.8.x); admin redesign done (1.7.0, §16); Day 7 in §17; 1.9.0 system pages in §18 – Session A done (§18.13), Sessions B and C waiting for approval; UI, responsive and widget controls release (§19): approved; Phase 1 done (§19.8) and adjusted after the review of the client's screenshots (§19.8.1), waiting for review before Phase 2.** Day 1 (1.1.0) is in §9, Day 2
 (1.2.0) in §10, Day 3 (1.3.0) in §11, Day 4 (1.4.0) in §12 and Day 5 (1.5.0)
 in §13, each with what was built, the deviations and the test results. §14
 is the status after Day 5. §15 is Day 6 (1.6.0, usability and appearance,
@@ -2307,7 +2307,7 @@ Tests:
 
 ## 19. Plan: UI, responsive and widget controls release (1.10.0)
 
-Status: **approved as proposed; Phase 1 done (§19.8), waiting for review.** Phases 1–3 as in the brief, each
+Status: **approved as proposed; Phase 1 done (§19.8, screenshot review §19.8.1), waiting for review.** Phases 1–3 as in the brief, each
 ending with tests, screenshots, a report, a commit and a stop.
 
 ### 19.1 Baseline
@@ -2581,7 +2581,7 @@ Approved as proposed (decisions 1–5 of §19.7; Elementor is still not reachabl
   - Field messages are kept by form and placed in **one slot under the row of their field** (`.fb-msgs`, full width), with messages of the same row together.
   - Rows are measured from the layout, so this holds at every width and in theme copies. Slots open and close in 150 ms (instant with reduced motion).
 - **Invalid state:** colour plus an inner line (`box-shadow: inset`), never a wider border.
-  - The date fields' "double border" was the focus outline 2 px outside the red border. Date buttons now use the same ring as the other fields.
+  - The date fields' "double border" was the focus outline 2 px outside the red border. After the screenshot review (19.8.1) every field – inputs, selects, date buttons – shows focus as one 2 px line inside its border, with no ring outside.
 - **Component:** one message component (`.fb-msg`, error/warning/info/success, icon), also used by notices, the promo code, the enquiry form and change requests.
 - **Details step:** its form-level messages ("Please check the highlighted fields", a refused booking) appear above its buttons instead of above the form.
 - `aria-describedby` and `aria-invalid` as before. On submit, focus goes to the first field to correct.
@@ -2645,3 +2645,45 @@ Approved as proposed (decisions 1–5 of §19.7; Elementor is still not reachabl
 - the widget's *Room results* in the Elementor panel;
 - that Elementor's padding, spacing, corner and typography controls still apply;
 - a theme copy of `booking-form.php`, if a client site has one.
+
+#### 19.8.1 Review of the client's screenshots (Azure site on 1.9.0)
+
+The five screenshots were taken on the client's site, which still runs 1.9.0. I mapped each one to its part of the brief and rebuilt the page as it is there, as `fxl-azure-kit` in `tests/ui/layout-seed.php`:
+- the cream section with two columns;
+- the "Booking Form | Contact Form" pills and the beige "Make A Reservation" box;
+- the Elementor kit's global colours and fonts;
+- the kit's *Buttons* and *Form fields* rules, with their `:hover`/`:focus` states;
+- the Hello theme's button reset.
+
+This page showed problems the plain lab pages didn't, all from the site's button rules. They are fixed now.
+
+| Screenshot | What it shows | Part | Now |
+|---|---|---|---|
+| 1. Room cards in the half column | cards wider than the column, middle column squeezed, "·" at line starts, ✓ ticks | 1 | Fixed by Phase 1: stacked cards in the column, icons. Also new: the stay line wraps only between its parts (dates, nights, each group of guests), and "·" stays at the end of a line. |
+| 2. Steps and tabs | steps of different widths | 3 | Fixed by Phase 1 (equal tracks). The pills are the page's own Elementor buttons; the Forms Tabs widget is Part 11 (Phase 2). |
+| 3. Calendar | calendar under the button; dark double border on the date fields; brown hover on the date fields | 2, 4 | Placement fixed by Phase 1. New: the date fields, calendar days and arrows, text links, the summary toggle, the nearby-date choices and the box's close button keep their look under the kit's and theme's `button:hover/:focus` rules (colours, padding, letter spacing, white space). The round arrows were ovals because of the kit's padding. Focus is one 2 px line inside the field, for every field. |
+| 4. Elementor editor, laptop | the form running under the contact column | 1 | Fixed by Phase 1 (the form follows its column). Checked on the replica at 360–1920 px. The editor itself needs Elementor (19.5). |
+| 5. Admin booking history | the timeline dot out of line | 12 | Phase 3, not part of this review. |
+
+The kit also restyles the form's main buttons (`.fb-button`: letter spacing, hover colour). That is Part 9 (button styles from the widget, the page and Appearance over the site's kit), in Phase 2 as planned.
+
+**Other changes found on the replica:**
+- At 390 px, "Clear dates" broke onto two lines beside the Done button. It now stays on one line, and Done gives way.
+- A block theme's `:focus` outline put a ring on the day the calendar focuses when it opens, which looked like a chosen date. Opened with the mouse, that day has no ring; opened with the keyboard, it keeps the form's focus ring.
+- Date fields stack under 300 px of search row.
+
+**Tests:** `layout-check.js` has a new case, `azurekit`:
+- the full flow (dates, calendar, messages, rooms, details) at 360, 390, 768, 1025, 1280, 1366, 1440 and 1920 px;
+- a state check: every date field, calendar day (free, unavailable, check-in, in the stay), arrow, text link and small button is measured at rest, on hover and on focus, with the kit's and theme's button and field rules and without them. Twelve properties must be the same.
+
+Results:
+- **Before** (1.9.0 code on the replica): 109 passed, 104 failed.
+  - All eleven controls fail the state check: white text on the kit's brown on hover and focus, arrows with 14/28 px padding (ovals), 1 px letter spacing, no wrapping.
+  - At 1025 px the contact column covers the room button – the overlap of screenshot 4.
+- **After:**
+  - the whole check: **956 passed, 0 failed** (Phase 1's 745 plus 211 for the new case);
+  - Bulgarian: **706 passed, 0 failed**.
+- **Browser suites:** the same results as Phase 1 (19.8): day 2–5, day 8 and Appearance all pass, day 1 runs up to its Elementor section, and day 6 (116 of 117) and day 7 (two room-page checks) need Elementor or block templates. Day 6 now ignores the non-breaking space before "·" when it compares rate lines.
+- **Checkboxes and radios:** unchanged. Their own focus rules win over the new field focus.
+- **PHP suites:** not run again; no PHP of the plugin changed.
+- **Screenshots:** `ui-audit/part-1`, `part-2`, `part-3` and `part-4` have `azure-kit-*` before and after shots (also `after-bg/`), and these lead each `before-after.png` sheet. The measurements are in `layout-before.json`, `layout-after.json` and `layout-after-bg.json`.

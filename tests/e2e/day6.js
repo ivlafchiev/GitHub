@@ -142,7 +142,7 @@ async function save( p, sel = '#submit' ) {
 	ok( card.includes( '36 m²' ) && card.includes( '1 double + 2 single' ) && card.includes( 'Up to 4 guests' ) && card.includes( 'Free Wi-Fi' ) && card.includes( '+3 more' ), 'room card: size, beds, guests, 4 amenities + more (1.10.0)' );
 	ok( await noOverflow( g ), 'results fit 390 px' );
 	await g.locator( '.fb-room', { hasText: 'Garden Family' } ).locator( '.fb-room__side .fb-button' ).click();
-	const plans = await text( g, '.fb-plans' );
+	const plans = ( await text( g, '.fb-plans' ) ).replace( /\u00a0/g, ' ' ); // 1.10.0: "·" is glued to the text before it
 	ok( plans.includes( 'Breakfast included · ✓' ) && plans.includes( 'No meals · ✕ Non-refundable' ), 'rates compared: meals and cancellation in one line' );
 	await g.locator( '.fb-plan', { hasText: 'Bed & Breakfast' } ).locator( '.fb-button' ).click();
 	await g.waitForSelector( '.fb-details:not([hidden])' );

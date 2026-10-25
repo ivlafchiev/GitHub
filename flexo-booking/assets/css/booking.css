@@ -153,6 +153,13 @@
 	width: 100%;
 }
 
+/* Under 300 px of row the dates would wrap inside their fields: check-in above check-out. */
+@container fbsearch (max-width: 299px) {
+	.flexo-booking .fb-dates {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
 @container fbsearch (min-width: 420px) {
 	.flexo-booking .fb-field--small {
 		flex: 1 1 90px;
@@ -205,11 +212,12 @@
 	transition: border-color 0.15s, box-shadow 0.15s;
 }
 
+/* Focus (1.10.0): one 2 px line inside the field – no ring around it, which read as a double border. */
 .flexo-booking input:focus,
 .flexo-booking select:focus,
 .flexo-booking textarea:focus {
 	border-color: var(--fb-focus);
-	box-shadow: 0 0 0 3px color-mix(in srgb, var(--fb-focus) 25%, transparent);
+	box-shadow: inset 0 0 0 1px var(--fb-focus);
 }
 
 /* Buttons */
@@ -817,6 +825,7 @@
 	color: var(--fb-primary);
 	background: none;
 	border: 0;
+	border-radius: 0;
 	text-decoration: underline;
 	cursor: pointer;
 }
@@ -1482,17 +1491,15 @@
 	--fb-msg-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='m8 12 3 3 5-6'/%3E%3C/svg%3E");
 }
 
-/* Invalid fields: colour and an inner line, never a wider border (the field keeps its size). */
-.flexo-booking [aria-invalid="true"],
-.flexo-booking .fb-date[aria-invalid="true"] {
+/* Invalid fields: colour and an inner line, never a wider border (the field keeps its size); with focus the line is thicker. */
+.flexo-booking [aria-invalid="true"] {
 	border-color: var(--fb-error);
 	box-shadow: inset 0 0 0 1px var(--fb-error);
 }
 
-.flexo-booking [aria-invalid="true"]:focus,
-.flexo-booking .fb-date[aria-invalid="true"]:focus-visible {
+.flexo-booking [aria-invalid="true"]:focus {
 	border-color: var(--fb-error);
-	box-shadow: inset 0 0 0 1px var(--fb-error), 0 0 0 3px color-mix(in srgb, var(--fb-error) 22%, transparent);
+	box-shadow: inset 0 0 0 2px var(--fb-error);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1669,25 +1676,47 @@
 	text-align: left;
 	color: var(--fb-text);
 	background: var(--fb-field-bg);
-	border: 1px solid var(--fb-border);
+	border: 1px solid var(--fb-field-border);
 	border-radius: calc(var(--fb-radius) * 0.75);
 	cursor: pointer;
 }
 
-.flexo-booking .fb-date.is-empty {
+/*
+ * The date fields are buttons that look like fields (1.10.0): the theme's and
+ * the Elementor kit's button:hover / button:focus colours and letter spacing
+ * (".elementor-kit-N button:hover" outranks one class) don't turn them into
+ * buttons. ".flexo-booking" twice ranks above those rules; the colours are the
+ * form's tokens, so the widget's and Appearance colours still apply.
+ */
+.flexo-booking.flexo-booking .fb-date,
+.flexo-booking.flexo-booking .fb-date:is(:hover, :focus, :active) {
+	color: var(--fb-text);
+	background-color: var(--fb-field-bg);
+	border-color: var(--fb-field-border);
+	box-shadow: none;
+	letter-spacing: normal;
+	text-transform: none;
+	white-space: normal;
+}
+
+.flexo-booking.flexo-booking .fb-date.is-empty {
 	color: var(--fb-muted);
 }
 
-.flexo-booking .fb-date.is-picking,
-.flexo-booking .fb-date:focus-visible {
+/* The date being chosen, and keyboard focus: one 2 px line inside the field. */
+.flexo-booking.flexo-booking .fb-date:is(.is-picking, :focus-visible) {
 	outline: none;
 	border-color: var(--fb-focus);
-	box-shadow: 0 0 0 3px color-mix(in srgb, var(--fb-focus) 25%, transparent);
+	box-shadow: inset 0 0 0 1px var(--fb-focus);
 }
 
-.flexo-booking .fb-date[aria-invalid="true"]:is(.is-picking, :focus-visible) {
+.flexo-booking.flexo-booking .fb-date[aria-invalid="true"] {
 	border-color: var(--fb-error);
-	box-shadow: inset 0 0 0 1px var(--fb-error), 0 0 0 3px color-mix(in srgb, var(--fb-error) 22%, transparent);
+	box-shadow: inset 0 0 0 1px var(--fb-error);
+}
+
+.flexo-booking.flexo-booking .fb-date[aria-invalid="true"]:is(.is-picking, :focus-visible) {
+	box-shadow: inset 0 0 0 2px var(--fb-error);
 }
 
 .flexo-booking .fb-search {
@@ -1727,6 +1756,8 @@
 	height: 44px;
 	font-size: 1.5em;
 	line-height: 1;
+	padding: 0;
+	font-weight: 400;
 	color: var(--fb-text);
 	background: transparent;
 	border: 1px solid var(--fb-border);
@@ -1836,6 +1867,84 @@
 	opacity: 1;
 }
 
+/*
+ * Calendar days and arrows, text links, the summary toggle, the nearby-date
+ * choices and the panel's close button are buttons too (1.10.0). The theme's
+ * and the Elementor kit's button rules (".elementor-kit-N button:hover",
+ * "button:focus") don't restyle them: each state is set again here, with
+ * ".flexo-booking" twice so it ranks above those rules.
+ */
+.flexo-booking.flexo-booking :is(.fb-day, .fb-picker__nav, .fb-link, .fb-aside__toggle, .fb-alt, .flexo-book-dialog__close) {
+	letter-spacing: normal;
+	text-transform: none;
+	white-space: normal;
+}
+
+.flexo-booking.flexo-booking .fb-day:is(:hover, :focus, :active) {
+	color: var(--fb-text);
+	background-color: transparent;
+	border-color: transparent;
+}
+
+.flexo-booking.flexo-booking .fb-day:hover:not([aria-disabled="true"]) {
+	border-color: var(--fb-primary);
+}
+
+.flexo-booking.flexo-booking .fb-day[aria-disabled="true"]:is(:hover, :focus, :active) {
+	color: var(--fb-muted);
+}
+
+.flexo-booking.flexo-booking .fb-day.is-blocked:is(:hover, :focus, :active) {
+	text-decoration: line-through;
+	background-color: color-mix(in srgb, var(--fb-text) 6%, transparent);
+}
+
+.flexo-booking.flexo-booking .fb-day.is-range:is(:hover, :focus, :active) {
+	background-color: color-mix(in srgb, var(--fb-primary) 14%, transparent);
+}
+
+.flexo-booking.flexo-booking .fb-day:is(.is-start, .is-end):is(:hover, :focus, :active) {
+	color: var(--fb-primary-contrast);
+	background-color: var(--fb-primary);
+}
+
+.flexo-booking.flexo-booking .fb-picker__nav:is(:hover, :focus, :active) {
+	color: var(--fb-text);
+	background-color: transparent;
+	border-color: var(--fb-border);
+}
+
+.flexo-booking.flexo-booking .fb-link:is(:hover, :focus, :active) {
+	color: var(--fb-primary);
+	background-color: transparent;
+	border-color: transparent;
+	text-decoration: underline;
+}
+
+.flexo-booking.flexo-booking .fb-aside__toggle:is(:hover, :focus, :active) {
+	color: var(--fb-text);
+	background-color: transparent;
+}
+
+.flexo-booking.flexo-booking .fb-alt:is(:hover, :focus, :active) {
+	color: var(--fb-text);
+	background-color: color-mix(in srgb, var(--fb-primary) 6%, var(--fb-bg));
+	border-color: var(--fb-border);
+}
+
+.flexo-booking.flexo-booking .fb-alt:hover {
+	border-color: var(--fb-primary);
+}
+
+.flexo-booking.flexo-booking .flexo-book-dialog__close:is(:hover, :focus, :active) {
+	color: var(--fb-text);
+	background-color: transparent;
+}
+
+.flexo-booking.flexo-booking .flexo-book-dialog__close:is(:hover, :focus-visible) {
+	background-color: color-mix(in srgb, var(--fb-text) 8%, transparent);
+}
+
 .flexo-booking .fb-day__price {
 	font-size: 0.6875rem;
 	font-weight: 400;
@@ -1860,6 +1969,21 @@
 	margin-top: 8px;
 }
 
+/* "Clear dates" stays on one line; the Done button gives way (it was the link that wrapped). */
+.flexo-booking .fb-picker__foot .fb-link {
+	flex: none;
+	white-space: nowrap;
+}
+
+/*
+ * The calendar moves focus to a day when it opens. Opened with the mouse, that
+ * day gets no ring (the theme's ":focus" outline made it look chosen); with the
+ * keyboard it keeps the form's focus ring.
+ */
+.flexo-booking .fb-picker :focus:not(:focus-visible) {
+	outline: none;
+}
+
 /* The stay, once rooms are shown */
 .flexo-booking .fb-stay {
 	display: flex;
@@ -1874,6 +1998,10 @@
 
 .flexo-booking .fb-stay__text {
 	margin: 0;
+}
+
+.flexo-booking .fb-stay__part {
+	white-space: nowrap;
 }
 
 /* Layout: summary next to the steps on wide forms, above them on narrow ones. */
@@ -2117,8 +2245,8 @@
 }
 
 .flexo-booking .fb-phone__cc:focus-within {
-	border-color: var(--fb-primary);
-	box-shadow: 0 0 0 3px color-mix(in srgb, var(--fb-primary) 25%, transparent);
+	border-color: var(--fb-focus);
+	box-shadow: inset 0 0 0 1px var(--fb-focus);
 }
 
 /* Before you book */
