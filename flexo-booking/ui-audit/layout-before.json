@@ -69,7 +69,7 @@
   {
    "name": "frame 320 rooms: nothing outside the form",
    "ok": false,
-   "detail": "fb-room [584–1163 in 560–880]; fb-room__body [813–925 in 560–880]; fb-room__title [813–925 in 560–880]; fb-room__facts [813–925 in 560–880]; LI [813–925 in 560–880]"
+   "detail": "fb-room [584\u20131163 in 560\u2013880]; fb-room__body [813\u2013925 in 560\u2013880]; fb-room__title [813\u2013925 in 560\u2013880]; fb-room__facts [813\u2013925 in 560\u2013880]; LI [813\u2013925 in 560\u2013880]"
   },
   {
    "name": "frame 320: room cards shown",
@@ -99,12 +99,12 @@
   {
    "name": "frame 320 details: nothing outside the form",
    "ok": false,
-   "detail": "fb-button [584–976 in 560–880]"
+   "detail": "fb-button [584\u2013976 in 560\u2013880]"
   },
   {
    "name": "frame 320 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,92.1 0.0×0.0); fb-2-name#1 (0.0,92.1 0.0×0.0); fb-2-email#2 (0.0,124.8 0.0×0.0); fb-2-email#3 (0.0,124.8 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,92.1 0.0\u00d70.0); fb-2-name#1 (0.0,92.1 0.0\u00d70.0); fb-2-email#2 (0.0,124.8 0.0\u00d70.0); fb-2-email#3 (0.0,124.8 0.0\u00d70.0)"
   },
   {
    "name": "frame 320 details: message outside the field cells",
@@ -189,7 +189,7 @@
   {
    "name": "frame 360 rooms: nothing outside the form",
    "ok": false,
-   "detail": "fb-room [564–1143 in 540–900]; fb-room__body [793–905 in 540–900]; fb-room__title [793–905 in 540–900]; fb-room__facts [793–905 in 540–900]; LI [793–905 in 540–900]"
+   "detail": "fb-room [564\u20131143 in 540\u2013900]; fb-room__body [793\u2013905 in 540\u2013900]; fb-room__title [793\u2013905 in 540\u2013900]; fb-room__facts [793\u2013905 in 540\u2013900]; LI [793\u2013905 in 540\u2013900]"
   },
   {
    "name": "frame 360: room cards shown",
@@ -219,12 +219,12 @@
   {
    "name": "frame 360 details: nothing outside the form",
    "ok": false,
-   "detail": "fb-button [564–956 in 540–900]"
+   "detail": "fb-button [564\u2013956 in 540\u2013900]"
   },
   {
    "name": "frame 360 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,98.8 0.0×0.0); fb-2-email#3 (0.0,98.8 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,66.0 0.0\u00d70.0); fb-2-name#1 (0.0,66.0 0.0\u00d70.0); fb-2-email#2 (0.0,98.8 0.0\u00d70.0); fb-2-email#3 (0.0,98.8 0.0\u00d70.0)"
   },
   {
    "name": "frame 360 details: message outside the field cells",
@@ -259,7 +259,7 @@
   {
    "name": "frame 420 dates: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0×0.0); fb-2-out-btn#3 (0.0,78.3 0.0×0.0)"
+   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0\u00d70.0); fb-2-out-btn#3 (0.0,78.3 0.0\u00d70.0)"
   },
   {
    "name": "frame 420 dates: message outside the field cells",
@@ -309,7 +309,7 @@
   {
    "name": "frame 420 rooms: nothing outside the form",
    "ok": false,
-   "detail": "fb-room [534–1113 in 510–930]; fb-room__side [891–1100 in 510–930]; fb-room__total-label [991–1100 in 510–930]; fb-room__total [952–1100 in 510–930]; fb-room__meta fb-room__avg [983–1100 in 510–930]"
+   "detail": "fb-room [534\u20131113 in 510\u2013930]; fb-room__side [891\u20131100 in 510\u2013930]; fb-room__total-label [991\u20131100 in 510\u2013930]; fb-room__total [952\u20131100 in 510\u2013930]; fb-room__meta fb-room__avg [983\u20131100 in 510\u2013930]"
   },
   {
    "name": "frame 420: room cards shown",
@@ -344,7 +344,7 @@
   {
    "name": "frame 420 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,98.8 0.0×0.0); fb-2-email#3 (0.0,98.8 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,66.0 0.0\u00d70.0); fb-2-name#1 (0.0,66.0 0.0\u00d70.0); fb-2-email#2 (0.0,98.8 0.0\u00d70.0); fb-2-email#3 (0.0,98.8 0.0\u00d70.0)"
   },
   {
    "name": "frame 420 details: message outside the field cells",
@@ -379,7 +379,7 @@
   {
    "name": "frame 480 dates: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0×0.0); fb-2-out-btn#3 (0.0,55.6 0.0×0.0)"
+   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0\u00d70.0); fb-2-out-btn#3 (0.0,55.6 0.0\u00d70.0)"
   },
   {
    "name": "frame 480 dates: message outside the field cells",
@@ -429,7 +429,7 @@
   {
    "name": "frame 480 rooms: nothing outside the form",
    "ok": false,
-   "detail": "fb-room [504–1083 in 480–960]; fb-room__side [861–1070 in 480–960]; fb-room__total-label [961–1070 in 480–960]; fb-room__total [922–1070 in 480–960]; fb-room__meta fb-room__avg [953–1070 in 480–960]"
+   "detail": "fb-room [504\u20131083 in 480\u2013960]; fb-room__side [861\u20131070 in 480\u2013960]; fb-room__total-label [961\u20131070 in 480\u2013960]; fb-room__total [922\u20131070 in 480\u2013960]; fb-room__meta fb-room__avg [953\u20131070 in 480\u2013960]"
   },
   {
    "name": "frame 480: room cards shown",
@@ -464,7 +464,7 @@
   {
    "name": "frame 480 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,66.0 0.0\u00d70.0); fb-2-name#1 (0.0,66.0 0.0\u00d70.0); fb-2-email#2 (0.0,66.0 0.0\u00d70.0); fb-2-email#3 (0.0,66.0 0.0\u00d70.0)"
   },
   {
    "name": "frame 480 details: message outside the field cells",
@@ -499,7 +499,7 @@
   {
    "name": "frame 560 dates: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0×0.0); fb-2-out-btn#3 (0.0,78.3 0.0×0.0); fb-2-adults#4 (0.0,78.3 0.0×0.0); fb-2-adults#5 (0.0,78.3 0.0×0.0)"
+   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0\u00d70.0); fb-2-out-btn#3 (0.0,78.3 0.0\u00d70.0); fb-2-adults#4 (0.0,78.3 0.0\u00d70.0); fb-2-adults#5 (0.0,78.3 0.0\u00d70.0)"
   },
   {
    "name": "frame 560 dates: message outside the field cells",
@@ -549,7 +549,7 @@
   {
    "name": "frame 560 rooms: nothing outside the form",
    "ok": false,
-   "detail": "fb-room [464–1043 in 440–1000]; fb-room__side [821–1030 in 440–1000]; fb-room__total-label [921–1030 in 440–1000]; fb-room__total [882–1030 in 440–1000]; fb-room__meta fb-room__avg [913–1030 in 440–1000]"
+   "detail": "fb-room [464\u20131043 in 440\u20131000]; fb-room__side [821\u20131030 in 440\u20131000]; fb-room__total-label [921\u20131030 in 440\u20131000]; fb-room__total [882\u20131030 in 440\u20131000]; fb-room__meta fb-room__avg [913\u20131030 in 440\u20131000]"
   },
   {
    "name": "frame 560: room cards shown",
@@ -584,7 +584,7 @@
   {
    "name": "frame 560 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,66.0 0.0\u00d70.0); fb-2-name#1 (0.0,66.0 0.0\u00d70.0); fb-2-email#2 (0.0,66.0 0.0\u00d70.0); fb-2-email#3 (0.0,66.0 0.0\u00d70.0)"
   },
   {
    "name": "frame 560 details: message outside the field cells",
@@ -619,7 +619,7 @@
   {
    "name": "frame 640 dates: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0×0.0); fb-2-out-btn#3 (0.0,78.3 0.0×0.0); fb-2-adults#4 (0.0,78.3 0.0×0.0); fb-2-adults#5 (0.0,78.3 0.0×0.0)"
+   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0\u00d70.0); fb-2-out-btn#3 (0.0,78.3 0.0\u00d70.0); fb-2-adults#4 (0.0,78.3 0.0\u00d70.0); fb-2-adults#5 (0.0,78.3 0.0\u00d70.0)"
   },
   {
    "name": "frame 640 dates: message outside the field cells",
@@ -704,7 +704,7 @@
   {
    "name": "frame 640 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,66.0 0.0\u00d70.0); fb-2-name#1 (0.0,66.0 0.0\u00d70.0); fb-2-email#2 (0.0,66.0 0.0\u00d70.0); fb-2-email#3 (0.0,66.0 0.0\u00d70.0)"
   },
   {
    "name": "frame 640 details: message outside the field cells",
@@ -739,7 +739,7 @@
   {
    "name": "frame 720 dates: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0×0.0); fb-2-out-btn#3 (0.0,55.6 0.0×0.0); fb-2-adults#4 (0.0,55.6 0.0×0.0); fb-2-adults#5 (0.0,55.6 0.0×0.0)"
+   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0\u00d70.0); fb-2-out-btn#3 (0.0,55.6 0.0\u00d70.0); fb-2-adults#4 (0.0,55.6 0.0\u00d70.0); fb-2-adults#5 (0.0,55.6 0.0\u00d70.0)"
   },
   {
    "name": "frame 720 dates: message outside the field cells",
@@ -824,7 +824,7 @@
   {
    "name": "frame 720 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,66.0 0.0\u00d70.0); fb-2-name#1 (0.0,66.0 0.0\u00d70.0); fb-2-email#2 (0.0,66.0 0.0\u00d70.0); fb-2-email#3 (0.0,66.0 0.0\u00d70.0)"
   },
   {
    "name": "frame 720 details: message outside the field cells",
@@ -859,7 +859,7 @@
   {
    "name": "frame 900 dates: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0×0.0); fb-2-out-btn#3 (0.0,55.6 0.0×0.0); fb-2-adults#4 (0.0,55.6 0.0×0.0); fb-2-adults#5 (0.0,55.6 0.0×0.0)"
+   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0\u00d70.0); fb-2-out-btn#3 (0.0,55.6 0.0\u00d70.0); fb-2-adults#4 (0.0,55.6 0.0\u00d70.0); fb-2-adults#5 (0.0,55.6 0.0\u00d70.0)"
   },
   {
    "name": "frame 900 dates: message outside the field cells",
@@ -944,7 +944,7 @@
   {
    "name": "frame 900 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,66.0 0.0\u00d70.0); fb-2-name#1 (0.0,66.0 0.0\u00d70.0); fb-2-email#2 (0.0,66.0 0.0\u00d70.0); fb-2-email#3 (0.0,66.0 0.0\u00d70.0)"
   },
   {
    "name": "frame 900 details: message outside the field cells",
@@ -979,7 +979,7 @@
   {
    "name": "frame 1100 dates: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0×0.0); fb-2-out-btn#3 (0.0,55.6 0.0×0.0); fb-2-adults#4 (0.0,55.6 0.0×0.0); fb-2-adults#5 (0.0,55.6 0.0×0.0)"
+   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0\u00d70.0); fb-2-out-btn#3 (0.0,55.6 0.0\u00d70.0); fb-2-adults#4 (0.0,55.6 0.0\u00d70.0); fb-2-adults#5 (0.0,55.6 0.0\u00d70.0)"
   },
   {
    "name": "frame 1100 dates: message outside the field cells",
@@ -1064,7 +1064,7 @@
   {
    "name": "frame 1100 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,66.0 0.0\u00d70.0); fb-2-name#1 (0.0,66.0 0.0\u00d70.0); fb-2-email#2 (0.0,66.0 0.0\u00d70.0); fb-2-email#3 (0.0,66.0 0.0\u00d70.0)"
   },
   {
    "name": "frame 1100 details: message outside the field cells",
@@ -1184,7 +1184,7 @@
   {
    "name": "window 320 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,92.1 0.0×0.0); fb-2-name#1 (0.0,92.1 0.0×0.0); fb-2-email#2 (0.0,124.8 0.0×0.0); fb-2-email#3 (0.0,124.8 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,92.1 0.0\u00d70.0); fb-2-name#1 (0.0,92.1 0.0\u00d70.0); fb-2-email#2 (0.0,124.8 0.0\u00d70.0); fb-2-email#3 (0.0,124.8 0.0\u00d70.0)"
   },
   {
    "name": "window 320 details: message outside the field cells",
@@ -1304,7 +1304,7 @@
   {
    "name": "window 360 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,92.1 0.0×0.0); fb-2-name#1 (0.0,92.1 0.0×0.0); fb-2-email#2 (0.0,124.8 0.0×0.0); fb-2-email#3 (0.0,124.8 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,92.1 0.0\u00d70.0); fb-2-name#1 (0.0,92.1 0.0\u00d70.0); fb-2-email#2 (0.0,124.8 0.0\u00d70.0); fb-2-email#3 (0.0,124.8 0.0\u00d70.0)"
   },
   {
    "name": "window 360 details: message outside the field cells",
@@ -1424,7 +1424,7 @@
   {
    "name": "window 390 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,92.1 0.0×0.0); fb-2-name#1 (0.0,92.1 0.0×0.0); fb-2-email#2 (0.0,124.8 0.0×0.0); fb-2-email#3 (0.0,124.8 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,92.1 0.0\u00d70.0); fb-2-name#1 (0.0,92.1 0.0\u00d70.0); fb-2-email#2 (0.0,124.8 0.0\u00d70.0); fb-2-email#3 (0.0,124.8 0.0\u00d70.0)"
   },
   {
    "name": "window 390 details: message outside the field cells",
@@ -1544,7 +1544,7 @@
   {
    "name": "window 430 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,98.8 0.0×0.0); fb-2-email#3 (0.0,98.8 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,66.0 0.0\u00d70.0); fb-2-name#1 (0.0,66.0 0.0\u00d70.0); fb-2-email#2 (0.0,98.8 0.0\u00d70.0); fb-2-email#3 (0.0,98.8 0.0\u00d70.0)"
   },
   {
    "name": "window 430 details: message outside the field cells",
@@ -1579,7 +1579,7 @@
   {
    "name": "window 768 dates: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0×0.0); fb-2-out-btn#3 (0.0,78.3 0.0×0.0); fb-2-adults#4 (0.0,78.3 0.0×0.0); fb-2-adults#5 (0.0,78.3 0.0×0.0)"
+   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0\u00d70.0); fb-2-out-btn#3 (0.0,78.3 0.0\u00d70.0); fb-2-adults#4 (0.0,78.3 0.0\u00d70.0); fb-2-adults#5 (0.0,78.3 0.0\u00d70.0)"
   },
   {
    "name": "window 768 dates: message outside the field cells",
@@ -1664,7 +1664,7 @@
   {
    "name": "window 768 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,66.0 0.0\u00d70.0); fb-2-name#1 (0.0,66.0 0.0\u00d70.0); fb-2-email#2 (0.0,66.0 0.0\u00d70.0); fb-2-email#3 (0.0,66.0 0.0\u00d70.0)"
   },
   {
    "name": "window 768 details: message outside the field cells",
@@ -1699,7 +1699,7 @@
   {
    "name": "window 1024 dates: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0×0.0); fb-2-out-btn#3 (0.0,78.3 0.0×0.0); fb-2-adults#4 (0.0,78.3 0.0×0.0); fb-2-adults#5 (0.0,78.3 0.0×0.0)"
+   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0\u00d70.0); fb-2-out-btn#3 (0.0,78.3 0.0\u00d70.0); fb-2-adults#4 (0.0,78.3 0.0\u00d70.0); fb-2-adults#5 (0.0,78.3 0.0\u00d70.0)"
   },
   {
    "name": "window 1024 dates: message outside the field cells",
@@ -1784,7 +1784,7 @@
   {
    "name": "window 1024 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,66.0 0.0\u00d70.0); fb-2-name#1 (0.0,66.0 0.0\u00d70.0); fb-2-email#2 (0.0,66.0 0.0\u00d70.0); fb-2-email#3 (0.0,66.0 0.0\u00d70.0)"
   },
   {
    "name": "window 1024 details: message outside the field cells",
@@ -1819,7 +1819,7 @@
   {
    "name": "window 1280 dates: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0×0.0); fb-2-out-btn#3 (0.0,78.3 0.0×0.0); fb-2-adults#4 (0.0,78.3 0.0×0.0); fb-2-adults#5 (0.0,78.3 0.0×0.0)"
+   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0\u00d70.0); fb-2-out-btn#3 (0.0,78.3 0.0\u00d70.0); fb-2-adults#4 (0.0,78.3 0.0\u00d70.0); fb-2-adults#5 (0.0,78.3 0.0\u00d70.0)"
   },
   {
    "name": "window 1280 dates: message outside the field cells",
@@ -1904,7 +1904,7 @@
   {
    "name": "window 1280 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,66.0 0.0\u00d70.0); fb-2-name#1 (0.0,66.0 0.0\u00d70.0); fb-2-email#2 (0.0,66.0 0.0\u00d70.0); fb-2-email#3 (0.0,66.0 0.0\u00d70.0)"
   },
   {
    "name": "window 1280 details: message outside the field cells",
@@ -1939,7 +1939,7 @@
   {
    "name": "window 1440 dates: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0×0.0); fb-2-out-btn#3 (0.0,78.3 0.0×0.0); fb-2-adults#4 (0.0,78.3 0.0×0.0); fb-2-adults#5 (0.0,78.3 0.0×0.0)"
+   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0\u00d70.0); fb-2-out-btn#3 (0.0,78.3 0.0\u00d70.0); fb-2-adults#4 (0.0,78.3 0.0\u00d70.0); fb-2-adults#5 (0.0,78.3 0.0\u00d70.0)"
   },
   {
    "name": "window 1440 dates: message outside the field cells",
@@ -2024,7 +2024,7 @@
   {
    "name": "window 1440 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,66.0 0.0\u00d70.0); fb-2-name#1 (0.0,66.0 0.0\u00d70.0); fb-2-email#2 (0.0,66.0 0.0\u00d70.0); fb-2-email#3 (0.0,66.0 0.0\u00d70.0)"
   },
   {
    "name": "window 1440 details: message outside the field cells",
@@ -2059,7 +2059,7 @@
   {
    "name": "window 1920 dates: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0×0.0); fb-2-out-btn#3 (0.0,78.3 0.0×0.0); fb-2-adults#4 (0.0,78.3 0.0×0.0); fb-2-adults#5 (0.0,78.3 0.0×0.0)"
+   "detail": "fb-2-out-btn-label#2 (0.0,78.3 0.0\u00d70.0); fb-2-out-btn#3 (0.0,78.3 0.0\u00d70.0); fb-2-adults#4 (0.0,78.3 0.0\u00d70.0); fb-2-adults#5 (0.0,78.3 0.0\u00d70.0)"
   },
   {
    "name": "window 1920 dates: message outside the field cells",
@@ -2144,7 +2144,7 @@
   {
    "name": "window 1920 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,66.0 0.0\u00d70.0); fb-2-name#1 (0.0,66.0 0.0\u00d70.0); fb-2-email#2 (0.0,66.0 0.0\u00d70.0); fb-2-email#3 (0.0,66.0 0.0\u00d70.0)"
   },
   {
    "name": "window 1920 details: message outside the field cells",
@@ -2264,7 +2264,7 @@
   {
    "name": "azure 390 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,98.8 0.0×0.0); fb-2-email#3 (0.0,98.8 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,66.0 0.0\u00d70.0); fb-2-name#1 (0.0,66.0 0.0\u00d70.0); fb-2-email#2 (0.0,98.8 0.0\u00d70.0); fb-2-email#3 (0.0,98.8 0.0\u00d70.0)"
   },
   {
    "name": "azure 390 details: message outside the field cells",
@@ -2299,7 +2299,7 @@
   {
    "name": "azure 768 dates: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0×0.0); fb-2-out-btn#3 (0.0,55.6 0.0×0.0); fb-2-adults#4 (0.0,55.6 0.0×0.0); fb-2-adults#5 (0.0,55.6 0.0×0.0)"
+   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0\u00d70.0); fb-2-out-btn#3 (0.0,55.6 0.0\u00d70.0); fb-2-adults#4 (0.0,55.6 0.0\u00d70.0); fb-2-adults#5 (0.0,55.6 0.0\u00d70.0)"
   },
   {
    "name": "azure 768 dates: message outside the field cells",
@@ -2384,7 +2384,7 @@
   {
    "name": "azure 768 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,66.0 0.0\u00d70.0); fb-2-name#1 (0.0,66.0 0.0\u00d70.0); fb-2-email#2 (0.0,66.0 0.0\u00d70.0); fb-2-email#3 (0.0,66.0 0.0\u00d70.0)"
   },
   {
    "name": "azure 768 details: message outside the field cells",
@@ -2419,7 +2419,7 @@
   {
    "name": "azure 1024 dates: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0×0.0); fb-2-out-btn#3 (0.0,55.6 0.0×0.0)"
+   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0\u00d70.0); fb-2-out-btn#3 (0.0,55.6 0.0\u00d70.0)"
   },
   {
    "name": "azure 1024 dates: message outside the field cells",
@@ -2504,7 +2504,7 @@
   {
    "name": "azure 1024 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,66.0 0.0\u00d70.0); fb-2-name#1 (0.0,66.0 0.0\u00d70.0); fb-2-email#2 (0.0,66.0 0.0\u00d70.0); fb-2-email#3 (0.0,66.0 0.0\u00d70.0)"
   },
   {
    "name": "azure 1024 details: message outside the field cells",
@@ -2539,7 +2539,7 @@
   {
    "name": "azure 1280 dates: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0×0.0); fb-2-out-btn#3 (0.0,55.6 0.0×0.0); fb-2-adults#4 (0.0,55.6 0.0×0.0); fb-2-adults#5 (0.0,55.6 0.0×0.0)"
+   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0\u00d70.0); fb-2-out-btn#3 (0.0,55.6 0.0\u00d70.0); fb-2-adults#4 (0.0,55.6 0.0\u00d70.0); fb-2-adults#5 (0.0,55.6 0.0\u00d70.0)"
   },
   {
    "name": "azure 1280 dates: message outside the field cells",
@@ -2624,7 +2624,7 @@
   {
    "name": "azure 1280 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,66.0 0.0\u00d70.0); fb-2-name#1 (0.0,66.0 0.0\u00d70.0); fb-2-email#2 (0.0,66.0 0.0\u00d70.0); fb-2-email#3 (0.0,66.0 0.0\u00d70.0)"
   },
   {
    "name": "azure 1280 details: message outside the field cells",
@@ -2659,7 +2659,7 @@
   {
    "name": "azure 1440 dates: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0×0.0); fb-2-out-btn#3 (0.0,55.6 0.0×0.0); fb-2-adults#4 (0.0,55.6 0.0×0.0); fb-2-adults#5 (0.0,55.6 0.0×0.0)"
+   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0\u00d70.0); fb-2-out-btn#3 (0.0,55.6 0.0\u00d70.0); fb-2-adults#4 (0.0,55.6 0.0\u00d70.0); fb-2-adults#5 (0.0,55.6 0.0\u00d70.0)"
   },
   {
    "name": "azure 1440 dates: message outside the field cells",
@@ -2744,7 +2744,7 @@
   {
    "name": "azure 1440 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,66.0 0.0\u00d70.0); fb-2-name#1 (0.0,66.0 0.0\u00d70.0); fb-2-email#2 (0.0,66.0 0.0\u00d70.0); fb-2-email#3 (0.0,66.0 0.0\u00d70.0)"
   },
   {
    "name": "azure 1440 details: message outside the field cells",
@@ -2779,7 +2779,7 @@
   {
    "name": "azure 1920 dates: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0×0.0); fb-2-out-btn#3 (0.0,55.6 0.0×0.0); fb-2-adults#4 (0.0,55.6 0.0×0.0); fb-2-adults#5 (0.0,55.6 0.0×0.0)"
+   "detail": "fb-2-out-btn-label#2 (0.0,55.6 0.0\u00d70.0); fb-2-out-btn#3 (0.0,55.6 0.0\u00d70.0); fb-2-adults#4 (0.0,55.6 0.0\u00d70.0); fb-2-adults#5 (0.0,55.6 0.0\u00d70.0)"
   },
   {
    "name": "azure 1920 dates: message outside the field cells",
@@ -2864,7 +2864,7 @@
   {
    "name": "azure 1920 details: no field in the row moves or resizes",
    "ok": false,
-   "detail": "fb-2-name#0 (0.0,66.0 0.0×0.0); fb-2-name#1 (0.0,66.0 0.0×0.0); fb-2-email#2 (0.0,66.0 0.0×0.0); fb-2-email#3 (0.0,66.0 0.0×0.0)"
+   "detail": "fb-2-name#0 (0.0,66.0 0.0\u00d70.0); fb-2-name#1 (0.0,66.0 0.0\u00d70.0); fb-2-email#2 (0.0,66.0 0.0\u00d70.0); fb-2-email#3 (0.0,66.0 0.0\u00d70.0)"
   },
   {
    "name": "azure 1920 details: message outside the field cells",
@@ -3360,6 +3360,1071 @@
    "name": "content-sized row: nothing outside the form",
    "ok": true,
    "detail": ""
+  },
+  {
+   "name": "azure kit 360 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 179.2 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure kit 360 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "azure kit 360 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "azure kit 360: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "azure kit 360 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 179.2 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure kit 360 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 310.4px"
+  },
+  {
+   "name": "azure kit 360 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 179.2 / 24.0"
+  },
+  {
+   "name": "azure kit 360 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 310.4px"
+  },
+  {
+   "name": "azure kit 360 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,91.2 0.0\u00d70.0); fb-2-name#1 (0.0,91.2 0.0\u00d70.0)"
+  },
+  {
+   "name": "azure kit 360 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "azure kit 360 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 206.8 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure kit 390 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "azure kit 390 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "azure kit 390: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "azure kit 390 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 206.8 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure kit 390 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 365.6px"
+  },
+  {
+   "name": "azure kit 390 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 206.8 / 24.0"
+  },
+  {
+   "name": "azure kit 390 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 365.6px"
+  },
+  {
+   "name": "azure kit 390 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,91.2 0.0\u00d70.0); fb-2-name#1 (0.0,91.2 0.0\u00d70.0)"
+  },
+  {
+   "name": "azure kit 390 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "azure kit 390 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 142.9 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure kit 768 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "azure kit 768 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "azure kit 768: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768: date fields still in view after opening",
+   "ok": false,
+   "detail": "scrolled 577px"
+  },
+  {
+   "name": "azure kit 768 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 142.9 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure kit 768 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 237.8px"
+  },
+  {
+   "name": "azure kit 768 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768: room cards readable and contained",
+   "ok": false,
+   "detail": "card 0: card outside the results | card 1: card outside the results"
+  },
+  {
+   "name": "azure kit 768 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 142.9 / 24.0"
+  },
+  {
+   "name": "azure kit 768 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 237.8px"
+  },
+  {
+   "name": "azure kit 768 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 details: nothing outside the form",
+   "ok": false,
+   "detail": "fb-button [-23\u2013395 in 49\u2013324]"
+  },
+  {
+   "name": "azure kit 768 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,91.2 0.0\u00d70.0); fb-2-name#1 (0.0,91.2 0.0\u00d70.0)"
+  },
+  {
+   "name": "azure kit 768 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "azure kit 768 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 246.9 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure kit 1025 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 dates: labels and fields of a row line up",
+   "ok": false,
+   "detail": "Adults / Check-out (labels -1.6, fields -1.6)"
+  },
+  {
+   "name": "azure kit 1025 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "azure kit 1025 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "azure kit 1025: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025: date fields still in view after opening",
+   "ok": false,
+   "detail": "scrolled 523px"
+  },
+  {
+   "name": "azure kit 1025 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 246.9 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure kit 1025 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 445.8px"
+  },
+  {
+   "name": "azure kit 1025 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 rooms: nothing outside the form",
+   "ok": false,
+   "detail": "fb-room [83\u2013651 in 59\u2013438]; fb-room__side [419\u2013638 in 59\u2013438]; fb-room__total-label [534\u2013638 in 59\u2013438]; fb-room__total [496\u2013638 in 59\u2013438]; fb-room__meta fb-room__avg [526\u2013638 in 59\u2013438]"
+  },
+  {
+   "name": "azure kit 1025: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025: room cards readable and contained",
+   "ok": false,
+   "detail": "card 0: details column 91 px next to the image, card outside the results | card 1: details column 98 px next to the image, card outside the results"
+  },
+  {
+   "name": "azure kit 1025: room button: can be clicked",
+   "ok": false,
+   "detail": "</div> intercepts pointer events"
+  },
+  {
+   "name": "azure kit 1025: rate button: can be clicked",
+   "ok": false,
+   "detail": "</div> intercepts pointer events"
+  },
+  {
+   "name": "azure kit 1025 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 246.9 / 24.0"
+  },
+  {
+   "name": "azure kit 1025 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 445.8px"
+  },
+  {
+   "name": "azure kit 1025 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 details: nothing outside the form",
+   "ok": false,
+   "detail": "fb-button [83\u2013501 in 59\u2013438]"
+  },
+  {
+   "name": "azure kit 1025 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,65.6 0.0\u00d70.0); fb-2-name#1 (0.0,65.6 0.0\u00d70.0)"
+  },
+  {
+   "name": "azure kit 1025 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "azure kit 1025 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 333.6 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure kit 1280 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,54.8 0.0\u00d70.0); fb-2-out-btn#3 (0.0,54.8 0.0\u00d70.0)"
+  },
+  {
+   "name": "azure kit 1280 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "azure kit 1280 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "azure kit 1280: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 20px"
+  },
+  {
+   "name": "azure kit 1280 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 333.6 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure kit 1280 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 619.2px"
+  },
+  {
+   "name": "azure kit 1280 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 rooms: nothing outside the form",
+   "ok": false,
+   "detail": "fb-room [112\u2013684 in 88\u2013554]; fb-room__side [452\u2013671 in 88\u2013554]; fb-room__total-label [567\u2013671 in 88\u2013554]; fb-room__total [529\u2013671 in 88\u2013554]; fb-room__meta fb-room__avg [559\u2013671 in 88\u2013554]"
+  },
+  {
+   "name": "azure kit 1280: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280: room cards readable and contained",
+   "ok": false,
+   "detail": "card 0: details column 95 px next to the image, card outside the results | card 1: details column 103 px next to the image, card outside the results"
+  },
+  {
+   "name": "azure kit 1280 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 333.6 / 24.0"
+  },
+  {
+   "name": "azure kit 1280 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 619.2px"
+  },
+  {
+   "name": "azure kit 1280 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,65.6 0.0\u00d70.0); fb-2-name#1 (0.0,65.6 0.0\u00d70.0); fb-2-email#2 (0.0,65.6 0.0\u00d70.0); fb-2-email#3 (0.0,65.6 0.0\u00d70.0)"
+  },
+  {
+   "name": "azure kit 1280 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "azure kit 1280 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 333.6 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure kit 1366 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,54.8 0.0\u00d70.0); fb-2-out-btn#3 (0.0,54.8 0.0\u00d70.0)"
+  },
+  {
+   "name": "azure kit 1366 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "azure kit 1366 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "azure kit 1366: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "azure kit 1366 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 333.6 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure kit 1366 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 619.2px"
+  },
+  {
+   "name": "azure kit 1366 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 rooms: nothing outside the form",
+   "ok": false,
+   "detail": "fb-room [155\u2013727 in 131\u2013597]; fb-room__side [495\u2013714 in 131\u2013597]; fb-room__total-label [610\u2013714 in 131\u2013597]; fb-room__total [572\u2013714 in 131\u2013597]; fb-room__meta fb-room__avg [602\u2013714 in 131\u2013597]"
+  },
+  {
+   "name": "azure kit 1366: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366: room cards readable and contained",
+   "ok": false,
+   "detail": "card 0: details column 95 px next to the image, card outside the results | card 1: details column 103 px next to the image, card outside the results"
+  },
+  {
+   "name": "azure kit 1366 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 333.6 / 24.0"
+  },
+  {
+   "name": "azure kit 1366 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 619.2px"
+  },
+  {
+   "name": "azure kit 1366 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,65.6 0.0\u00d70.0); fb-2-name#1 (0.0,65.6 0.0\u00d70.0); fb-2-email#2 (0.0,65.6 0.0\u00d70.0); fb-2-email#3 (0.0,65.6 0.0\u00d70.0)"
+  },
+  {
+   "name": "azure kit 1366 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "azure kit 1366 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 333.6 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure kit 1440 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,54.8 0.0\u00d70.0); fb-2-out-btn#3 (0.0,54.8 0.0\u00d70.0)"
+  },
+  {
+   "name": "azure kit 1440 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "azure kit 1440 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "azure kit 1440: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "azure kit 1440 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 333.6 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure kit 1440 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 619.2px"
+  },
+  {
+   "name": "azure kit 1440 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 rooms: nothing outside the form",
+   "ok": false,
+   "detail": "fb-room [192\u2013764 in 168\u2013634]; fb-room__side [532\u2013751 in 168\u2013634]; fb-room__total-label [647\u2013751 in 168\u2013634]; fb-room__total [609\u2013751 in 168\u2013634]; fb-room__meta fb-room__avg [639\u2013751 in 168\u2013634]"
+  },
+  {
+   "name": "azure kit 1440: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440: room cards readable and contained",
+   "ok": false,
+   "detail": "card 0: details column 95 px next to the image, card outside the results | card 1: details column 103 px next to the image, card outside the results"
+  },
+  {
+   "name": "azure kit 1440 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 333.6 / 24.0"
+  },
+  {
+   "name": "azure kit 1440 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 619.2px"
+  },
+  {
+   "name": "azure kit 1440 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,65.6 0.0\u00d70.0); fb-2-name#1 (0.0,65.6 0.0\u00d70.0); fb-2-email#2 (0.0,65.6 0.0\u00d70.0); fb-2-email#3 (0.0,65.6 0.0\u00d70.0)"
+  },
+  {
+   "name": "azure kit 1440 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "azure kit 1440 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 dates: steps equally wide",
+   "ok": false,
+   "detail": "widths 333.6 / 24.0 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure kit 1920 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 dates: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-out-btn-label#2 (0.0,54.8 0.0\u00d70.0); fb-2-out-btn#3 (0.0,54.8 0.0\u00d70.0)"
+  },
+  {
+   "name": "azure kit 1920 dates: message outside the field cells",
+   "ok": false,
+   "detail": "Please choose your check-in and check-out dates."
+  },
+  {
+   "name": "azure kit 1920 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920: calendar right under the date fields",
+   "ok": false,
+   "detail": "between: fb-field fb-field--small, adults, fb-field fb-field--small, children, fb-field fb-field--action, fb-button"
+  },
+  {
+   "name": "azure kit 1920: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "azure kit 1920 rooms: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 333.6 / 24.0 / 24.0"
+  },
+  {
+   "name": "azure kit 1920 rooms: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 619.2px"
+  },
+  {
+   "name": "azure kit 1920 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 rooms: nothing outside the form",
+   "ok": false,
+   "detail": "fb-room [432\u20131004 in 408\u2013874]; fb-room__side [772\u2013991 in 408\u2013874]; fb-room__total-label [887\u2013991 in 408\u2013874]; fb-room__total [849\u2013991 in 408\u2013874]; fb-room__meta fb-room__avg [879\u2013991 in 408\u2013874]"
+  },
+  {
+   "name": "azure kit 1920: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920: room cards readable and contained",
+   "ok": false,
+   "detail": "card 0: details column 95 px next to the image, card outside the results | card 1: details column 103 px next to the image, card outside the results"
+  },
+  {
+   "name": "azure kit 1920 details: steps equally wide",
+   "ok": false,
+   "detail": "widths 24.0 / 24.0 / 333.6 / 24.0"
+  },
+  {
+   "name": "azure kit 1920 details: steps keep their place from step to step",
+   "ok": false,
+   "detail": "moved 619.2px"
+  },
+  {
+   "name": "azure kit 1920 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 details: no field in the row moves or resizes",
+   "ok": false,
+   "detail": "fb-2-name#0 (0.0,65.6 0.0\u00d70.0); fb-2-name#1 (0.0,65.6 0.0\u00d70.0); fb-2-email#2 (0.0,65.6 0.0\u00d70.0); fb-2-email#3 (0.0,65.6 0.0\u00d70.0)"
+  },
+  {
+   "name": "azure kit 1920 details: message outside the field cells",
+   "ok": false,
+   "detail": "Please enter your full name.; Please enter your email address.; Please enter your phone number."
+  },
+  {
+   "name": "azure kit 1920 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit: controls found for the state check",
+   "ok": true,
+   "detail": "date field, day, day (check-in), day (in the stay), next month, previous month, clear dates, nearby dates, summary toggle, close"
+  },
+  {
+   "name": "azure kit: date field keeps its look at rest, on hover and on focus",
+   "ok": false,
+   "detail": "rest letterSpacing: 1px (without the site's rules normal); rest whiteSpace: nowrap (without the site's rules normal); hover color: rgb(255, 255, 255) (without the site's rules rgb(181, 122, 90))"
+  },
+  {
+   "name": "azure kit: day keeps its look at rest, on hover and on focus",
+   "ok": false,
+   "detail": "rest letterSpacing: 1px (without the site's rules normal); rest whiteSpace: nowrap (without the site's rules normal); hover color: rgb(255, 255, 255) (without the site's rules rgb(181, 122, 90))"
+  },
+  {
+   "name": "azure kit: day (check-in) keeps its look at rest, on hover and on focus",
+   "ok": false,
+   "detail": "rest letterSpacing: 1px (without the site's rules normal); rest whiteSpace: nowrap (without the site's rules normal); hover letterSpacing: 1px (without the site's rules normal)"
+  },
+  {
+   "name": "azure kit: day (in the stay) keeps its look at rest, on hover and on focus",
+   "ok": false,
+   "detail": "rest letterSpacing: 1px (without the site's rules normal); rest whiteSpace: nowrap (without the site's rules normal); hover color: rgb(255, 255, 255) (without the site's rules rgb(181, 122, 90))"
+  },
+  {
+   "name": "azure kit: next month keeps its look at rest, on hover and on focus",
+   "ok": false,
+   "detail": "rest paddingTop: 14px (without the site's rules 1px); rest paddingLeft: 28px (without the site's rules 6px); rest letterSpacing: 1px (without the site's rules normal)"
+  },
+  {
+   "name": "azure kit: previous month keeps its look at rest, on hover and on focus",
+   "ok": false,
+   "detail": "rest paddingTop: 14px (without the site's rules 1px); rest paddingLeft: 28px (without the site's rules 6px); rest letterSpacing: 1px (without the site's rules normal)"
+  },
+  {
+   "name": "azure kit: clear dates keeps its look at rest, on hover and on focus",
+   "ok": false,
+   "detail": "rest letterSpacing: 1px (without the site's rules normal); rest whiteSpace: nowrap (without the site's rules normal); rest borderTopLeftRadius: 6px (without the site's rules 0px)"
+  },
+  {
+   "name": "azure kit: nearby dates keeps its look at rest, on hover and on focus",
+   "ok": false,
+   "detail": "rest letterSpacing: 1px (without the site's rules normal); rest whiteSpace: nowrap (without the site's rules normal); hover color: rgb(255, 255, 255) (without the site's rules rgb(181, 122, 90))"
+  },
+  {
+   "name": "azure kit: summary toggle keeps its look at rest, on hover and on focus",
+   "ok": false,
+   "detail": "rest letterSpacing: 1px (without the site's rules normal); rest whiteSpace: nowrap (without the site's rules normal); hover color: rgb(255, 255, 255) (without the site's rules rgb(181, 122, 90))"
+  },
+  {
+   "name": "azure kit: close keeps its look at rest, on hover and on focus",
+   "ok": false,
+   "detail": "rest letterSpacing: 1px (without the site's rules normal); rest whiteSpace: nowrap (without the site's rules normal); hover color: rgb(255, 255, 255) (without the site's rules rgb(181, 122, 90))"
   }
  ]
 }

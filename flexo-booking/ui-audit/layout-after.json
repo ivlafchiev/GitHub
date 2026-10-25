@@ -1179,7 +1179,7 @@
   {
    "name": "window 320: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 94px"
+   "detail": "scrolled 148px"
   },
   {
    "name": "window 320 rooms: steps equally wide",
@@ -1304,7 +1304,7 @@
   {
    "name": "window 360: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 79px"
+   "detail": "scrolled 132px"
   },
   {
    "name": "window 360 rooms: steps equally wide",
@@ -1429,7 +1429,7 @@
   {
    "name": "window 390: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 65px"
+   "detail": "scrolled 136px"
   },
   {
    "name": "window 390 rooms: steps equally wide",
@@ -1554,7 +1554,7 @@
   {
    "name": "window 430: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 70px"
+   "detail": "scrolled 51px"
   },
   {
    "name": "window 430 rooms: steps equally wide",
@@ -1929,7 +1929,7 @@
   {
    "name": "window 1280: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 257px"
+   "detail": "scrolled 307px"
   },
   {
    "name": "window 1280 rooms: steps equally wide",
@@ -2304,7 +2304,7 @@
   {
    "name": "azure 390: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 211px"
+   "detail": "scrolled 191px"
   },
   {
    "name": "azure 390 rooms: steps equally wide",
@@ -3002,6 +3002,1061 @@
    "detail": ""
   },
   {
+   "name": "azure kit 360 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 62.8 / 62.8 / 62.8 / 62.8"
+  },
+  {
+   "name": "azure kit 360 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 87.2px"
+  },
+  {
+   "name": "azure kit 360: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 51px"
+  },
+  {
+   "name": "azure kit 360 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 62.8 / 62.8 / 62.8 / 62.8"
+  },
+  {
+   "name": "azure kit 360 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure kit 360 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 62.8 / 62.8 / 62.8 / 62.8"
+  },
+  {
+   "name": "azure kit 360 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure kit 360 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 360 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 69.7 / 69.7 / 69.7 / 69.7"
+  },
+  {
+   "name": "azure kit 390 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 87.2px"
+  },
+  {
+   "name": "azure kit 390: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 51px"
+  },
+  {
+   "name": "azure kit 390 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 69.7 / 69.7 / 69.7 / 69.7"
+  },
+  {
+   "name": "azure kit 390 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure kit 390 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 69.7 / 69.7 / 69.7 / 69.7"
+  },
+  {
+   "name": "azure kit 390 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure kit 390 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 390 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 53.7 / 53.7 / 53.7 / 53.7"
+  },
+  {
+   "name": "azure kit 768 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 106.8px"
+  },
+  {
+   "name": "azure kit 768: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 174px"
+  },
+  {
+   "name": "azure kit 768 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 53.7 / 53.7 / 53.7 / 53.7"
+  },
+  {
+   "name": "azure kit 768 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure kit 768 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 53.7 / 53.7 / 53.7 / 53.7"
+  },
+  {
+   "name": "azure kit 768 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure kit 768 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 768 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 79.7 / 79.7 / 79.7 / 79.7"
+  },
+  {
+   "name": "azure kit 1025 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 87.2px"
+  },
+  {
+   "name": "azure kit 1025: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 72px"
+  },
+  {
+   "name": "azure kit 1025 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 79.7 / 79.7 / 79.7 / 79.7"
+  },
+  {
+   "name": "azure kit 1025 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure kit 1025 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 79.7 / 79.7 / 79.7 / 79.7"
+  },
+  {
+   "name": "azure kit 1025 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure kit 1025 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1025 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 101.4 / 101.4 / 101.4 / 101.4"
+  },
+  {
+   "name": "azure kit 1280 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 67.6px"
+  },
+  {
+   "name": "azure kit 1280: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 58px"
+  },
+  {
+   "name": "azure kit 1280 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 101.4 / 101.4 / 101.4 / 101.4"
+  },
+  {
+   "name": "azure kit 1280 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure kit 1280 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 101.4 / 101.4 / 101.4 / 101.4"
+  },
+  {
+   "name": "azure kit 1280 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure kit 1280 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1280 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 101.4 / 101.4 / 101.4 / 101.4"
+  },
+  {
+   "name": "azure kit 1366 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 67.6px"
+  },
+  {
+   "name": "azure kit 1366: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 8px"
+  },
+  {
+   "name": "azure kit 1366 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 101.4 / 101.4 / 101.4 / 101.4"
+  },
+  {
+   "name": "azure kit 1366 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure kit 1366 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 101.4 / 101.4 / 101.4 / 101.4"
+  },
+  {
+   "name": "azure kit 1366 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure kit 1366 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1366 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 101.4 / 101.4 / 101.4 / 101.4"
+  },
+  {
+   "name": "azure kit 1440 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 67.6px"
+  },
+  {
+   "name": "azure kit 1440: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "azure kit 1440 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 101.4 / 101.4 / 101.4 / 101.4"
+  },
+  {
+   "name": "azure kit 1440 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure kit 1440 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 101.4 / 101.4 / 101.4 / 101.4"
+  },
+  {
+   "name": "azure kit 1440 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure kit 1440 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1440 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 dates: steps equally wide",
+   "ok": true,
+   "detail": "widths 101.4 / 101.4 / 101.4 / 101.4"
+  },
+  {
+   "name": "azure kit 1920 dates: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 dates: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 dates: labels and fields of a row line up",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 dates: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 dates: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 dates: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 dates: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920: calendar right under the date fields",
+   "ok": true,
+   "detail": "gap 67.6px"
+  },
+  {
+   "name": "azure kit 1920: calendar inside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920: date fields still in view after opening",
+   "ok": true,
+   "detail": "scrolled 0px"
+  },
+  {
+   "name": "azure kit 1920 rooms: steps equally wide",
+   "ok": true,
+   "detail": "widths 101.4 / 101.4 / 101.4 / 101.4"
+  },
+  {
+   "name": "azure kit 1920 rooms: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure kit 1920 rooms: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 rooms: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920: room cards shown",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920: room cards readable and contained",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 details: steps equally wide",
+   "ok": true,
+   "detail": "widths 101.4 / 101.4 / 101.4 / 101.4"
+  },
+  {
+   "name": "azure kit 1920 details: steps keep their place from step to step",
+   "ok": true,
+   "detail": "moved 0.0px"
+  },
+  {
+   "name": "azure kit 1920 details: no sideways scroll",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 details: nothing outside the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 details: no field in the row moves or resizes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 details: message outside the field cells",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 details: message as wide as the form",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit 1920 details: message under its row",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit: controls found for the state check",
+   "ok": true,
+   "detail": "date field, day, day (check-in), day (in the stay), next month, previous month, clear dates, nearby dates, summary toggle, close"
+  },
+  {
+   "name": "azure kit: date field keeps its look at rest, on hover and on focus",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit: day keeps its look at rest, on hover and on focus",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit: day (check-in) keeps its look at rest, on hover and on focus",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit: day (in the stay) keeps its look at rest, on hover and on focus",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit: next month keeps its look at rest, on hover and on focus",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit: previous month keeps its look at rest, on hover and on focus",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit: clear dates keeps its look at rest, on hover and on focus",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit: nearby dates keeps its look at rest, on hover and on focus",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit: summary toggle keeps its look at rest, on hover and on focus",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit: close keeps its look at rest, on hover and on focus",
+   "ok": true,
+   "detail": ""
+  },
+  {
    "name": "two forms: no repeated ids",
    "ok": true,
    "detail": ""
@@ -3069,7 +4124,7 @@
   {
    "name": "hidden tab shown: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 297px"
+   "detail": "scrolled 347px"
   },
   {
    "name": "search 320: no sideways scroll",
