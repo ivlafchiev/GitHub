@@ -210,11 +210,17 @@ namespace {
 	 */
 	function flexo_stub_widgets() {
 		$dir = WP_PLUGIN_DIR . '/flexo-booking/includes/elementor/';
+		// Files and widgets missing in older versions are skipped (before/after captures).
 		foreach ( array( 'class-controls.php', 'class-booking-widget.php', 'class-room-widgets.php', 'class-room-box-widget.php', 'class-contact-widget.php' ) as $file ) {
-			require_once $dir . $file;
+			if ( file_exists( $dir . $file ) ) {
+				require_once $dir . $file;
+			}
 		}
 		$widgets = array();
 		foreach ( array( 'Flexo_Booking_Elementor_Widget', 'Flexo_Booking_Room_Box_Widget', 'Flexo_Booking_Contact_Widget', 'Flexo_Booking_Forms_Tabs_Widget', 'Flexo_Booking_Room_Amenities_Widget', 'Flexo_Booking_Room_Details_Widget', 'Flexo_Booking_Room_Gallery_Widget' ) as $class ) {
+			if ( ! class_exists( $class ) ) {
+				continue;
+			}
 			$widget = new $class();
 			$widget->flexo_register();
 			$widgets[ $widget->get_name() ] = $widget;

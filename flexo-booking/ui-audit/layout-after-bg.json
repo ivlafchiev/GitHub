@@ -54,7 +54,7 @@
   {
    "name": "frame 320: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 237px"
   },
   {
    "name": "frame 320 rooms: steps equally wide",
@@ -179,7 +179,7 @@
   {
    "name": "frame 360: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 146px"
   },
   {
    "name": "frame 360 rooms: steps equally wide",
@@ -304,7 +304,7 @@
   {
    "name": "frame 420: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 146px"
   },
   {
    "name": "frame 420 rooms: steps equally wide",
@@ -429,7 +429,7 @@
   {
    "name": "frame 480: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 125px"
   },
   {
    "name": "frame 480 rooms: steps equally wide",
@@ -554,7 +554,7 @@
   {
    "name": "frame 560: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 125px"
   },
   {
    "name": "frame 560 rooms: steps equally wide",
@@ -679,7 +679,7 @@
   {
    "name": "frame 640: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 125px"
   },
   {
    "name": "frame 640 rooms: steps equally wide",
@@ -804,7 +804,7 @@
   {
    "name": "frame 720: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 93px"
   },
   {
    "name": "frame 720 rooms: steps equally wide",
@@ -929,7 +929,7 @@
   {
    "name": "frame 900: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 93px"
   },
   {
    "name": "frame 900 rooms: steps equally wide",
@@ -1054,7 +1054,7 @@
   {
    "name": "frame 1100: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 93px"
   },
   {
    "name": "frame 1100 rooms: steps equally wide",
@@ -1179,7 +1179,7 @@
   {
    "name": "azure 390: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 209px"
+   "detail": "scrolled 255px"
   },
   {
    "name": "azure 390 rooms: steps equally wide",
@@ -1304,7 +1304,7 @@
   {
    "name": "azure 768: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 278px"
+   "detail": "scrolled 0px"
   },
   {
    "name": "azure 768 rooms: steps equally wide",
@@ -1429,7 +1429,7 @@
   {
    "name": "azure 1024: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 141px"
   },
   {
    "name": "azure 1024 rooms: steps equally wide",
@@ -1554,7 +1554,7 @@
   {
    "name": "azure 1280: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 89px"
   },
   {
    "name": "azure 1280 rooms: steps equally wide",
@@ -1679,7 +1679,7 @@
   {
    "name": "azure 1440: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 89px"
   },
   {
    "name": "azure 1440 rooms: steps equally wide",
@@ -1804,7 +1804,7 @@
   {
    "name": "azure 1920: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 39px"
   },
   {
    "name": "azure 1920 rooms: steps equally wide",
@@ -1929,7 +1929,7 @@
   {
    "name": "azure kit 360: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 51px"
+   "detail": "scrolled 97px"
   },
   {
    "name": "azure kit 360 rooms: steps equally wide",
@@ -2054,7 +2054,7 @@
   {
    "name": "azure kit 390: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 51px"
+   "detail": "scrolled 97px"
   },
   {
    "name": "azure kit 390 rooms: steps equally wide",
@@ -2179,7 +2179,7 @@
   {
    "name": "azure kit 768: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 203px"
+   "detail": "scrolled 456px"
   },
   {
    "name": "azure kit 768 rooms: steps equally wide",
@@ -2304,7 +2304,7 @@
   {
    "name": "azure kit 1025: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 72px"
+   "detail": "scrolled 257px"
   },
   {
    "name": "azure kit 1025 rooms: steps equally wide",
@@ -2429,7 +2429,7 @@
   {
    "name": "azure kit 1280: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 58px"
+   "detail": "scrolled 204px"
   },
   {
    "name": "azure kit 1280 rooms: steps equally wide",
@@ -2554,7 +2554,7 @@
   {
    "name": "azure kit 1366: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 8px"
+   "detail": "scrolled 204px"
   },
   {
    "name": "azure kit 1366 rooms: steps equally wide",
@@ -2679,7 +2679,7 @@
   {
    "name": "azure kit 1440: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 204px"
   },
   {
    "name": "azure kit 1440 rooms: steps equally wide",
@@ -2804,7 +2804,7 @@
   {
    "name": "azure kit 1920: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 154px"
   },
   {
    "name": "azure kit 1920 rooms: steps equally wide",
@@ -2879,7 +2879,17 @@
   {
    "name": "azure kit: controls found for the state check",
    "ok": true,
-   "detail": "date field, day, day (check-in), day (in the stay), next month, previous month, clear dates, nearby dates, summary toggle, close"
+   "detail": "more details, room button, date field, day, day (check-in), day (in the stay), next month, previous month, clear dates, outline button (Done), nearby dates, summary toggle, close, day (unavailable)"
+  },
+  {
+   "name": "azure kit: more details keeps its look at rest, on hover and on focus",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit: room button keeps its look at rest, on hover and on focus",
+   "ok": true,
+   "detail": ""
   },
   {
    "name": "azure kit: date field keeps its look at rest, on hover and on focus",
@@ -2917,6 +2927,11 @@
    "detail": ""
   },
   {
+   "name": "azure kit: outline button (Done) keeps its look at rest, on hover and on focus",
+   "ok": true,
+   "detail": ""
+  },
+  {
    "name": "azure kit: nearby dates keeps its look at rest, on hover and on focus",
    "ok": true,
    "detail": ""
@@ -2928,6 +2943,11 @@
   },
   {
    "name": "azure kit: close keeps its look at rest, on hover and on focus",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "azure kit: day (unavailable) keeps its look at rest, on hover and on focus",
    "ok": true,
    "detail": ""
   },
@@ -2979,7 +2999,7 @@
   {
    "name": "search 320: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 69px"
   },
   {
    "name": "search 360: no sideways scroll",
@@ -3409,7 +3429,7 @@
   {
    "name": "box 320: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 119px"
   },
   {
    "name": "box 360: no sideways scroll",
@@ -3439,7 +3459,7 @@
   {
    "name": "box 360: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 46px"
   },
   {
    "name": "box 420: no sideways scroll",
@@ -3469,7 +3489,7 @@
   {
    "name": "box 420: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 28px"
   },
   {
    "name": "box 480: no sideways scroll",
@@ -3499,7 +3519,7 @@
   {
    "name": "box 480: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 28px"
   },
   {
    "name": "box 560: no sideways scroll",
@@ -3529,7 +3549,7 @@
   {
    "name": "box 560: date fields still in view after opening",
    "ok": true,
-   "detail": "scrolled 0px"
+   "detail": "scrolled 28px"
   }
  ]
 }

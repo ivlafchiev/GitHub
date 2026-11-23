@@ -393,8 +393,9 @@ preg_match_all( '/(?:^|})\s*([^{}]+)\{/', $css, $flexo_sel );
 $flexo_scoped = array_filter(
 	array_map( 'trim', $flexo_sel[1] ),
 	static function ( $sel ) {
-		// 1.9.0: also the built-in Booking / Thank You pages (their wrapper and page area).
-		return '@font-face' !== $sel && 0 !== strpos( $sel, '.flexo-booking' ) && 0 !== strpos( $sel, '.flexo-system-page' ) && 0 !== strpos( $sel, 'body.flexo-system-page-body ' );
+		// 1.9.0: also the built-in Booking / Thank You pages (their wrapper and page area);
+		// 1.10.0: the Booking & Contact tabs around the forms.
+		return '@font-face' !== $sel && 0 !== strpos( $sel, '.flexo-booking' ) && 0 !== strpos( $sel, '.flexo-system-page' ) && 0 !== strpos( $sel, 'body.flexo-system-page-body ' ) && '.flexo-forms-tabs' !== $sel;
 	}
 );
 t_ok( ! $flexo_scoped && false !== strpos( $css, '--fb-primary:#123456' ) && false === strpos( $css, '!important' ), 'custom CSS only for the booking form and the built-in pages (and its fonts), no !important' );

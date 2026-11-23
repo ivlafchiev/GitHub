@@ -4,6 +4,7 @@
  *
  *   BASE=http://localhost:8092 OUT=flexo-booking/ui-audit LABEL=after WP="wp --path=…" node tests/ui/release-check.js
  *   [ONLY=cards,lists,gallery,buttons,contact,tabs,timeline] [MAIL_LOG=…/mail.log]
+ *   ONLY=sheets: only the before/after sheets (part-N/before-after.png) from shots already taken
  *
  * - Part 6, room cards: each amenity's own icon, one tick, or no icon.
  * - Part 7, room lists: the icon box is exactly the chosen size (px and em,
@@ -154,8 +155,11 @@ async function lists( browser ) {
 	}
 	// Room details: the Size slider exists only once (it was dropped next to the Size fact's own icon).
 	if ( process.env.CONTROLS ) {
-		const ids = ( controls.widgets[ 'flexo-room-details' ] || { controls: [] } ).controls.map( ( c ) => c.id );
-		ok( 1 === ids.filter( ( id ) => 'icon_size' === id ).length, 'Room details: one "icon_size" control (the icon Size slider)' );
+		const details = controls.widgets[ 'flexo-room-details' ] || { controls: [], problems: [] };
+		const ids = details.controls.map( ( c ) => c.id );
+		const clash = ( details.problems || [] ).filter( ( x ) => /duplicate control icon_size/.test( x ) );
+		const slider = details.controls.find( ( c ) => 'icon_size' === c.id );
+		ok( 1 === ids.filter( ( id ) => 'icon_size' === id ).length && ! clash.length && slider && 'slider' === slider.type, 'Room details: one "icon_size" control (the icon Size slider)', clash.length ? 'registered twice: Elementor keeps the first (an icon picker) and drops the slider' : '' );
 	}
 	await page.close();
 }
@@ -456,8 +460,44 @@ async function timeline( browser ) {
 	}
 }
 
+/* ------------------------------------------------------------------ */
+
+// ONLY=sheets: part-N/before-after.png from the shots of a LABEL=before and a LABEL=after run.
+// Shots that exist only after (new features) are shown alone.
+async function sheets( browser ) {
+	const page = await browser.newPage( { viewport: { width: 1400, height: 800 } } );
+	const img = ( f ) => 'data:image/png;base64,' + fs.readFileSync( f ).toString( 'base64' );
+	for ( let part = 6; part <= 12; part++ ) {
+		const dir = path.join( OUT, `part-${ part }` );
+		const after = path.join( dir, 'after' );
+		if ( ! fs.existsSync( after ) ) {
+			continue;
+		}
+		const files = fs.readdirSync( after ).filter( ( f ) => f.endsWith( '.png' ) ).sort();
+		const rows = files.map( ( f ) => {
+			const b = path.join( dir, 'before', f );
+			const caption = f.replace( /\.png$/, '' ).replace( /-/g, ' ' );
+			const left = fs.existsSync( b ) ? `<figure><figcaption>Before</figcaption><img src="${ img( b ) }"></figure>` : '<figure><figcaption>Before</figcaption><p>Not in the previous version.</p></figure>';
+			return `<section><h2>${ caption }</h2><div class="pair">${ left }<figure><figcaption>After</figcaption><img src="${ img( path.join( after, f ) ) }"></figure></div></section>`;
+		} ).join( '' );
+		if ( ! rows ) {
+			continue;
+		}
+		await page.setContent( `<style>body{margin:16px;font:14px system-ui,sans-serif;color:#1f2933;background:#fff}h1{font-size:18px}h2{font-size:15px;margin:24px 0 8px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}figure{margin:0}figcaption{font-weight:600;margin:0 0 6px}p{color:#5b6670}img{max-width:100%;border:1px solid #d5dbe1}</style><h1>Part ${ part }: before (1.9.0 + Phase 1) and after (1.10.0)</h1>${ rows }` );
+		await page.waitForTimeout( 300 );
+		await page.screenshot( { path: path.join( dir, 'before-after.png' ), fullPage: true } );
+		console.log( `  sheet: part-${ part }/before-after.png (${ files.length } shots)` );
+	}
+	await page.close();
+}
+
 async function run() {
 	const browser = await chromium.launch();
+	if ( ONLY.includes( 'sheets' ) ) {
+		await sheets( browser );
+		await browser.close();
+		return;
+	}
 	const parts = { cards, lists, gallery, buttons, contact, tabs, timeline };
 	for ( const key of ONLY ) {
 		if ( parts[ key ] ) {

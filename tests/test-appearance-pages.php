@@ -278,7 +278,8 @@ $all_css = Flexo_Booking_Appearance::css() . $page_css( 'booking' );
 $bad     = array_filter(
 	ap_selectors( $all_css ),
 	static function ( $selector ) {
-		return 1 !== preg_match( '/^(\.flexo-booking|\.flexo-system-page(--[a-z-]+)?( \.flexo-booking)?|body\.flexo-system-page-body(--[a-z-]+)? \.flexo-page)$/', $selector );
+		// 1.10.0: also the Booking & Contact tabs around the forms.
+		return 1 !== preg_match( '/^(\.flexo-booking|\.flexo-forms-tabs|\.flexo-system-page(--[a-z-]+)?( \.flexo-booking)?|body\.flexo-system-page-body(--[a-z-]+)? \.flexo-page)$/', $selector );
 	}
 );
 t_eq( array(), array_values( $bad ), 'every selector is a Flexo element (no body, h1, button, …)' );
