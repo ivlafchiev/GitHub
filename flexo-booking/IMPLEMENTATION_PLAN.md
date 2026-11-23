@@ -1,6 +1,6 @@
-# Flexo Booking: implementation plan (Days 1–7, 1.9.0)
+# Flexo Booking: implementation plan (Days 1–7, 1.10.0)
 
-Status: **Days 1–7 done (1.8.x); admin redesign done (1.7.0, §16); Day 7 in §17; 1.9.0 system pages in §18 – Session A done (§18.13), Sessions B and C waiting for approval; UI, responsive and widget controls release (§19): approved; Phase 1 done (§19.8) and adjusted after the review of the client's screenshots (§19.8.1), waiting for review before Phase 2.** Day 1 (1.1.0) is in §9, Day 2
+Status: **Days 1–7 done (1.8.x); admin redesign done (1.7.0, §16); Day 7 in §17; 1.9.0 system pages in §18 – Session A done (§18.13), Sessions B and C waiting for approval; UI, responsive and widget controls release 1.10.0 (§19): done – Phase 1 (§19.8, §19.8.1), Phase 2 (§19.9), Phase 3 (§19.10), release results (§19.11).** Day 1 (1.1.0) is in §9, Day 2
 (1.2.0) in §10, Day 3 (1.3.0) in §11, Day 4 (1.4.0) in §12 and Day 5 (1.5.0)
 in §13, each with what was built, the deviations and the test results. §14
 is the status after Day 5. §15 is Day 6 (1.6.0, usability and appearance,
@@ -28,7 +28,7 @@ Contents:
 16. Admin redesign (1.7.0)
 17. Day 7 plan: dynamic room pages, room listings and availability buttons
 18. 1.9.0 plan: system pages (Booking, Thank You, Contact)
-19. Plan: UI, responsive and widget controls release (1.10.0) – Phase 1 done (§19.8)
+19. UI, responsive and widget controls release (1.10.0) – done (Phases 1–3: §19.8–§19.10, results §19.11)
 
 ---
 
@@ -2307,8 +2307,7 @@ Tests:
 
 ## 19. Plan: UI, responsive and widget controls release (1.10.0)
 
-Status: **approved as proposed; Phase 1 done (§19.8, screenshot review §19.8.1), waiting for review.** Phases 1–3 as in the brief, each
-ending with tests, screenshots, a report, a commit and a stop.
+Status: **done.** Phase 1 in §19.8 (screenshot review §19.8.1), Phase 2 in §19.9, Phase 3 in §19.10, release results in §19.11. Phases 1–3 as in the brief; Phases 2 and 3 ran without a stop in between, at the user's request.
 
 ### 19.1 Baseline
 
@@ -2516,7 +2515,7 @@ ending with tests, screenshots, a report, a commit and a stop.
    `?ver=` on the assets, so browsers fetch the new CSS).
 5. **Elementor access** for the editor checks (19.5).
 
-### 19.8 Phase 1 status: responsive foundation and booking flow (Parts 1–5) – done, waiting for review
+### 19.8 Phase 1 status: responsive foundation and booking flow (Parts 1–5) – done
 
 Approved as proposed (decisions 1–5 of §19.7; Elementor is still not reachable here, see 19.5).
 
@@ -2687,3 +2686,204 @@ Results:
 - **Checkboxes and radios:** unchanged. Their own focus rules win over the new field focus.
 - **PHP suites:** not run again; no PHP of the plugin changed.
 - **Screenshots:** `ui-audit/part-1`, `part-2`, `part-3` and `part-4` have `azure-kit-*` before and after shots (also `after-bg/`), and these lead each `before-after.png` sheet. The measurements are in `layout-before.json`, `layout-after.json` and `layout-after-bg.json`.
+
+### 19.9 Phase 2 status: room widgets, buttons, controls, contact form (Parts 6–11) – done
+
+The user asked for Phases 2 and 3 without a stop for review in between (“continue, and don't stop at all”). So Phase 2 and Phase 3 were built one after the other and are reported here together. Elementor is still not reachable here (19.5). The widget controls are checked against a test-only stand-in for Elementor's widget API (`tests/ui/elementor-stub.php`), which records every section and control and renders the widget with chosen settings. CSS is generated the way Elementor does it (`{{WRAPPER}}` → `.elementor-N .elementor-element.elementor-element-ID`), inside the Azure-like kit (its *Buttons* and *Form fields* rules with their `:hover`/`:focus` states).
+
+**Shared approach:** widget controls write tokens (custom properties such as `--fb-button-bg` or `--flexo-arrow-size`) on the widget's root. The plugin's own rules use those tokens in every state, so a control does not need its own selector for hover, focus and active. Where the site's kit restyles `button:hover/:focus` with a stronger selector, the plugin restates its states with `:is(:hover,:focus,:active)` on its own root. No `!important` was added (`booking.css` still has the 11 from before; `flexo-admin.css` has none).
+
+**Part 6 – amenity icons on room cards**
+- The card shows each amenity's own icon (the bundled set or an uploaded one, as a mask, so it takes the icon colour).
+- *Amenities on the room cards*: Amenity icons / One simple tick / No icon:
+  - Appearance → *Room cards* (with the icon colour and size);
+  - the booking widget (and the Booking & Contact tabs widget);
+  - the shortcode: `[flexo_booking amenity_icons="tick"]`.
+- The choice is CSS only (`--fb-amenity-tick`, `--fb-amenity-icon-display`, `data-fb-amenities`). The script and the availability answer are unchanged.
+- Widget *Room cards* section: background, border, corners, padding, shadow, price colour, amenity icon colour, icon size, space after the icon.
+
+**Part 7 – room details and amenities**
+- **Why *Size* had no effect in Room details.** The widget registered two controls with the same id, `icon_size`:
+  - the *Your own icons → Size* icon picker (the icon for the room's size, id `icon_` + `size`);
+  - the *Icon → Size* slider.
+
+  Elementor keeps the first control with an id and drops the second. So the slider never existed in the panel's data, and nothing it did reached the page. Amenities had no own-icons section, so their slider worked.
+- The fix renames the own-icons pickers `fact_icon_size`, `fact_icon_guests` and so on. Pages saved before 1.10.0 still find their chosen icons under the old ids. The check now fails on any duplicate control id in any Flexo widget.
+- The icon box is now exactly the chosen size whatever is inside it:
+  - a bundled SVG, an uploaded image or an icon-font `<i>`;
+  - also under theme rules such as `svg { max-width: 100%; height: auto }`.
+
+  The box has `font-size: var(--flexo-icon-size)` and is 1 em square, and its child is 1 em with no max size.
+- New list controls:
+  - icon position (before, above, after);
+  - vertical alignment of the icon;
+  - long texts (wrap or one line with "…");
+  - item background, background under the mouse, padding and corners;
+  - divider style and width;
+  - icon and text colour under the mouse.
+- *Alignment* now also works in the grid layout.
+
+**Part 8 – gallery**
+- Photos: fit (cover, contain) and zoom under the mouse.
+- Arrows:
+  - button size, arrow size;
+  - colours and background, with their hover colours and hover border;
+  - border, corners, shadow, distance from the edge, height (top, middle, bottom).
+- The arrows keep their look under the site's `button:hover/:focus` rules, and show a ring only for keyboard focus.
+- Dots:
+  - shown as dots, lines or a count ("2 / 5");
+  - under or over the photos;
+  - active and other colours, size, space between, distance from the photos;
+  - the count's background and typography.
+- The existing dot colour control keeps its id.
+
+**Part 9 – buttons and fields**
+- New tokens:
+  - `--fb-button-radius` and `--fb-field-radius`, both 0.75 × `--fb-radius` as before, so nothing changes on existing sites;
+  - the button's colours, border, padding, height and shadow, with hover and outline variants.
+- **Appearance:**
+  - *Button corners*: as before / square / slight / rounded / **pill** / custom px;
+  - *Field corners*: as before / **like the buttons** / square / slight / rounded / custom px;
+  - the same two settings in a page's own look (Settings → Pages).
+- One shared **Buttons** Style section (`Flexo_Booking_Elementor_Controls::buttons()`) in the booking form, the room booking box, the contact form and the tabs widget:
+  - typography;
+  - text, background and border colours for normal and hover;
+  - border width, corners, padding, height, shadow;
+  - the outline button's colours.
+- One shared **Fields and labels** section:
+  - field text, border, focus colour, corners, height;
+  - label colour and typography;
+  - error and success colours.
+- The booking form's existing *Button typography* moved into *Buttons* under the same id, so saved pages keep it.
+
+**Part 10 – controls audit**
+- Every control of the seven Flexo widgets was set to a value different from its default on a test page. The check compares the page before and after: markup for content controls, computed style for style controls (hover and focus where the control is for a state).
+- **Result:** every control has a visible effect; none is ✗.
+- The checklist (each widget's sections and controls, with ⟂ for per-device controls) is in `ui-audit/part-10/widget-controls.md`, with the raw data in `controls.json` and `widgets-check.json`.
+- The booking form and the room booking box also got:
+  - *Steps and summary*: current, completed and next step colours, step name typography, summary background;
+  - *Calendar*: background, check-in/out and their text, nights in between, day under the mouse, arrows, day corners.
+- Three controls can't show an effect on the test pages, so the check marks them "not checked" (with the reason) instead of passing or failing them:
+  - *Success* colour: shown only after a booking or a sent message;
+  - *Uploaded icons keep their own colours*: only for uploaded icon files, and the test room uses the bundled icons;
+  - the own icon for *Room type*: the test room has no room type, so that fact is not shown.
+
+**Part 11 – contact form, Contact widget, Booking & Contact tabs**
+- **One contact component:**
+  - `class-contact.php` and `templates/contact-form.php`;
+  - the shortcode `[flexo_contact]`;
+  - the Elementor widget *Flexo Contact Form*.
+- **Fields:** name, email, phone (optional), subject (hidden), message.
+  - Each field can be required / optional / hidden in Settings → Pages → *Contact form*.
+  - There you also set the texts, the button and the message after sending.
+  - The filter `flexo_booking_contact_fields` can change the fields.
+- The form uses the booking form's own validation, message slots, phone field and consent. Its consent text speaks of "my message", not "my booking".
+- **Sending** (REST `contact`) uses the same internal method as availability enquiries (`Guest::message()`, `kind = contact`):
+  - the same checks, honeypot and consent;
+  - a limit per visitor and kind;
+  - the same storage and retention.
+- **What the hotel and the guest get:**
+  - The hotel gets "Message from {name}: {subject}", with Reply-To set to the guest.
+  - Today lists it as a message with *Reply by email* (`mailto:` with "Re: subject").
+  - An answer to the guest can be switched on (off by default).
+  - The privacy export says which form it came from and its subject.
+- **Tracking:** `contact_submit` (no personal data).
+- **Booking & Contact tabs:** the widget *Flexo Booking & Contact tabs* and `[flexo_forms_tabs]`.
+  - Behaviour:
+    - ARIA tabs;
+    - arrow keys, Home and End;
+    - the tab shown first;
+    - `#contact` / `#booking` in the address opens that tab;
+    - each form lays out for its own width when shown.
+  - Style controls:
+    - alignment (with *Stretch*);
+    - typography;
+    - normal, hover and selected colours;
+    - border, corners, padding, space between and below the tabs.
+  - The selected tab keeps its colours under the site's button rules.
+  - Appearance colours and fonts apply to the tabs too.
+- The Contact system page itself stays in Session B (§18), as decided (19.7, decision 1).
+
+### 19.10 Phase 3 status: booking history and emails (Parts 12–13) – done
+
+**Part 12 – booking history timeline**
+- Each entry is a grid row: a fixed rail column (24 px) and the text.
+- The dot (12 px, `box-sizing: border-box`) is centred on the entry's first line through the line height (`--fx-tl-lh`). The rail is drawn per entry from its dot's centre to the next dot's centre. So it starts at the first dot and ends at the last, whatever the line height, zoom or the theme's box sizing.
+- Markup: dot, text, then the time and who, in their own spans.
+
+**Part 13 – email audit**
+
+What was checked: every email type's subject and text, the HTML wrapper (logo or name on the hotel colour, details table, button, footer), the plain-text part, Reply-To, the test email and the log.
+
+Fixed, because they were clear defects:
+- **Readable colours on a light hotel colour.** The header text and the button text were always white. With a light brand colour (for example `#f2c94c`) that is below AA. They now take the readable colour for that background (`Appearance::readable_on()`). The footer link uses the brand colour only where it has 4.5:1 on white, otherwise dark text.
+- **Reply-To.** Hotel notifications set Reply-To to the guest with one shared, sanitised header (`Guest::reply_to_header()`: control characters and the characters that could add a second address are removed from the name). This applies to booking emails as well as messages.
+
+Recommendations, not changed (each changes what guests receive, so they are for you to decide):
+1. Guest emails reply to the notification address. The hotel's public email (Settings → Hotel) may be the better Reply-To.
+2. No preheader text (the line inboxes show after the subject).
+3. The footer has the hotel name and address but not its email or phone.
+4. No `color-scheme` meta: some dark-mode mail apps invert the header colours.
+5. The test email sends only "Booking confirmed". A choice of type would let the hotel check every text.
+
+### 19.11 Release 1.10.0: results
+
+- **Version** 1.10.0 (plugin header and constant).
+- **Translations:**
+  - `.pot` regenerated;
+  - the 127 new strings in Bulgarian (`.po`, `.mo`, `.l10n.php`).
+- **Docs:** README (widgets, shortcodes, Appearance, contact form and tabs, privacy, emails, testing) and `tests/README.md`.
+- **Compatibility:**
+  - Without the new settings, pages look as in 1.9.0. The suite checks the generated CSS and markup.
+  - Saved widgets keep their values (*Button typography*, the room details' own icons, the gallery's dot colour).
+  - A page look saved before 1.10.0 reads the new keys with their defaults.
+
+**Tests**
+- `tests/test-release-1-10.php` (new, in `run.sh`): **80 passed, 0 failed**:
+  - the defaults change nothing;
+  - corners in Appearance and in a page's look;
+  - card icons;
+  - the contact form's settings, markup and sending (mail log, Today, auto-reply, limit, privacy export and erase);
+  - the tabs;
+  - email colours.
+- `tests/ui/widgets-check.js` with `widgets-seed.php` and the Elementor stand-in: **338 passed, 0 failed**. It covers every control of the seven widgets (356 registered, counting group controls) and checks that no control id is used twice.
+- `tests/ui/release-check.js`, Parts 6–12 in the browser:
+  - after: **43 passed, 0 failed**;
+  - before (the previous commit, cc2a3f2): 8 passed, 11 failed, 6 skipped (the contact form, tabs, amenity choices and corners don't exist there). The failures are the defects this release fixes:
+    - a `2em` icon is 64 px (the size applied twice);
+    - Room details registers `icon_size` twice, so Elementor drops the Size slider;
+    - the gallery arrows take the kit's letter spacing;
+    - in the history, every dot is 2 px off the rail, and the rail starts 4 px above the first dot and runs 24 px past the last (screenshot 5), at every zoom.
+  - Checks:
+    - card icons;
+    - the icon box size with theme svg rules and icon fonts;
+    - the arrows under the kit's button rules, keyboard-only focus ring, dots, lines and count;
+    - pill buttons and fields like the buttons;
+    - the contact form's messages, focus, sending and email;
+    - the tabs by keyboard and `#contact`;
+    - the timeline at 100 %, 125 % and 200 %, with theme box-sizing rules.
+- `tests/ui/layout-check.js` (Phase 1, every case again with the new code):
+  - **960 passed, 0 failed** (956 after Phase 1; the kit state check now also measures the room card's button and the calendar's outline *Done* button, which Part 9 made keep their look under the kit);
+  - Bulgarian (site in `bg_BG`): **710 passed, 0 failed** (706 after Phase 1).
+- **PHP suites** (`tests/run.sh`):
+  - all pass except the same three checks in `test-day7` as before (they need `register_block_template()`, missing in the WordPress 6.7 test build);
+  - `test-day7-elementor` and `test-room-design` skip without Elementor;
+  - the concurrency checks pass (last unit, payment hold, promo code's last use);
+  - `test-day6` and `test-appearance-pages` now accept the one new Appearance rule for the tabs (`.flexo-forms-tabs { … }`, colours and fonts only).
+- **Browser suites:**
+  - Day 1: 32 passed, up to its Elementor section.
+  - Day 2: 52. Day 3: 63. Day 4: 49. Day 5: 167. Day 8: 46. Appearance: 46.
+  - Day 6: 116 of 117 (the failing check needs an Elementor page).
+  - Day 7: 15 passed, then the same two room-page checks as before ("more details" expects the fact names, which the default room template doesn't show, and the "from" price reads across two flex items), and it stops at its screenshot of the booking box, which is below the fold at 1280 × 900. Run on the previous commit (cc2a3f2) with the same seed, it gives exactly the same: 15 passed, the same two failures, the same stop.
+- **Screenshots:**
+  - `ui-audit/part-6`, `part-7`, `part-8`, `part-9`, `part-11` and `part-12`, each with `before/`, `after/` and a `before-after.png` sheet (shots of new features have no before);
+  - each widget at its defaults and fully styled in `ui-audit/part-10/after/`;
+  - results in `ui-audit/release-before.json` and `release-after.json`;
+  - for every "before" run the test site's server is restarted after switching the plugin, so old PHP and old CSS/JS are never mixed.
+
+**To check by hand in WordPress with Elementor:**
+- every new control in the real panel, including per-device values and the hover tabs;
+- Room details → *Icon → Size* now appears and works, and existing pages keep their own icons;
+- the kit's button and form-field settings next to the widgets' *Buttons* and *Fields* sections;
+- the contact form and tabs inside the Azure page's columns;
+- one real email from each type in Gmail and Outlook, light and dark.

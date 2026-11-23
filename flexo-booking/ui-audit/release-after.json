@@ -1,0 +1,220 @@
+{
+ "label": "after",
+ "results": [
+  {
+   "name": "each amenity's own icon",
+   "ok": true,
+   "detail": "8 different icons"
+  },
+  {
+   "name": "one simple tick for every amenity",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "no icon",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "room list: amenities, 32 px – every icon exactly 32.0 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "room list: amenities, 2em – every icon exactly 32.0 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "room list: details, 28 px – every icon exactly 28.0 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "room list: details, own icon (icon font), 28 px – every icon exactly 28.0 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Room details: one \"icon_size\" control (the icon Size slider)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "arrows keep their look under the site's button rules (rest, hover, focus)",
+   "ok": true,
+   "detail": "{\"rest\":\"rgba(255, 255, 255, 0.92)|rgb(29, 31, 34)|0px|50%|0px|44px|44px|normal\",\"hover\":\"rgb(255, 255, 255)|rgb(29, 31, 34)|0px|50%|0px|44px|44px|normal\",\"focus\":\"rgb(255, 255, 255)|rgb(29, 31, 34)|0px|50%|0px|44px|44px|normal\"} vs {\"rest\":\"rgba(255, 255, 255, 0.92)|rgb(29, 31, 34)|0px|50%|0px|44px|44px|normal\",\"hover\":\"rgb(255, 255, 255)|rgb(29, 31, 34)|0px|50%|0px|44px|44px|normal\",\"focus\":\"rgb(255, 255, 255)|rgb(29, 31, 34)|0px|50%|0px|44px|44px|normal\"}"
+  },
+  {
+   "name": "a ring only for keyboard focus",
+   "ok": true,
+   "detail": "mouse: none, keyboard: solid"
+  },
+  {
+   "name": "dots as lines",
+   "ok": true,
+   "detail": "28×3.1875"
+  },
+  {
+   "name": "a count instead of dots (\"1 / 2\", then \"2 / 2\")",
+   "ok": true,
+   "detail": "1 / 2 → 2 / 2"
+  },
+  {
+   "name": "dots over the photos",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "as before: buttons and fields 0.75 × the corners",
+   "ok": true,
+   "detail": "{\"button\":\"4.5px\",\"date\":\"4.5px\",\"select\":\"4.5px\"}"
+  },
+  {
+   "name": "pill buttons, fields like the buttons",
+   "ok": true,
+   "detail": "{\"button\":\"999px\",\"date\":\"999px\",\"select\":\"999px\"}"
+  },
+  {
+   "name": "exact button radius, square fields",
+   "ok": true,
+   "detail": "{\"button\":\"20px\",\"date\":\"0px\",\"select\":\"0px\"}"
+  },
+  {
+   "name": "contact page loads",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "messages for the empty fields, no field moved sideways or resized",
+   "ok": true,
+   "detail": "4 messages, 0 fields moved"
+  },
+  {
+   "name": "focus on the first field to correct",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "sent: thank-you message, read out (focus)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "the hotel gets the message, reply goes to the guest",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "booking shown first",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "arrow key: contact tab, focus moves with it",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Home: first tab",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "the selected tab keeps its colours under the mouse (site button rules)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "a link to #contact opens the contact tab",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "no sideways scroll at 390 px",
+   "ok": true,
+   "detail": "0px"
+  },
+  {
+   "name": "timeline 100 %: every dot on the rail axis",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "timeline 100 %: every dot centred on its first line",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "timeline 100 %: the rail runs from the first dot to the last, no further",
+   "ok": true,
+   "detail": "rail 770.3–1194.2, dots 770.3–1194.2"
+  },
+  {
+   "name": "timeline 100 %: each piece of rail joins two dots",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "timeline 125 %: every dot on the rail axis",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "timeline 125 %: every dot centred on its first line",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "timeline 125 %: the rail runs from the first dot to the last, no further",
+   "ok": true,
+   "detail": "rail 770.3–1194.2, dots 770.3–1194.2"
+  },
+  {
+   "name": "timeline 125 %: each piece of rail joins two dots",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "timeline 200 %: every dot on the rail axis",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "timeline 200 %: every dot centred on its first line",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "timeline 200 %: the rail runs from the first dot to the last, no further",
+   "ok": true,
+   "detail": "rail 770.3–1194.2, dots 770.3–1194.2"
+  },
+  {
+   "name": "timeline 200 %: each piece of rail joins two dots",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "timeline 100 %, theme box-sizing: every dot on the rail axis",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "timeline 100 %, theme box-sizing: every dot centred on its first line",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "timeline 100 %, theme box-sizing: the rail runs from the first dot to the last, no further",
+   "ok": true,
+   "detail": "rail 770.3–1194.2, dots 770.3–1194.2"
+  },
+  {
+   "name": "timeline 100 %, theme box-sizing: each piece of rail joins two dots",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}

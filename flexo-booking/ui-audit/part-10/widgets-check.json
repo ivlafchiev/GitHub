@@ -1,0 +1,1696 @@
+{
+ "pass": 338,
+ "fail": 0,
+ "results": [
+  {
+   "name": "flexo-booking-form: controls registered without clashes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "flexo-booking-form: layout (\"Layout\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-booking-form: booking_page (\"Booking page path\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-booking-form: room (\"Room\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-booking-form: title (\"Heading\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-booking-form: button_text (\"Button text\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-booking-form: results_layout (\"Room results\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-booking-form: amenity_icons (\"Amenities on the room cards\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-booking-form: color_primary (\"Accent / buttons\")",
+   "ok": true,
+   "detail": "style: 47 changes"
+  },
+  {
+   "name": "flexo-booking-form: color_primary_contrast (\"Button text\")",
+   "ok": true,
+   "detail": "style: 12 changes"
+  },
+  {
+   "name": "flexo-booking-form: color_text (\"Text\")",
+   "ok": true,
+   "detail": "style: 466 changes"
+  },
+  {
+   "name": "flexo-booking-form: color_background (\"Background\")",
+   "ok": true,
+   "detail": "style: 11 changes"
+  },
+  {
+   "name": "flexo-booking-form: color_field_background (\"Field background\")",
+   "ok": true,
+   "detail": "style: 25 changes"
+  },
+  {
+   "name": "flexo-booking-form: color_border (\"Borders\")",
+   "ok": true,
+   "detail": "style: 33 changes"
+  },
+  {
+   "name": "flexo-booking-form: padding (\"Padding\")",
+   "ok": true,
+   "detail": "style: 41 changes"
+  },
+  {
+   "name": "flexo-booking-form: gap (\"Spacing\")",
+   "ok": true,
+   "detail": "style: 35 changes"
+  },
+  {
+   "name": "flexo-booking-form: radius (\"Corner radius\")",
+   "ok": true,
+   "detail": "style: 43 changes"
+  },
+  {
+   "name": "flexo-booking-form: heading_typography__typography (\"Headings\")",
+   "ok": true,
+   "detail": "style: 18 changes"
+  },
+  {
+   "name": "flexo-booking-form: text_typography__typography (\"Text & fields\")",
+   "ok": true,
+   "detail": "style: 517 changes"
+  },
+  {
+   "name": "flexo-booking-form: button_typography__typography (\"Typography\")",
+   "ok": true,
+   "detail": "style: 26 changes"
+  },
+  {
+   "name": "flexo-booking-form: button_text_color (\"Text colour\")",
+   "ok": true,
+   "detail": "style: 8 changes"
+  },
+  {
+   "name": "flexo-booking-form: button_bg_color (\"Background\")",
+   "ok": true,
+   "detail": "style: 5 changes"
+  },
+  {
+   "name": "flexo-booking-form: button_border_color (\"Border colour\")",
+   "ok": true,
+   "detail": "style: 5 changes"
+  },
+  {
+   "name": "flexo-booking-form: button_hover_text_color (\"Text colour\")",
+   "ok": true,
+   "detail": "style (hover): 2 changes"
+  },
+  {
+   "name": "flexo-booking-form: button_hover_bg_color (\"Background\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-booking-form: button_hover_border_color (\"Border colour\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-booking-form: button_border_width (\"Border width\")",
+   "ok": true,
+   "detail": "style: 10 changes"
+  },
+  {
+   "name": "flexo-booking-form: button_radius (\"Corner radius\")",
+   "ok": true,
+   "detail": "style: 7 changes"
+  },
+  {
+   "name": "flexo-booking-form: button_padding (\"Padding\")",
+   "ok": true,
+   "detail": "style: 7 changes"
+  },
+  {
+   "name": "flexo-booking-form: button_min_height (\"Height\")",
+   "ok": true,
+   "detail": "style: 10 changes"
+  },
+  {
+   "name": "flexo-booking-form: button_shadow__box-shadow",
+   "ok": true,
+   "detail": "style: 7 changes"
+  },
+  {
+   "name": "flexo-booking-form: button_outline_text (\"Text colour\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-booking-form: button_outline_bg (\"Background\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-booking-form: button_outline_border (\"Border colour\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-booking-form: button_outline_hover_text (\"Text colour\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-booking-form: button_outline_hover_bg (\"Background\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-booking-form: button_outline_hover_border (\"Border colour\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-booking-form: field_text_color (\"Text in fields\")",
+   "ok": true,
+   "detail": "style: 230 changes"
+  },
+  {
+   "name": "flexo-booking-form: field_border_color (\"Field border\")",
+   "ok": true,
+   "detail": "style: 17 changes"
+  },
+  {
+   "name": "flexo-booking-form: field_focus_color (\"Field in use\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-booking-form: field_radius (\"Field corners\")",
+   "ok": true,
+   "detail": "style: 20 changes"
+  },
+  {
+   "name": "flexo-booking-form: field_height (\"Field and button height\")",
+   "ok": true,
+   "detail": "style: 27 changes"
+  },
+  {
+   "name": "flexo-booking-form: label_color (\"Colour\")",
+   "ok": true,
+   "detail": "style: 29 changes"
+  },
+  {
+   "name": "flexo-booking-form: label_typography__typography",
+   "ok": true,
+   "detail": "style: 38 changes"
+  },
+  {
+   "name": "flexo-booking-form: error_color (\"Errors\")",
+   "ok": true,
+   "detail": "style: 4 changes"
+  },
+  {
+   "name": "flexo-booking-form: step_active_color (\"Current step\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-booking-form: step_done_color (\"Completed steps\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-booking-form: step_inactive_color (\"Next steps\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-booking-form: step_typography__typography (\"Step names\")",
+   "ok": true,
+   "detail": "style: 16 changes"
+  },
+  {
+   "name": "flexo-booking-form: summary_bg_color (\"Summary background\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-booking-form: calendar_bg (\"Background\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-booking-form: day_selected_bg (\"Check-in and check-out\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-booking-form: day_selected_text (\"Their text\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-booking-form: day_range_bg (\"Nights in between\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-booking-form: day_hover_border (\"Day under the mouse\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-booking-form: calendar_arrow_color (\"Arrows\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-booking-form: day_radius (\"Day corners\")",
+   "ok": true,
+   "detail": "style: 60 changes"
+  },
+  {
+   "name": "flexo-booking-form: card_bg_color (\"Background\")",
+   "ok": true,
+   "detail": "style: 3 changes"
+  },
+  {
+   "name": "flexo-booking-form: card_border_color (\"Border colour\")",
+   "ok": true,
+   "detail": "style: 3 changes"
+  },
+  {
+   "name": "flexo-booking-form: card_radius (\"Corner radius\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-booking-form: card_padding (\"Padding\")",
+   "ok": true,
+   "detail": "style: 29 changes"
+  },
+  {
+   "name": "flexo-booking-form: card_shadow__box-shadow",
+   "ok": true,
+   "detail": "style: 3 changes"
+  },
+  {
+   "name": "flexo-booking-form: card_price_color (\"Price\")",
+   "ok": true,
+   "detail": "style: 3 changes"
+  },
+  {
+   "name": "flexo-booking-form: card_icon_color (\"Amenity icon colour\")",
+   "ok": true,
+   "detail": "style: 22 changes"
+  },
+  {
+   "name": "flexo-booking-form: card_icon_size (\"Icon size\")",
+   "ok": true,
+   "detail": "style: 73 changes"
+  },
+  {
+   "name": "flexo-booking-form: card_icon_gap (\"Space after the icon\")",
+   "ok": true,
+   "detail": "style: 33 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: controls registered without clashes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "flexo-room-booking-box: room (\"Room\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-booking-box: title (\"Heading\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-booking-box: show_price (\"Show the \"from\" price\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-booking-box: button_text (\"Button text\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-booking-box: book_text (\"\"Book now\" text\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-booking-box: booking_page (\"Booking page path\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-booking-box: color_primary (\"Accent / buttons\")",
+   "ok": true,
+   "detail": "style: 9 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: color_primary_contrast (\"Button text\")",
+   "ok": true,
+   "detail": "style: 4 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: color_text (\"Text\")",
+   "ok": true,
+   "detail": "style: 209 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: color_background (\"Background\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: color_field_background (\"Field background\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: color_border (\"Borders\")",
+   "ok": true,
+   "detail": "style: 8 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: padding (\"Padding\")",
+   "ok": true,
+   "detail": "style: 205 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: gap (\"Spacing\")",
+   "ok": true,
+   "detail": "style: 9 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: radius (\"Corner radius\")",
+   "ok": true,
+   "detail": "style: 71 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: heading_typography__typography (\"Headings\")",
+   "ok": true,
+   "detail": "style: 3 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: text_typography__typography (\"Text & fields\")",
+   "ok": true,
+   "detail": "style: 222 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: button_typography__typography (\"Typography\")",
+   "ok": true,
+   "detail": "style: 11 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: button_text_color (\"Text colour\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: button_bg_color (\"Background\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: button_border_color (\"Border colour\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: button_hover_text_color (\"Text colour\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: button_hover_bg_color (\"Background\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: button_hover_border_color (\"Border colour\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: button_border_width (\"Border width\")",
+   "ok": true,
+   "detail": "style: 11 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: button_radius (\"Corner radius\")",
+   "ok": true,
+   "detail": "style: 3 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: button_padding (\"Padding\")",
+   "ok": true,
+   "detail": "style: 3 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: button_min_height (\"Height\")",
+   "ok": true,
+   "detail": "style: 11 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: button_shadow__box-shadow",
+   "ok": true,
+   "detail": "style: 3 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: button_outline_text (\"Text colour\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: button_outline_bg (\"Background\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: button_outline_border (\"Border colour\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: button_outline_hover_text (\"Text colour\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: button_outline_hover_bg (\"Background\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: button_outline_hover_border (\"Border colour\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: field_text_color (\"Text in fields\")",
+   "ok": true,
+   "detail": "style: 14 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: field_border_color (\"Field border\")",
+   "ok": true,
+   "detail": "style: 3 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: field_focus_color (\"Field in use\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: field_radius (\"Field corners\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: field_height (\"Field and button height\")",
+   "ok": true,
+   "detail": "style: 20 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: label_color (\"Colour\")",
+   "ok": true,
+   "detail": "style: 4 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: label_typography__typography",
+   "ok": true,
+   "detail": "style: 12 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: error_color (\"Errors\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: calendar_bg (\"Background\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: day_selected_bg (\"Check-in and check-out\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: day_selected_text (\"Their text\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: day_range_bg (\"Nights in between\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: day_hover_border (\"Day under the mouse\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: calendar_arrow_color (\"Arrows\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-room-booking-box: day_radius (\"Day corners\")",
+   "ok": true,
+   "detail": "style: 60 changes"
+  },
+  {
+   "name": "flexo-contact-form: controls registered without clashes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "flexo-contact-form: title (\"Heading\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-contact-form: intro (\"Text above the fields\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-contact-form: button_text (\"Button text\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-contact-form: success_text (\"Text after sending\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-contact-form: color_primary (\"Accent / buttons\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-contact-form: color_primary_contrast (\"Button text\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-contact-form: color_text (\"Text\")",
+   "ok": true,
+   "detail": "style: 231 changes"
+  },
+  {
+   "name": "flexo-contact-form: color_background (\"Background\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-contact-form: color_field_background (\"Field background\")",
+   "ok": true,
+   "detail": "style: 8 changes"
+  },
+  {
+   "name": "flexo-contact-form: color_border (\"Borders\")",
+   "ok": true,
+   "detail": "style: 7 changes"
+  },
+  {
+   "name": "flexo-contact-form: padding (\"Padding\")",
+   "ok": true,
+   "detail": "style: 24 changes"
+  },
+  {
+   "name": "flexo-contact-form: gap (\"Spacing\")",
+   "ok": true,
+   "detail": "style: 18 changes"
+  },
+  {
+   "name": "flexo-contact-form: radius (\"Corner radius\")",
+   "ok": true,
+   "detail": "style: 9 changes"
+  },
+  {
+   "name": "flexo-contact-form: heading_typography__typography (\"Headings\")",
+   "ok": true,
+   "detail": "style: 4 changes"
+  },
+  {
+   "name": "flexo-contact-form: text_typography__typography (\"Text & fields\")",
+   "ok": true,
+   "detail": "style: 238 changes"
+  },
+  {
+   "name": "flexo-contact-form: button_typography__typography (\"Typography\")",
+   "ok": true,
+   "detail": "style: 5 changes"
+  },
+  {
+   "name": "flexo-contact-form: button_text_color (\"Text colour\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-contact-form: button_bg_color (\"Background\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-contact-form: button_border_color (\"Border colour\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-contact-form: button_hover_text_color (\"Text colour\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-contact-form: button_hover_bg_color (\"Background\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-contact-form: button_hover_border_color (\"Border colour\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-contact-form: button_border_width (\"Border width\")",
+   "ok": true,
+   "detail": "style: 5 changes"
+  },
+  {
+   "name": "flexo-contact-form: button_radius (\"Corner radius\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-contact-form: button_padding (\"Padding\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-contact-form: button_min_height (\"Height\")",
+   "ok": true,
+   "detail": "style: 5 changes"
+  },
+  {
+   "name": "flexo-contact-form: button_shadow__box-shadow",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-contact-form: field_text_color (\"Text in fields\")",
+   "ok": true,
+   "detail": "style: 206 changes"
+  },
+  {
+   "name": "flexo-contact-form: field_border_color (\"Field border\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-contact-form: field_focus_color (\"Field in use\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-contact-form: field_radius (\"Field corners\")",
+   "ok": true,
+   "detail": "style: 7 changes"
+  },
+  {
+   "name": "flexo-contact-form: field_height (\"Field and button height\")",
+   "ok": true,
+   "detail": "style: 19 changes"
+  },
+  {
+   "name": "flexo-contact-form: label_color (\"Colour\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-contact-form: label_typography__typography",
+   "ok": true,
+   "detail": "style: 22 changes"
+  },
+  {
+   "name": "flexo-contact-form: error_color (\"Errors\")",
+   "ok": true,
+   "detail": "style: 4 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: controls registered without clashes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "flexo-forms-tabs: booking_label (\"Booking tab\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-forms-tabs: contact_label (\"Contact tab\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-forms-tabs: default_tab (\"Shown first\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-forms-tabs: room (\"Room\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-forms-tabs: title (\"Heading\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-forms-tabs: button_text (\"Button text\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-forms-tabs: results_layout (\"Room results\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-forms-tabs: amenity_icons (\"Amenities on the room cards\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-forms-tabs: contact_title (\"Heading\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-forms-tabs: contact_intro (\"Text above the fields\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-forms-tabs: contact_button_text (\"Button text\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-forms-tabs: contact_success_text (\"Text after sending\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-forms-tabs: tabs_align (\"Alignment\")",
+   "ok": true,
+   "detail": "style: 3 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: tab_typography__typography",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: tab_bg (\"Background\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: tab_text (\"Text colour\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: tab_border (\"Border colour\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: tab_hover_bg (\"Background\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: tab_active_bg (\"Background\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: tab_active_text (\"Text colour\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: tab_active_border (\"Border colour\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: tab_border_width (\"Border width\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: tab_radius (\"Corner radius\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: tab_padding (\"Padding\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: tabs_gap (\"Space between tabs\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: tabs_space (\"Space below the tabs\")",
+   "ok": true,
+   "detail": "style: 3 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: color_primary (\"Accent / buttons\")",
+   "ok": true,
+   "detail": "style: 48 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: color_primary_contrast (\"Button text\")",
+   "ok": true,
+   "detail": "style: 14 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: color_text (\"Text\")",
+   "ok": true,
+   "detail": "style: 695 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: color_background (\"Background\")",
+   "ok": true,
+   "detail": "style: 12 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: color_field_background (\"Field background\")",
+   "ok": true,
+   "detail": "style: 33 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: color_border (\"Borders\")",
+   "ok": true,
+   "detail": "style: 40 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: padding (\"Padding\")",
+   "ok": true,
+   "detail": "style: 44 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: gap (\"Spacing\")",
+   "ok": true,
+   "detail": "style: 40 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: radius (\"Corner radius\")",
+   "ok": true,
+   "detail": "style: 52 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: heading_typography__typography (\"Headings\")",
+   "ok": true,
+   "detail": "style: 20 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: text_typography__typography (\"Text & fields\")",
+   "ok": true,
+   "detail": "style: 754 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: button_typography__typography (\"Typography\")",
+   "ok": true,
+   "detail": "style: 29 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: button_text_color (\"Text colour\")",
+   "ok": true,
+   "detail": "style: 9 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: button_bg_color (\"Background\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: button_border_color (\"Border colour\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: button_hover_text_color (\"Text colour\")",
+   "ok": true,
+   "detail": "style (hover): 2 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: button_hover_bg_color (\"Background\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: button_hover_border_color (\"Border colour\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: button_border_width (\"Border width\")",
+   "ok": true,
+   "detail": "style: 11 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: button_radius (\"Corner radius\")",
+   "ok": true,
+   "detail": "style: 8 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: button_padding (\"Padding\")",
+   "ok": true,
+   "detail": "style: 8 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: button_min_height (\"Height\")",
+   "ok": true,
+   "detail": "style: 11 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: button_shadow__box-shadow",
+   "ok": true,
+   "detail": "style: 8 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: button_outline_text (\"Text colour\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: button_outline_bg (\"Background\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: button_outline_border (\"Border colour\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: button_outline_hover_text (\"Text colour\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: button_outline_hover_bg (\"Background\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: button_outline_hover_border (\"Border colour\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: field_text_color (\"Text in fields\")",
+   "ok": true,
+   "detail": "style: 436 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: field_border_color (\"Field border\")",
+   "ok": true,
+   "detail": "style: 23 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: field_focus_color (\"Field in use\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: field_radius (\"Field corners\")",
+   "ok": true,
+   "detail": "style: 27 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: field_height (\"Field and button height\")",
+   "ok": true,
+   "detail": "style: 34 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: label_color (\"Colour\")",
+   "ok": true,
+   "detail": "style: 35 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: label_typography__typography",
+   "ok": true,
+   "detail": "style: 51 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: error_color (\"Errors\")",
+   "ok": true,
+   "detail": "style: 8 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: step_active_color (\"Current step\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: step_done_color (\"Completed steps\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: step_inactive_color (\"Next steps\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: step_typography__typography (\"Step names\")",
+   "ok": true,
+   "detail": "style: 18 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: summary_bg_color (\"Summary background\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: calendar_bg (\"Background\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: day_selected_bg (\"Check-in and check-out\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: day_selected_text (\"Their text\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: day_range_bg (\"Nights in between\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: day_hover_border (\"Day under the mouse\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: calendar_arrow_color (\"Arrows\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: day_radius (\"Day corners\")",
+   "ok": true,
+   "detail": "style: 60 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: card_bg_color (\"Background\")",
+   "ok": true,
+   "detail": "style: 3 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: card_border_color (\"Border colour\")",
+   "ok": true,
+   "detail": "style: 3 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: card_radius (\"Corner radius\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: card_padding (\"Padding\")",
+   "ok": true,
+   "detail": "style: 31 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: card_shadow__box-shadow",
+   "ok": true,
+   "detail": "style: 3 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: card_price_color (\"Price\")",
+   "ok": true,
+   "detail": "style: 3 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: card_icon_color (\"Amenity icon colour\")",
+   "ok": true,
+   "detail": "style: 22 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: card_icon_size (\"Icon size\")",
+   "ok": true,
+   "detail": "style: 75 changes"
+  },
+  {
+   "name": "flexo-forms-tabs: card_icon_gap (\"Space after the icon\")",
+   "ok": true,
+   "detail": "style: 33 changes"
+  },
+  {
+   "name": "flexo-room-amenities: controls registered without clashes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "flexo-room-amenities: room (\"Room\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-amenities: layout (\"Layout\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-amenities: columns (\"Columns\")",
+   "ok": true,
+   "detail": "style: 8 changes"
+  },
+  {
+   "name": "flexo-room-amenities: limit (\"How many\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-amenities: show_icons (\"Icons\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-amenities: same_icon (\"Same icon for all (optional)\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-amenities: space_between (\"Space between\")",
+   "ok": true,
+   "detail": "style: 8 changes"
+  },
+  {
+   "name": "flexo-room-amenities: align (\"Alignment\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-room-amenities: icon_position (\"Icon\")",
+   "ok": true,
+   "detail": "style: 20 changes"
+  },
+  {
+   "name": "flexo-room-amenities: icon_valign (\"Icon and text\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-room-amenities: text_wrap (\"Long texts\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-room-amenities: item_bg (\"Item background\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-room-amenities: item_hover_bg (\"Item background under the mouse\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-room-amenities: item_padding (\"Item padding\")",
+   "ok": true,
+   "detail": "style: 8 changes"
+  },
+  {
+   "name": "flexo-room-amenities: item_radius (\"Item corners\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-room-amenities: divider (\"Divider\")",
+   "ok": true,
+   "detail": "style: 8 changes"
+  },
+  {
+   "name": "flexo-room-amenities: divider_color (\"Divider colour\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-room-amenities: divider_style (\"Divider style\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-room-amenities: divider_width (\"Divider width\")",
+   "ok": true,
+   "detail": "style: 8 changes"
+  },
+  {
+   "name": "flexo-room-amenities: icon_color (\"Colour\")",
+   "ok": true,
+   "detail": "style: 40 changes"
+  },
+  {
+   "name": "flexo-room-amenities: icon_hover_color (\"Colour under the mouse\")",
+   "ok": true,
+   "detail": "style (hover): 6 changes"
+  },
+  {
+   "name": "flexo-room-amenities: icon_size (\"Size\")",
+   "ok": true,
+   "detail": "style: 48 changes"
+  },
+  {
+   "name": "flexo-room-amenities: icon_gap (\"Space after the icon\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-room-amenities: text_color (\"Colour\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-room-amenities: text_hover_color (\"Colour under the mouse\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-room-amenities: text_typography__typography",
+   "ok": true,
+   "detail": "style: 14 changes"
+  },
+  {
+   "name": "flexo-room-details: controls registered without clashes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "flexo-room-details: room (\"Room\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-details: facts (\"Facts\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-details: more (\"Add the room's \"More details\"\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-details: show (\"Text\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-details: guests_format (\"Guests as\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-details: layout (\"Layout\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-details: columns (\"Columns\")",
+   "ok": true,
+   "detail": "style: 7 changes"
+  },
+  {
+   "name": "flexo-room-details: show_icons (\"Icons\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-details: fact_icon_size (\"Size\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-details: fact_icon_guests (\"Guests\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-details: fact_icon_beds (\"Beds\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-details: fact_icon_view (\"View\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-details: space_between (\"Space between\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-room-details: align (\"Alignment\")",
+   "ok": true,
+   "detail": "style: 5 changes"
+  },
+  {
+   "name": "flexo-room-details: icon_position (\"Icon\")",
+   "ok": true,
+   "detail": "style: 32 changes"
+  },
+  {
+   "name": "flexo-room-details: icon_valign (\"Icon and text\")",
+   "ok": true,
+   "detail": "style: 5 changes"
+  },
+  {
+   "name": "flexo-room-details: text_wrap (\"Long texts\")",
+   "ok": true,
+   "detail": "style: 20 changes"
+  },
+  {
+   "name": "flexo-room-details: item_bg (\"Item background\")",
+   "ok": true,
+   "detail": "style: 5 changes"
+  },
+  {
+   "name": "flexo-room-details: item_hover_bg (\"Item background under the mouse\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-room-details: item_padding (\"Item padding\")",
+   "ok": true,
+   "detail": "style: 7 changes"
+  },
+  {
+   "name": "flexo-room-details: item_radius (\"Item corners\")",
+   "ok": true,
+   "detail": "style: 5 changes"
+  },
+  {
+   "name": "flexo-room-details: divider (\"Divider\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-room-details: divider_color (\"Divider colour\")",
+   "ok": true,
+   "detail": "style: 4 changes"
+  },
+  {
+   "name": "flexo-room-details: divider_style (\"Divider style\")",
+   "ok": true,
+   "detail": "style: 4 changes"
+  },
+  {
+   "name": "flexo-room-details: divider_width (\"Divider width\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-room-details: icon_color (\"Colour\")",
+   "ok": true,
+   "detail": "style: 31 changes"
+  },
+  {
+   "name": "flexo-room-details: icon_hover_color (\"Colour under the mouse\")",
+   "ok": true,
+   "detail": "style (hover): 10 changes"
+  },
+  {
+   "name": "flexo-room-details: icon_size (\"Size\")",
+   "ok": true,
+   "detail": "style: 38 changes"
+  },
+  {
+   "name": "flexo-room-details: icon_gap (\"Space after the icon\")",
+   "ok": true,
+   "detail": "style: 5 changes"
+  },
+  {
+   "name": "flexo-room-details: text_color (\"Colour\")",
+   "ok": true,
+   "detail": "style: 20 changes"
+  },
+  {
+   "name": "flexo-room-details: text_hover_color (\"Colour under the mouse\")",
+   "ok": true,
+   "detail": "style (hover): 4 changes"
+  },
+  {
+   "name": "flexo-room-details: text_typography__typography",
+   "ok": true,
+   "detail": "style: 27 changes"
+  },
+  {
+   "name": "flexo-room-details: label_color (\"Colour\")",
+   "ok": true,
+   "detail": "style: 5 changes"
+  },
+  {
+   "name": "flexo-room-details: label_typography__typography",
+   "ok": true,
+   "detail": "style: 17 changes"
+  },
+  {
+   "name": "flexo-room-gallery: controls registered without clashes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "flexo-room-gallery: room (\"Room\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-gallery: layout (\"Layout\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-gallery: per_view (\"Photos side by side\")",
+   "ok": true,
+   "detail": "style: 13 changes"
+  },
+  {
+   "name": "flexo-room-gallery: height (\"Photo height\")",
+   "ok": true,
+   "detail": "style: 17 changes"
+  },
+  {
+   "name": "flexo-room-gallery: with_main (\"Start with the main photo\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-gallery: limit (\"How many photos\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-gallery: image_size (\"Image size\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-gallery: lightbox (\"Open photos in a lightbox\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-gallery: arrows (\"Arrows\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-gallery: dots (\"Dots\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-gallery: autoplay (\"Autoplay every (seconds)\")",
+   "ok": true,
+   "detail": "content: markup changes"
+  },
+  {
+   "name": "flexo-room-gallery: gap (\"Space between\")",
+   "ok": true,
+   "detail": "style: 13 changes"
+  },
+  {
+   "name": "flexo-room-gallery: radius (\"Corner radius\")",
+   "ok": true,
+   "detail": "style: 4 changes"
+  },
+  {
+   "name": "flexo-room-gallery: photo_border__border",
+   "ok": true,
+   "detail": "style: 4 changes"
+  },
+  {
+   "name": "flexo-room-gallery: photo_fit (\"Photos fill\")",
+   "ok": true,
+   "detail": "style: 4 changes"
+  },
+  {
+   "name": "flexo-room-gallery: photo_zoom (\"Under the mouse\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-room-gallery: arrow_size (\"Button size\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-room-gallery: arrow_icon_size (\"Arrow size\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-room-gallery: arrow_color (\"Arrow colour\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-room-gallery: arrow_bg (\"Arrow background\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-room-gallery: arrow_hover_color (\"Arrow colour\")",
+   "ok": true,
+   "detail": "style (hover): 3 changes"
+  },
+  {
+   "name": "flexo-room-gallery: arrow_hover_bg (\"Arrow background\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-room-gallery: arrow_hover_border (\"Border colour\")",
+   "ok": true,
+   "detail": "style (hover): 1 changes"
+  },
+  {
+   "name": "flexo-room-gallery: arrow_border__border",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-room-gallery: arrow_radius (\"Corner radius\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-room-gallery: arrow_shadow (\"Shadow\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-room-gallery: arrow_offset (\"Distance from the edge\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-room-gallery: arrow_position (\"Height\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-room-gallery: dots_style (\"Show as\")",
+   "ok": true,
+   "detail": "style: 4 changes"
+  },
+  {
+   "name": "flexo-room-gallery: dots_position (\"Position\")",
+   "ok": true,
+   "detail": "style: 6 changes"
+  },
+  {
+   "name": "flexo-room-gallery: dot_color (\"Colour\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-room-gallery: dot_inactive_color (\"Other dots\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-room-gallery: fraction_bg (\"Count background\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-room-gallery: dot_size (\"Size\")",
+   "ok": true,
+   "detail": "style: 2 changes"
+  },
+  {
+   "name": "flexo-room-gallery: dot_gap (\"Space between\")",
+   "ok": true,
+   "detail": "style: 1 changes"
+  },
+  {
+   "name": "flexo-room-gallery: dots_offset (\"Distance from the photos\")",
+   "ok": true,
+   "detail": "style: 3 changes"
+  },
+  {
+   "name": "flexo-room-gallery: fraction_typography__typography (\"Count\")",
+   "ok": true,
+   "detail": "style: 4 changes"
+  }
+ ]
+}

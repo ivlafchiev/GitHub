@@ -1,0 +1,130 @@
+{
+ "label": "before",
+ "results": [
+  {
+   "name": "each amenity's own icon",
+   "ok": true,
+   "detail": "8 different icons"
+  },
+  {
+   "name": "a tick or no icon",
+   "ok": null,
+   "detail": "skipped: not in this version"
+  },
+  {
+   "name": "room list: amenities, 32 px – every icon exactly 32.0 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "room list: amenities, 2em – every icon exactly 32.0 px",
+   "ok": false,
+   "detail": "span.flexo-room-list__icon 64.0×64.0; svg.flexo-room-icon 64.0×64.0; span.flexo-room-list__icon 64.0×64.0"
+  },
+  {
+   "name": "room list: details, 28 px – every icon exactly 28.0 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "room list: details, own icon (icon font), 28 px – every icon exactly 28.0 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Room details: one \"icon_size\" control (the icon Size slider)",
+   "ok": false,
+   "detail": "registered twice: Elementor keeps the first (an icon picker) and drops the slider"
+  },
+  {
+   "name": "arrows keep their look under the site's button rules (rest, hover, focus)",
+   "ok": false,
+   "detail": "{\"rest\":\"rgba(255, 255, 255, 0.92)|rgb(29, 31, 34)|0px|50%|0px|44px|44px|1px\",\"hover\":\"rgb(255, 255, 255)|rgb(29, 31, 34)|0px|50%|0px|44px|44px|1px\",\"focus\":\"rgb(255, 255, 255)|rgb(29, 31, 34)|0px|50%|0px|44px|44px|1px\"} vs {\"rest\":\"rgba(255, 255, 255, 0.92)|rgb(29, 31, 34)|0px|50%|0px|44px|44px|normal\",\"hover\":\"rgb(255, 255, 255)|rgb(29, 31, 34)|0px|50%|0px|44px|44px|normal\",\"focus\":\"rgb(255, 255, 255)|rgb(29, 31, 34)|0px|50%|0px|44px|44px|normal\"}"
+  },
+  {
+   "name": "focus ring only for the keyboard",
+   "ok": null,
+   "detail": "skipped: checked on the new code"
+  },
+  {
+   "name": "dots as lines, count, over the photos",
+   "ok": null,
+   "detail": "skipped: not in this version"
+  },
+  {
+   "name": "button and field corners",
+   "ok": null,
+   "detail": "skipped: not in this version"
+  },
+  {
+   "name": "contact form",
+   "ok": null,
+   "detail": "skipped: not in this version"
+  },
+  {
+   "name": "tabs",
+   "ok": null,
+   "detail": "skipped: not in this version"
+  },
+  {
+   "name": "timeline 100 %: every dot on the rail axis",
+   "ok": false,
+   "detail": "#0 -2.00px; #1 -2.00px; #2 -2.00px"
+  },
+  {
+   "name": "timeline 100 %: every dot centred on its first line",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "timeline 100 %: the rail runs from the first dot to the last, no further",
+   "ok": false,
+   "detail": "rail 766.2–1214.2, dots 770.2–1190.2"
+  },
+  {
+   "name": "timeline 125 %: every dot on the rail axis",
+   "ok": false,
+   "detail": "#0 -2.00px; #1 -2.00px; #2 -2.00px"
+  },
+  {
+   "name": "timeline 125 %: every dot centred on its first line",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "timeline 125 %: the rail runs from the first dot to the last, no further",
+   "ok": false,
+   "detail": "rail 766.2–1214.2, dots 770.2–1190.2"
+  },
+  {
+   "name": "timeline 200 %: every dot on the rail axis",
+   "ok": false,
+   "detail": "#0 -2.00px; #1 -2.00px; #2 -2.00px"
+  },
+  {
+   "name": "timeline 200 %: every dot centred on its first line",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "timeline 200 %: the rail runs from the first dot to the last, no further",
+   "ok": false,
+   "detail": "rail 766.2–1214.2, dots 770.2–1190.2"
+  },
+  {
+   "name": "timeline 100 %, theme box-sizing: every dot on the rail axis",
+   "ok": false,
+   "detail": "#0 -2.00px; #1 -2.00px; #2 -2.00px"
+  },
+  {
+   "name": "timeline 100 %, theme box-sizing: every dot centred on its first line",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "timeline 100 %, theme box-sizing: the rail runs from the first dot to the last, no further",
+   "ok": false,
+   "detail": "rail 766.2–1214.2, dots 770.2–1190.2"
+  }
+ ]
+}

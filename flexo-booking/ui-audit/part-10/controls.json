@@ -1,0 +1,5039 @@
+{
+    "room": "demo-garden-double",
+    "box_room": "garden-family",
+    "booking": 4,
+    "widgets": {
+        "flexo-booking-form": {
+            "title": "Flexo Booking Form",
+            "sections": [
+                {
+                    "id": "section_content",
+                    "label": "Booking form",
+                    "tab": "content"
+                },
+                {
+                    "id": "section_style_colors",
+                    "label": "Colors",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_layout",
+                    "label": "Layout & typography",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_buttons",
+                    "label": "Buttons",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_fields",
+                    "label": "Fields and labels",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_steps",
+                    "label": "Steps and summary",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_calendar",
+                    "label": "Calendar",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_cards",
+                    "label": "Room cards",
+                    "tab": "style"
+                }
+            ],
+            "controls": [
+                {
+                    "id": "layout",
+                    "type": "select",
+                    "label": "Layout",
+                    "section": "section_content",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "full",
+                    "options": [
+                        "full",
+                        "search"
+                    ]
+                },
+                {
+                    "id": "booking_page",
+                    "type": "text",
+                    "label": "Booking page path",
+                    "section": "section_content",
+                    "tab": "content",
+                    "control_tab": "",
+                    "condition": {
+                        "layout": "search"
+                    },
+                    "default": "/booking/"
+                },
+                {
+                    "id": "room",
+                    "type": "select",
+                    "label": "Room",
+                    "section": "section_content",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "",
+                    "options": [
+                        "",
+                        "garden-family",
+                        "sea-double",
+                        "panoramic-suite",
+                        "demo-garden-double",
+                        "demo-sea-view-studio",
+                        "demo-family-suite"
+                    ]
+                },
+                {
+                    "id": "title",
+                    "type": "text",
+                    "label": "Heading",
+                    "section": "section_content",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": ""
+                },
+                {
+                    "id": "button_text",
+                    "type": "text",
+                    "label": "Button text",
+                    "section": "section_content",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": ""
+                },
+                {
+                    "id": "results_layout",
+                    "type": "select",
+                    "label": "Room results",
+                    "section": "section_content",
+                    "tab": "content",
+                    "control_tab": "",
+                    "condition": {
+                        "layout": "full"
+                    },
+                    "default": "",
+                    "options": [
+                        "",
+                        "auto",
+                        "stacked",
+                        "horizontal"
+                    ]
+                },
+                {
+                    "id": "amenity_icons",
+                    "type": "select",
+                    "label": "Amenities on the room cards",
+                    "section": "section_content",
+                    "tab": "content",
+                    "control_tab": "",
+                    "condition": {
+                        "layout": "full"
+                    },
+                    "default": "",
+                    "options": [
+                        "",
+                        "icons",
+                        "tick",
+                        "none"
+                    ]
+                },
+                {
+                    "id": "colors_note",
+                    "type": "raw_html",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": ""
+                },
+                {
+                    "id": "color_primary",
+                    "type": "color",
+                    "label": "Accent / buttons",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-primary: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "color_primary_contrast",
+                    "type": "color",
+                    "label": "Button text",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-primary-contrast: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "color_text",
+                    "type": "color",
+                    "label": "Text",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "color_background",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "color_field_background",
+                    "type": "color",
+                    "label": "Field background",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-field-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "color_border",
+                    "type": "color",
+                    "label": "Borders",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "padding",
+                    "type": "slider",
+                    "label": "Padding",
+                    "section": "section_style_layout",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-padding: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 80
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "gap",
+                    "type": "slider",
+                    "label": "Spacing",
+                    "section": "section_style_layout",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-gap: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 48
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "radius",
+                    "type": "slider",
+                    "label": "Corner radius",
+                    "section": "section_style_layout",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 32
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ]
+                },
+                {
+                    "id": "heading_typography__typography",
+                    "label": "Headings",
+                    "section": "section_style_layout",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .fb-title, {{WRAPPER}} .fb-step-title, {{WRAPPER}} .fb-room__title",
+                    "group": "typography",
+                    "name": "heading_typography"
+                },
+                {
+                    "id": "text_typography__typography",
+                    "label": "Text & fields",
+                    "section": "section_style_layout",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-booking, {{WRAPPER}} .flexo-booking input, {{WRAPPER}} .flexo-booking select, {{WRAPPER}} .flexo-booking textarea",
+                    "group": "typography",
+                    "name": "text_typography"
+                },
+                {
+                    "id": "button_typography__typography",
+                    "label": "Typography",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .fb-button",
+                    "group": "typography",
+                    "name": "button_typography"
+                },
+                {
+                    "id": "button_text_color",
+                    "type": "color",
+                    "label": "Text colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_bg_color",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_border_color",
+                    "type": "color",
+                    "label": "Border colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_hover_text_color",
+                    "type": "color",
+                    "label": "Text colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-hover-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_hover_bg_color",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-hover-bg: {{VALUE}}; --fb-button-hover-filter: none;"
+                    }
+                },
+                {
+                    "id": "button_hover_border_color",
+                    "type": "color",
+                    "label": "Border colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-hover-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_border_width",
+                    "type": "slider",
+                    "label": "Border width",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-border-w: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 8
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "button_radius",
+                    "type": "slider",
+                    "label": "Corner radius",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 100
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "button_padding",
+                    "type": "dimensions",
+                    "label": "Padding",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};"
+                    },
+                    "size_units": [
+                        "px",
+                        "em"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "button_min_height",
+                    "type": "slider",
+                    "label": "Height",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-min-h: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 90
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "button_shadow__box-shadow",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-booking .fb-button",
+                    "group": "box-shadow",
+                    "name": "button_shadow"
+                },
+                {
+                    "id": "button_outline_heading",
+                    "type": "heading",
+                    "label": "Outline buttons (\"Back\", \"Done\", \"Add to calendar\")",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": ""
+                },
+                {
+                    "id": "button_outline_text",
+                    "type": "color",
+                    "label": "Text colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_outline_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-ghost-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_outline_bg",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_outline_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-ghost-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_outline_border",
+                    "type": "color",
+                    "label": "Border colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_outline_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-ghost-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_outline_hover_text",
+                    "type": "color",
+                    "label": "Text colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_outline_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-ghost-hover-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_outline_hover_bg",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_outline_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-ghost-hover-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_outline_hover_border",
+                    "type": "color",
+                    "label": "Border colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_outline_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-ghost-hover-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "field_text_color",
+                    "type": "color",
+                    "label": "Text in fields",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-field-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "field_border_color",
+                    "type": "color",
+                    "label": "Field border",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-field-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "field_focus_color",
+                    "type": "color",
+                    "label": "Field in use",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-focus: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "field_radius",
+                    "type": "slider",
+                    "label": "Field corners",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-field-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 60
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "field_height",
+                    "type": "slider",
+                    "label": "Field and button height",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-control-h: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 80
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "label_heading",
+                    "type": "heading",
+                    "label": "Labels",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": ""
+                },
+                {
+                    "id": "label_color",
+                    "type": "color",
+                    "label": "Colour",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-label: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "label_typography__typography",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-booking label",
+                    "group": "typography",
+                    "name": "label_typography"
+                },
+                {
+                    "id": "messages_heading",
+                    "type": "heading",
+                    "label": "Messages",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": ""
+                },
+                {
+                    "id": "error_color",
+                    "type": "color",
+                    "label": "Errors",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-error: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "success_color",
+                    "type": "color",
+                    "label": "Success",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-success: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "step_active_color",
+                    "type": "color",
+                    "label": "Current step",
+                    "section": "section_style_steps",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-step-active: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "step_done_color",
+                    "type": "color",
+                    "label": "Completed steps",
+                    "section": "section_style_steps",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-step-done: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "step_inactive_color",
+                    "type": "color",
+                    "label": "Next steps",
+                    "section": "section_style_steps",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-step-inactive: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "step_typography__typography",
+                    "label": "Step names",
+                    "section": "section_style_steps",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .fb-steps",
+                    "group": "typography",
+                    "name": "step_typography"
+                },
+                {
+                    "id": "summary_bg_color",
+                    "type": "color",
+                    "label": "Summary background",
+                    "section": "section_style_steps",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-summary-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "calendar_bg",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-picker-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "day_selected_bg",
+                    "type": "color",
+                    "label": "Check-in and check-out",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-day-selected-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "day_selected_text",
+                    "type": "color",
+                    "label": "Their text",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-day-selected-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "day_range_bg",
+                    "type": "color",
+                    "label": "Nights in between",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-day-range-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "day_hover_border",
+                    "type": "color",
+                    "label": "Day under the mouse",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-day-hover: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "calendar_arrow_color",
+                    "type": "color",
+                    "label": "Arrows",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-picker-nav: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "day_radius",
+                    "type": "slider",
+                    "label": "Day corners",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-day-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 30
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "card_bg_color",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_cards",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-room-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "card_border_color",
+                    "type": "color",
+                    "label": "Border colour",
+                    "section": "section_style_cards",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-room-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "card_radius",
+                    "type": "slider",
+                    "label": "Corner radius",
+                    "section": "section_style_cards",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-room-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 40
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "card_padding",
+                    "type": "slider",
+                    "label": "Padding",
+                    "section": "section_style_cards",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-room-pad: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 48
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "card_shadow__box-shadow",
+                    "section": "section_style_cards",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-booking .fb-room",
+                    "group": "box-shadow",
+                    "name": "card_shadow"
+                },
+                {
+                    "id": "card_price_color",
+                    "type": "color",
+                    "label": "Price",
+                    "section": "section_style_cards",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-price-color: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "card_icons_heading",
+                    "type": "heading",
+                    "label": "Icons (facts and amenities)",
+                    "section": "section_style_cards",
+                    "tab": "style",
+                    "control_tab": ""
+                },
+                {
+                    "id": "card_icon_color",
+                    "type": "color",
+                    "label": "Amenity icon colour",
+                    "section": "section_style_cards",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-icon-color: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "card_icon_size",
+                    "type": "slider",
+                    "label": "Icon size",
+                    "section": "section_style_cards",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-icon-size: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 40
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "card_icon_gap",
+                    "type": "slider",
+                    "label": "Space after the icon",
+                    "section": "section_style_cards",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-icon-gap: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 24
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                }
+            ],
+            "problems": []
+        },
+        "flexo-room-booking-box": {
+            "title": "Room booking box",
+            "sections": [
+                {
+                    "id": "section_content",
+                    "label": "Room booking box",
+                    "tab": "content"
+                },
+                {
+                    "id": "section_style_colors",
+                    "label": "Colors",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_layout",
+                    "label": "Layout & typography",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_buttons",
+                    "label": "Buttons",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_fields",
+                    "label": "Fields and labels",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_calendar",
+                    "label": "Calendar",
+                    "tab": "style"
+                }
+            ],
+            "controls": [
+                {
+                    "id": "room",
+                    "type": "select",
+                    "label": "Room",
+                    "section": "section_content",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "",
+                    "options": [
+                        "",
+                        "garden-family",
+                        "sea-double",
+                        "panoramic-suite",
+                        "demo-garden-double",
+                        "demo-sea-view-studio",
+                        "demo-family-suite"
+                    ]
+                },
+                {
+                    "id": "title",
+                    "type": "text",
+                    "label": "Heading",
+                    "section": "section_content",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": ""
+                },
+                {
+                    "id": "show_price",
+                    "type": "switcher",
+                    "label": "Show the \"from\" price",
+                    "section": "section_content",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "yes"
+                },
+                {
+                    "id": "button_text",
+                    "type": "text",
+                    "label": "Button text",
+                    "section": "section_content",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": ""
+                },
+                {
+                    "id": "book_text",
+                    "type": "text",
+                    "label": "\"Book now\" text",
+                    "section": "section_content",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": ""
+                },
+                {
+                    "id": "booking_page",
+                    "type": "text",
+                    "label": "Booking page path",
+                    "section": "section_content",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": ""
+                },
+                {
+                    "id": "colors_note",
+                    "type": "raw_html",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": ""
+                },
+                {
+                    "id": "color_primary",
+                    "type": "color",
+                    "label": "Accent / buttons",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-primary: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "color_primary_contrast",
+                    "type": "color",
+                    "label": "Button text",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-primary-contrast: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "color_text",
+                    "type": "color",
+                    "label": "Text",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "color_background",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "color_field_background",
+                    "type": "color",
+                    "label": "Field background",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-field-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "color_border",
+                    "type": "color",
+                    "label": "Borders",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "padding",
+                    "type": "slider",
+                    "label": "Padding",
+                    "section": "section_style_layout",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-padding: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 80
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "gap",
+                    "type": "slider",
+                    "label": "Spacing",
+                    "section": "section_style_layout",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-gap: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 48
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "radius",
+                    "type": "slider",
+                    "label": "Corner radius",
+                    "section": "section_style_layout",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 32
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ]
+                },
+                {
+                    "id": "heading_typography__typography",
+                    "label": "Headings",
+                    "section": "section_style_layout",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .fb-title, {{WRAPPER}} .fb-step-title, {{WRAPPER}} .fb-room__title",
+                    "group": "typography",
+                    "name": "heading_typography"
+                },
+                {
+                    "id": "text_typography__typography",
+                    "label": "Text & fields",
+                    "section": "section_style_layout",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-booking, {{WRAPPER}} .flexo-booking input, {{WRAPPER}} .flexo-booking select, {{WRAPPER}} .flexo-booking textarea",
+                    "group": "typography",
+                    "name": "text_typography"
+                },
+                {
+                    "id": "button_typography__typography",
+                    "label": "Typography",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .fb-button",
+                    "group": "typography",
+                    "name": "button_typography"
+                },
+                {
+                    "id": "button_text_color",
+                    "type": "color",
+                    "label": "Text colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_bg_color",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_border_color",
+                    "type": "color",
+                    "label": "Border colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_hover_text_color",
+                    "type": "color",
+                    "label": "Text colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-hover-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_hover_bg_color",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-hover-bg: {{VALUE}}; --fb-button-hover-filter: none;"
+                    }
+                },
+                {
+                    "id": "button_hover_border_color",
+                    "type": "color",
+                    "label": "Border colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-hover-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_border_width",
+                    "type": "slider",
+                    "label": "Border width",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-border-w: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 8
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "button_radius",
+                    "type": "slider",
+                    "label": "Corner radius",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 100
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "button_padding",
+                    "type": "dimensions",
+                    "label": "Padding",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};"
+                    },
+                    "size_units": [
+                        "px",
+                        "em"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "button_min_height",
+                    "type": "slider",
+                    "label": "Height",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-min-h: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 90
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "button_shadow__box-shadow",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-booking .fb-button",
+                    "group": "box-shadow",
+                    "name": "button_shadow"
+                },
+                {
+                    "id": "button_outline_heading",
+                    "type": "heading",
+                    "label": "Outline buttons (\"Back\", \"Done\", \"Add to calendar\")",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": ""
+                },
+                {
+                    "id": "button_outline_text",
+                    "type": "color",
+                    "label": "Text colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_outline_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-ghost-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_outline_bg",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_outline_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-ghost-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_outline_border",
+                    "type": "color",
+                    "label": "Border colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_outline_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-ghost-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_outline_hover_text",
+                    "type": "color",
+                    "label": "Text colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_outline_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-ghost-hover-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_outline_hover_bg",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_outline_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-ghost-hover-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_outline_hover_border",
+                    "type": "color",
+                    "label": "Border colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_outline_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-ghost-hover-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "field_text_color",
+                    "type": "color",
+                    "label": "Text in fields",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-field-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "field_border_color",
+                    "type": "color",
+                    "label": "Field border",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-field-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "field_focus_color",
+                    "type": "color",
+                    "label": "Field in use",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-focus: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "field_radius",
+                    "type": "slider",
+                    "label": "Field corners",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-field-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 60
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "field_height",
+                    "type": "slider",
+                    "label": "Field and button height",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-control-h: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 80
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "label_heading",
+                    "type": "heading",
+                    "label": "Labels",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": ""
+                },
+                {
+                    "id": "label_color",
+                    "type": "color",
+                    "label": "Colour",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-label: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "label_typography__typography",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-booking label",
+                    "group": "typography",
+                    "name": "label_typography"
+                },
+                {
+                    "id": "messages_heading",
+                    "type": "heading",
+                    "label": "Messages",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": ""
+                },
+                {
+                    "id": "error_color",
+                    "type": "color",
+                    "label": "Errors",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-error: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "success_color",
+                    "type": "color",
+                    "label": "Success",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-success: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "calendar_bg",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-picker-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "day_selected_bg",
+                    "type": "color",
+                    "label": "Check-in and check-out",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-day-selected-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "day_selected_text",
+                    "type": "color",
+                    "label": "Their text",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-day-selected-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "day_range_bg",
+                    "type": "color",
+                    "label": "Nights in between",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-day-range-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "day_hover_border",
+                    "type": "color",
+                    "label": "Day under the mouse",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-day-hover: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "calendar_arrow_color",
+                    "type": "color",
+                    "label": "Arrows",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-picker-nav: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "day_radius",
+                    "type": "slider",
+                    "label": "Day corners",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-day-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 30
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                }
+            ],
+            "problems": []
+        },
+        "flexo-contact-form": {
+            "title": "Flexo Contact Form",
+            "sections": [
+                {
+                    "id": "section_content",
+                    "label": "Contact form",
+                    "tab": "content"
+                },
+                {
+                    "id": "section_style_colors",
+                    "label": "Colors",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_layout",
+                    "label": "Layout & typography",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_buttons",
+                    "label": "Buttons",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_fields",
+                    "label": "Fields and labels",
+                    "tab": "style"
+                }
+            ],
+            "controls": [
+                {
+                    "id": "title",
+                    "type": "text",
+                    "label": "Heading",
+                    "section": "section_content",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": ""
+                },
+                {
+                    "id": "intro",
+                    "type": "textarea",
+                    "label": "Text above the fields",
+                    "section": "section_content",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": ""
+                },
+                {
+                    "id": "button_text",
+                    "type": "text",
+                    "label": "Button text",
+                    "section": "section_content",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": ""
+                },
+                {
+                    "id": "success_text",
+                    "type": "textarea",
+                    "label": "Text after sending",
+                    "section": "section_content",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": ""
+                },
+                {
+                    "id": "contact_note",
+                    "type": "raw_html",
+                    "section": "section_content",
+                    "tab": "content",
+                    "control_tab": ""
+                },
+                {
+                    "id": "colors_note",
+                    "type": "raw_html",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": ""
+                },
+                {
+                    "id": "color_primary",
+                    "type": "color",
+                    "label": "Accent / buttons",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-primary: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "color_primary_contrast",
+                    "type": "color",
+                    "label": "Button text",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-primary-contrast: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "color_text",
+                    "type": "color",
+                    "label": "Text",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "color_background",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "color_field_background",
+                    "type": "color",
+                    "label": "Field background",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-field-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "color_border",
+                    "type": "color",
+                    "label": "Borders",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "padding",
+                    "type": "slider",
+                    "label": "Padding",
+                    "section": "section_style_layout",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-padding: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 80
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "gap",
+                    "type": "slider",
+                    "label": "Spacing",
+                    "section": "section_style_layout",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-gap: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 48
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "radius",
+                    "type": "slider",
+                    "label": "Corner radius",
+                    "section": "section_style_layout",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 32
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ]
+                },
+                {
+                    "id": "heading_typography__typography",
+                    "label": "Headings",
+                    "section": "section_style_layout",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .fb-title, {{WRAPPER}} .fb-step-title, {{WRAPPER}} .fb-room__title",
+                    "group": "typography",
+                    "name": "heading_typography"
+                },
+                {
+                    "id": "text_typography__typography",
+                    "label": "Text & fields",
+                    "section": "section_style_layout",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-booking, {{WRAPPER}} .flexo-booking input, {{WRAPPER}} .flexo-booking select, {{WRAPPER}} .flexo-booking textarea",
+                    "group": "typography",
+                    "name": "text_typography"
+                },
+                {
+                    "id": "button_typography__typography",
+                    "label": "Typography",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .fb-button",
+                    "group": "typography",
+                    "name": "button_typography"
+                },
+                {
+                    "id": "button_text_color",
+                    "type": "color",
+                    "label": "Text colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_bg_color",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_border_color",
+                    "type": "color",
+                    "label": "Border colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_hover_text_color",
+                    "type": "color",
+                    "label": "Text colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-hover-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_hover_bg_color",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-hover-bg: {{VALUE}}; --fb-button-hover-filter: none;"
+                    }
+                },
+                {
+                    "id": "button_hover_border_color",
+                    "type": "color",
+                    "label": "Border colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-hover-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_border_width",
+                    "type": "slider",
+                    "label": "Border width",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-border-w: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 8
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "button_radius",
+                    "type": "slider",
+                    "label": "Corner radius",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 100
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "button_padding",
+                    "type": "dimensions",
+                    "label": "Padding",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};"
+                    },
+                    "size_units": [
+                        "px",
+                        "em"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "button_min_height",
+                    "type": "slider",
+                    "label": "Height",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-min-h: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 90
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "button_shadow__box-shadow",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-booking .fb-button",
+                    "group": "box-shadow",
+                    "name": "button_shadow"
+                },
+                {
+                    "id": "field_text_color",
+                    "type": "color",
+                    "label": "Text in fields",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-field-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "field_border_color",
+                    "type": "color",
+                    "label": "Field border",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-field-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "field_focus_color",
+                    "type": "color",
+                    "label": "Field in use",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-focus: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "field_radius",
+                    "type": "slider",
+                    "label": "Field corners",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-field-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 60
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "field_height",
+                    "type": "slider",
+                    "label": "Field and button height",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-control-h: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 80
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "label_heading",
+                    "type": "heading",
+                    "label": "Labels",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": ""
+                },
+                {
+                    "id": "label_color",
+                    "type": "color",
+                    "label": "Colour",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-label: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "label_typography__typography",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-booking label",
+                    "group": "typography",
+                    "name": "label_typography"
+                },
+                {
+                    "id": "messages_heading",
+                    "type": "heading",
+                    "label": "Messages",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": ""
+                },
+                {
+                    "id": "error_color",
+                    "type": "color",
+                    "label": "Errors",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-error: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "success_color",
+                    "type": "color",
+                    "label": "Success",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-success: {{VALUE}};"
+                    }
+                }
+            ],
+            "problems": []
+        },
+        "flexo-forms-tabs": {
+            "title": "Booking & Contact tabs",
+            "sections": [
+                {
+                    "id": "section_tabs",
+                    "label": "Tabs",
+                    "tab": "content"
+                },
+                {
+                    "id": "section_booking",
+                    "label": "Booking form",
+                    "tab": "content"
+                },
+                {
+                    "id": "section_contact",
+                    "label": "Contact form",
+                    "tab": "content"
+                },
+                {
+                    "id": "section_style_tabs",
+                    "label": "Tabs",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_colors",
+                    "label": "Colors",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_layout",
+                    "label": "Layout & typography",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_buttons",
+                    "label": "Buttons",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_fields",
+                    "label": "Fields and labels",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_steps",
+                    "label": "Steps and summary",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_calendar",
+                    "label": "Calendar",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_cards",
+                    "label": "Room cards",
+                    "tab": "style"
+                }
+            ],
+            "controls": [
+                {
+                    "id": "booking_label",
+                    "type": "text",
+                    "label": "Booking tab",
+                    "section": "section_tabs",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": ""
+                },
+                {
+                    "id": "contact_label",
+                    "type": "text",
+                    "label": "Contact tab",
+                    "section": "section_tabs",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": ""
+                },
+                {
+                    "id": "default_tab",
+                    "type": "select",
+                    "label": "Shown first",
+                    "section": "section_tabs",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "booking",
+                    "options": [
+                        "booking",
+                        "contact"
+                    ]
+                },
+                {
+                    "id": "room",
+                    "type": "select",
+                    "label": "Room",
+                    "section": "section_booking",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "",
+                    "options": [
+                        "",
+                        "garden-family",
+                        "sea-double",
+                        "panoramic-suite",
+                        "demo-garden-double",
+                        "demo-sea-view-studio",
+                        "demo-family-suite"
+                    ]
+                },
+                {
+                    "id": "title",
+                    "type": "text",
+                    "label": "Heading",
+                    "section": "section_booking",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": ""
+                },
+                {
+                    "id": "button_text",
+                    "type": "text",
+                    "label": "Button text",
+                    "section": "section_booking",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": ""
+                },
+                {
+                    "id": "results_layout",
+                    "type": "select",
+                    "label": "Room results",
+                    "section": "section_booking",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "",
+                    "options": [
+                        "",
+                        "auto",
+                        "stacked",
+                        "horizontal"
+                    ]
+                },
+                {
+                    "id": "amenity_icons",
+                    "type": "select",
+                    "label": "Amenities on the room cards",
+                    "section": "section_booking",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "",
+                    "options": [
+                        "",
+                        "icons",
+                        "tick",
+                        "none"
+                    ]
+                },
+                {
+                    "id": "contact_title",
+                    "type": "text",
+                    "label": "Heading",
+                    "section": "section_contact",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": ""
+                },
+                {
+                    "id": "contact_intro",
+                    "type": "textarea",
+                    "label": "Text above the fields",
+                    "section": "section_contact",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": ""
+                },
+                {
+                    "id": "contact_button_text",
+                    "type": "text",
+                    "label": "Button text",
+                    "section": "section_contact",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": ""
+                },
+                {
+                    "id": "contact_success_text",
+                    "type": "textarea",
+                    "label": "Text after sending",
+                    "section": "section_contact",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": ""
+                },
+                {
+                    "id": "tabs_align",
+                    "type": "choose",
+                    "label": "Alignment",
+                    "section": "section_style_tabs",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-forms-tabs": "{{VALUE}}"
+                    },
+                    "selectors_dictionary": {
+                        "flex-start": "--fb-tabs-align: flex-start;",
+                        "center": "--fb-tabs-align: center;",
+                        "flex-end": "--fb-tabs-align: flex-end;",
+                        "stretch": "--fb-tabs-align: stretch; --fb-tab-flex: 1 1 0;"
+                    },
+                    "responsive": true,
+                    "options": [
+                        "flex-start",
+                        "center",
+                        "flex-end",
+                        "stretch"
+                    ]
+                },
+                {
+                    "id": "tab_typography__typography",
+                    "section": "section_style_tabs",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-forms-tabs .fb-tab",
+                    "group": "typography",
+                    "name": "tab_typography"
+                },
+                {
+                    "id": "tab_bg",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_tabs",
+                    "tab": "style",
+                    "control_tab": "tab_colors_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-forms-tabs": "--fb-tab-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "tab_text",
+                    "type": "color",
+                    "label": "Text colour",
+                    "section": "section_style_tabs",
+                    "tab": "style",
+                    "control_tab": "tab_colors_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-forms-tabs": "--fb-tab-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "tab_border",
+                    "type": "color",
+                    "label": "Border colour",
+                    "section": "section_style_tabs",
+                    "tab": "style",
+                    "control_tab": "tab_colors_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-forms-tabs": "--fb-tab-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "tab_hover_bg",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_tabs",
+                    "tab": "style",
+                    "control_tab": "tab_colors_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-forms-tabs": "--fb-tab-hover-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "tab_active_bg",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_tabs",
+                    "tab": "style",
+                    "control_tab": "tab_colors_active",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-forms-tabs": "--fb-tab-active-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "tab_active_text",
+                    "type": "color",
+                    "label": "Text colour",
+                    "section": "section_style_tabs",
+                    "tab": "style",
+                    "control_tab": "tab_colors_active",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-forms-tabs": "--fb-tab-active-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "tab_active_border",
+                    "type": "color",
+                    "label": "Border colour",
+                    "section": "section_style_tabs",
+                    "tab": "style",
+                    "control_tab": "tab_colors_active",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-forms-tabs": "--fb-tab-active-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "tab_border_width",
+                    "type": "slider",
+                    "label": "Border width",
+                    "section": "section_style_tabs",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-forms-tabs": "--fb-tab-border-w: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 8
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "tab_radius",
+                    "type": "slider",
+                    "label": "Corner radius",
+                    "section": "section_style_tabs",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-forms-tabs": "--fb-tab-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 100
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "tab_padding",
+                    "type": "dimensions",
+                    "label": "Padding",
+                    "section": "section_style_tabs",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-forms-tabs": "--fb-tab-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};"
+                    },
+                    "size_units": [
+                        "px",
+                        "em"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "tabs_gap",
+                    "type": "slider",
+                    "label": "Space between tabs",
+                    "section": "section_style_tabs",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-forms-tabs": "--fb-tabs-gap: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 40
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "tabs_space",
+                    "type": "slider",
+                    "label": "Space below the tabs",
+                    "section": "section_style_tabs",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-forms-tabs": "--fb-tabs-space: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 80
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "colors_note",
+                    "type": "raw_html",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": ""
+                },
+                {
+                    "id": "color_primary",
+                    "type": "color",
+                    "label": "Accent / buttons",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-primary: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "color_primary_contrast",
+                    "type": "color",
+                    "label": "Button text",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-primary-contrast: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "color_text",
+                    "type": "color",
+                    "label": "Text",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "color_background",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "color_field_background",
+                    "type": "color",
+                    "label": "Field background",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-field-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "color_border",
+                    "type": "color",
+                    "label": "Borders",
+                    "section": "section_style_colors",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "padding",
+                    "type": "slider",
+                    "label": "Padding",
+                    "section": "section_style_layout",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-padding: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 80
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "gap",
+                    "type": "slider",
+                    "label": "Spacing",
+                    "section": "section_style_layout",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-gap: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 48
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "radius",
+                    "type": "slider",
+                    "label": "Corner radius",
+                    "section": "section_style_layout",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 32
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ]
+                },
+                {
+                    "id": "heading_typography__typography",
+                    "label": "Headings",
+                    "section": "section_style_layout",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .fb-title, {{WRAPPER}} .fb-step-title, {{WRAPPER}} .fb-room__title",
+                    "group": "typography",
+                    "name": "heading_typography"
+                },
+                {
+                    "id": "text_typography__typography",
+                    "label": "Text & fields",
+                    "section": "section_style_layout",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-booking, {{WRAPPER}} .flexo-booking input, {{WRAPPER}} .flexo-booking select, {{WRAPPER}} .flexo-booking textarea",
+                    "group": "typography",
+                    "name": "text_typography"
+                },
+                {
+                    "id": "button_typography__typography",
+                    "label": "Typography",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .fb-button",
+                    "group": "typography",
+                    "name": "button_typography"
+                },
+                {
+                    "id": "button_text_color",
+                    "type": "color",
+                    "label": "Text colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_bg_color",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_border_color",
+                    "type": "color",
+                    "label": "Border colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_hover_text_color",
+                    "type": "color",
+                    "label": "Text colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-hover-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_hover_bg_color",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-hover-bg: {{VALUE}}; --fb-button-hover-filter: none;"
+                    }
+                },
+                {
+                    "id": "button_hover_border_color",
+                    "type": "color",
+                    "label": "Border colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_colors_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-hover-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_border_width",
+                    "type": "slider",
+                    "label": "Border width",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-border-w: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 8
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "button_radius",
+                    "type": "slider",
+                    "label": "Corner radius",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 100
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "button_padding",
+                    "type": "dimensions",
+                    "label": "Padding",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};"
+                    },
+                    "size_units": [
+                        "px",
+                        "em"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "button_min_height",
+                    "type": "slider",
+                    "label": "Height",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-button-min-h: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 90
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "button_shadow__box-shadow",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-booking .fb-button",
+                    "group": "box-shadow",
+                    "name": "button_shadow"
+                },
+                {
+                    "id": "button_outline_heading",
+                    "type": "heading",
+                    "label": "Outline buttons (\"Back\", \"Done\", \"Add to calendar\")",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": ""
+                },
+                {
+                    "id": "button_outline_text",
+                    "type": "color",
+                    "label": "Text colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_outline_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-ghost-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_outline_bg",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_outline_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-ghost-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_outline_border",
+                    "type": "color",
+                    "label": "Border colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_outline_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-ghost-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_outline_hover_text",
+                    "type": "color",
+                    "label": "Text colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_outline_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-ghost-hover-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_outline_hover_bg",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_outline_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-ghost-hover-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "button_outline_hover_border",
+                    "type": "color",
+                    "label": "Border colour",
+                    "section": "section_style_buttons",
+                    "tab": "style",
+                    "control_tab": "button_outline_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-ghost-hover-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "field_text_color",
+                    "type": "color",
+                    "label": "Text in fields",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-field-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "field_border_color",
+                    "type": "color",
+                    "label": "Field border",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-field-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "field_focus_color",
+                    "type": "color",
+                    "label": "Field in use",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-focus: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "field_radius",
+                    "type": "slider",
+                    "label": "Field corners",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-field-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 60
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "field_height",
+                    "type": "slider",
+                    "label": "Field and button height",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-control-h: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 80
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "label_heading",
+                    "type": "heading",
+                    "label": "Labels",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": ""
+                },
+                {
+                    "id": "label_color",
+                    "type": "color",
+                    "label": "Colour",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-label: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "label_typography__typography",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-booking label",
+                    "group": "typography",
+                    "name": "label_typography"
+                },
+                {
+                    "id": "messages_heading",
+                    "type": "heading",
+                    "label": "Messages",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": ""
+                },
+                {
+                    "id": "error_color",
+                    "type": "color",
+                    "label": "Errors",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-error: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "success_color",
+                    "type": "color",
+                    "label": "Success",
+                    "section": "section_style_fields",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-success: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "step_active_color",
+                    "type": "color",
+                    "label": "Current step",
+                    "section": "section_style_steps",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-step-active: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "step_done_color",
+                    "type": "color",
+                    "label": "Completed steps",
+                    "section": "section_style_steps",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-step-done: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "step_inactive_color",
+                    "type": "color",
+                    "label": "Next steps",
+                    "section": "section_style_steps",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-step-inactive: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "step_typography__typography",
+                    "label": "Step names",
+                    "section": "section_style_steps",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .fb-steps",
+                    "group": "typography",
+                    "name": "step_typography"
+                },
+                {
+                    "id": "summary_bg_color",
+                    "type": "color",
+                    "label": "Summary background",
+                    "section": "section_style_steps",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-summary-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "calendar_bg",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-picker-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "day_selected_bg",
+                    "type": "color",
+                    "label": "Check-in and check-out",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-day-selected-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "day_selected_text",
+                    "type": "color",
+                    "label": "Their text",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-day-selected-text: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "day_range_bg",
+                    "type": "color",
+                    "label": "Nights in between",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-day-range-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "day_hover_border",
+                    "type": "color",
+                    "label": "Day under the mouse",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-day-hover: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "calendar_arrow_color",
+                    "type": "color",
+                    "label": "Arrows",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-picker-nav: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "day_radius",
+                    "type": "slider",
+                    "label": "Day corners",
+                    "section": "section_style_calendar",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-day-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 30
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "card_bg_color",
+                    "type": "color",
+                    "label": "Background",
+                    "section": "section_style_cards",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-room-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "card_border_color",
+                    "type": "color",
+                    "label": "Border colour",
+                    "section": "section_style_cards",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-room-border: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "card_radius",
+                    "type": "slider",
+                    "label": "Corner radius",
+                    "section": "section_style_cards",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-room-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 40
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "card_padding",
+                    "type": "slider",
+                    "label": "Padding",
+                    "section": "section_style_cards",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-room-pad: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 48
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "card_shadow__box-shadow",
+                    "section": "section_style_cards",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-booking .fb-room",
+                    "group": "box-shadow",
+                    "name": "card_shadow"
+                },
+                {
+                    "id": "card_price_color",
+                    "type": "color",
+                    "label": "Price",
+                    "section": "section_style_cards",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-price-color: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "card_icons_heading",
+                    "type": "heading",
+                    "label": "Icons (facts and amenities)",
+                    "section": "section_style_cards",
+                    "tab": "style",
+                    "control_tab": ""
+                },
+                {
+                    "id": "card_icon_color",
+                    "type": "color",
+                    "label": "Amenity icon colour",
+                    "section": "section_style_cards",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-icon-color: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "card_icon_size",
+                    "type": "slider",
+                    "label": "Icon size",
+                    "section": "section_style_cards",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-icon-size: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 40
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "card_icon_gap",
+                    "type": "slider",
+                    "label": "Space after the icon",
+                    "section": "section_style_cards",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-booking": "--fb-icon-gap: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 24
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                }
+            ],
+            "problems": []
+        },
+        "flexo-room-amenities": {
+            "title": "Room amenities",
+            "sections": [
+                {
+                    "id": "section_room",
+                    "label": "Room",
+                    "tab": "content"
+                },
+                {
+                    "id": "section_style_list",
+                    "label": "List",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_icon",
+                    "label": "Icon",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_text",
+                    "label": "Text",
+                    "tab": "style"
+                }
+            ],
+            "controls": [
+                {
+                    "id": "room",
+                    "type": "select",
+                    "label": "Room",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "",
+                    "options": [
+                        "",
+                        "garden-family",
+                        "sea-double",
+                        "panoramic-suite",
+                        "demo-garden-double",
+                        "demo-sea-view-studio",
+                        "demo-family-suite"
+                    ]
+                },
+                {
+                    "id": "layout",
+                    "type": "select",
+                    "label": "Layout",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "grid",
+                    "options": [
+                        "list",
+                        "inline",
+                        "grid"
+                    ]
+                },
+                {
+                    "id": "columns",
+                    "type": "select",
+                    "label": "Columns",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-columns: {{VALUE}};"
+                    },
+                    "condition": {
+                        "layout": "grid"
+                    },
+                    "default": "2",
+                    "responsive": true,
+                    "options": [
+                        "1",
+                        "2",
+                        "3",
+                        "4"
+                    ]
+                },
+                {
+                    "id": "limit",
+                    "type": "number",
+                    "label": "How many",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": 0
+                },
+                {
+                    "id": "show_icons",
+                    "type": "switcher",
+                    "label": "Icons",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "yes"
+                },
+                {
+                    "id": "same_icon",
+                    "type": "icons",
+                    "label": "Same icon for all (optional)",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "condition": {
+                        "show_icons": "yes"
+                    },
+                    "default": {
+                        "value": "",
+                        "library": ""
+                    }
+                },
+                {
+                    "id": "space_between",
+                    "type": "slider",
+                    "label": "Space between",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-gap: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 60
+                        }
+                    },
+                    "size_units": [
+                        "px",
+                        "em"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "align",
+                    "type": "choose",
+                    "label": "Alignment",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-align: {{VALUE}};"
+                    },
+                    "responsive": true,
+                    "options": [
+                        "flex-start",
+                        "center",
+                        "flex-end"
+                    ]
+                },
+                {
+                    "id": "icon_position",
+                    "type": "choose",
+                    "label": "Icon",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "{{VALUE}}"
+                    },
+                    "selectors_dictionary": {
+                        "beside": "--flexo-item-dir: row; text-align: inherit;",
+                        "above": "--flexo-item-dir: column; --flexo-icon-valign: center; text-align: center;"
+                    },
+                    "responsive": true,
+                    "options": [
+                        "beside",
+                        "above"
+                    ]
+                },
+                {
+                    "id": "icon_valign",
+                    "type": "choose",
+                    "label": "Icon and text",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-icon-valign: {{VALUE}};"
+                    },
+                    "condition": {
+                        "icon_position!": "above"
+                    },
+                    "responsive": true,
+                    "options": [
+                        "flex-start",
+                        "center",
+                        "flex-end"
+                    ]
+                },
+                {
+                    "id": "text_wrap",
+                    "type": "select",
+                    "label": "Long texts",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "prefix_class": "flexo-room-text-",
+                    "default": "",
+                    "options": [
+                        "",
+                        "nowrap"
+                    ]
+                },
+                {
+                    "id": "item_bg",
+                    "type": "color",
+                    "label": "Item background",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-item-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "item_hover_bg",
+                    "type": "color",
+                    "label": "Item background under the mouse",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list__item:hover": "background-color: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "item_padding",
+                    "type": "dimensions",
+                    "label": "Item padding",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-item-pad: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};"
+                    },
+                    "size_units": [
+                        "px",
+                        "em"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "item_radius",
+                    "type": "slider",
+                    "label": "Item corners",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-item-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 60
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ]
+                },
+                {
+                    "id": "divider",
+                    "type": "switcher",
+                    "label": "Divider",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "prefix_class": "flexo-room-divider-"
+                },
+                {
+                    "id": "divider_color",
+                    "type": "color",
+                    "label": "Divider colour",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-divider: {{VALUE}};"
+                    },
+                    "condition": {
+                        "divider": "yes"
+                    }
+                },
+                {
+                    "id": "divider_style",
+                    "type": "select",
+                    "label": "Divider style",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-divider-style: {{VALUE}};"
+                    },
+                    "condition": {
+                        "divider": "yes"
+                    },
+                    "default": "",
+                    "options": [
+                        "",
+                        "dashed",
+                        "dotted"
+                    ]
+                },
+                {
+                    "id": "divider_width",
+                    "type": "slider",
+                    "label": "Divider width",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-divider-w: {{SIZE}}{{UNIT}};"
+                    },
+                    "condition": {
+                        "divider": "yes"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 1,
+                            "max": 10
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ]
+                },
+                {
+                    "id": "icon_color",
+                    "type": "color",
+                    "label": "Colour",
+                    "section": "section_style_icon",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-icon-color: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "icon_hover_color",
+                    "type": "color",
+                    "label": "Colour under the mouse",
+                    "section": "section_style_icon",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list__item:hover .flexo-room-list__icon": "color: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "icon_size",
+                    "type": "slider",
+                    "label": "Size",
+                    "section": "section_style_icon",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-icon-size: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 8,
+                            "max": 80
+                        }
+                    },
+                    "size_units": [
+                        "px",
+                        "em"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "icon_gap",
+                    "type": "slider",
+                    "label": "Space after the icon",
+                    "section": "section_style_icon",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-icon-gap: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 40
+                        }
+                    },
+                    "size_units": [
+                        "px",
+                        "em"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "original_colours",
+                    "type": "switcher",
+                    "label": "Uploaded icons keep their own colours",
+                    "section": "section_style_icon",
+                    "tab": "style",
+                    "control_tab": ""
+                },
+                {
+                    "id": "text_color",
+                    "type": "color",
+                    "label": "Colour",
+                    "section": "section_style_text",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list__text": "color: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "text_hover_color",
+                    "type": "color",
+                    "label": "Colour under the mouse",
+                    "section": "section_style_text",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list__item:hover .flexo-room-list__text": "color: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "text_typography__typography",
+                    "section": "section_style_text",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-room-list__text",
+                    "group": "typography",
+                    "name": "text_typography"
+                }
+            ],
+            "problems": []
+        },
+        "flexo-room-details": {
+            "title": "Room details",
+            "sections": [
+                {
+                    "id": "section_room",
+                    "label": "Room",
+                    "tab": "content"
+                },
+                {
+                    "id": "section_icons",
+                    "label": "Your own icons (optional)",
+                    "tab": "content"
+                },
+                {
+                    "id": "section_style_list",
+                    "label": "List",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_icon",
+                    "label": "Icon",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_text",
+                    "label": "Text",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_label",
+                    "label": "Names",
+                    "tab": "style"
+                }
+            ],
+            "controls": [
+                {
+                    "id": "room",
+                    "type": "select",
+                    "label": "Room",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "",
+                    "options": [
+                        "",
+                        "garden-family",
+                        "sea-double",
+                        "panoramic-suite",
+                        "demo-garden-double",
+                        "demo-sea-view-studio",
+                        "demo-family-suite"
+                    ]
+                },
+                {
+                    "id": "facts",
+                    "type": "select2",
+                    "label": "Facts",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": [
+                        "size",
+                        "guests",
+                        "beds",
+                        "view"
+                    ],
+                    "options": [
+                        "size",
+                        "guests",
+                        "beds",
+                        "view",
+                        "type"
+                    ]
+                },
+                {
+                    "id": "more",
+                    "type": "switcher",
+                    "label": "Add the room's \"More details\"",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "yes"
+                },
+                {
+                    "id": "show",
+                    "type": "select",
+                    "label": "Text",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "both",
+                    "options": [
+                        "both",
+                        "stacked",
+                        "value"
+                    ]
+                },
+                {
+                    "id": "guests_format",
+                    "type": "select",
+                    "label": "Guests as",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "summary",
+                    "options": [
+                        "summary",
+                        "guests"
+                    ]
+                },
+                {
+                    "id": "layout",
+                    "type": "select",
+                    "label": "Layout",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "list",
+                    "options": [
+                        "list",
+                        "inline",
+                        "grid"
+                    ]
+                },
+                {
+                    "id": "columns",
+                    "type": "select",
+                    "label": "Columns",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-columns: {{VALUE}};"
+                    },
+                    "condition": {
+                        "layout": "grid"
+                    },
+                    "default": "2",
+                    "responsive": true,
+                    "options": [
+                        "1",
+                        "2",
+                        "3",
+                        "4"
+                    ]
+                },
+                {
+                    "id": "show_icons",
+                    "type": "switcher",
+                    "label": "Icons",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "yes"
+                },
+                {
+                    "id": "fact_icon_size",
+                    "type": "icons",
+                    "label": "Size",
+                    "section": "section_icons",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": {
+                        "value": "",
+                        "library": ""
+                    }
+                },
+                {
+                    "id": "fact_icon_guests",
+                    "type": "icons",
+                    "label": "Guests",
+                    "section": "section_icons",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": {
+                        "value": "",
+                        "library": ""
+                    }
+                },
+                {
+                    "id": "fact_icon_beds",
+                    "type": "icons",
+                    "label": "Beds",
+                    "section": "section_icons",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": {
+                        "value": "",
+                        "library": ""
+                    }
+                },
+                {
+                    "id": "fact_icon_view",
+                    "type": "icons",
+                    "label": "View",
+                    "section": "section_icons",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": {
+                        "value": "",
+                        "library": ""
+                    }
+                },
+                {
+                    "id": "fact_icon_type",
+                    "type": "icons",
+                    "label": "Room type",
+                    "section": "section_icons",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": {
+                        "value": "",
+                        "library": ""
+                    }
+                },
+                {
+                    "id": "space_between",
+                    "type": "slider",
+                    "label": "Space between",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-gap: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 60
+                        }
+                    },
+                    "size_units": [
+                        "px",
+                        "em"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "align",
+                    "type": "choose",
+                    "label": "Alignment",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-align: {{VALUE}};"
+                    },
+                    "responsive": true,
+                    "options": [
+                        "flex-start",
+                        "center",
+                        "flex-end"
+                    ]
+                },
+                {
+                    "id": "icon_position",
+                    "type": "choose",
+                    "label": "Icon",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "{{VALUE}}"
+                    },
+                    "selectors_dictionary": {
+                        "beside": "--flexo-item-dir: row; text-align: inherit;",
+                        "above": "--flexo-item-dir: column; --flexo-icon-valign: center; text-align: center;"
+                    },
+                    "responsive": true,
+                    "options": [
+                        "beside",
+                        "above"
+                    ]
+                },
+                {
+                    "id": "icon_valign",
+                    "type": "choose",
+                    "label": "Icon and text",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-icon-valign: {{VALUE}};"
+                    },
+                    "condition": {
+                        "icon_position!": "above"
+                    },
+                    "responsive": true,
+                    "options": [
+                        "flex-start",
+                        "center",
+                        "flex-end"
+                    ]
+                },
+                {
+                    "id": "text_wrap",
+                    "type": "select",
+                    "label": "Long texts",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "prefix_class": "flexo-room-text-",
+                    "default": "",
+                    "options": [
+                        "",
+                        "nowrap"
+                    ]
+                },
+                {
+                    "id": "item_bg",
+                    "type": "color",
+                    "label": "Item background",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-item-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "item_hover_bg",
+                    "type": "color",
+                    "label": "Item background under the mouse",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list__item:hover": "background-color: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "item_padding",
+                    "type": "dimensions",
+                    "label": "Item padding",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-item-pad: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};"
+                    },
+                    "size_units": [
+                        "px",
+                        "em"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "item_radius",
+                    "type": "slider",
+                    "label": "Item corners",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-item-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 60
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ]
+                },
+                {
+                    "id": "divider",
+                    "type": "switcher",
+                    "label": "Divider",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "prefix_class": "flexo-room-divider-"
+                },
+                {
+                    "id": "divider_color",
+                    "type": "color",
+                    "label": "Divider colour",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-divider: {{VALUE}};"
+                    },
+                    "condition": {
+                        "divider": "yes"
+                    }
+                },
+                {
+                    "id": "divider_style",
+                    "type": "select",
+                    "label": "Divider style",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-divider-style: {{VALUE}};"
+                    },
+                    "condition": {
+                        "divider": "yes"
+                    },
+                    "default": "",
+                    "options": [
+                        "",
+                        "dashed",
+                        "dotted"
+                    ]
+                },
+                {
+                    "id": "divider_width",
+                    "type": "slider",
+                    "label": "Divider width",
+                    "section": "section_style_list",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-divider-w: {{SIZE}}{{UNIT}};"
+                    },
+                    "condition": {
+                        "divider": "yes"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 1,
+                            "max": 10
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ]
+                },
+                {
+                    "id": "icon_color",
+                    "type": "color",
+                    "label": "Colour",
+                    "section": "section_style_icon",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-icon-color: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "icon_hover_color",
+                    "type": "color",
+                    "label": "Colour under the mouse",
+                    "section": "section_style_icon",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list__item:hover .flexo-room-list__icon": "color: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "icon_size",
+                    "type": "slider",
+                    "label": "Size",
+                    "section": "section_style_icon",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-icon-size: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 8,
+                            "max": 80
+                        }
+                    },
+                    "size_units": [
+                        "px",
+                        "em"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "icon_gap",
+                    "type": "slider",
+                    "label": "Space after the icon",
+                    "section": "section_style_icon",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list": "--flexo-icon-gap: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 40
+                        }
+                    },
+                    "size_units": [
+                        "px",
+                        "em"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "original_colours",
+                    "type": "switcher",
+                    "label": "Uploaded icons keep their own colours",
+                    "section": "section_style_icon",
+                    "tab": "style",
+                    "control_tab": ""
+                },
+                {
+                    "id": "text_color",
+                    "type": "color",
+                    "label": "Colour",
+                    "section": "section_style_text",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list__text": "color: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "text_hover_color",
+                    "type": "color",
+                    "label": "Colour under the mouse",
+                    "section": "section_style_text",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-list__item:hover .flexo-room-list__text": "color: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "text_typography__typography",
+                    "section": "section_style_text",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-room-list__text",
+                    "group": "typography",
+                    "name": "text_typography"
+                },
+                {
+                    "id": "label_color",
+                    "type": "color",
+                    "label": "Colour",
+                    "section": "section_style_label",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-details__label": "color: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "label_typography__typography",
+                    "section": "section_style_label",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-room-details__label",
+                    "group": "typography",
+                    "name": "label_typography"
+                }
+            ],
+            "problems": []
+        },
+        "flexo-room-gallery": {
+            "title": "Room gallery",
+            "sections": [
+                {
+                    "id": "section_room",
+                    "label": "Room",
+                    "tab": "content"
+                },
+                {
+                    "id": "section_style_photos",
+                    "label": "Photos",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_nav",
+                    "label": "Arrows",
+                    "tab": "style"
+                },
+                {
+                    "id": "section_style_dots",
+                    "label": "Dots",
+                    "tab": "style"
+                }
+            ],
+            "controls": [
+                {
+                    "id": "room",
+                    "type": "select",
+                    "label": "Room",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "",
+                    "options": [
+                        "",
+                        "garden-family",
+                        "sea-double",
+                        "panoramic-suite",
+                        "demo-garden-double",
+                        "demo-sea-view-studio",
+                        "demo-family-suite"
+                    ]
+                },
+                {
+                    "id": "layout",
+                    "type": "select",
+                    "label": "Layout",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "carousel",
+                    "options": [
+                        "carousel",
+                        "grid"
+                    ]
+                },
+                {
+                    "id": "per_view",
+                    "type": "select",
+                    "label": "Photos side by side",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-per-view: {{VALUE}};"
+                    },
+                    "default": "3",
+                    "responsive": true,
+                    "options": [
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6"
+                    ]
+                },
+                {
+                    "id": "height",
+                    "type": "slider",
+                    "label": "Photo height",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-height: {{SIZE}}{{UNIT}};"
+                    },
+                    "default": {
+                        "size": 260,
+                        "unit": "px"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 80,
+                            "max": 900
+                        },
+                        "vh": {
+                            "min": 10,
+                            "max": 100
+                        }
+                    },
+                    "size_units": [
+                        "px",
+                        "vh"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "with_main",
+                    "type": "switcher",
+                    "label": "Start with the main photo",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "yes"
+                },
+                {
+                    "id": "limit",
+                    "type": "number",
+                    "label": "How many photos",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": 0
+                },
+                {
+                    "id": "image_size",
+                    "type": "select",
+                    "label": "Image size",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "large",
+                    "options": [
+                        "medium",
+                        "medium_large",
+                        "large",
+                        "full"
+                    ]
+                },
+                {
+                    "id": "lightbox",
+                    "type": "switcher",
+                    "label": "Open photos in a lightbox",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "default": "yes"
+                },
+                {
+                    "id": "arrows",
+                    "type": "switcher",
+                    "label": "Arrows",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "condition": {
+                        "layout": "carousel"
+                    },
+                    "default": "yes"
+                },
+                {
+                    "id": "dots",
+                    "type": "switcher",
+                    "label": "Dots",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "condition": {
+                        "layout": "carousel"
+                    },
+                    "default": "yes"
+                },
+                {
+                    "id": "autoplay",
+                    "type": "number",
+                    "label": "Autoplay every (seconds)",
+                    "section": "section_room",
+                    "tab": "content",
+                    "control_tab": "",
+                    "condition": {
+                        "layout": "carousel"
+                    },
+                    "default": 0
+                },
+                {
+                    "id": "gap",
+                    "type": "slider",
+                    "label": "Space between",
+                    "section": "section_style_photos",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-gap: {{SIZE}}{{UNIT}};"
+                    },
+                    "default": {
+                        "size": 16,
+                        "unit": "px"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 60
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "radius",
+                    "type": "slider",
+                    "label": "Corner radius",
+                    "section": "section_style_photos",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 60
+                        }
+                    },
+                    "size_units": [
+                        "px",
+                        "%"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "photo_border__border",
+                    "section": "section_style_photos",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-room-gallery__img",
+                    "group": "border",
+                    "name": "photo_border"
+                },
+                {
+                    "id": "photo_fit",
+                    "type": "select",
+                    "label": "Photos fill",
+                    "section": "section_style_photos",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-fit: {{VALUE}};"
+                    },
+                    "default": "",
+                    "options": [
+                        "",
+                        "contain"
+                    ]
+                },
+                {
+                    "id": "photo_zoom",
+                    "type": "select",
+                    "label": "Under the mouse",
+                    "section": "section_style_photos",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-zoom: {{VALUE}};"
+                    },
+                    "default": "",
+                    "options": [
+                        "",
+                        "1"
+                    ]
+                },
+                {
+                    "id": "arrow_size",
+                    "type": "slider",
+                    "label": "Button size",
+                    "section": "section_style_nav",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-arrow-size: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 24,
+                            "max": 96
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "arrow_icon_size",
+                    "type": "slider",
+                    "label": "Arrow size",
+                    "section": "section_style_nav",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-arrow-icon: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 8,
+                            "max": 64
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "arrow_color",
+                    "type": "color",
+                    "label": "Arrow colour",
+                    "section": "section_style_nav",
+                    "tab": "style",
+                    "control_tab": "arrow_colors_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-arrow-color: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "arrow_bg",
+                    "type": "color",
+                    "label": "Arrow background",
+                    "section": "section_style_nav",
+                    "tab": "style",
+                    "control_tab": "arrow_colors_normal",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-arrow-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "arrow_hover_color",
+                    "type": "color",
+                    "label": "Arrow colour",
+                    "section": "section_style_nav",
+                    "tab": "style",
+                    "control_tab": "arrow_colors_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-arrow-hover-color: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "arrow_hover_bg",
+                    "type": "color",
+                    "label": "Arrow background",
+                    "section": "section_style_nav",
+                    "tab": "style",
+                    "control_tab": "arrow_colors_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-arrow-hover-bg: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "arrow_hover_border",
+                    "type": "color",
+                    "label": "Border colour",
+                    "section": "section_style_nav",
+                    "tab": "style",
+                    "control_tab": "arrow_colors_hover",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery button.flexo-room-gallery__arrow:hover": "border-color: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "arrow_border__border",
+                    "section": "section_style_nav",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-room-gallery button.flexo-room-gallery__arrow",
+                    "group": "border",
+                    "name": "arrow_border"
+                },
+                {
+                    "id": "arrow_radius",
+                    "type": "slider",
+                    "label": "Corner radius",
+                    "section": "section_style_nav",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-arrow-radius: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 60
+                        },
+                        "%": {
+                            "min": 0,
+                            "max": 50
+                        }
+                    },
+                    "size_units": [
+                        "px",
+                        "%"
+                    ]
+                },
+                {
+                    "id": "arrow_shadow",
+                    "type": "select",
+                    "label": "Shadow",
+                    "section": "section_style_nav",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-arrow-shadow: {{VALUE}};"
+                    },
+                    "default": "",
+                    "options": [
+                        "",
+                        "none"
+                    ]
+                },
+                {
+                    "id": "arrow_offset",
+                    "type": "slider",
+                    "label": "Distance from the edge",
+                    "section": "section_style_nav",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-arrow-offset: {{SIZE}}{{UNIT}};"
+                    },
+                    "range": {
+                        "px": {
+                            "min": -60,
+                            "max": 80
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "arrow_position",
+                    "type": "choose",
+                    "label": "Height",
+                    "section": "section_style_nav",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-arrow-top: {{VALUE}};"
+                    },
+                    "selectors_dictionary": {
+                        "top": "calc(var(--flexo-arrow-size) / 2 + 12px)",
+                        "middle": "calc(var(--flexo-height) / 2)",
+                        "bottom": "calc(var(--flexo-height) - var(--flexo-arrow-size) / 2 - 12px)"
+                    },
+                    "options": [
+                        "top",
+                        "middle",
+                        "bottom"
+                    ]
+                },
+                {
+                    "id": "dots_style",
+                    "type": "select",
+                    "label": "Show as",
+                    "section": "section_style_dots",
+                    "tab": "style",
+                    "control_tab": "",
+                    "prefix_class": "flexo-gallery-dots-",
+                    "default": "dots",
+                    "options": [
+                        "dots",
+                        "lines",
+                        "fraction"
+                    ]
+                },
+                {
+                    "id": "dots_position",
+                    "type": "select",
+                    "label": "Position",
+                    "section": "section_style_dots",
+                    "tab": "style",
+                    "control_tab": "",
+                    "prefix_class": "flexo-gallery-dots-at-",
+                    "default": "below",
+                    "options": [
+                        "below",
+                        "over"
+                    ]
+                },
+                {
+                    "id": "dot_color",
+                    "type": "color",
+                    "label": "Colour",
+                    "section": "section_style_dots",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-dot: {{VALUE}};"
+                    }
+                },
+                {
+                    "id": "dot_inactive_color",
+                    "type": "color",
+                    "label": "Other dots",
+                    "section": "section_style_dots",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-dot-inactive: {{VALUE}};"
+                    },
+                    "condition": {
+                        "dots_style!": "fraction"
+                    }
+                },
+                {
+                    "id": "fraction_bg",
+                    "type": "color",
+                    "label": "Count background",
+                    "section": "section_style_dots",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-fraction-bg: {{VALUE}}; --flexo-fraction-color: var(--flexo-dot);"
+                    },
+                    "condition": {
+                        "dots_style": "fraction"
+                    }
+                },
+                {
+                    "id": "dot_size",
+                    "type": "slider",
+                    "label": "Size",
+                    "section": "section_style_dots",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-dot-size: {{SIZE}}{{UNIT}};"
+                    },
+                    "condition": {
+                        "dots_style!": "fraction"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 4,
+                            "max": 24
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "dot_gap",
+                    "type": "slider",
+                    "label": "Space between",
+                    "section": "section_style_dots",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-dot-gap: {{SIZE}}{{UNIT}};"
+                    },
+                    "condition": {
+                        "dots_style!": "fraction"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 24
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "dots_offset",
+                    "type": "slider",
+                    "label": "Distance from the photos",
+                    "section": "section_style_dots",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selectors": {
+                        "{{WRAPPER}} .flexo-room-gallery": "--flexo-dots-offset: {{SIZE}}{{UNIT}};"
+                    },
+                    "condition": {
+                        "dots_position": "below"
+                    },
+                    "range": {
+                        "px": {
+                            "min": 0,
+                            "max": 60
+                        }
+                    },
+                    "size_units": [
+                        "px"
+                    ],
+                    "responsive": true
+                },
+                {
+                    "id": "fraction_typography__typography",
+                    "label": "Count",
+                    "section": "section_style_dots",
+                    "tab": "style",
+                    "control_tab": "",
+                    "selector": "{{WRAPPER}} .flexo-room-gallery__fraction",
+                    "condition": {
+                        "dots_style": "fraction"
+                    },
+                    "group": "typography",
+                    "name": "fraction_typography"
+                }
+            ],
+            "problems": []
+        }
+    }
+}

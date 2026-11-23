@@ -450,7 +450,7 @@ async function timeline( browser ) {
 		ok( ! offLine.length, `timeline ${ label }: every dot centred on its first line`, offLine.slice( 0, 3 ).map( ( [ i, d ] ) => `#${ i } ${ d.toFixed( 2 ) }px` ).join( '; ' ) );
 		ok( Math.abs( top - first.y ) <= SUB && Math.abs( bottom - last.y ) <= SUB, `timeline ${ label }: the rail runs from the first dot to the last, no further`, `rail ${ top.toFixed( 1 ) }–${ bottom.toFixed( 1 ) }, dots ${ first.y.toFixed( 1 ) }–${ last.y.toFixed( 1 ) }` );
 		if ( ! m.single ) {
-			const gaps = m.segs.map( ( s, i ) => [ Math.abs( s.top - m.dots[ i ].y ), Math.abs( s.bottom - m.dots[ i + 1 ].y ) ] ).filter( ( [ a, b ] ) => a > SUB || b > SUB );
+			const gaps = m.segs.map( ( s, i ) => [ Math.abs( s.top - m.dots[ i ].y ), m.dots[ i + 1 ] ? Math.abs( s.bottom - m.dots[ i + 1 ].y ) : Infinity ] ).filter( ( [ a, b ] ) => a > SUB || b > SUB );
 			ok( ! gaps.length, `timeline ${ label }: each piece of rail joins two dots` );
 		}
 		if ( 2 === scale || hostile ) {
