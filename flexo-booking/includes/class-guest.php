@@ -623,12 +623,50 @@ class Flexo_Booking_Guest {
 	 * @return array|WP_Error
 	 */
 	public static function enquiry( array $data ) {
+		return self::message( $data, 'availability' );
+	}
+
+	/**
+	 * A message from the contact form (1.10.0), handled exactly like an
+	 * enquiry: emailed to the hotel, listed on Today, kept and erased with
+	 * the guest's other data.
+	 *
+	 * @return array|WP_Error
+	 */
+	public static function contact_message( array $data ) {
+		return self::message( $data, 'contact' );
+	}
+
+	/**
+	 * "Reply-To" for a guest's message: one address, a name that can't add
+	 * another header or another address.
+	 */
+	public static function reply_to_header( $name, $email ) {
+		$email = sanitize_email( $email );
+		// Only letters, digits, spaces and plain punctuation stay in the name (no quotes,
+		// brackets, commas, colons or line breaks), so it needs no quoting.
+		$name = trim( preg_replace( '/\s+/', ' ', preg_replace( '/[\x00-\x1f\x7f"\\\\<>()\[\],;:@]+/', ' ', (string) $name ) ) );
+		return 'Reply-To: ' . ( '' !== $name ? $name . ' ' : '' ) . '<' . $email . '>';
+	}
+
+	/**
+	 * The one way guests send the hotel a message (enquiries from the
+	 * booking form, the contact form): checks, spam trap, limit per visitor,
+	 * storage, email to the hotel, optional answer to the guest.
+	 *
+	 * @param array  $data Fields sent by the form.
+	 * @param string $kind availability | contact.
+	 * @return array|WP_Error
+	 */
+	private static function message( array $data, $kind ) {
+		$contact = 'contact' === $kind;
 		if ( '' !== trim( (string) ( isset( $data['fb_website'] ) ? $data['fb_website'] : '' ) ) ) {
 			return new WP_Error( 'flexo_spam', __( 'Your message could not be sent.', 'flexo-booking' ), array( 'status' => 400 ) );
 		}
-		$name    = sanitize_text_field( isset( $data['name'] ) ? $data['name'] : '' );
+		$name    = mb_substr( sanitize_text_field( isset( $data['name'] ) ? $data['name'] : '' ), 0, 120 );
 		$email   = sanitize_email( isset( $data['email'] ) ? $data['email'] : '' );
 		$phone   = Flexo_Booking_Phone::normalize( sanitize_text_field( isset( $data['phone'] ) ? $data['phone'] : '' ), isset( $data['phone_country'] ) ? $data['phone_country'] : '' );
+		$subject = $contact ? mb_substr( sanitize_text_field( isset( $data['subject'] ) ? $data['subject'] : '' ), 0, 150 ) : '';
 		$message = mb_substr( sanitize_textarea_field( isset( $data['message'] ) ? $data['message'] : '' ), 0, 2000 );
 		if ( '' === $name ) {
 			return new WP_Error( 'flexo_missing_name', __( 'Please enter your name.', 'flexo-booking' ), array( 'status' => 400, 'field' => 'name' ) );
@@ -636,53 +674,92 @@ class Flexo_Booking_Guest {
 		if ( ! is_email( $email ) ) {
 			return new WP_Error( 'flexo_invalid_email', __( 'Please enter your email address, for example name@example.com.', 'flexo-booking' ), array( 'status' => 400, 'field' => 'email' ) );
 		}
+		if ( $contact && 'required' === Flexo_Booking_Forms::contact_field_mode( 'phone' ) && '' === $phone ) {
+			return new WP_Error( 'flexo_missing_phone', __( 'Please enter a phone number we can reach you on, for example +359 888 123 456.', 'flexo-booking' ), array( 'status' => 400, 'field' => 'phone' ) );
+		}
 		if ( '' !== $phone && ! Flexo_Booking_Phone::looks_valid( $phone ) ) {
 			return new WP_Error( 'flexo_invalid_phone', __( 'Please enter a phone number we can reach you on, for example +359 888 123 456.', 'flexo-booking' ), array( 'status' => 400, 'field' => 'phone' ) );
+		}
+		if ( $contact && 'required' === Flexo_Booking_Forms::contact_field_mode( 'subject' ) && '' === $subject ) {
+			return new WP_Error( 'flexo_missing_subject', __( 'Please tell us what your message is about.', 'flexo-booking' ), array( 'status' => 400, 'field' => 'subject' ) );
+		}
+		if ( $contact && '' === trim( $message ) ) {
+			return new WP_Error( 'flexo_missing_message', __( 'Please write your message.', 'flexo-booking' ), array( 'status' => 400, 'field' => 'message' ) );
 		}
 		if ( Flexo_Booking_Privacy::enabled() && Flexo_Booking_Privacy::consent_required() && ( empty( $data['privacy_consent'] ) || 'false' === $data['privacy_consent'] ) ) {
 			return new WP_Error( 'flexo_consent', __( 'Please accept the privacy policy to send your message.', 'flexo-booking' ), array( 'status' => 400, 'field' => 'privacy_consent' ) );
 		}
-		if ( self::too_many( 'enquiry', (int) apply_filters( 'flexo_booking_enquiry_limit', 5 ) ) ) {
+		if ( self::too_many( $contact ? 'contact' : 'enquiry', (int) apply_filters( 'flexo_booking_enquiry_limit', 5, $kind ) ) ) {
 			return new WP_Error( 'flexo_rate_limited', __( 'You have sent several messages already. Please wait a little or contact us by phone or email.', 'flexo-booking' ), array( 'status' => 429 ) );
 		}
 
-		$in     = Flexo_Booking_Dates::parse( isset( $data['check_in'] ) ? $data['check_in'] : '' );
-		$out    = Flexo_Booking_Dates::parse( isset( $data['check_out'] ) ? $data['check_out'] : '' );
-		$room   = ! empty( $data['room'] ) ? Flexo_Booking_Rooms::find( $data['room'] ) : null;
 		$locale = Flexo_Booking_I18n::sanitize_locale( isset( $data['locale'] ) ? $data['locale'] : '' );
-		$details = array(
-			'name'      => $name,
-			'email'     => $email,
-			'phone'     => $phone,
-			'message'   => $message,
-			'check_in'  => $in ? $in : '',
-			'check_out' => $out && $in && $out > $in ? $out : '',
-			'adults'    => max( 1, (int) ( isset( $data['adults'] ) ? $data['adults'] : 1 ) ),
-			'children'  => max( 0, (int) ( isset( $data['children'] ) ? $data['children'] : 0 ) ),
-			'room'      => $room ? get_the_title( $room ) : '',
-			'locale'    => $locale,
-			'status'    => 'open',
-		);
+		if ( $contact ) {
+			$details = array(
+				'kind'    => 'contact',
+				'name'    => $name,
+				'email'   => $email,
+				'phone'   => $phone,
+				'subject' => $subject,
+				'message' => $message,
+				'locale'  => $locale,
+				'status'  => 'open',
+			);
+		} else {
+			$in      = Flexo_Booking_Dates::parse( isset( $data['check_in'] ) ? $data['check_in'] : '' );
+			$out     = Flexo_Booking_Dates::parse( isset( $data['check_out'] ) ? $data['check_out'] : '' );
+			$room    = ! empty( $data['room'] ) ? Flexo_Booking_Rooms::find( $data['room'] ) : null;
+			$details = array(
+				'name'      => $name,
+				'email'     => $email,
+				'phone'     => $phone,
+				'message'   => $message,
+				'check_in'  => $in ? $in : '',
+				'check_out' => $out && $in && $out > $in ? $out : '',
+				'adults'    => max( 1, (int) ( isset( $data['adults'] ) ? $data['adults'] : 1 ) ),
+				'children'  => max( 0, (int) ( isset( $data['children'] ) ? $data['children'] : 0 ) ),
+				'room'      => $room ? get_the_title( $room ) : '',
+				'locale'    => $locale,
+				'status'    => 'open',
+			);
+		}
 		$id = Flexo_Booking_Log::add( 0, 'enquiry', $details, 0 );
 
 		// The email to the hotel is in the site's language.
 		$sent = Flexo_Booking_I18n::with_locale(
 			Flexo_Booking_I18n::site_locale(),
-			static function () use ( $details ) {
-				$stay = '' !== $details['check_in'] && '' !== $details['check_out']
-					? Flexo_Booking_I18n::format_date( $details['check_in'] ) . ' – ' . Flexo_Booking_I18n::format_date( $details['check_out'] )
-					: __( 'no dates given', 'flexo-booking' );
-				$lines = array(
-					__( 'A guest sent an enquiry from the booking form. This is not a booking – reply to this email to answer.', 'flexo-booking' ),
-					'',
-					__( 'Name', 'flexo-booking' ) . ': ' . $details['name'],
-					__( 'Email', 'flexo-booking' ) . ': ' . $details['email'],
-					__( 'Phone', 'flexo-booking' ) . ': ' . ( '' !== $details['phone'] ? $details['phone'] : '–' ),
-					__( 'Dates', 'flexo-booking' ) . ': ' . $stay,
-					__( 'Guests', 'flexo-booking' ) . ': ' . self::guests_text( $details ),
-				);
-				if ( '' !== $details['room'] ) {
-					$lines[] = __( 'Room', 'flexo-booking' ) . ': ' . $details['room'];
+			static function () use ( $details, $contact ) {
+				if ( $contact ) {
+					$lines = array(
+						__( 'A guest sent a message from the contact form on your website. Reply to this email to answer.', 'flexo-booking' ),
+						'',
+						__( 'Name', 'flexo-booking' ) . ': ' . $details['name'],
+						__( 'Email', 'flexo-booking' ) . ': ' . $details['email'],
+						__( 'Phone', 'flexo-booking' ) . ': ' . ( '' !== $details['phone'] ? $details['phone'] : '–' ),
+					);
+					if ( '' !== $details['subject'] ) {
+						$lines[] = __( 'Subject', 'flexo-booking' ) . ': ' . $details['subject'];
+					}
+					/* translators: 1: guest name, 2: subject of the message */
+					$title = '' !== $details['subject'] ? sprintf( __( 'Message from %1$s: %2$s', 'flexo-booking' ), $details['name'], $details['subject'] ) : sprintf( /* translators: %s: guest name */ __( 'Message from %s', 'flexo-booking' ), $details['name'] );
+				} else {
+					$stay  = '' !== $details['check_in'] && '' !== $details['check_out']
+						? Flexo_Booking_I18n::format_date( $details['check_in'] ) . ' – ' . Flexo_Booking_I18n::format_date( $details['check_out'] )
+						: __( 'no dates given', 'flexo-booking' );
+					$lines = array(
+						__( 'A guest sent an enquiry from the booking form. This is not a booking – reply to this email to answer.', 'flexo-booking' ),
+						'',
+						__( 'Name', 'flexo-booking' ) . ': ' . $details['name'],
+						__( 'Email', 'flexo-booking' ) . ': ' . $details['email'],
+						__( 'Phone', 'flexo-booking' ) . ': ' . ( '' !== $details['phone'] ? $details['phone'] : '–' ),
+						__( 'Dates', 'flexo-booking' ) . ': ' . $stay,
+						__( 'Guests', 'flexo-booking' ) . ': ' . self::guests_text( $details ),
+					);
+					if ( '' !== $details['room'] ) {
+						$lines[] = __( 'Room', 'flexo-booking' ) . ': ' . $details['room'];
+					}
+					/* translators: 1: guest name, 2: dates */
+					$title = sprintf( __( 'Enquiry from %1$s (%2$s)', 'flexo-booking' ), $details['name'], $stay );
 				}
 				if ( '' !== $details['locale'] ) {
 					$lines[] = __( 'Language', 'flexo-booking' ) . ': ' . Flexo_Booking_I18n::language_name( $details['locale'] );
@@ -692,16 +769,56 @@ class Flexo_Booking_Guest {
 				$lines[] = '' !== $details['message'] ? $details['message'] : '–';
 				return Flexo_Booking_Emails::send(
 					Flexo_Booking_Settings::notification_emails(),
-					/* translators: 1: guest name, 2: dates */
-					sprintf( __( 'Enquiry from %1$s (%2$s)', 'flexo-booking' ), $details['name'], $stay ),
+					$title,
 					implode( "\n", $lines ),
 					array(
-						'headers' => array( 'Reply-To: ' . $details['name'] . ' <' . $details['email'] . '>' ),
-						'type'    => 'hotel_enquiry',
+						'headers' => array( self::reply_to_header( $details['name'], $details['email'] ) ),
+						'type'    => $contact ? 'hotel_contact' : 'hotel_enquiry',
 					)
 				);
 			}
 		);
+
+		if ( $contact ) {
+			// Optional short answer to the guest (Settings → Pages → Contact form), in their language.
+			if ( ! empty( Flexo_Booking_Forms::all()['contact_autoreply'] ) ) {
+				Flexo_Booking_I18n::with_locale(
+					'' !== $details['locale'] ? $details['locale'] : Flexo_Booking_I18n::site_locale(),
+					static function () use ( $details ) {
+						$hotel = self::contact();
+						$lines = array(
+							/* translators: %s: guest name */
+							sprintf( __( 'Dear %s,', 'flexo-booking' ), $details['name'] ),
+							'',
+							/* translators: 1: hotel name, 2: e.g. "within 24 hours" */
+							sprintf( __( 'Thank you for your message to %1$s. We have received it and will reply %2$s.', 'flexo-booking' ), $hotel['name'], self::reply_time_text() ),
+						);
+						if ( '' !== $details['subject'] ) {
+							$lines[] = '';
+							$lines[] = __( 'Subject', 'flexo-booking' ) . ': ' . $details['subject'];
+						}
+						$lines[] = '';
+						$lines[] = __( 'Your message', 'flexo-booking' ) . ':';
+						$lines[] = $details['message'];
+						return Flexo_Booking_Emails::send(
+							$details['email'],
+							/* translators: %s: hotel name */
+							sprintf( __( 'We have received your message – %s', 'flexo-booking' ), $hotel['name'] ),
+							implode( "\n", $lines ),
+							array(
+								'type'   => 'guest_contact_reply',
+								'locale' => determine_locale(),
+							)
+						);
+					}
+				);
+			}
+			do_action( 'flexo_booking_contact', $details, $id );
+			return array(
+				'sent'    => (bool) $sent,
+				'message' => Flexo_Booking_Forms::contact_text( 'success' ),
+			);
+		}
 		do_action( 'flexo_booking_enquiry', $details, $id );
 
 		return array(
@@ -985,6 +1102,16 @@ class Flexo_Booking_Guest {
 				'permission_callback' => '__return_true',
 			)
 		);
+		// 1.10.0: the contact form.
+		register_rest_route(
+			$ns,
+			'/contact',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( __CLASS__, 'rest_contact' ),
+				'permission_callback' => '__return_true',
+			)
+		);
 	}
 
 	private static function use_locale( WP_REST_Request $request ) {
@@ -1064,6 +1191,14 @@ class Flexo_Booking_Guest {
 		self::use_locale( $request );
 		$result = self::alternatives( $request['check_in'], $request['check_out'], (int) $request['adults'], (int) $request['children'], $request['children_ages'], sanitize_title( $request['room'] ) );
 		return is_wp_error( $result ) ? $result : rest_ensure_response( $result );
+	}
+
+	public static function rest_contact( WP_REST_Request $request ) {
+		self::use_locale( $request );
+		$params = $request->get_json_params();
+		$params = is_array( $params ) ? $params : $request->get_body_params();
+		$result = self::contact_message( is_array( $params ) ? $params : array() );
+		return is_wp_error( $result ) ? $result : self::no_store( $result );
 	}
 
 	public static function rest_enquiry( WP_REST_Request $request ) {

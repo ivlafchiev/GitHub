@@ -250,17 +250,33 @@ class Flexo_Booking_Today_Admin {
 			if ( empty( $d['status'] ) || 'open' !== $d['status'] ) {
 				continue;
 			}
-			$stay    = ! empty( $d['check_in'] ) && ! empty( $d['check_out'] ) ? Flexo_Booking_Dates::display( $d['check_in'] ) . ' → ' . Flexo_Booking_Dates::display( $d['check_out'] ) : '';
-			$items[] = array(
-				'type'    => 'enquiry',
+			$is_contact = isset( $d['kind'] ) && 'contact' === $d['kind'];
+			if ( $is_contact ) {
+				// 1.10.0: a message from the contact form.
+				$subject = isset( $d['subject'] ) ? (string) $d['subject'] : '';
 				/* translators: %s: guest name */
-				'title'   => sprintf( __( 'Enquiry from %s', 'flexo-booking' ), $d['name'] ),
-				'text'    => trim( $stay . ( '' !== (string) $d['message'] ? ' · "' . $d['message'] . '"' : '' ), ' ·' ),
+				$title = sprintf( __( 'Message from %s', 'flexo-booking' ), $d['name'] );
+				$text  = trim( ( '' !== $subject ? $subject : '' ) . ( '' !== (string) $d['message'] ? ' · "' . $d['message'] . '"' : '' ), ' ·' );
+				/* translators: %s: subject of the guest's message */
+				$reply = '' !== $subject ? sprintf( __( 'Re: %s', 'flexo-booking' ), $subject ) : sprintf( /* translators: %s: hotel name */ __( 'Your message to %s', 'flexo-booking' ), Flexo_Booking_Guest::contact()['name'] );
+			} else {
+				$stay = ! empty( $d['check_in'] ) && ! empty( $d['check_out'] ) ? Flexo_Booking_Dates::display( $d['check_in'] ) . ' → ' . Flexo_Booking_Dates::display( $d['check_out'] ) : '';
+				/* translators: %s: guest name */
+				$title = sprintf( __( 'Enquiry from %s', 'flexo-booking' ), $d['name'] );
+				$text  = trim( $stay . ( '' !== (string) $d['message'] ? ' · "' . $d['message'] . '"' : '' ), ' ·' );
+				/* translators: %s: hotel name */
+				$reply = sprintf( __( 'Your enquiry to %s', 'flexo-booking' ), Flexo_Booking_Guest::contact()['name'] );
+			}
+			$items[] = array(
+				'type'    => $is_contact ? 'contact' : 'enquiry',
+				'title'   => $title,
+				'text'    => $text,
 				'booking' => null,
 				'actions' => array(
 					array(
 						'label'   => __( 'Reply by email', 'flexo-booking' ),
-						'url'     => 'mailto:' . $d['email'],
+						// The guest's address and a subject: rawurlencode keeps it one link (no extra headers).
+						'url'     => 'mailto:' . str_replace( '%40', '@', rawurlencode( $d['email'] ) ) . '?subject=' . rawurlencode( $reply ),
 						'primary' => true,
 					),
 					array(
@@ -445,6 +461,7 @@ class Flexo_Booking_Today_Admin {
 			'request'          => array( 'clock', 'info' ),
 			'guest_request'    => array( 'note', 'info' ),
 			'enquiry'          => array( 'mail', 'info' ),
+			'contact'          => array( 'mail', 'info' ),
 		);
 		return isset( $looks[ $type ] ) ? $looks[ $type ] : array( 'info', 'info' );
 	}

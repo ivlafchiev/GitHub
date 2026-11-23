@@ -119,9 +119,37 @@ class Flexo_Booking_Elementor_Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_control(
+			'amenity_icons',
+			array(
+				'label'       => __( 'Amenities on the room cards', 'flexo-booking' ),
+				'type'        => Controls_Manager::SELECT,
+				'default'     => '',
+				'options'     => Flexo_Booking_Elementor_Controls::amenity_icon_options(),
+				'description' => __( 'The icon in front of each amenity, such as Free Wi-Fi.', 'flexo-booking' ),
+				'condition'   => array( 'layout' => 'full' ),
+			)
+		);
+
 		$this->end_controls_section();
 
 		$this->register_style_controls();
+	}
+
+	/**
+	 * Style sections of this widget (the room box has no steps or room cards).
+	 *
+	 * @return string[]
+	 */
+	protected function style_parts() {
+		return array( 'buttons', 'fields', 'steps', 'calendar', 'cards' );
+	}
+
+	/**
+	 * Options of the shared Buttons section (Flexo_Booking_Elementor_Controls::buttons()).
+	 */
+	protected function button_args() {
+		return array();
 	}
 
 	/**
@@ -225,16 +253,25 @@ class Flexo_Booking_Elementor_Widget extends Widget_Base {
 			)
 		);
 
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			array(
-				'name'     => 'button_typography',
-				'label'    => __( 'Buttons', 'flexo-booking' ),
-				'selector' => '{{WRAPPER}} .fb-button',
-			)
-		);
-
 		$this->end_controls_section();
+
+		// 1.10.0: the shared sections (the button typography above moved into Buttons, same setting).
+		$parts = $this->style_parts();
+		if ( in_array( 'buttons', $parts, true ) ) {
+			Flexo_Booking_Elementor_Controls::buttons( $this, $this->button_args() );
+		}
+		if ( in_array( 'fields', $parts, true ) ) {
+			Flexo_Booking_Elementor_Controls::fields( $this );
+		}
+		if ( in_array( 'steps', $parts, true ) ) {
+			Flexo_Booking_Elementor_Controls::steps( $this );
+		}
+		if ( in_array( 'calendar', $parts, true ) ) {
+			Flexo_Booking_Elementor_Controls::calendar( $this );
+		}
+		if ( in_array( 'cards', $parts, true ) ) {
+			Flexo_Booking_Elementor_Controls::cards( $this );
+		}
 	}
 
 	protected function render() {
@@ -250,6 +287,7 @@ class Flexo_Booking_Elementor_Widget extends Widget_Base {
 				'title'        => $settings['title'],
 				'button_text'  => $settings['button_text'],
 				'results'      => isset( $settings['results_layout'] ) ? $settings['results_layout'] : '',
+				'amenity_icons' => isset( $settings['amenity_icons'] ) ? $settings['amenity_icons'] : '',
 			)
 		);
 	}

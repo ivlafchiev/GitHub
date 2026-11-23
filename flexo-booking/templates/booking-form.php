@@ -23,6 +23,7 @@
  * @var bool       $autosearch
  * @var bool       $ask_ages   Children's ages are asked ("Children & ages" feature).
  * @var string     $results    Room results layout: auto, stacked or horizontal (1.10.0).
+ * @var string     $amenity_icons Amenities on the room cards: icons, tick, none or '' (Appearance) (1.10.0).
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -30,6 +31,7 @@ defined( 'ABSPATH' ) || exit;
 <div class="flexo-booking flexo-booking--full"
 	data-flexo-booking
 	data-fb-results="<?php echo esc_attr( isset( $results ) ? $results : 'auto' ); ?>"
+	<?php echo ! empty( $amenity_icons ) ? 'data-fb-amenities="' . esc_attr( $amenity_icons ) . '"' : ''; ?>
 	data-room="<?php echo esc_attr( $room ? $room['slug'] : '' ); ?>"
 	data-autosearch="<?php echo $autosearch ? '1' : '0'; ?>"<?php echo Flexo_Booking_Frontend::locale_attributes(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in locale_attributes(). ?>>
 

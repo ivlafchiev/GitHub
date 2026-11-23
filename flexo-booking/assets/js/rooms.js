@@ -61,9 +61,14 @@
 			}
 			if ( dots ) {
 				var page = i >= max ? pages() - 1 : Math.floor( i / perView() );
-				Array.prototype.forEach.call( dots.children, function ( dot, d ) {
+				Array.prototype.forEach.call( dots.querySelectorAll( '.flexo-room-gallery__dot' ), function ( dot, d ) {
 					dot.setAttribute( 'aria-current', d === page ? 'true' : 'false' );
 				} );
+				// "2 / 5" (dots shown as a count): the visible page of photos.
+				var count = dots.querySelector( '.flexo-room-gallery__fraction' );
+				if ( count ) {
+					count.textContent = ( page + 1 ) + ' / ' + pages();
+				}
 			}
 		}
 		function buildDots() {
@@ -83,6 +88,12 @@
 				b.setAttribute( 'data-page', p );
 				dots.appendChild( b );
 			}
+			// Shown instead of the dots when the gallery is set to "2 / 5" (1.10.0); screen
+			// readers hear the slide's own "2 of 5".
+			var fraction = document.createElement( 'span' );
+			fraction.className = 'flexo-room-gallery__fraction';
+			fraction.setAttribute( 'aria-hidden', 'true' );
+			dots.appendChild( fraction );
 		}
 
 		root.addEventListener( 'click', function ( e ) {

@@ -237,8 +237,51 @@ class Flexo_Booking_Appearance {
 				'slight'  => array( __( 'Slightly rounded', 'flexo-booking' ), '6px' ),
 				'pill'    => array( __( 'Round ends', 'flexo-booking' ), '999px' ),
 			),
+			// 1.10.0: buttons and fields can have their own corners.
+			'button_corners'    => array(
+				''        => array( __( 'As the corners above', 'flexo-booking' ), '' ),
+				'square'  => array( __( 'Square', 'flexo-booking' ), '0px' ),
+				'slight'  => array( __( 'Slightly rounded', 'flexo-booking' ), '6px' ),
+				'rounded' => array( __( 'Rounded', 'flexo-booking' ), '16px' ),
+				'pill'    => array( __( 'Pill (round ends)', 'flexo-booking' ), '999px' ),
+				'custom'  => array( __( 'Exact radius', 'flexo-booking' ), '' ),
+			),
+			'field_corners'     => array(
+				''        => array( __( 'As the corners above', 'flexo-booking' ), '' ),
+				'buttons' => array( __( 'Match the buttons', 'flexo-booking' ), 'var(--fb-button-radius)' ),
+				'square'  => array( __( 'Square', 'flexo-booking' ), '0px' ),
+				'slight'  => array( __( 'Slightly rounded', 'flexo-booking' ), '6px' ),
+				'rounded' => array( __( 'Rounded', 'flexo-booking' ), '16px' ),
+				'custom'  => array( __( 'Exact radius', 'flexo-booking' ), '' ),
+			),
+			// 1.10.0: amenities on the room cards of the booking form.
+			'amenity_icons'     => array(
+				''     => array( __( 'Each amenity\'s own icon', 'flexo-booking' ), '' ),
+				'tick' => array( __( 'A simple tick', 'flexo-booking' ), '' ),
+				'none' => array( __( 'No icon', 'flexo-booking' ), '' ),
+			),
+			'icon_size'         => array(
+				''      => array( __( 'Normal', 'flexo-booking' ), '' ),
+				'small' => array( __( 'Small', 'flexo-booking' ), '1em' ),
+				'large' => array( __( 'Large', 'flexo-booking' ), '1.4em' ),
+			),
 		);
 		return isset( $choices[ $key ] ) ? $choices[ $key ] : array();
+	}
+
+	/**
+	 * Radius of a corner choice ('' = not set): a preset, or the exact pixels for "custom".
+	 *
+	 * @param string $key    button_corners | field_corners.
+	 * @param string $choice The chosen value.
+	 * @param int    $px     Pixels for "custom".
+	 */
+	public static function corner_radius( $key, $choice, $px ) {
+		$choices = self::choices( $key );
+		if ( 'custom' === $choice ) {
+			return max( 0, min( 100, (int) $px ) ) . 'px';
+		}
+		return isset( $choices[ $choice ] ) ? $choices[ $choice ][1] : '';
 	}
 
 	public static function sanitize_choice( $key, $value ) {
@@ -287,9 +330,13 @@ class Flexo_Booking_Appearance {
 		foreach ( self::PAGE_COLORS as $key ) {
 			$values[ $key ] = self::sanitize_color( isset( $settings[ $key ] ) ? $settings[ $key ] : '' );
 		}
-		foreach ( array( 'page_image_effect', 'max_width', 'card_corners', 'card_shadow', 'spacing', 'control_size', 'tab_corners' ) as $choice ) {
+		foreach ( array( 'page_image_effect', 'max_width', 'card_corners', 'card_shadow', 'spacing', 'control_size', 'tab_corners', 'button_corners', 'field_corners', 'amenity_icons', 'icon_size' ) as $choice ) {
 			$values[ 'appearance_' . $choice ] = self::sanitize_choice( $choice, isset( $settings[ 'appearance_' . $choice ] ) ? $settings[ 'appearance_' . $choice ] : '' );
 		}
+		foreach ( array( 'appearance_button_corners_px', 'appearance_field_corners_px' ) as $key ) {
+			$values[ $key ] = isset( $settings[ $key ] ) ? max( 0, min( 100, (int) $settings[ $key ] ) ) : 8;
+		}
+		$values['appearance_icon_color'] = self::sanitize_color( isset( $settings['appearance_icon_color'] ) ? $settings['appearance_icon_color'] : '' );
 		$values['appearance_page_image']     = isset( $settings['appearance_page_image'] ) ? absint( $settings['appearance_page_image'] ) : 0;
 		$values['appearance_max_width_px']   = isset( $settings['appearance_max_width_px'] ) ? max( 600, min( 2000, absint( $settings['appearance_max_width_px'] ) ) ) : 1200;
 		$values['appearance_card_no_border'] = empty( $settings['appearance_card_no_border'] ) ? 0 : 1;
@@ -339,6 +386,11 @@ class Flexo_Booking_Appearance {
 		$css   = self::font_faces( array_unique( array_filter( array( $v['appearance_body_font'], $v['appearance_heading_font'] ) ) ) );
 		if ( $props ) {
 			$css .= '.flexo-booking{' . implode( ';', $props ) . '}';
+			// 1.10.0: the "Booking | Contact" tabs around the forms get the colours, corners and fonts they use.
+			$tabs = array_values( preg_grep( '/^--fb-(primary|primary-contrast|text|bg|radius|font|tab-[a-z-]+):/', $props ) );
+			if ( $tabs ) {
+				$css .= '.flexo-forms-tabs{' . implode( ';', $tabs ) . '}';
+			}
 		}
 		// The Booking and Thank You pages around the form: same values, plus the page and cards.
 		$page = array_merge( $props, $parts['page'] );
@@ -391,6 +443,25 @@ class Flexo_Booking_Appearance {
 		$tabs = self::choices( 'tab_corners' );
 		if ( '' !== $get( 'appearance_tab_corners' ) && isset( $tabs[ $get( 'appearance_tab_corners' ) ] ) ) {
 			$form[] = '--fb-tab-radius:' . $tabs[ $get( 'appearance_tab_corners' ) ][1];
+		}
+		// 1.10.0: button and field corners, room card icons.
+		foreach ( array( 'button' => '--fb-button-radius', 'field' => '--fb-field-radius' ) as $part => $property ) {
+			$radius = self::corner_radius( $part . '_corners', $get( 'appearance_' . $part . '_corners' ), $get( 'appearance_' . $part . '_corners_px' ) );
+			if ( '' !== $radius ) {
+				$form[] = $property . ':' . $radius;
+			}
+		}
+		if ( 'tick' === $get( 'appearance_amenity_icons' ) ) {
+			$form[] = '--fb-amenity-tick:var(--fb-tick-icon)';
+		} elseif ( 'none' === $get( 'appearance_amenity_icons' ) ) {
+			$form[] = '--fb-amenity-icon-display:none';
+		}
+		if ( '' !== $get( 'appearance_icon_color' ) ) {
+			$form[] = '--fb-icon-color:' . $get( 'appearance_icon_color' );
+		}
+		$icon_sizes = self::choices( 'icon_size' );
+		if ( '' !== $get( 'appearance_icon_size' ) && isset( $icon_sizes[ $get( 'appearance_icon_size' ) ] ) ) {
+			$form[] = '--fb-icon-size:' . $icon_sizes[ $get( 'appearance_icon_size' ) ][1];
 		}
 
 		// Page and cards.
@@ -494,6 +565,10 @@ class Flexo_Booking_Appearance {
 			'appearance_status_confirmed'  => $o['status_confirmed'],
 			'appearance_status_awaiting'   => $o['status_awaiting'],
 			'appearance_status_request'    => $o['status_request'],
+			'appearance_button_corners'    => $o['button_corners'],
+			'appearance_button_corners_px' => $o['button_corners_px'],
+			'appearance_field_corners'     => $o['field_corners'],
+			'appearance_field_corners_px'  => $o['field_corners_px'],
 		);
 		$parts = self::declarations( $v );
 		$props = $parts['form'];

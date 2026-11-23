@@ -76,7 +76,8 @@ class Flexo_Booking_Frontend {
 				) : false,
 				'phoneCountry' => $settings['phone_country'],
 				'consent'   => Flexo_Booking_Privacy::enabled() ? array(
-					'html'     => Flexo_Booking_Privacy::consent_text( true ),
+					// The enquiry form sends a message, not a booking (1.10.0).
+					'html'     => Flexo_Booking_Privacy::consent_text( true, '', 'message' ),
 					'required' => Flexo_Booking_Privacy::consent_required(),
 				) : false,
 				'i18n'      => array_merge( self::texts(), array(
@@ -293,6 +294,9 @@ class Flexo_Booking_Frontend {
 			'termsMissing'    => __( 'Please accept the terms and conditions to continue.', 'flexo-booking' ),
 			'ageMissing'      => __( 'Please choose the child\'s age.', 'flexo-booking' ),
 			'consentMessage'  => __( 'Please accept the privacy policy to send your message.', 'flexo-booking' ),
+			// 1.10.0: contact form.
+			'subjectMissing'  => __( 'Please tell us what your message is about.', 'flexo-booking' ),
+			'messageMissing'  => __( 'Please write your message.', 'flexo-booking' ),
 			'chooseRequest'   => __( 'Please choose what you would like to do.', 'flexo-booking' ),
 			'checkFields'     => __( 'Please check the highlighted fields.', 'flexo-booking' ),
 			'beforeYouBook'   => __( 'Before you book', 'flexo-booking' ),
@@ -368,6 +372,8 @@ class Flexo_Booking_Frontend {
 				'in_dialog'    => '',
 				// Room results: "" (the Booking page's setting), "auto", "stacked" or "horizontal".
 				'results'      => '',
+				// Amenities on the room cards: "" (Appearance), "icons", "tick" or "none" (1.10.0).
+				'amenity_icons' => '',
 			),
 			$atts,
 			$is_box ? 'flexo_room_booking' : 'flexo_booking'
@@ -427,6 +433,8 @@ class Flexo_Booking_Frontend {
 			'terms_url'    => Flexo_Booking_I18n::page_url( Flexo_Booking_Settings::site_url_setting( 'terms_url' ) ),
 			// 1.10.0: how room results are arranged (auto, stacked, horizontal).
 			'results'      => Flexo_Booking_System_Pages::results_layout( $atts['results'] ),
+			// The widget's or shortcode's own choice; empty: Bookings → Appearance (CSS).
+			'amenity_icons' => in_array( $atts['amenity_icons'], array( 'icons', 'tick', 'none' ), true ) ? $atts['amenity_icons'] : '',
 		);
 
 		wp_enqueue_style( 'flexo-booking' );
@@ -541,7 +549,7 @@ class Flexo_Booking_Frontend {
 	 */
 	private static $styled = false;
 
-	private static function appearance() {
+	public static function appearance() {
 		if ( ! self::$styled ) {
 			self::$styled = true;
 			Flexo_Booking_Appearance::enqueue();

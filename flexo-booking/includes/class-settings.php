@@ -161,6 +161,14 @@ class Flexo_Booking_Settings {
 			'appearance_tab_text'             => '',
 			'appearance_tab_active_text'      => '',
 			'appearance_tab_corners'          => '',
+			// 1.10.0: button and field corners, room card icons ('' = as before).
+			'appearance_button_corners'       => '',
+			'appearance_button_corners_px'    => 8,
+			'appearance_field_corners'        => '',
+			'appearance_field_corners_px'     => 8,
+			'appearance_amenity_icons'        => '',
+			'appearance_icon_color'           => '',
+			'appearance_icon_size'            => '',
 			'email_log_days'                => 90,
 			// Guest details form (Day 4, data minimisation).
 			'field_phone'                   => 'required',
@@ -349,6 +357,7 @@ class Flexo_Booking_Settings {
 				case 'appearance_tab_active_bg':
 				case 'appearance_tab_text':
 				case 'appearance_tab_active_text':
+				case 'appearance_icon_color':
 					$clean[ $key ] = Flexo_Booking_Appearance::sanitize_color( $value );
 					break;
 				case 'appearance_corners':
@@ -385,7 +394,15 @@ class Flexo_Booking_Settings {
 				case 'appearance_spacing':
 				case 'appearance_control_size':
 				case 'appearance_tab_corners':
+				case 'appearance_button_corners':
+				case 'appearance_field_corners':
+				case 'appearance_amenity_icons':
+				case 'appearance_icon_size':
 					$clean[ $key ] = Flexo_Booking_Appearance::sanitize_choice( substr( $key, 11 ), $value );
+					break;
+				case 'appearance_button_corners_px':
+				case 'appearance_field_corners_px':
+					$clean[ $key ] = max( 0, min( 100, (int) $value ) );
 					break;
 				case 'payment_mode':
 					$clean[ $key ] = in_array( $value, array( 'property', 'deposit', 'full' ), true ) ? $value : 'full';

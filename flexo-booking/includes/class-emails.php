@@ -134,7 +134,13 @@ class Flexo_Booking_Emails {
 		$extra = array(
 			'hotel_enquiry'       => __( 'Enquiry', 'flexo-booking' ),
 			'hotel_guest_request' => __( 'Change or cancellation request', 'flexo-booking' ),
+			// 1.10.0.
+			'hotel_contact'       => __( 'Message from the contact form', 'flexo-booking' ),
 		);
+		if ( 'guest_contact_reply' === $type ) {
+			/* translators: %s: email type */
+			return sprintf( __( 'To the guest: %s', 'flexo-booking' ), __( 'Message received (contact form)', 'flexo-booking' ) );
+		}
 		if ( isset( $extra[ $type ] ) ) {
 			/* translators: %s: email type */
 			return sprintf( __( 'To the hotel: %s', 'flexo-booking' ), $extra[ $type ] );
@@ -399,7 +405,7 @@ class Flexo_Booking_Emails {
 
 				$headers = array();
 				if ( is_email( $booking['guest_email'] ) ) {
-					$headers[] = 'Reply-To: ' . str_replace( array( "\r", "\n", '<', '>', ',' ), '', $booking['guest_name'] ) . ' <' . $booking['guest_email'] . '>';
+					$headers[] = Flexo_Booking_Guest::reply_to_header( $booking['guest_name'], $booking['guest_email'] );
 				}
 
 				$email = apply_filters( 'flexo_booking_admin_email', compact( 'subject', 'body', 'headers' ), $booking );
@@ -593,11 +599,15 @@ class Flexo_Booking_Emails {
 	public static function html( $subject, $text, $locale = '' ) {
 		$settings = Flexo_Booking_Settings::all();
 		$color    = Flexo_Booking_Appearance::email_color();
+		// 1.10.0: text on the hotel colour (header, button) is white or dark, whichever reads
+		// better; links on the white footer keep the colour only when it is dark enough.
+		$on_color = Flexo_Booking_Appearance::readable_on( $color );
+		$link     = Flexo_Booking_Appearance::contrast( $color, '#ffffff' ) >= 4.5 ? $color : '#1f2933';
 		$name     = wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES );
 		$logo     = self::logo_url();
 		$header   = $logo
 			? '<img src="' . esc_url( $logo ) . '" alt="' . esc_attr( $name ) . '" style="max-height:56px;max-width:220px;height:auto;border:0;display:block;">'
-			: '<span style="font-size:20px;font-weight:bold;color:#ffffff;">' . esc_html( $name ) . '</span>';
+			: '<span style="font-size:20px;font-weight:bold;color:' . esc_attr( $on_color ) . ';">' . esc_html( $name ) . '</span>';
 
 		$paragraphs = array();
 		foreach ( preg_split( "/\n\s*\n/", str_replace( "\r\n", "\n", trim( (string) $text ) ) ) as $block ) {
@@ -619,7 +629,7 @@ class Flexo_Booking_Emails {
 			}
 			// "View your booking: https://…" becomes a button.
 			if ( 1 === count( $raw ) && preg_match( '#^([^:]{3,80}):\s+(https?://\S+)$#u', trim( $raw[0] ), $m ) ) {
-				$paragraphs[] = '<p style="margin:8px 0 20px;"><a href="' . esc_url( $m[2] ) . '" style="display:inline-block;padding:12px 20px;border-radius:6px;background:' . esc_attr( $color ) . ';color:#ffffff;text-decoration:none;font-weight:bold;">' . esc_html( $m[1] ) . '</a></p>';
+				$paragraphs[] = '<p style="margin:8px 0 20px;"><a href="' . esc_url( $m[2] ) . '" style="display:inline-block;padding:12px 20px;border-radius:6px;background:' . esc_attr( $color ) . ';color:' . esc_attr( $on_color ) . ';text-decoration:none;font-weight:bold;">' . esc_html( $m[1] ) . '</a></p>';
 				continue;
 			}
 			$lines = array();
@@ -634,7 +644,7 @@ class Flexo_Booking_Emails {
 		if ( '' !== $settings['hotel_phone'] ) {
 			$footer[] = esc_html( $settings['hotel_phone'] );
 		}
-		$footer[] = '<a href="' . esc_url( home_url( '/' ) ) . '" style="color:' . esc_attr( $color ) . ';">' . esc_html( wp_parse_url( home_url(), PHP_URL_HOST ) ) . '</a>';
+		$footer[] = '<a href="' . esc_url( home_url( '/' ) ) . '" style="color:' . esc_attr( $link ) . ';">' . esc_html( wp_parse_url( home_url(), PHP_URL_HOST ) ) . '</a>';
 		if ( '' !== trim( (string) $settings['hotel_address'] ) ) {
 			$footer[] = esc_html( preg_replace( '/\s*\n\s*/', ', ', trim( $settings['hotel_address'] ) ) );
 		}

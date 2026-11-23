@@ -44,6 +44,44 @@
 	--fb-warning: #8a5300;
 	--fb-info: #1d5c96;
 	--fb-icon-color: var(--fb-primary);
+	--fb-icon-size: 1.15em;
+	--fb-icon-gap: 6px;
+	--fb-tick-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+	/*
+	 * 1.10.0: buttons and fields have their own corners and button states, set
+	 * by Appearance, a page's own look or the Elementor widgets. The defaults
+	 * are the 1.9.0 look.
+	 */
+	--fb-button-radius: calc(var(--fb-radius) * 0.75);
+	--fb-field-radius: calc(var(--fb-radius) * 0.75);
+	--fb-button-bg: var(--fb-primary);
+	--fb-button-text: var(--fb-primary-contrast);
+	--fb-button-border: var(--fb-button-bg);
+	--fb-button-border-w: 1px;
+	--fb-button-padding: 10px 22px;
+	--fb-button-min-h: var(--fb-control-h);
+	--fb-button-shadow: none;
+	--fb-button-hover-bg: var(--fb-button-hover, var(--fb-button-bg));
+	--fb-button-hover-text: var(--fb-button-text);
+	--fb-button-hover-border: var(--fb-button-hover-bg);
+	--fb-ghost-text: var(--fb-secondary);
+	--fb-ghost-bg: transparent;
+	--fb-ghost-border: var(--fb-secondary);
+	--fb-ghost-hover-text: var(--fb-ghost-text);
+	--fb-ghost-hover-bg: var(--fb-ghost-bg);
+	--fb-ghost-hover-border: var(--fb-ghost-border);
+	/* 1.10.0: calendar and room cards (Elementor widgets: Calendar, Room cards). */
+	--fb-picker-bg: var(--fb-bg);
+	--fb-picker-nav: var(--fb-text);
+	--fb-day-selected-bg: var(--fb-primary);
+	--fb-day-selected-text: var(--fb-primary-contrast);
+	--fb-day-range-bg: color-mix(in srgb, var(--fb-primary) 14%, transparent);
+	--fb-day-hover: var(--fb-primary);
+	--fb-day-radius: calc(var(--fb-radius) * 0.6);
+	--fb-room-bg: transparent;
+	--fb-room-border: var(--fb-border);
+	--fb-room-radius: var(--fb-radius);
+	--fb-room-pad: 12px;
 
 	box-sizing: border-box;
 	color: var(--fb-text);
@@ -204,12 +242,17 @@
 	min-height: var(--fb-control-h);
 	padding: 10px 12px;
 	font: inherit;
-	color: var(--fb-text);
+	color: var(--fb-field-text, var(--fb-text));
 	background: var(--fb-field-bg);
 	border: 1px solid var(--fb-field-border);
-	border-radius: calc(var(--fb-radius) * 0.75);
+	border-radius: var(--fb-field-radius);
 	outline: none;
 	transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+/* Text areas never take "round ends" (pill fields): at most 16 px corners. */
+.flexo-booking textarea {
+	border-radius: min(var(--fb-field-radius), 16px);
 }
 
 /* Focus (1.10.0): one 2 px line inside the field – no ring around it, which read as a double border. */
@@ -220,23 +263,38 @@
 	box-shadow: inset 0 0 0 1px var(--fb-focus);
 }
 
-/* Buttons */
+/*
+ * Buttons (1.10.0: from the --fb-button-* tokens). The form's buttons take
+ * the form's font, as before; the site's own button rules (theme, Elementor
+ * Site Settings → Buttons, "button:hover / button:focus") don't restyle them:
+ * every state below restates its colours and ranks above those rules.
+ */
 .flexo-booking .fb-button {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	min-height: var(--fb-control-h);
-	padding: 10px 22px;
+	min-height: var(--fb-button-min-h);
+	padding: var(--fb-button-padding);
 	font: inherit;
 	font-weight: 600;
 	line-height: 1.2;
-	color: var(--fb-primary-contrast);
-	background: var(--fb-primary);
-	border: 1px solid var(--fb-primary);
-	border-radius: calc(var(--fb-radius) * 0.75);
+	letter-spacing: inherit;
+	text-transform: inherit;
+	color: var(--fb-button-text);
+	background: var(--fb-button-bg);
+	border: var(--fb-button-border-w) solid var(--fb-button-border);
+	border-radius: var(--fb-button-radius);
+	box-shadow: var(--fb-button-shadow);
 	cursor: pointer;
-	transition: filter 0.15s, opacity 0.15s;
+	transition: filter 0.15s, opacity 0.15s, background-color 0.15s, border-color 0.15s, color 0.15s;
 	white-space: nowrap;
+}
+
+.flexo-booking .fb-button:is(:hover, :focus, :active) {
+	color: var(--fb-button-text);
+	background-color: var(--fb-button-bg);
+	border-color: var(--fb-button-border);
+	text-decoration: none;
 }
 
 .flexo-booking .fb-button:hover:not(:disabled) {
@@ -244,8 +302,9 @@
 }
 
 .flexo-booking .fb-button:not(.fb-button--ghost):hover:not(:disabled) {
-	background: var(--fb-button-hover, var(--fb-primary));
-	border-color: var(--fb-button-hover, var(--fb-primary));
+	color: var(--fb-button-hover-text);
+	background-color: var(--fb-button-hover-bg);
+	border-color: var(--fb-button-hover-border);
 }
 
 .flexo-booking .fb-button:focus-visible {
@@ -258,10 +317,17 @@
 	cursor: not-allowed;
 }
 
-.flexo-booking .fb-button--ghost {
-	color: var(--fb-secondary);
-	background: transparent;
-	border-color: var(--fb-secondary);
+.flexo-booking .fb-button--ghost,
+.flexo-booking .fb-button--ghost:is(:hover, :focus, :active) {
+	color: var(--fb-ghost-text);
+	background-color: var(--fb-ghost-bg);
+	border-color: var(--fb-ghost-border);
+}
+
+.flexo-booking .fb-button--ghost:hover:not(:disabled) {
+	color: var(--fb-ghost-hover-text);
+	background-color: var(--fb-ghost-hover-bg);
+	border-color: var(--fb-ghost-hover-border);
 }
 
 /* Notices (the form's own messages: search errors, booking errors). */
@@ -325,9 +391,10 @@
 	gap: 12px var(--fb-gap);
 	align-items: start;
 	min-width: 0;
-	padding: 12px;
-	border: 1px solid var(--fb-border);
-	border-radius: var(--fb-radius);
+	padding: var(--fb-room-pad);
+	background: var(--fb-room-bg);
+	border: 1px solid var(--fb-room-border);
+	border-radius: var(--fb-room-radius);
 }
 
 .flexo-booking .fb-room__image {
@@ -338,7 +405,7 @@
 	height: auto;
 	aspect-ratio: 16 / 10;
 	object-fit: cover;
-	border-radius: max(0px, calc(var(--fb-radius) - 4px));
+	border-radius: max(0px, calc(var(--fb-room-radius) - 4px));
 	background: color-mix(in srgb, var(--fb-text) 7%, var(--fb-bg));
 }
 
@@ -435,7 +502,7 @@
 .flexo-booking .fb-room__amenities li {
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
+	gap: var(--fb-icon-gap);
 	min-width: 0;
 	margin: 0;
 }
@@ -450,7 +517,29 @@
 }
 
 .flexo-booking .fb-room__amenities .fb-icon {
+	display: var(--fb-amenity-icon-display, inline-block);
 	color: var(--fb-icon-color);
+	-webkit-mask-image: var(--fb-amenity-tick, var(--fb-icon, var(--fb-tick-icon)));
+	mask-image: var(--fb-amenity-tick, var(--fb-icon, var(--fb-tick-icon)));
+}
+
+/*
+ * Amenities on the room cards (1.10.0): each amenity's own icon (default), a
+ * simple tick or no icon – from Bookings → Appearance, or the widget's or
+ * shortcode's own choice (amenity_icons="tick").
+ */
+.flexo-booking[data-fb-amenities="icons"] {
+	--fb-amenity-tick: initial;
+	--fb-amenity-icon-display: inline-block;
+}
+
+.flexo-booking[data-fb-amenities="tick"] {
+	--fb-amenity-tick: var(--fb-tick-icon);
+	--fb-amenity-icon-display: inline-block;
+}
+
+.flexo-booking[data-fb-amenities="none"] {
+	--fb-amenity-icon-display: none;
 }
 
 .flexo-booking .fb-room__amenity.is-extra,
@@ -480,6 +569,7 @@
 	font-size: 1.375em;
 	line-height: 1.2;
 	white-space: nowrap;
+	color: var(--fb-price-color, inherit);
 }
 
 .flexo-booking .fb-room__avg {
@@ -1677,7 +1767,7 @@
 	color: var(--fb-text);
 	background: var(--fb-field-bg);
 	border: 1px solid var(--fb-field-border);
-	border-radius: calc(var(--fb-radius) * 0.75);
+	border-radius: var(--fb-field-radius);
 	cursor: pointer;
 }
 
@@ -1690,7 +1780,7 @@
  */
 .flexo-booking.flexo-booking .fb-date,
 .flexo-booking.flexo-booking .fb-date:is(:hover, :focus, :active) {
-	color: var(--fb-text);
+	color: var(--fb-field-text, var(--fb-text));
 	background-color: var(--fb-field-bg);
 	border-color: var(--fb-field-border);
 	box-shadow: none;
@@ -1729,7 +1819,7 @@
 	padding: 12px;
 	border: 1px solid var(--fb-border);
 	border-radius: var(--fb-radius);
-	background: var(--fb-bg);
+	background: var(--fb-picker-bg);
 	box-shadow: 0 8px 24px -12px color-mix(in srgb, var(--fb-text) 40%, transparent);
 }
 
@@ -1758,7 +1848,7 @@
 	line-height: 1;
 	padding: 0;
 	font-weight: 400;
-	color: var(--fb-text);
+	color: var(--fb-picker-nav);
 	background: transparent;
 	border: 1px solid var(--fb-border);
 	border-radius: 50%;
@@ -1827,12 +1917,12 @@
 	color: var(--fb-text);
 	background: transparent;
 	border: 1px solid transparent;
-	border-radius: calc(var(--fb-radius) * 0.6);
+	border-radius: var(--fb-day-radius);
 	cursor: pointer;
 }
 
 .flexo-booking .fb-day:hover:not([aria-disabled="true"]) {
-	border-color: var(--fb-primary);
+	border-color: var(--fb-day-hover);
 }
 
 .flexo-booking .fb-day.is-today {
@@ -1855,14 +1945,14 @@
 }
 
 .flexo-booking .fb-day.is-range {
-	background: color-mix(in srgb, var(--fb-primary) 14%, transparent);
+	background: var(--fb-day-range-bg);
 	border-radius: 0;
 }
 
 .flexo-booking .fb-day.is-start,
 .flexo-booking .fb-day.is-end {
-	color: var(--fb-primary-contrast);
-	background: var(--fb-primary);
+	color: var(--fb-day-selected-text);
+	background: var(--fb-day-selected-bg);
 	text-decoration: none;
 	opacity: 1;
 }
@@ -1887,7 +1977,7 @@
 }
 
 .flexo-booking.flexo-booking .fb-day:hover:not([aria-disabled="true"]) {
-	border-color: var(--fb-primary);
+	border-color: var(--fb-day-hover);
 }
 
 .flexo-booking.flexo-booking .fb-day[aria-disabled="true"]:is(:hover, :focus, :active) {
@@ -1900,16 +1990,16 @@
 }
 
 .flexo-booking.flexo-booking .fb-day.is-range:is(:hover, :focus, :active) {
-	background-color: color-mix(in srgb, var(--fb-primary) 14%, transparent);
+	background-color: var(--fb-day-range-bg);
 }
 
 .flexo-booking.flexo-booking .fb-day:is(.is-start, .is-end):is(:hover, :focus, :active) {
-	color: var(--fb-primary-contrast);
-	background-color: var(--fb-primary);
+	color: var(--fb-day-selected-text);
+	background-color: var(--fb-day-selected-bg);
 }
 
 .flexo-booking.flexo-booking .fb-picker__nav:is(:hover, :focus, :active) {
-	color: var(--fb-text);
+	color: var(--fb-picker-nav);
 	background-color: transparent;
 	border-color: var(--fb-border);
 }
@@ -2223,7 +2313,7 @@
 	padding: 0 22px 0 12px;
 	background: var(--fb-field-bg);
 	border: 1px solid var(--fb-border);
-	border-radius: calc(var(--fb-radius) * 0.75);
+	border-radius: var(--fb-field-radius);
 }
 
 .flexo-booking .fb-phone__cc::after {
@@ -3357,5 +3447,124 @@ html.flexo-book-dialog-open {
 @media (prefers-reduced-motion: reduce) {
 	.flexo-confirmation--pending .flexo-confirmation__icon::after {
 		animation: none;
+	}
+}
+
+/* ---------------------------------------------------------------------
+ * Contact form (1.10.0): the booking form's fields, buttons and messages.
+ * ------------------------------------------------------------------- */
+
+.flexo-booking--contact .fb-contact__intro {
+	margin: 0 0 var(--fb-gap);
+	color: var(--fb-muted);
+}
+
+.flexo-booking--contact .fb-contact__status:empty {
+	display: none;
+}
+
+.flexo-booking--contact .fb-contact__status {
+	margin: 12px 0 0;
+}
+
+.flexo-booking--contact .fb-actions {
+	justify-content: flex-start;
+}
+
+@container fbform (max-width: 479px) {
+	.flexo-booking--contact .fb-actions .fb-button {
+		flex: 1 1 100%;
+	}
+}
+
+.flexo-booking .fb-contact__done:focus {
+	outline: none;
+}
+
+/* ---------------------------------------------------------------------
+ * "Booking | Contact" tabs (1.10.0). The tabs have the booking form's
+ * tokens (Appearance → Tabs, or the Forms Tabs widget).
+ * ------------------------------------------------------------------- */
+
+.flexo-forms-tabs {
+	--fb-primary: var(--e-global-color-accent, var(--e-global-color-primary, #1f6f5c));
+	--fb-primary-contrast: #fff;
+	--fb-text: var(--e-global-color-text, #1f2933);
+	--fb-bg: #fff;
+	--fb-radius: 8px;
+	--fb-tab-bg: color-mix(in srgb, var(--fb-text) 6%, var(--fb-bg));
+	--fb-tab-active-bg: var(--fb-primary);
+	--fb-tab-text: var(--fb-text);
+	--fb-tab-active-text: var(--fb-primary-contrast);
+	--fb-tab-radius: var(--fb-radius);
+	min-width: 0;
+	max-width: 100%;
+}
+
+.flexo-forms-tabs .fb-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: var(--fb-tabs-align, center);
+	gap: var(--fb-tabs-gap, 10px);
+	margin: 0 0 var(--fb-tabs-space, 16px);
+	padding: 0;
+}
+
+.flexo-forms-tabs .fb-tab,
+.flexo-forms-tabs .fb-tab:is(:hover, :focus, :active) {
+	display: inline-flex;
+	flex: var(--fb-tab-flex, 0 1 auto);
+	align-items: center;
+	justify-content: center;
+	min-height: 44px;
+	margin: 0;
+	padding: var(--fb-tab-padding, 8px 20px);
+	font: inherit;
+	font-weight: 600;
+	line-height: 1.2;
+	letter-spacing: normal;
+	text-transform: none;
+	white-space: normal;
+	color: var(--fb-tab-text);
+	background: var(--fb-tab-bg);
+	border: var(--fb-tab-border-w, 0px) solid var(--fb-tab-border, transparent);
+	border-radius: var(--fb-tab-radius);
+	box-shadow: none;
+	cursor: pointer;
+	transition: background-color 0.15s, color 0.15s;
+}
+
+.flexo-forms-tabs .fb-tab:hover:not([aria-selected="true"]) {
+	background: var(--fb-tab-hover-bg, color-mix(in srgb, var(--fb-tab-active-bg) 14%, var(--fb-tab-bg)));
+}
+
+.flexo-forms-tabs .fb-tab[aria-selected="true"],
+.flexo-forms-tabs .fb-tab[aria-selected="true"]:is(:hover, :focus, :active) {
+	color: var(--fb-tab-active-text);
+	background: var(--fb-tab-active-bg);
+	border-color: var(--fb-tab-active-border, var(--fb-tab-border, transparent));
+}
+
+.flexo-forms-tabs .fb-tab:focus:not(:focus-visible) {
+	outline: none;
+}
+
+.flexo-forms-tabs .fb-tab:focus-visible {
+	outline: 2px solid var(--fb-tab-active-bg);
+	outline-offset: 2px;
+}
+
+.flexo-forms-tabs .fb-tabpanel:focus {
+	outline: none;
+}
+
+.flexo-forms-tabs .fb-tabpanel:focus-visible {
+	outline: 2px solid var(--fb-tab-active-bg);
+	outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.flexo-forms-tabs .fb-tab {
+		transition: none;
 	}
 }

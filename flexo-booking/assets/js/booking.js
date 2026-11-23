@@ -492,6 +492,8 @@
 			phone: t.phoneMissing,
 			terms: t.termsMissing,
 			privacy_consent: t.consent,
+			subject: t.subjectMissing,
+			message: t.messageMissing,
 			'children_ages[]': t.ageMissing,
 		};
 		if ( field.required && ! value ) {
@@ -2188,6 +2190,7 @@
 		var amenityIcons = room.amenity_icons || [];
 		card._fbExtra = Math.max( 0, amenities.length - CARD_AMENITIES );
 		if ( amenities.length ) {
+			// Own icon, a simple tick or none: chosen in CSS (Appearance, widget, shortcode).
 			var am = el( 'ul', 'fb-room__amenities' );
 			amenities.forEach( function ( a, i ) {
 				var li = el( 'li', 'fb-room__amenity' + ( i >= CARD_AMENITIES ? ' is-extra' : '' ) );
@@ -4154,6 +4157,147 @@
 		}, wait );
 	}
 
+	/* ---- Contact form (1.10.0) ---- */
+
+	/**
+	 * The contact form: the booking form's fields, messages and checks; the
+	 * message goes to the hotel like an enquiry (REST "contact").
+	 */
+	function ContactForm( root ) {
+		var form = root.querySelector( 'form.fb-contact' );
+		if ( ! form ) {
+			return;
+		}
+		var status = form.querySelector( '.fb-contact__status' );
+		var submit = form.querySelector( '[type="submit"]' );
+		var locale = root.getAttribute( 'data-locale' ) || '';
+		var consent = form.querySelector( '[name="privacy_consent"]' );
+		if ( consent && t.consentMessage ) {
+			consent.setAttribute( 'data-fb-message', t.consentMessage );
+		}
+		bindValidation( form );
+		// The country code beside the phone number, as in the booking form.
+		BookingForm.prototype.bindPhone.call( { root: root } );
+		watchForm( form );
+
+		form.addEventListener( 'submit', function ( e ) {
+			e.preventDefault();
+			if ( form._sending ) {
+				return;
+			}
+			var bad = validateForm( form );
+			if ( bad ) {
+				focusEl( bad );
+				return;
+			}
+			var get = function ( name ) {
+				var f = form.querySelector( '[name="' + name + '"]' );
+				return f ? ( f.type === 'checkbox' ? f.checked : f.value ) : '';
+			};
+			form._sending = true;
+			submit.disabled = true;
+			submit.classList.add( 'is-busy' );
+			submit.setAttribute( 'aria-busy', 'true' );
+			if ( status ) {
+				status.textContent = t.sending || '';
+				status.className = 'fb-contact__status';
+			}
+			postJson( 'contact', {
+				name: get( 'name' ),
+				email: get( 'email' ),
+				phone: get( 'phone' ),
+				phone_country: get( 'phone_country' ),
+				subject: get( 'subject' ),
+				message: get( 'message' ),
+				locale: locale,
+				privacy_consent: get( 'privacy_consent' ),
+				fb_website: get( 'fb_website' ),
+			} )
+				.then( function ( data ) {
+					var done = el( 'p', 'fb-msg fb-msg--success fb-contact__done', root.getAttribute( 'data-success' ) || data.message );
+					done.setAttribute( 'role', 'status' );
+					done.tabIndex = -1;
+					form.hidden = true;
+					form.parentNode.insertBefore( done, form.nextSibling );
+					focusEl( done );
+					// No personal data: only that a contact message was sent.
+					track( { event: 'contact_submit', form_type: 'contact' } );
+				} )
+				.catch( function ( err ) {
+					var target = err.data && err.data.field ? form.querySelector( '[name="' + err.data.field + '"]' ) : null;
+					if ( target ) {
+						setError( target, err.message );
+						focusEl( target );
+						if ( status ) {
+							status.textContent = '';
+						}
+					} else if ( status ) {
+						status.textContent = err.message || t.error || '';
+						status.className = 'fb-contact__status fb-msg fb-msg--error';
+					}
+				} )
+				.finally( function () {
+					form._sending = false;
+					submit.disabled = false;
+					submit.classList.remove( 'is-busy' );
+					submit.removeAttribute( 'aria-busy' );
+				} );
+		} );
+	}
+
+	/**
+	 * "Booking | Contact" tabs (1.10.0): click, arrow keys, Home and End; a
+	 * link to #contact (or #booking) opens that tab.
+	 */
+	function FormsTabs( root ) {
+		var tabs = Array.prototype.slice.call( root.querySelectorAll( '.fb-tabs [role="tab"]' ) );
+		function show( tab, focus ) {
+			tabs.forEach( function ( other ) {
+				var on = other === tab;
+				other.setAttribute( 'aria-selected', on ? 'true' : 'false' );
+				other.tabIndex = on ? 0 : -1;
+				var panel = document.getElementById( other.getAttribute( 'aria-controls' ) );
+				if ( panel ) {
+					panel.hidden = ! on;
+				}
+			} );
+			if ( focus ) {
+				tab.focus();
+			}
+		}
+		tabs.forEach( function ( tab, i ) {
+			tab.addEventListener( 'click', function () {
+				show( tab, false );
+			} );
+			tab.addEventListener( 'keydown', function ( e ) {
+				var next = null;
+				if ( 'ArrowRight' === e.key || 'ArrowDown' === e.key ) {
+					next = tabs[ ( i + 1 ) % tabs.length ];
+				} else if ( 'ArrowLeft' === e.key || 'ArrowUp' === e.key ) {
+					next = tabs[ ( i - 1 + tabs.length ) % tabs.length ];
+				} else if ( 'Home' === e.key ) {
+					next = tabs[ 0 ];
+				} else if ( 'End' === e.key ) {
+					next = tabs[ tabs.length - 1 ];
+				}
+				if ( next ) {
+					e.preventDefault();
+					show( next, true );
+				}
+			} );
+		} );
+		function fromHash() {
+			var key = String( window.location.hash || '' ).replace( /^#/, '' );
+			tabs.forEach( function ( tab ) {
+				if ( key && tab.getAttribute( 'data-key' ) === key ) {
+					show( tab, false );
+				}
+			} );
+		}
+		fromHash();
+		window.addEventListener( 'hashchange', fromHash );
+	}
+
 	function init( scope ) {
 		var ctx = scope || document;
 		bindDialogs();
@@ -4178,6 +4322,14 @@
 			node.setAttribute( 'data-fb-ready', '1' );
 			new SearchBar( node ); // eslint-disable-line no-new
 		} );
+		ctx.querySelectorAll( '[data-flexo-contact]:not([data-fb-ready])' ).forEach( function ( node ) {
+			node.setAttribute( 'data-fb-ready', '1' );
+			ContactForm( node );
+		} );
+		ctx.querySelectorAll( '[data-flexo-tabs]:not([data-fb-ready])' ).forEach( function ( node ) {
+			node.setAttribute( 'data-fb-ready', '1' );
+			FormsTabs( node );
+		} );
 	}
 
 	if ( document.readyState === 'loading' ) {
@@ -4198,8 +4350,10 @@
 		window.elementorFrontend.hooks.addAction( 'frontend/element_ready/flexo-booking-form.default', function ( $scope ) {
 			init( $scope && $scope[ 0 ] ? $scope[ 0 ] : document );
 		} );
-		window.elementorFrontend.hooks.addAction( 'frontend/element_ready/flexo-room-booking-box.default', function ( $scope ) {
-			init( $scope && $scope[ 0 ] ? $scope[ 0 ] : document );
+		[ 'flexo-room-booking-box', 'flexo-contact-form', 'flexo-forms-tabs' ].forEach( function ( name ) {
+			window.elementorFrontend.hooks.addAction( 'frontend/element_ready/' + name + '.default', function ( $scope ) {
+				init( $scope && $scope[ 0 ] ? $scope[ 0 ] : document );
+			} );
 		} );
 	}
 	hookElementor();

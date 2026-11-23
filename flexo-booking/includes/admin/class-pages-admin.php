@@ -235,6 +235,7 @@ class Flexo_Booking_Pages_Admin {
 			<?php
 			self::render_booking_card( $all, $opt, $s );
 			self::render_thank_you_card( $all, $opt, $s );
+			self::render_contact_form_card();
 			if ( Flexo_Booking_System_Pages::supported( 'contact' ) ) {
 				do_action( 'flexo_booking_pages_admin_contact', $all, $opt );
 			}
@@ -471,6 +472,9 @@ class Flexo_Booking_Pages_Admin {
 				<?php if ( 'max_width' === $field ) : ?>
 					<?php $look = Flexo_Booking_System_Pages::get( $key )['appearance']; ?>
 					<span data-flexo-show-when="<?php echo esc_attr( $id ); ?>=custom"><input type="number" min="600" max="2000" step="10" class="small-text" name="<?php echo esc_attr( Flexo_Booking_System_Pages::OPTION . '[' . $key . '][appearance][max_width_px]' ); ?>" value="<?php echo esc_attr( $look['max_width_px'] ); ?>" aria-label="<?php esc_attr_e( 'Width in pixels', 'flexo-booking' ); ?>"> px</span>
+				<?php elseif ( in_array( $field, array( 'button_corners', 'field_corners' ), true ) ) : ?>
+					<?php $look = Flexo_Booking_System_Pages::get( $key )['appearance']; ?>
+					<span data-flexo-show-when="<?php echo esc_attr( $id ); ?>=custom"><input type="number" min="0" max="100" step="1" class="small-text" name="<?php echo esc_attr( Flexo_Booking_System_Pages::OPTION . '[' . $key . '][appearance][' . $field . '_px]' ); ?>" value="<?php echo esc_attr( $look[ $field . '_px' ] ); ?>" aria-label="<?php esc_attr_e( 'Radius in pixels', 'flexo-booking' ); ?>"> px</span>
 				<?php endif; ?>
 			</td>
 		</tr>
@@ -553,6 +557,8 @@ class Flexo_Booking_Pages_Admin {
 					self::look_color( $key, 'heading', __( 'Heading colour', 'flexo-booking' ), $look['heading'] );
 					self::look_color( $key, 'text', __( 'Text colour', 'flexo-booking' ), $look['text'] );
 					self::look_select( $key, 'corners', __( 'Corners', 'flexo-booking' ), $look['corners'], $corners );
+					self::look_select( $key, 'button_corners', __( 'Button corners', 'flexo-booking' ), $look['button_corners'], $labels( 'button_corners', __( 'As in Appearance', 'flexo-booking' ) ) );
+					self::look_select( $key, 'field_corners', __( 'Field corners', 'flexo-booking' ), $look['field_corners'], $labels( 'field_corners', __( 'As in Appearance', 'flexo-booking' ) ) );
 					self::look_select( $key, 'max_width', __( 'Content width', 'flexo-booking' ), $look['max_width'], $labels( 'max_width', __( 'As in Appearance', 'flexo-booking' ) ) );
 					self::look_select( $key, 'spacing', __( 'Space between sections', 'flexo-booking' ), $look['spacing'], $labels( 'spacing', __( 'As in Appearance', 'flexo-booking' ) ) );
 					if ( 'thank_you' === $key ) {
@@ -741,6 +747,84 @@ class Flexo_Booking_Pages_Admin {
 			}
 			?>
 		</p>
+		<?php
+	}
+
+	/* ---------------------------------------------------------------------
+	 * Contact form (1.10.0)
+	 * ------------------------------------------------------------------- */
+
+	/**
+	 * The contact form's fields and texts, the answer to the guest.
+	 */
+	private static function render_contact_form_card() {
+		$forms    = Flexo_Booking_Forms::all();
+		$defaults = Flexo_Booking_Forms::contact_field_defaults();
+		$texts    = Flexo_Booking_Forms::contact_text_defaults();
+		$fname    = Flexo_Booking_Forms::OPTION;
+		$modes    = array(
+			'required' => __( 'Required', 'flexo-booking' ),
+			'optional' => __( 'Optional', 'flexo-booking' ),
+			'hidden'   => __( 'Not asked', 'flexo-booking' ),
+		);
+		?>
+		<section class="flexo-card flexo-page-card" id="flexo-contact-form">
+			<div class="flexo-card__head flexo-page-card__head">
+				<div>
+					<h2><?php esc_html_e( 'Contact form', 'flexo-booking' ); ?></h2>
+					<p class="description"><?php esc_html_e( 'The form of the [flexo_contact] shortcode, the Flexo Contact Form widget and the Booking & Contact tabs. Messages arrive by email (reply straight to the guest) and on Today until you mark them answered. They are not bookings.', 'flexo-booking' ); ?></p>
+				</div>
+			</div>
+			<details class="flexo-page-card__customize" data-flexo-remember="contact_form">
+				<summary><?php esc_html_e( 'Customize', 'flexo-booking' ); ?></summary>
+				<h3 class="flexo-page-section__title"><?php esc_html_e( 'Fields', 'flexo-booking' ); ?></h3>
+				<p class="description"><?php esc_html_e( 'Name, email and message are always required. Ask only for what you need (data minimisation).', 'flexo-booking' ); ?></p>
+				<ol class="flexo-field-list">
+					<?php foreach ( $defaults as $key => $default ) : ?>
+						<?php $field = $forms['contact_fields'][ $key ]; ?>
+						<li class="flexo-field-item">
+							<div class="flexo-field-item__head">
+								<strong><?php echo esc_html( $default['label'] ); ?></strong>
+								<?php if ( in_array( $key, array( 'phone', 'subject' ), true ) ) : ?>
+									<select name="<?php echo esc_attr( $fname . '[contact_' . $key . ']' ); ?>" aria-label="<?php echo esc_attr( $default['label'] ); ?>">
+										<?php foreach ( $modes as $mode => $mode_label ) : ?>
+											<option value="<?php echo esc_attr( $mode ); ?>" <?php selected( $forms[ 'contact_' . $key ], $mode ); ?>><?php echo esc_html( $mode_label ); ?></option>
+										<?php endforeach; ?>
+									</select>
+								<?php else : ?>
+									<span class="flexo-badge"><?php esc_html_e( 'Always required', 'flexo-booking' ); ?></span>
+								<?php endif; ?>
+							</div>
+							<div class="flexo-field-item__texts">
+								<?php foreach ( array( 'label' => __( 'Label', 'flexo-booking' ), 'placeholder' => __( 'Example text in the field', 'flexo-booking' ), 'help' => __( 'Help text', 'flexo-booking' ) ) as $part => $part_label ) : ?>
+									<label><span><?php echo esc_html( $part_label ); ?></span>
+										<input type="text" name="<?php echo esc_attr( $fname ); ?>[contact_fields][<?php echo esc_attr( $key ); ?>][<?php echo esc_attr( $part ); ?>]" value="<?php echo esc_attr( $field[ $part ] ); ?>" placeholder="<?php echo esc_attr( $default[ $part ] ); ?>"></label>
+								<?php endforeach; ?>
+							</div>
+						</li>
+					<?php endforeach; ?>
+				</ol>
+				<table class="form-table" role="presentation">
+					<tr>
+						<th scope="row"><label for="fb-contact-button"><?php esc_html_e( 'Button text', 'flexo-booking' ); ?></label></th>
+						<td><input type="text" class="regular-text" id="fb-contact-button" name="<?php echo esc_attr( $fname ); ?>[contact_texts][button]" value="<?php echo esc_attr( $forms['contact_texts']['button'] ); ?>" placeholder="<?php echo esc_attr( $texts['button'] ); ?>"></td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="fb-contact-success"><?php esc_html_e( 'Text after sending', 'flexo-booking' ); ?></label></th>
+						<td><input type="text" class="large-text" id="fb-contact-success" name="<?php echo esc_attr( $fname ); ?>[contact_texts][success]" value="<?php echo esc_attr( $forms['contact_texts']['success'] ); ?>" placeholder="<?php echo esc_attr( $texts['success'] ); ?>"></td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Answer to the guest', 'flexo-booking' ); ?></th>
+						<td>
+							<input type="hidden" name="<?php echo esc_attr( $fname ); ?>[contact_autoreply]" value="0">
+							<?php echo Flexo_Booking_Admin_UI::switch_html( __( 'Email the guest that their message arrived', 'flexo-booking' ), 'name="' . esc_attr( $fname ) . '[contact_autoreply]" value="1"', ! empty( $forms['contact_autoreply'] ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in switch_html(). ?>
+							<p class="description"><?php esc_html_e( 'A short email in the guest\'s language with a copy of their message. Off by default: your own reply is usually enough.', 'flexo-booking' ); ?></p>
+						</td>
+					</tr>
+				</table>
+				<p class="description"><?php esc_html_e( 'Leave a text empty to use the standard text shown in grey – it is translated into your guests\' language automatically.', 'flexo-booking' ); ?></p>
+			</details>
+		</section>
 		<?php
 	}
 

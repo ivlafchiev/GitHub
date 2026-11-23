@@ -3,7 +3,7 @@
  * Plugin Name:       Flexo Booking
  * Plugin URI:        https://github.com/ivlafchiev/GitHub
  * Description:       Room & accommodation booking system for FlexoHotels websites. Works with any theme via the [flexo_booking] shortcode and ships a native Elementor widget. Settings and rooms can be exported/imported between sites.
- * Version:           1.8.3
+ * Version:           1.10.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            FlexoHotels
@@ -18,7 +18,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'FLEXO_BOOKING_VERSION', '1.8.3' );
+define( 'FLEXO_BOOKING_VERSION', '1.10.0' );
 define( 'FLEXO_BOOKING_DB_VERSION', '9' ); // Kept for compatibility; see Flexo_Booking_Migrations::LATEST.
 define( 'FLEXO_BOOKING_FILE', __FILE__ );
 define( 'FLEXO_BOOKING_DIR', plugin_dir_path( __FILE__ ) );
@@ -67,6 +67,7 @@ require_once FLEXO_BOOKING_DIR . 'includes/class-roles.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-rest.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-frontend.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-forms.php';
+require_once FLEXO_BOOKING_DIR . 'includes/class-contact.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-page-cache.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-page-seo.php';
 require_once FLEXO_BOOKING_DIR . 'includes/class-confirmation.php';
@@ -124,6 +125,7 @@ add_action(
 		Flexo_Booking_ICal::init();
 		Flexo_Booking_Rate_Plans::init();
 		Flexo_Booking_Frontend::init();
+		Flexo_Booking_Contact::init();
 		Flexo_Booking_System_Pages::init();
 		Flexo_Booking_Page_Cache::init();
 		Flexo_Booking_Elementor::init();

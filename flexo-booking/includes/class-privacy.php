@@ -56,12 +56,16 @@ class Flexo_Booking_Privacy {
 	 * The consent text in the current language, with {privacy_policy}
 	 * replaced by $link (HTML) or by "Privacy Policy (URL)" for the record.
 	 */
-	public static function consent_text( $html = true, $locale = '' ) {
+	public static function consent_text( $html = true, $locale = '', $context = 'booking' ) {
 		$locale = $locale ? $locale : determine_locale();
 		$stored = (string) Flexo_Booking_Settings::get( 'privacy_consent_text' );
 		if ( '' === trim( $stored ) || Flexo_Booking_Emails::is_default_text( 'privacy_consent_text', $stored ) ) {
 			$defaults = Flexo_Booking_Settings::defaults();
 			$text     = $defaults['privacy_consent_text'];
+			if ( 'message' === $context ) {
+				// 1.10.0: the standard text, for a message instead of a booking (contact form, enquiries).
+				$text = __( 'I agree to the {privacy_policy} and consent to my information being processed to answer my message.', 'flexo-booking' );
+			}
 		} else {
 			$text = Flexo_Booking_I18n::translate( $stored, 'privacy_consent_text', $locale );
 		}
@@ -287,19 +291,24 @@ class Flexo_Booking_Privacy {
 					),
 				);
 			}
-			// Enquiries sent from the booking form (not bookings).
+			// Enquiries sent from the booking form and (1.10.0) messages from the contact form (not bookings).
 			foreach ( Flexo_Booking_Schema::table_exists( 'booking_log' ) ? Flexo_Booking_Log::enquiries_by_email( $email ) : array() as $entry ) {
-				$d       = $entry['details'];
+				$d    = $entry['details'];
+				$data = array(
+					array( 'name' => __( 'Sent', 'flexo-booking' ), 'value' => $entry['created_at'] ),
+					array( 'name' => __( 'Sent from', 'flexo-booking' ), 'value' => isset( $d['kind'] ) && 'contact' === $d['kind'] ? __( 'Contact form', 'flexo-booking' ) : __( 'Booking form', 'flexo-booking' ) ),
+					array( 'name' => __( 'Name', 'flexo-booking' ), 'value' => isset( $d['name'] ) ? $d['name'] : '' ),
+					array( 'name' => __( 'Phone', 'flexo-booking' ), 'value' => isset( $d['phone'] ) ? $d['phone'] : '' ),
+				);
+				if ( ! empty( $d['subject'] ) ) {
+					$data[] = array( 'name' => __( 'Subject', 'flexo-booking' ), 'value' => $d['subject'] );
+				}
+				$data[]  = array( 'name' => __( 'Message', 'flexo-booking' ), 'value' => isset( $d['message'] ) ? $d['message'] : '' );
 				$items[] = array(
 					'group_id'    => 'flexo-booking-enquiries',
 					'group_label' => __( 'Enquiries to the hotel', 'flexo-booking' ),
 					'item_id'     => 'flexo-enquiry-' . $entry['id'],
-					'data'        => array(
-						array( 'name' => __( 'Sent', 'flexo-booking' ), 'value' => $entry['created_at'] ),
-						array( 'name' => __( 'Name', 'flexo-booking' ), 'value' => isset( $d['name'] ) ? $d['name'] : '' ),
-						array( 'name' => __( 'Phone', 'flexo-booking' ), 'value' => isset( $d['phone'] ) ? $d['phone'] : '' ),
-						array( 'name' => __( 'Message', 'flexo-booking' ), 'value' => isset( $d['message'] ) ? $d['message'] : '' ),
-					),
+					'data'        => $data,
 				);
 			}
 		}

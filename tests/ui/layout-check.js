@@ -365,6 +365,9 @@ async function kitStates( page, root ) {
 	const keys = await page.evaluate( ( r ) => {
 		const form = document.querySelector( r );
 		const extra = document.createElement( 'div' );
+		if ( document.getElementById( 'fxl-kit-extra' ) ) {
+			document.getElementById( 'fxl-kit-extra' ).remove();
+		}
 		extra.id = 'fxl-kit-extra';
 		extra.innerHTML = '<button type="button" class="fb-alt"><strong>Fri 12 – Sun 14</strong><span>2 rooms · from 300 €</span></button>'
 			+ '<button type="button" class="fb-aside__toggle"><span>Your stay</span><span>300 €</span></button>'
@@ -380,6 +383,8 @@ async function kitStates( page, root ) {
 			'previous month': '.fb-picker__nav--prev',
 			'clear dates': '.fb-picker .fb-link',
 			'more details': '.fb-room__more',
+			'room button': '.fb-room__select:not([disabled])',
+			'outline button (Done)': '.fb-picker .fb-button--ghost',
 			'nearby dates': '#fxl-kit-extra .fb-alt',
 			'summary toggle': '#fxl-kit-extra .fb-aside__toggle',
 			'close': '#fxl-kit-extra .flexo-book-dialog__close',
@@ -595,10 +600,23 @@ async function run() {
 		await ak.setViewportSize( { width: 1025, height: 1000 } );
 		await ak.goto( `${ BASE }/fxl-azure-kit/?${ STAY }`, { waitUntil: 'networkidle' } );
 		await ak.waitForSelector( '.fb-room', { timeout: 15000 } ).catch( () => {} );
+		await settle( ak );
+		// The room cards first (room button, "More details"), then the calendar after "Change".
+		const onCards = ( await kitStates( ak, sel ) ).filter( ( s ) => [ 'room button', 'more details' ].includes( s.k ) );
+		await ak.evaluate( () => document.getElementById( 'fxl-kit-extra' ).remove() );
 		await press( ak.locator( `${ sel } .fb-stay__change` ), 'azure kit 1025: "Change"' );
 		await settle( ak, 500 );
-		const states = await kitStates( ak, sel );
-		ok( states.length >= 10, 'azure kit: controls found for the state check', states.map( ( s ) => s.k ).join( ', ' ) );
+		const states = onCards.concat( ( await kitStates( ak, sel ) ).filter( ( s ) => ! [ 'room button', 'more details' ].includes( s.k ) ) );
+		// Days that can't be chosen (before today) from the current month, when the stay's month has none.
+		if ( ! states.some( ( s ) => 'day (unavailable)' === s.k ) && await ak.locator( `${ sel } .fb-picker__nav--prev:not([disabled])` ).count() ) {
+			await ak.evaluate( () => document.getElementById( 'fxl-kit-extra' ).remove() );
+			await ak.locator( `${ sel } .fb-picker__nav--prev` ).click();
+			await settle( ak, 400 );
+			states.push( ...( await kitStates( ak, sel ) ).filter( ( s ) => 'day (unavailable)' === s.k ) );
+			await ak.locator( `${ sel } .fb-picker__nav--next` ).click();
+			await settle( ak, 400 );
+		}
+		ok( states.length >= 14, 'azure kit: controls found for the state check', states.map( ( s ) => s.k ).join( ', ' ) );
 		states.forEach( ( s ) => ok( ! s.diff.length, `azure kit: ${ s.k } keeps its look at rest, on hover and on focus`, s.diff.slice( 0, 3 ).join( '; ' ) ) );
 		await ak.evaluate( () => document.getElementById( 'fxl-kit-extra' ).remove() );
 		// Screenshots: a day and the next-month arrow hovered, a date field focused.

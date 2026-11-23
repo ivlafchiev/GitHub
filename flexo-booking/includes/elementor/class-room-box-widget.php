@@ -108,6 +108,10 @@ class Flexo_Booking_Room_Box_Widget extends Flexo_Booking_Elementor_Widget {
 		$this->register_style_controls();
 	}
 
+	protected function style_parts() {
+		return array( 'buttons', 'fields', 'calendar' );
+	}
+
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 

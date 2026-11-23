@@ -3515,43 +3515,62 @@ body.flexo-admin-ui {
 	line-height: 1;
 }
 
-/* 5.23 History timeline. */
+/*
+ * 5.23 History timeline (1.10.0). A grid with a fixed column for the rail:
+ * each dot is centred in that column and on the first line of its entry,
+ * and the rail is drawn per entry from its dot's centre to the next dot's
+ * centre – nothing above the first dot or below the last. Sizes are tokens,
+ * and everything is measured from the line height, so the dots stay on the
+ * rail with any box sizing, font size or zoom.
+ */
 .flexo-admin-ui .wrap .flexo-history__list {
-	position: relative;
+	--fx-tl-col: 24px;
+	--fx-tl-dot: 12px;
+	--fx-tl-rail: 2px;
+	--fx-tl-lh: 1.45;
+	--fx-tl-gap: var(--fx-space-3);
 	margin: 0;
-	padding: 0 0 0 22px;
+	padding: 0;
 	list-style: none;
 }
 
-.flexo-admin-ui .wrap .flexo-history__list::before {
+.flexo-admin-ui .wrap .flexo-history__item {
+	position: relative;
+	display: grid;
+	grid-template-columns: var(--fx-tl-col) minmax(0, 1fr);
+	column-gap: var(--fx-space-2);
+	align-items: start;
+	margin: 0;
+	padding: 0 0 var(--fx-tl-gap);
+	line-height: var(--fx-tl-lh);
+}
+
+.flexo-admin-ui .wrap .flexo-history__item:last-child {
+	padding-bottom: 0;
+}
+
+/* The rail: from this dot's centre down to the next dot's centre. */
+.flexo-admin-ui .wrap .flexo-history__item:not(:last-child)::before {
 	content: "";
 	position: absolute;
-	top: 6px;
-	bottom: 6px;
-	left: 5px;
-	width: 2px;
+	top: calc(var(--fx-tl-lh) * 0.5em);
+	bottom: calc(var(--fx-tl-lh) * -0.5em);
+	left: calc((var(--fx-tl-col) - var(--fx-tl-rail)) / 2);
+	width: var(--fx-tl-rail);
 	border-radius: 1px;
 	background: var(--fx-border);
 }
 
-.flexo-admin-ui .wrap .flexo-history__list li {
+.flexo-admin-ui .wrap .flexo-history__dot {
 	position: relative;
-	display: flex;
-	flex-direction: column;
-	margin: 0 0 var(--fx-space-3);
-}
-
-.flexo-admin-ui .wrap .flexo-history__list li:last-child {
-	margin-bottom: 0;
-}
-
-.flexo-admin-ui .wrap .flexo-history__list li::before {
-	content: "";
-	position: absolute;
-	top: 6px;
-	left: -22px;
-	width: 8px;
-	height: 8px;
+	z-index: 1;
+	grid-column: 1;
+	grid-row: 1 / span 2;
+	justify-self: center;
+	box-sizing: border-box;
+	width: var(--fx-tl-dot);
+	height: var(--fx-tl-dot);
+	margin-top: calc((var(--fx-tl-lh) * 1em - var(--fx-tl-dot)) / 2);
 	border: 2px solid var(--fx-surface);
 	border-radius: 50%;
 	background: var(--fx-primary);
@@ -3559,7 +3578,17 @@ body.flexo-admin-ui {
 }
 
 .flexo-admin-ui .wrap .flexo-history__text {
+	grid-column: 2;
+	grid-row: 1;
+	min-width: 0;
 	font-weight: 500;
+	overflow-wrap: anywhere;
+}
+
+.flexo-admin-ui .wrap .flexo-history__meta {
+	grid-column: 2;
+	grid-row: 2;
+	min-width: 0;
 }
 
 .flexo-admin-ui .wrap .flexo-history__list time {

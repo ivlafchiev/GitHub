@@ -14,6 +14,11 @@
 	--flexo-icon-size: 1.25em;
 	--flexo-icon-gap: 0.6em;
 	--flexo-icon-color: currentColor;
+	/* 1.10.0: icon beside or above the text, its vertical alignment, separators, chips. */
+	--flexo-item-dir: row;
+	--flexo-icon-valign: center;
+	--flexo-divider-style: solid;
+	--flexo-divider-w: 1px;
 	display: flex;
 	flex-direction: column;
 	gap: var(--flexo-gap);
@@ -36,36 +41,60 @@
 
 .flexo-room-list .flexo-room-list__item {
 	display: flex;
-	align-items: center;
+	flex-direction: var(--flexo-item-dir);
+	align-items: var(--flexo-icon-valign);
 	gap: var(--flexo-icon-gap);
 	margin: 0;
-	padding: 0;
+	padding: var(--flexo-item-pad, 0);
 	line-height: 1.4;
+	background: var(--flexo-item-bg, transparent);
+	border-radius: var(--flexo-item-radius, 0);
+	transition: color 0.15s, background-color 0.15s;
 }
 
-.flexo-room-list--list .flexo-room-list__item {
+/* Alignment within the line (list) or the column (1.10.0: also in columns). */
+.flexo-room-list--list .flexo-room-list__item,
+.flexo-room-list--grid .flexo-room-list__item {
 	justify-content: var(--flexo-align);
 }
 
-.flexo-room-list__icon {
+/*
+ * The icon (1.10.0): its box is 1em of a font size equal to the chosen icon
+ * size, so the size is worked out once – also in em – and every kind of icon
+ * (bundled SVG, uploaded file, Elementor icon font or SVG) fills that box.
+ * Theme and Elementor rules for svg, img and i (max-width, height: auto,
+ * width: 1.25em) don't change it.
+ */
+.flexo-room-list .flexo-room-list__icon {
 	display: inline-flex;
 	flex: 0 0 auto;
 	align-items: center;
 	justify-content: center;
+	width: 1em;
+	height: 1em;
 	color: var(--flexo-icon-color);
 	font-size: var(--flexo-icon-size);
 	line-height: 1;
+	transition: color 0.15s;
 }
 
-.flexo-room-list__icon .flexo-room-icon,
-.flexo-room-list__icon svg {
+.flexo-room-list .flexo-room-list__icon > :is(svg, img, i, span) {
 	display: block;
-	width: var(--flexo-icon-size);
-	height: var(--flexo-icon-size);
+	flex: none;
+	width: 1em;
+	height: 1em;
+	max-width: none;
+	max-height: none;
+	margin: 0;
+	font-size: 1em;
+	line-height: 1;
+	text-align: center;
 }
 
-.flexo-room-list__icon i {
-	font-size: var(--flexo-icon-size);
+.flexo-room-list .flexo-room-list__icon > i::before {
+	display: block;
+	width: 1em;
+	line-height: 1;
 }
 
 /* Uploaded SVG icons (Elementor icon control) take the icon colour. */
@@ -86,6 +115,24 @@
 
 .flexo-room-list__text {
 	min-width: 0;
+	transition: color 0.15s;
+}
+
+/* Long texts: on more lines (default) or cut with "…" (1.10.0, Elementor: Long texts). */
+.flexo-room-text-nowrap .flexo-room-list__text {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.flexo-room-text-nowrap .flexo-room-details--stacked .flexo-room-list__text {
+	display: block;
+}
+
+.flexo-room-text-nowrap .flexo-room-details--stacked .flexo-room-list__text > span {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .flexo-room-details__label {
@@ -111,12 +158,12 @@
 .flexo-room-divider-yes .flexo-room-list--list .flexo-room-list__item + .flexo-room-list__item,
 .flexo-room-divider-yes .flexo-room-list--grid .flexo-room-list__item {
 	padding-top: var(--flexo-gap);
-	border-top: 1px solid var(--flexo-divider, rgba(0, 0, 0, 0.12));
+	border-top: var(--flexo-divider-w) var(--flexo-divider-style) var(--flexo-divider, rgba(0, 0, 0, 0.12));
 }
 
 .flexo-room-divider-yes .flexo-room-list--inline .flexo-room-list__item + .flexo-room-list__item {
 	padding-left: var(--flexo-gap);
-	border-left: 1px solid var(--flexo-divider, rgba(0, 0, 0, 0.12));
+	border-left: var(--flexo-divider-w) var(--flexo-divider-style) var(--flexo-divider, rgba(0, 0, 0, 0.12));
 }
 
 /* ---- Gallery ---- */
@@ -126,6 +173,18 @@
 	--flexo-gap: 16px;
 	--flexo-height: 260px;
 	--flexo-radius: 0px;
+	/* 1.10.0: photos, arrows and dots (Elementor: Room gallery → Style). */
+	--flexo-fit: cover;
+	--flexo-zoom: 1.03;
+	--flexo-arrow-size: 44px;
+	--flexo-arrow-icon: 22px;
+	--flexo-arrow-radius: 50%;
+	--flexo-arrow-offset: 12px;
+	--flexo-arrow-top: calc(var(--flexo-height) / 2);
+	--flexo-arrow-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+	--flexo-dot-size: 8px;
+	--flexo-dot-gap: 2px;
+	--flexo-dots-offset: 10px;
 	position: relative;
 }
 
@@ -176,12 +235,12 @@
 	max-width: none;
 	height: 100%;
 	border-radius: inherit;
-	object-fit: cover;
+	object-fit: var(--flexo-fit);
 	transition: transform 0.4s ease;
 }
 
 .flexo-room-gallery .flexo-room-gallery__link:hover .flexo-room-gallery__img {
-	transform: scale(1.03);
+	transform: scale(var(--flexo-zoom));
 }
 
 .flexo-room-gallery--empty .flexo-room-gallery__img {
@@ -190,34 +249,50 @@
 	border-radius: var(--flexo-radius);
 }
 
+/*
+ * Arrows: buttons, so the website's own button rules (theme, Elementor Site
+ * Settings → Buttons, button:hover / button:focus) are set back here in every
+ * state. A ring shows only for keyboard focus.
+ */
 .flexo-room-gallery button.flexo-room-gallery__arrow {
 	position: absolute;
-	top: calc(var(--flexo-height) / 2);
+	top: var(--flexo-arrow-top);
 	z-index: 2;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 44px;
-	height: 44px;
+	width: var(--flexo-arrow-size);
+	height: var(--flexo-arrow-size);
+	min-width: 0;
 	min-height: 0;
 	margin: 0;
 	padding: 0;
 	border: 0;
-	border-radius: 50%;
+	border-radius: var(--flexo-arrow-radius);
 	background: var(--flexo-arrow-bg, rgba(255, 255, 255, 0.92));
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+	box-shadow: var(--flexo-arrow-shadow);
 	color: var(--flexo-arrow-color, #1d1f22);
+	font-size: 16px;
+	letter-spacing: normal;
 	line-height: 1;
 	text-transform: none;
 	cursor: pointer;
 	transform: translateY(-50%);
-	transition: opacity 0.2s ease;
+	transition: opacity 0.2s ease, color 0.15s, background-color 0.15s;
 }
 
-.flexo-room-gallery button.flexo-room-gallery__arrow:hover,
-.flexo-room-gallery button.flexo-room-gallery__arrow:focus {
-	background: var(--flexo-arrow-bg, #fff);
+.flexo-room-gallery button.flexo-room-gallery__arrow:is(:hover, :focus, :active) {
+	background-color: var(--flexo-arrow-bg, #fff);
 	color: var(--flexo-arrow-color, #1d1f22);
+}
+
+.flexo-room-gallery button.flexo-room-gallery__arrow:hover {
+	background-color: var(--flexo-arrow-hover-bg, var(--flexo-arrow-bg, #fff));
+	color: var(--flexo-arrow-hover-color, var(--flexo-arrow-color, #1d1f22));
+}
+
+.flexo-room-gallery button.flexo-room-gallery__arrow:focus:not(:focus-visible) {
+	outline: none;
 }
 
 .flexo-room-gallery button.flexo-room-gallery__arrow:focus-visible {
@@ -231,8 +306,8 @@
 }
 
 .flexo-room-gallery__arrow svg {
-	width: 22px;
-	height: 22px;
+	width: var(--flexo-arrow-icon);
+	height: var(--flexo-arrow-icon);
 	fill: none;
 	stroke: currentColor;
 	stroke-width: 2.25;
@@ -241,11 +316,11 @@
 }
 
 .flexo-room-gallery__arrow--prev {
-	left: 12px;
+	left: var(--flexo-arrow-offset);
 }
 
 .flexo-room-gallery__arrow--next {
-	right: 12px;
+	right: var(--flexo-arrow-offset);
 }
 
 [dir="rtl"] .flexo-room-gallery__arrow svg {
@@ -255,47 +330,114 @@
 .flexo-room-gallery__dots {
 	display: flex;
 	flex-wrap: wrap;
+	align-items: center;
 	justify-content: center;
-	gap: 2px;
-	margin-top: 10px;
+	gap: var(--flexo-dot-gap);
+	margin-top: var(--flexo-dots-offset);
 }
 
 .flexo-room-gallery__dots:empty {
 	display: none;
 }
 
-.flexo-room-gallery button.flexo-room-gallery__dot {
+.flexo-room-gallery button.flexo-room-gallery__dot,
+.flexo-room-gallery button.flexo-room-gallery__dot:is(:hover, :focus, :active) {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 24px;
+	width: max(24px, var(--flexo-dot-size));
 	height: 24px;
+	min-width: 0;
 	min-height: 0;
 	margin: 0;
 	padding: 0;
 	border: 0;
 	background: none;
+	box-shadow: none;
+	color: inherit;
 	cursor: pointer;
 }
 
 .flexo-room-gallery button.flexo-room-gallery__dot::before {
 	content: "";
-	width: 8px;
-	height: 8px;
+	width: var(--flexo-dot-size);
+	height: var(--flexo-dot-size);
 	border-radius: 50%;
-	background: var(--flexo-dot, currentColor);
-	opacity: 0.3;
-	transition: opacity 0.2s ease, transform 0.2s ease;
+	background: var(--flexo-dot-inactive, color-mix(in srgb, var(--flexo-dot, currentColor) 30%, transparent));
+	transition: background-color 0.2s ease, transform 0.2s ease, width 0.2s ease;
 }
 
 .flexo-room-gallery button.flexo-room-gallery__dot[aria-current="true"]::before {
-	opacity: 1;
+	background: var(--flexo-dot-active, var(--flexo-dot, currentColor));
 	transform: scale(1.25);
 }
 
+.flexo-room-gallery button.flexo-room-gallery__dot:focus:not(:focus-visible) {
+	outline: none;
+}
+
 .flexo-room-gallery button.flexo-room-gallery__dot:focus-visible {
-	outline: 2px solid var(--flexo-dot, currentColor);
+	outline: 2px solid var(--flexo-dot-active, var(--flexo-dot, currentColor));
 	border-radius: 50%;
+}
+
+/* Dots as short lines (1.10.0). */
+.flexo-gallery-dots-lines .flexo-room-gallery button.flexo-room-gallery__dot {
+	width: max(24px, calc(var(--flexo-dot-size) * 3.5));
+}
+
+.flexo-gallery-dots-lines .flexo-room-gallery button.flexo-room-gallery__dot::before {
+	width: calc(var(--flexo-dot-size) * 2.5);
+	height: max(2px, calc(var(--flexo-dot-size) / 2.5));
+	border-radius: 2px;
+}
+
+.flexo-gallery-dots-lines .flexo-room-gallery button.flexo-room-gallery__dot[aria-current="true"]::before {
+	width: calc(var(--flexo-dot-size) * 3.5);
+	transform: none;
+}
+
+/* "2 / 5" instead of dots (1.10.0); the buttons stay out of sight. */
+.flexo-room-gallery__fraction {
+	display: none;
+	min-width: 3.5em;
+	padding: 2px 10px;
+	border-radius: 999px;
+	color: var(--flexo-fraction-color, inherit);
+	background: var(--flexo-fraction-bg, transparent);
+	font-size: 0.875em;
+	font-variant-numeric: tabular-nums;
+	text-align: center;
+}
+
+.flexo-gallery-dots-fraction .flexo-room-gallery__fraction {
+	display: inline-block;
+}
+
+.flexo-gallery-dots-fraction .flexo-room-gallery button.flexo-room-gallery__dot {
+	display: none;
+}
+
+/* Dots over the photos, at the bottom (1.10.0). */
+.flexo-gallery-dots-at-over .flexo-room-gallery__dots {
+	position: absolute;
+	top: calc(var(--flexo-height) - 12px);
+	left: 0;
+	right: 0;
+	z-index: 2;
+	margin: 0;
+	transform: translateY(-100%);
+	pointer-events: none;
+}
+
+.flexo-gallery-dots-at-over .flexo-room-gallery__dots > * {
+	pointer-events: auto;
+}
+
+.flexo-gallery-dots-at-over .flexo-room-gallery {
+	--flexo-dot: #fff;
+	--flexo-fraction-color: #fff;
+	--flexo-fraction-bg: rgba(15, 20, 25, 0.55);
 }
 
 @media (hover: none) {
@@ -665,10 +807,15 @@
 /* Amenities as Elementor Icon List items (1.9.0): the plugin's icon, drawn
  * in the list's icon colour and at its icon size (Elementor sets both on
  * the icon element, like for its own icons). */
+/* 1.10.0: Elementor's own Size control (--e-icon-list-icon-size) is used
+ * directly, so the size works whether Elementor sizes icons by font size or
+ * by width and height. */
 .elementor-icon-list-icon .flexo-icon-list-icon {
 	display: inline-block;
-	min-width: 1em;
-	height: 1em;
+	flex: none;
+	width: var(--e-icon-list-icon-size, 1em);
+	min-width: var(--e-icon-list-icon-size, 1em);
+	height: var(--e-icon-list-icon-size, 1em);
 	background-color: currentColor;
 	-webkit-mask: var(--flexo-icon) center / contain no-repeat;
 	mask: var(--flexo-icon) center / contain no-repeat;

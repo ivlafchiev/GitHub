@@ -1191,7 +1191,7 @@ class Flexo_Booking_Admin {
 			<?php else : ?>
 				<ol class="flexo-history__list">
 					<?php foreach ( $rows as $row ) : ?>
-						<li><span class="flexo-history__text"><?php echo esc_html( $row['text'] ); ?></span> <span class="flexo-muted"><time datetime="<?php echo esc_attr( mysql2date( 'c', $row['time'] ) ); ?>"><?php echo esc_html( mysql2date( 'd.m.Y H:i', $row['time'] ) ); ?></time> – <?php echo esc_html( $row['who'] ); ?></span></li>
+						<li class="flexo-history__item"><span class="flexo-history__dot" aria-hidden="true"></span><span class="flexo-history__text"><?php echo esc_html( $row['text'] ); ?></span> <span class="flexo-history__meta flexo-muted"><time datetime="<?php echo esc_attr( mysql2date( 'c', $row['time'] ) ); ?>"><?php echo esc_html( mysql2date( 'd.m.Y H:i', $row['time'] ) ); ?></time> – <?php echo esc_html( $row['who'] ); ?></span></li>
 					<?php endforeach; ?>
 				</ol>
 			<?php endif; ?>

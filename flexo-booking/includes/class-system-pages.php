@@ -254,6 +254,11 @@ class Flexo_Booking_System_Pages {
 			'status_confirmed'  => '',
 			'status_awaiting'   => '',
 			'status_request'    => '',
+			// 1.10.0.
+			'button_corners'    => '',
+			'button_corners_px' => 8,
+			'field_corners'     => '',
+			'field_corners_px'  => 8,
 		);
 	}
 
@@ -286,6 +291,14 @@ class Flexo_Booking_System_Pages {
 					break;
 				case 'corners':
 					$clean[ $name ] = is_string( $value ) && array_key_exists( $value, Flexo_Booking_Appearance::corners() ) ? $value : '';
+					break;
+				case 'button_corners':
+				case 'field_corners':
+					$clean[ $name ] = Flexo_Booking_Appearance::sanitize_choice( $name, $value );
+					break;
+				case 'button_corners_px':
+				case 'field_corners_px':
+					$clean[ $name ] = max( 0, min( 100, (int) $value ) );
 					break;
 				default:
 					$clean[ $name ] = Flexo_Booking_Appearance::sanitize_color( is_scalar( $value ) ? $value : '' );
@@ -406,6 +419,10 @@ class Flexo_Booking_System_Pages {
 		$out      = array_merge( $defaults, array_intersect_key( $saved, $defaults ) );
 		foreach ( self::keys() as $key ) {
 			$out[ $key ] = array_merge( $defaults[ $key ], isset( $saved[ $key ] ) && is_array( $saved[ $key ] ) ? $saved[ $key ] : array() );
+			// A page's own look saved before a release added settings to it (1.10.0: button and field corners).
+			if ( isset( $out[ $key ]['appearance'] ) && is_array( $out[ $key ]['appearance'] ) ) {
+				$out[ $key ]['appearance'] = array_merge( self::appearance_defaults(), $out[ $key ]['appearance'] );
+			}
 		}
 		return $out;
 	}

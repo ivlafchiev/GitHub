@@ -121,11 +121,15 @@ class Flexo_Booking_Elementor {
 	}
 
 	public static function register_widgets( $widgets_manager ) {
+		require_once __DIR__ . '/class-controls.php';
 		require_once __DIR__ . '/class-booking-widget.php';
 		require_once __DIR__ . '/class-room-widgets.php';
 		require_once __DIR__ . '/class-room-box-widget.php';
+		require_once __DIR__ . '/class-contact-widget.php';
 		$widgets_manager->register( new Flexo_Booking_Elementor_Widget() );
 		$widgets_manager->register( new Flexo_Booking_Room_Box_Widget() );
+		$widgets_manager->register( new Flexo_Booking_Contact_Widget() );
+		$widgets_manager->register( new Flexo_Booking_Forms_Tabs_Widget() );
 		$widgets_manager->register( new Flexo_Booking_Room_Amenities_Widget() );
 		$widgets_manager->register( new Flexo_Booking_Room_Details_Widget() );
 		$widgets_manager->register( new Flexo_Booking_Room_Gallery_Widget() );

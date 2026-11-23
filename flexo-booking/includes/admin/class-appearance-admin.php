@@ -200,6 +200,8 @@ class Flexo_Booking_Appearance_Admin {
 			</select>
 			<?php if ( 'appearance_max_width' === $key ) : ?>
 				<span class="flexo-width-px flexo-input-unit" data-flexo-show-when="<?php echo esc_attr( $id ); ?>=custom"><input type="number" min="600" max="2000" step="10" class="small-text" name="<?php echo esc_attr( $name ); ?>[appearance_max_width_px]" value="<?php echo esc_attr( $s['appearance_max_width_px'] ); ?>" aria-label="<?php esc_attr_e( 'Width in pixels', 'flexo-booking' ); ?>"><span>px</span></span>
+			<?php elseif ( in_array( $key, array( 'appearance_button_corners', 'appearance_field_corners' ), true ) ) : ?>
+				<span class="flexo-width-px flexo-input-unit" data-flexo-show-when="<?php echo esc_attr( $id ); ?>=custom"><input type="number" min="0" max="100" step="1" class="small-text" name="<?php echo esc_attr( $name . '[' . $key . '_px]' ); ?>" value="<?php echo esc_attr( $s[ $key . '_px' ] ); ?>" aria-label="<?php esc_attr_e( 'Radius in pixels', 'flexo-booking' ); ?>"><span>px</span></span>
 			<?php endif; ?>
 		</span>
 		<?php
@@ -328,6 +330,19 @@ class Flexo_Booking_Appearance_Admin {
 				self::color_row( 'appearance_focus', __( 'Field in use', 'flexo-booking' ), __( 'The outline of the field the guest is typing in.', 'flexo-booking' ), $s, $name );
 				self::color_row( 'appearance_label', __( 'Field labels', 'flexo-booking' ), '', $s, $name );
 				self::choice_row( 'appearance_control_size', __( 'Field and button height', 'flexo-booking' ), __( 'Large is easier to tap on phones.', 'flexo-booking' ), $s, $name );
+				self::choice_row( 'appearance_button_corners', __( 'Button corners', 'flexo-booking' ), __( 'Pill gives buttons fully round ends. "As the corners above" follows Brand → Corners.', 'flexo-booking' ), $s, $name );
+				self::choice_row( 'appearance_field_corners', __( 'Field corners', 'flexo-booking' ), __( 'Fields where guests type or choose: dates, guests, their details.', 'flexo-booking' ), $s, $name );
+			}
+		);
+
+		self::group(
+			__( 'Room cards', 'flexo-booking' ),
+			__( 'The rooms guests choose from in the booking form.', 'flexo-booking' ),
+			false,
+			static function () use ( $s, $name ) {
+				self::choice_row( 'appearance_amenity_icons', __( 'Amenities', 'flexo-booking' ), __( 'The icon in front of each amenity, such as Free Wi-Fi.', 'flexo-booking' ), $s, $name );
+				self::color_row( 'appearance_icon_color', __( 'Icon colour', 'flexo-booking' ), __( 'Empty: the main colour.', 'flexo-booking' ), $s, $name );
+				self::choice_row( 'appearance_icon_size', __( 'Icon size', 'flexo-booking' ), '', $s, $name );
 			}
 		);
 

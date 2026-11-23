@@ -166,6 +166,101 @@ abstract class Flexo_Booking_Room_Widget extends Widget_Base {
 				'selectors' => array( '{{WRAPPER}} .flexo-room-list' => '--flexo-align: {{VALUE}};' ),
 			)
 		);
+		// 1.10.0: icon beside or above the text, vertical alignment, long texts, chips.
+		$this->add_responsive_control(
+			'icon_position',
+			array(
+				'label'                => __( 'Icon', 'flexo-booking' ),
+				'type'                 => Controls_Manager::CHOOSE,
+				'options'              => array(
+					'beside' => array(
+						'title' => __( 'Beside the text', 'flexo-booking' ),
+						'icon'  => 'eicon-h-align-left',
+					),
+					'above'  => array(
+						'title' => __( 'Above the text', 'flexo-booking' ),
+						'icon'  => 'eicon-v-align-top',
+					),
+				),
+				'selectors_dictionary' => array(
+					'beside' => '--flexo-item-dir: row; text-align: inherit;',
+					'above'  => '--flexo-item-dir: column; --flexo-icon-valign: center; text-align: center;',
+				),
+				'selectors'            => array( '{{WRAPPER}} .flexo-room-list' => '{{VALUE}}' ),
+			)
+		);
+		$this->add_responsive_control(
+			'icon_valign',
+			array(
+				'label'     => __( 'Icon and text', 'flexo-booking' ),
+				'type'      => Controls_Manager::CHOOSE,
+				'options'   => array(
+					'flex-start' => array(
+						'title' => __( 'Top', 'flexo-booking' ),
+						'icon'  => 'eicon-v-align-top',
+					),
+					'center'     => array(
+						'title' => __( 'Middle', 'flexo-booking' ),
+						'icon'  => 'eicon-v-align-middle',
+					),
+					'flex-end'   => array(
+						'title' => __( 'Bottom', 'flexo-booking' ),
+						'icon'  => 'eicon-v-align-bottom',
+					),
+				),
+				'condition' => array( 'icon_position!' => 'above' ),
+				'selectors' => array( '{{WRAPPER}} .flexo-room-list' => '--flexo-icon-valign: {{VALUE}};' ),
+			)
+		);
+		$this->add_control(
+			'text_wrap',
+			array(
+				'label'        => __( 'Long texts', 'flexo-booking' ),
+				'type'         => Controls_Manager::SELECT,
+				'default'      => '',
+				'options'      => array(
+					''       => __( 'On more lines', 'flexo-booking' ),
+					'nowrap' => __( 'One line, cut with …', 'flexo-booking' ),
+				),
+				'prefix_class' => 'flexo-room-text-',
+			)
+		);
+		$this->add_control(
+			'item_bg',
+			array(
+				'label'     => __( 'Item background', 'flexo-booking' ),
+				'type'      => Controls_Manager::COLOR,
+				'separator' => 'before',
+				'selectors' => array( '{{WRAPPER}} .flexo-room-list' => '--flexo-item-bg: {{VALUE}};' ),
+			)
+		);
+		$this->add_control(
+			'item_hover_bg',
+			array(
+				'label'     => __( 'Item background under the mouse', 'flexo-booking' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .flexo-room-list__item:hover' => 'background-color: {{VALUE}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'item_padding',
+			array(
+				'label'      => __( 'Item padding', 'flexo-booking' ),
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em' ),
+				'selectors'  => array( '{{WRAPPER}} .flexo-room-list' => '--flexo-item-pad: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
+			)
+		);
+		$this->add_control(
+			'item_radius',
+			array(
+				'label'      => __( 'Item corners', 'flexo-booking' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 0, 'max' => 60 ) ),
+				'selectors'  => array( '{{WRAPPER}} .flexo-room-list' => '--flexo-item-radius: {{SIZE}}{{UNIT}};' ),
+			)
+		);
 		$this->add_control(
 			'divider',
 			array(
@@ -184,6 +279,32 @@ abstract class Flexo_Booking_Room_Widget extends Widget_Base {
 				'selectors' => array( '{{WRAPPER}} .flexo-room-list' => '--flexo-divider: {{VALUE}};' ),
 			)
 		);
+		$this->add_control(
+			'divider_style',
+			array(
+				'label'     => __( 'Divider style', 'flexo-booking' ),
+				'type'      => Controls_Manager::SELECT,
+				'default'   => '',
+				'options'   => array(
+					''       => __( 'Solid', 'flexo-booking' ),
+					'dashed' => __( 'Dashed', 'flexo-booking' ),
+					'dotted' => __( 'Dotted', 'flexo-booking' ),
+				),
+				'condition' => array( 'divider' => 'yes' ),
+				'selectors' => array( '{{WRAPPER}} .flexo-room-list' => '--flexo-divider-style: {{VALUE}};' ),
+			)
+		);
+		$this->add_control(
+			'divider_width',
+			array(
+				'label'      => __( 'Divider width', 'flexo-booking' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 1, 'max' => 10 ) ),
+				'condition'  => array( 'divider' => 'yes' ),
+				'selectors'  => array( '{{WRAPPER}} .flexo-room-list' => '--flexo-divider-w: {{SIZE}}{{UNIT}};' ),
+			)
+		);
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -200,6 +321,14 @@ abstract class Flexo_Booking_Room_Widget extends Widget_Base {
 				'type'      => Controls_Manager::COLOR,
 				'global'    => array( 'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Colors::COLOR_PRIMARY ),
 				'selectors' => array( '{{WRAPPER}} .flexo-room-list' => '--flexo-icon-color: {{VALUE}};' ),
+			)
+		);
+		$this->add_control(
+			'icon_hover_color',
+			array(
+				'label'     => __( 'Colour under the mouse', 'flexo-booking' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .flexo-room-list__item:hover .flexo-room-list__icon' => 'color: {{VALUE}};' ),
 			)
 		);
 		$this->add_responsive_control(
@@ -246,6 +375,14 @@ abstract class Flexo_Booking_Room_Widget extends Widget_Base {
 				'type'      => Controls_Manager::COLOR,
 				'global'    => array( 'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Colors::COLOR_TEXT ),
 				'selectors' => array( '{{WRAPPER}} .flexo-room-list__text' => 'color: {{VALUE}};' ),
+			)
+		);
+		$this->add_control(
+			'text_hover_color',
+			array(
+				'label'     => __( 'Colour under the mouse', 'flexo-booking' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .flexo-room-list__item:hover .flexo-room-list__text' => 'color: {{VALUE}};' ),
 			)
 		);
 		$this->add_group_control(
@@ -444,9 +581,11 @@ class Flexo_Booking_Room_Details_Widget extends Flexo_Booking_Room_Widget {
 				'condition' => array( 'show_icons' => 'yes' ),
 			)
 		);
+		// 1.10.0: "fact_icon_…" – as "icon_size" the Size fact's icon had the same id as the
+		// icon Size slider of the Style tab, and Elementor dropped the slider.
 		foreach ( self::facts() as $key => $label ) {
 			$this->add_control(
-				'icon_' . $key,
+				'fact_icon_' . $key,
 				array(
 					'label'   => $label,
 					'type'    => Controls_Manager::ICONS,
@@ -497,7 +636,12 @@ class Flexo_Booking_Room_Details_Widget extends Flexo_Booking_Room_Widget {
 		$s     = $this->get_settings_for_display();
 		$icons = array();
 		foreach ( array_keys( self::facts() ) as $key ) {
-			$html = isset( $s[ 'icon_' . $key ] ) ? $this->icon_html( $s[ 'icon_' . $key ] ) : '';
+			$icon = isset( $s[ 'fact_icon_' . $key ] ) ? $s[ 'fact_icon_' . $key ] : array();
+			// Icons chosen before 1.10.0 were saved as "icon_…" (a size setting has no "value").
+			if ( empty( $icon['value'] ) && isset( $s[ 'icon_' . $key ]['value'] ) ) {
+				$icon = $s[ 'icon_' . $key ];
+			}
+			$html = is_array( $icon ) ? $this->icon_html( $icon ) : '';
 			if ( '' !== $html ) {
 				$icons[ $key ] = $html;
 			}
@@ -713,16 +857,68 @@ class Flexo_Booking_Room_Gallery_Widget extends Flexo_Booking_Room_Widget {
 				'selector' => '{{WRAPPER}} .flexo-room-gallery__img',
 			)
 		);
+		// 1.10.0.
+		$this->add_control(
+			'photo_fit',
+			array(
+				'label'     => __( 'Photos fill', 'flexo-booking' ),
+				'type'      => Controls_Manager::SELECT,
+				'default'   => '',
+				'options'   => array(
+					''        => __( 'The whole frame (may cut edges)', 'flexo-booking' ),
+					'contain' => __( 'Whole photo visible', 'flexo-booking' ),
+				),
+				'selectors' => array( '{{WRAPPER}} .flexo-room-gallery' => '--flexo-fit: {{VALUE}};' ),
+			)
+		);
+		$this->add_control(
+			'photo_zoom',
+			array(
+				'label'     => __( 'Under the mouse', 'flexo-booking' ),
+				'type'      => Controls_Manager::SELECT,
+				'default'   => '',
+				'options'   => array(
+					''  => __( 'Zoom in slightly', 'flexo-booking' ),
+					'1' => __( 'No zoom', 'flexo-booking' ),
+				),
+				'selectors' => array( '{{WRAPPER}} .flexo-room-gallery' => '--flexo-zoom: {{VALUE}};' ),
+			)
+		);
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_style_nav',
 			array(
-				'label'     => __( 'Arrows and dots', 'flexo-booking' ),
+				'label'     => __( 'Arrows', 'flexo-booking' ),
 				'tab'       => Controls_Manager::TAB_STYLE,
-				'condition' => array( 'layout' => 'carousel' ),
+				'condition' => array(
+					'layout' => 'carousel',
+					'arrows' => 'yes',
+				),
 			)
 		);
+		$this->add_responsive_control(
+			'arrow_size',
+			array(
+				'label'      => __( 'Button size', 'flexo-booking' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 24, 'max' => 96 ) ),
+				'selectors'  => array( '{{WRAPPER}} .flexo-room-gallery' => '--flexo-arrow-size: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'arrow_icon_size',
+			array(
+				'label'      => __( 'Arrow size', 'flexo-booking' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 8, 'max' => 64 ) ),
+				'selectors'  => array( '{{WRAPPER}} .flexo-room-gallery' => '--flexo-arrow-icon: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->start_controls_tabs( 'arrow_colors' );
+		$this->start_controls_tab( 'arrow_colors_normal', array( 'label' => __( 'Normal', 'flexo-booking' ) ) );
 		$this->add_control(
 			'arrow_color',
 			array(
@@ -739,13 +935,213 @@ class Flexo_Booking_Room_Gallery_Widget extends Flexo_Booking_Room_Widget {
 				'selectors' => array( '{{WRAPPER}} .flexo-room-gallery' => '--flexo-arrow-bg: {{VALUE}};' ),
 			)
 		);
+		$this->end_controls_tab();
+		$this->start_controls_tab( 'arrow_colors_hover', array( 'label' => __( 'Hover', 'flexo-booking' ) ) );
+		$this->add_control(
+			'arrow_hover_color',
+			array(
+				'label'     => __( 'Arrow colour', 'flexo-booking' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .flexo-room-gallery' => '--flexo-arrow-hover-color: {{VALUE}};' ),
+			)
+		);
+		$this->add_control(
+			'arrow_hover_bg',
+			array(
+				'label'     => __( 'Arrow background', 'flexo-booking' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .flexo-room-gallery' => '--flexo-arrow-hover-bg: {{VALUE}};' ),
+			)
+		);
+		$this->add_control(
+			'arrow_hover_border',
+			array(
+				'label'     => __( 'Border colour', 'flexo-booking' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .flexo-room-gallery button.flexo-room-gallery__arrow:hover' => 'border-color: {{VALUE}};' ),
+			)
+		);
+		$this->end_controls_tab();
+		$this->end_controls_tabs();
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name'      => 'arrow_border',
+				'separator' => 'before',
+				'selector'  => '{{WRAPPER}} .flexo-room-gallery button.flexo-room-gallery__arrow',
+			)
+		);
+		$this->add_control(
+			'arrow_radius',
+			array(
+				'label'      => __( 'Corner radius', 'flexo-booking' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', '%' ),
+				'range'      => array(
+					'px' => array( 'min' => 0, 'max' => 60 ),
+					'%'  => array( 'min' => 0, 'max' => 50 ),
+				),
+				'selectors'  => array( '{{WRAPPER}} .flexo-room-gallery' => '--flexo-arrow-radius: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_control(
+			'arrow_shadow',
+			array(
+				'label'     => __( 'Shadow', 'flexo-booking' ),
+				'type'      => Controls_Manager::SELECT,
+				'default'   => '',
+				'options'   => array(
+					''     => __( 'Soft shadow', 'flexo-booking' ),
+					'none' => __( 'No shadow', 'flexo-booking' ),
+				),
+				'selectors' => array( '{{WRAPPER}} .flexo-room-gallery' => '--flexo-arrow-shadow: {{VALUE}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'arrow_offset',
+			array(
+				'label'       => __( 'Distance from the edge', 'flexo-booking' ),
+				'type'        => Controls_Manager::SLIDER,
+				'size_units'  => array( 'px' ),
+				'range'       => array( 'px' => array( 'min' => -60, 'max' => 80 ) ),
+				'description' => __( 'Below 0 the arrows sit outside the photos.', 'flexo-booking' ),
+				'selectors'   => array( '{{WRAPPER}} .flexo-room-gallery' => '--flexo-arrow-offset: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_control(
+			'arrow_position',
+			array(
+				'label'                => __( 'Height', 'flexo-booking' ),
+				'type'                 => Controls_Manager::CHOOSE,
+				'options'              => array(
+					'top'    => array(
+						'title' => __( 'Top', 'flexo-booking' ),
+						'icon'  => 'eicon-v-align-top',
+					),
+					'middle' => array(
+						'title' => __( 'Middle', 'flexo-booking' ),
+						'icon'  => 'eicon-v-align-middle',
+					),
+					'bottom' => array(
+						'title' => __( 'Bottom', 'flexo-booking' ),
+						'icon'  => 'eicon-v-align-bottom',
+					),
+				),
+				'selectors_dictionary' => array(
+					'top'    => 'calc(var(--flexo-arrow-size) / 2 + 12px)',
+					'middle' => 'calc(var(--flexo-height) / 2)',
+					'bottom' => 'calc(var(--flexo-height) - var(--flexo-arrow-size) / 2 - 12px)',
+				),
+				'selectors'            => array( '{{WRAPPER}} .flexo-room-gallery' => '--flexo-arrow-top: {{VALUE}};' ),
+			)
+		);
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_style_dots',
+			array(
+				'label'     => __( 'Dots', 'flexo-booking' ),
+				'tab'       => Controls_Manager::TAB_STYLE,
+				'condition' => array(
+					'layout' => 'carousel',
+					'dots'   => 'yes',
+				),
+			)
+		);
+		$this->add_control(
+			'dots_style',
+			array(
+				'label'        => __( 'Show as', 'flexo-booking' ),
+				'type'         => Controls_Manager::SELECT,
+				'default'      => 'dots',
+				'options'      => array(
+					'dots'     => __( 'Dots', 'flexo-booking' ),
+					'lines'    => __( 'Lines', 'flexo-booking' ),
+					'fraction' => __( 'Count (2 / 5)', 'flexo-booking' ),
+				),
+				'prefix_class' => 'flexo-gallery-dots-',
+			)
+		);
+		$this->add_control(
+			'dots_position',
+			array(
+				'label'        => __( 'Position', 'flexo-booking' ),
+				'type'         => Controls_Manager::SELECT,
+				'default'      => 'below',
+				'options'      => array(
+					'below' => __( 'Below the photos', 'flexo-booking' ),
+					'over'  => __( 'Over the photos', 'flexo-booking' ),
+				),
+				'prefix_class' => 'flexo-gallery-dots-at-',
+			)
+		);
 		$this->add_control(
 			'dot_color',
 			array(
-				'label'     => __( 'Dot colour', 'flexo-booking' ),
+				'label'     => __( 'Colour', 'flexo-booking' ),
 				'type'      => Controls_Manager::COLOR,
 				'global'    => array( 'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Colors::COLOR_PRIMARY ),
 				'selectors' => array( '{{WRAPPER}} .flexo-room-gallery' => '--flexo-dot: {{VALUE}};' ),
+			)
+		);
+		$this->add_control(
+			'dot_inactive_color',
+			array(
+				'label'     => __( 'Other dots', 'flexo-booking' ),
+				'type'      => Controls_Manager::COLOR,
+				'condition' => array( 'dots_style!' => 'fraction' ),
+				'selectors' => array( '{{WRAPPER}} .flexo-room-gallery' => '--flexo-dot-inactive: {{VALUE}};' ),
+			)
+		);
+		$this->add_control(
+			'fraction_bg',
+			array(
+				'label'     => __( 'Count background', 'flexo-booking' ),
+				'type'      => Controls_Manager::COLOR,
+				'condition' => array( 'dots_style' => 'fraction' ),
+				'selectors' => array( '{{WRAPPER}} .flexo-room-gallery' => '--flexo-fraction-bg: {{VALUE}}; --flexo-fraction-color: var(--flexo-dot);' ),
+			)
+		);
+		$this->add_responsive_control(
+			'dot_size',
+			array(
+				'label'      => __( 'Size', 'flexo-booking' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 4, 'max' => 24 ) ),
+				'condition'  => array( 'dots_style!' => 'fraction' ),
+				'selectors'  => array( '{{WRAPPER}} .flexo-room-gallery' => '--flexo-dot-size: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'dot_gap',
+			array(
+				'label'      => __( 'Space between', 'flexo-booking' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 0, 'max' => 24 ) ),
+				'condition'  => array( 'dots_style!' => 'fraction' ),
+				'selectors'  => array( '{{WRAPPER}} .flexo-room-gallery' => '--flexo-dot-gap: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'dots_offset',
+			array(
+				'label'      => __( 'Distance from the photos', 'flexo-booking' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 0, 'max' => 60 ) ),
+				'condition'  => array( 'dots_position' => 'below' ),
+				'selectors'  => array( '{{WRAPPER}} .flexo-room-gallery' => '--flexo-dots-offset: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			array(
+				'name'      => 'fraction_typography',
+				'label'     => __( 'Count', 'flexo-booking' ),
+				'condition' => array( 'dots_style' => 'fraction' ),
+				'selector'  => '{{WRAPPER}} .flexo-room-gallery__fraction',
 			)
 		);
 		$this->end_controls_section();
